@@ -18,13 +18,13 @@ import desapegoCarrinho from "@/assets/desapego-carrinho.jpg";
 
 
 const serviceShortcuts = [
-  { label: "Jardinagem", icon: TreePine, path: "/morador/servicos" },
-  { label: "Faxina", icon: SprayCan, path: "/morador/servicos" },
-  { label: "Eletricista", icon: Zap, path: "/morador/servicos" },
-  { label: "Encanador", icon: Droplets, path: "/morador/servicos" },
-  { label: "Pintura", icon: Paintbrush, path: "/morador/servicos" },
-  { label: "Reparos", icon: Hammer, path: "/morador/servicos" },
-  { label: "Limpeza", icon: Wrench, path: "/morador/servicos" },
+  { label: "Jardinagem", icon: TreePine, path: "/morador/servicos?q=Jardinagem" },
+  { label: "Faxina", icon: SprayCan, path: "/morador/servicos?q=Faxina" },
+  { label: "Eletricista", icon: Zap, path: "/morador/servicos?q=Eletricista" },
+  { label: "Encanador", icon: Droplets, path: "/morador/servicos?q=Encanador" },
+  { label: "Pintura", icon: Paintbrush, path: "/morador/servicos?q=Pintura" },
+  { label: "Reparos", icon: Hammer, path: "/morador/servicos?q=Reparos" },
+  { label: "Limpeza", icon: Wrench, path: "/morador/servicos?q=Limpeza" },
   { label: "Outros", icon: Wrench, path: "/morador/servicos" },
 ];
 
