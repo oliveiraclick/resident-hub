@@ -13,6 +13,7 @@ import MoradorDashboard from "./pages/morador/MoradorDashboard";
 import PrestadorDashboard from "./pages/prestador/PrestadorDashboard";
 import NotFound from "./pages/NotFound";
 import TesteSupabase from "./pages/TesteSupabase";
+import TesteAuth from "./pages/TesteAuth";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/teste-supabase" element={<TesteSupabase />} />
+            <Route path="/teste-auth" element={<TesteAuth />} />
             <Route path="/auth" element={<Auth />} />
             <Route
               path="/dashboard"
