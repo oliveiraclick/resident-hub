@@ -1,4 +1,5 @@
 workflows:
+
   android-release:
     name: Android Release Build
     environment:
@@ -14,7 +15,7 @@ workflows:
         script: |
           npm run build
 
-      - name: Sync Capacitor
+      - name: Sync Capacitor Android
         script: |
           npx cap sync android
 
@@ -43,14 +44,9 @@ workflows:
         script: |
           npm run build
 
-      - name: Sync Capacitor
+      - name: Sync Capacitor iOS
         script: |
           npx cap sync ios
-
-      - name: Install CocoaPods
-        script: |
-          cd ios/App
-          pod install
 
       - name: Build IPA
         script: |
