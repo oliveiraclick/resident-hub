@@ -4,11 +4,28 @@ import { useSearchParams } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { Star, Wrench, Search } from "lucide-react";
+import { Wrench, Search, MessageCircle, Star, ArrowLeft, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface Categoria {
   nome: string;
   count: number;
+}
+
+interface PrestadorCompleto {
+  id: string;
+  especialidade: string;
+  descricao: string | null;
+  user_id: string;
+  nome: string;
+  telefone: string | null;
+  avatar_url: string | null;
+  servicos: {
+    id: string;
+    titulo: string;
+    descricao: string | null;
+    preco: number | null;
+  }[];
 }
 
 const MoradorServicos = () => {
@@ -20,11 +37,12 @@ const MoradorServicos = () => {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [allPrestadores, setAllPrestadores] = useState<any[]>([]);
   const [selectedCategoria, setSelectedCategoria] = useState<string | null>(null);
-  const [servicos, setServicos] = useState<any[]>([]);
+  const [prestadoresCompletos, setPrestadoresCompletos] = useState<PrestadorCompleto[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState(queryFromUrl);
+  const [loadingDetail, setLoadingDetail] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // Fetch all prestadores
+  // Fetch all prestadores for categories
   useEffect(() => {
     if (!condominioId) return;
 
@@ -66,31 +84,186 @@ const MoradorServicos = () => {
     }
   }, [queryFromUrl, categorias]);
 
+  // Fetch full prestador details when category is selected
   useEffect(() => {
     if (!condominioId || !selectedCategoria) return;
 
-    const fetchServicos = async () => {
-      const prestadorIds = allPrestadores
-        .filter((p) => p.especialidade === selectedCategoria)
-        .map((p) => p.id);
+    const fetchPrestadoresCompletos = async () => {
+      setLoadingDetail(true);
 
-      if (!prestadorIds.length) {
-        setServicos([]);
+      const prestadoresFiltrados = allPrestadores.filter(
+        (p) => p.especialidade === selectedCategoria
+      );
+
+      if (!prestadoresFiltrados.length) {
+        setPrestadoresCompletos([]);
+        setLoadingDetail(false);
         return;
       }
 
-      const { data: servicosData } = await supabase
+      // Fetch profiles for these prestadores
+      const userIds = prestadoresFiltrados.map((p) => p.user_id);
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("user_id, nome, telefone, avatar_url")
+        .in("user_id", userIds);
+
+      // Fetch servicos for these prestadores
+      const prestadorIds = prestadoresFiltrados.map((p) => p.id);
+      const { data: servicos } = await supabase
         .from("servicos")
-        .select("*")
+        .select("id, titulo, descricao, preco, prestador_id")
         .eq("condominio_id", condominioId)
         .in("prestador_id", prestadorIds)
         .eq("status", "ativo");
 
-      setServicos(servicosData || []);
+      const result: PrestadorCompleto[] = prestadoresFiltrados.map((p) => {
+        const profile = profiles?.find((pr) => pr.user_id === p.user_id);
+        const prestadorServicos = servicos?.filter((s) => s.prestador_id === p.id) || [];
+        return {
+          id: p.id,
+          especialidade: p.especialidade,
+          descricao: p.descricao,
+          user_id: p.user_id,
+          nome: profile?.nome || "Prestador",
+          telefone: profile?.telefone || null,
+          avatar_url: profile?.avatar_url || null,
+          servicos: prestadorServicos,
+        };
+      });
+
+      setPrestadoresCompletos(result);
+      setLoadingDetail(false);
     };
 
-    fetchServicos();
+    fetchPrestadoresCompletos();
   }, [condominioId, selectedCategoria, allPrestadores]);
+
+  const openWhatsApp = (telefone: string, nome: string, especialidade: string) => {
+    const cleaned = telefone.replace(/\D/g, "");
+    const number = cleaned.startsWith("55") ? cleaned : `55${cleaned}`;
+    const msg = encodeURIComponent(
+      `Olá ${nome}! Vi seu perfil de ${especialidade} no app do condomínio e gostaria de saber mais sobre seus serviços.`
+    );
+    window.open(`https://wa.me/${number}?text=${msg}`, "_blank");
+  };
+
+  // Category detail view
+  if (selectedCategoria) {
+    return (
+      <MoradorLayout title={selectedCategoria}>
+        <div className="flex flex-col gap-4">
+          <button
+            onClick={() => {
+              setSelectedCategoria(null);
+              setPrestadoresCompletos([]);
+            }}
+            className="flex items-center gap-1.5 text-[13px] font-medium text-primary w-fit"
+          >
+            <ArrowLeft size={16} />
+            Voltar às categorias
+          </button>
+
+          {loadingDetail ? (
+            <p className="text-[13px] text-muted-foreground text-center py-8">Carregando...</p>
+          ) : prestadoresCompletos.length === 0 ? (
+            <div className="flex flex-col items-center gap-3 py-12">
+              <Wrench size={40} className="text-muted-foreground" />
+              <p className="text-[14px] text-muted-foreground">
+                Nenhum prestador de {selectedCategoria} disponível
+              </p>
+            </div>
+          ) : (
+            prestadoresCompletos.map((prestador) => (
+              <Card key={prestador.id} className="overflow-hidden">
+                <CardContent className="p-4 flex flex-col gap-3">
+                  {/* Header: Avatar + Name */}
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                      {prestador.avatar_url ? (
+                        <img
+                          src={prestador.avatar_url}
+                          alt={prestador.nome}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <User size={22} className="text-primary" />
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[15px] font-semibold text-foreground truncate">
+                        {prestador.nome}
+                      </p>
+                      <p className="text-[12px] text-primary font-medium">
+                        {prestador.especialidade}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  {prestador.descricao && (
+                    <p className="text-[13px] text-muted-foreground leading-relaxed">
+                      {prestador.descricao}
+                    </p>
+                  )}
+
+                  {/* Serviços oferecidos */}
+                  {prestador.servicos.length > 0 && (
+                    <div className="flex flex-col gap-2">
+                      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
+                        Serviços oferecidos
+                      </p>
+                      <div className="flex flex-col gap-1.5">
+                        {prestador.servicos.map((s) => (
+                          <div
+                            key={s.id}
+                            className="flex items-center justify-between bg-muted/50 rounded-xl px-3 py-2"
+                          >
+                            <div className="min-w-0 flex-1">
+                              <p className="text-[13px] font-medium text-foreground truncate">
+                                {s.titulo}
+                              </p>
+                              {s.descricao && (
+                                <p className="text-[11px] text-muted-foreground truncate">
+                                  {s.descricao}
+                                </p>
+                              )}
+                            </div>
+                            {s.preco != null && (
+                              <span className="text-[13px] font-bold text-primary ml-2 flex-shrink-0">
+                                R$ {Number(s.preco).toFixed(2).replace(".", ",")}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* WhatsApp button */}
+                  {prestador.telefone ? (
+                    <Button
+                      onClick={() =>
+                        openWhatsApp(prestador.telefone!, prestador.nome, prestador.especialidade)
+                      }
+                      className="w-full rounded-xl gap-2 bg-[#25D366] hover:bg-[#1da851] text-white font-semibold"
+                    >
+                      <MessageCircle size={18} />
+                      Falar no WhatsApp
+                    </Button>
+                  ) : (
+                    <p className="text-[12px] text-muted-foreground text-center py-1">
+                      Telefone não cadastrado
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </div>
+      </MoradorLayout>
+    );
+  }
 
   // Filter categories by search term
   const filteredCategorias = searchTerm
@@ -99,59 +272,10 @@ const MoradorServicos = () => {
       )
     : categorias;
 
-  // Also show matching prestadores directly when searching
-  const filteredPrestadores = searchTerm
-    ? allPrestadores.filter(
-        (p) =>
-          p.especialidade.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (p.descricao && p.descricao.toLowerCase().includes(searchTerm.toLowerCase()))
-      )
-    : [];
-
-  if (selectedCategoria) {
-    return (
-      <MoradorLayout title={selectedCategoria} showBack>
-        <div className="flex flex-col gap-3 max-w-md mx-auto">
-          {servicos.length === 0 ? (
-            <div className="flex flex-col items-center gap-3 py-12">
-              <Wrench size={40} className="text-muted-foreground" />
-              <p className="text-body text-muted-foreground">
-                Nenhum serviço nesta categoria
-              </p>
-            </div>
-          ) : (
-            servicos.map((s) => (
-              <Card key={s.id}>
-                <CardContent className="flex flex-col gap-2 p-4">
-                  <p className="text-title-md">{s.titulo}</p>
-                  {s.descricao && (
-                    <p className="text-body text-muted-foreground">{s.descricao}</p>
-                  )}
-                  {s.preco && (
-                    <p className="text-body font-semibold text-primary">
-                      R$ {Number(s.preco).toFixed(2)}
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
-            ))
-          )}
-
-          <button
-            onClick={() => setSelectedCategoria(null)}
-            className="text-body text-primary font-semibold py-2"
-          >
-            ← Voltar às categorias
-          </button>
-        </div>
-      </MoradorLayout>
-    );
-  }
-
   return (
     <MoradorLayout title="Serviços">
-      <div className="flex flex-col gap-4 max-w-md mx-auto">
-        {/* Search within page */}
+      <div className="flex flex-col gap-4">
+        {/* Search */}
         <div className="relative">
           <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
@@ -164,13 +288,11 @@ const MoradorServicos = () => {
         </div>
 
         {loading ? (
-          <p className="text-body text-muted-foreground text-center py-8">
-            Carregando...
-          </p>
-        ) : filteredCategorias.length === 0 && filteredPrestadores.length === 0 ? (
+          <p className="text-[13px] text-muted-foreground text-center py-8">Carregando...</p>
+        ) : filteredCategorias.length === 0 ? (
           <div className="flex flex-col items-center gap-3 py-12">
             <Wrench size={40} className="text-muted-foreground" />
-            <p className="text-body text-muted-foreground">
+            <p className="text-[14px] text-muted-foreground">
               {searchTerm ? `Nenhum resultado para "${searchTerm}"` : "Nenhum prestador disponível"}
             </p>
           </div>
@@ -182,12 +304,12 @@ const MoradorServicos = () => {
               onClick={() => setSelectedCategoria(cat.nome)}
             >
               <CardContent className="flex items-center gap-4 p-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-button bg-primary/10">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10">
                   <Wrench size={20} className="text-primary" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-title-md">{cat.nome}</p>
-                  <p className="text-subtitle text-muted-foreground">
+                  <p className="text-[14px] font-semibold text-foreground">{cat.nome}</p>
+                  <p className="text-[12px] text-muted-foreground">
                     {cat.count} prestador{cat.count > 1 ? "es" : ""}
                   </p>
                 </div>
