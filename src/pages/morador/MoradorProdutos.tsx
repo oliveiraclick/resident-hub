@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ShoppingBag } from "lucide-react";
 
 const MoradorProdutos = () => {
+  const navigate = useNavigate();
   const { roles } = useAuth();
   const condominioId = roles[0]?.condominio_id;
 
@@ -43,7 +45,7 @@ const MoradorProdutos = () => {
         ) : (
           <div className="grid grid-cols-2 gap-3">
             {produtos.map((p) => (
-              <Card key={p.id} className="overflow-hidden">
+              <Card key={p.id} className="overflow-hidden cursor-pointer active:scale-[0.98] transition-transform" onClick={() => navigate(`/morador/produtos/${p.id}`)}>
                 <CardContent className="flex flex-col gap-2 p-3">
                   <div className="flex h-24 items-center justify-center rounded-button bg-muted">
                     <ShoppingBag size={28} className="text-muted-foreground" />

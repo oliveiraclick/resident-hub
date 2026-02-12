@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,6 +10,7 @@ import { toast } from "sonner";
 import { Repeat, Plus } from "lucide-react";
 
 const MoradorDesapegos = () => {
+  const navigate = useNavigate();
   const { user, roles } = useAuth();
   const condominioId = roles[0]?.condominio_id;
 
@@ -115,7 +117,7 @@ const MoradorDesapegos = () => {
           </div>
         ) : (
           desapegos.map((d) => (
-            <Card key={d.id}>
+            <Card key={d.id} className="cursor-pointer active:scale-[0.98] transition-transform" onClick={() => navigate(`/morador/desapegos/${d.id}`)}>
               <CardContent className="flex flex-col gap-2 p-4">
                 <p className="text-title-md">{d.titulo}</p>
                 {d.descricao && (
