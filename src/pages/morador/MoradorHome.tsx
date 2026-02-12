@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Package, Wrench, Zap, Droplets, TreePine, SprayCan, Paintbrush, Hammer } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import bannerCarnaval from "@/assets/banner-carnaval.jpg";
 
 const categories = [
   { label: "Serviços", active: true },
@@ -78,17 +79,18 @@ const MoradorHome = () => {
           </button>
         )}
 
-        {/* Ad Banner */}
-        <div className="rounded-card overflow-hidden relative bg-gradient-to-r from-primary to-primary-hover h-[140px] flex items-center px-5">
-          <div className="relative z-10 flex-1">
-            <p className="text-[11px] font-semibold text-primary-foreground/70 uppercase tracking-wide">Patrocinado</p>
-            <p className="text-[18px] font-bold text-primary-foreground mt-1 leading-tight">Limpeza completa<br/>com 20% OFF</p>
-            <button className="mt-2.5 px-4 py-1.5 rounded-full bg-card text-primary text-[12px] font-semibold">
-              Saiba mais
-            </button>
-          </div>
-          <div className="absolute right-4 bottom-0 opacity-10">
-            <SprayCan size={120} className="text-primary-foreground" />
+        {/* Ad Banner - Imagem */}
+        <div className="rounded-card overflow-hidden relative h-[160px] active:scale-[0.98] transition-transform cursor-pointer">
+          <img
+            src={bannerCarnaval}
+            alt="Festa de Carnaval no Splendido"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-foreground/60 to-transparent" />
+          <div className="relative z-10 flex flex-col justify-end h-full p-4">
+            <p className="text-[10px] font-semibold text-primary-foreground/80 uppercase tracking-wide">Evento</p>
+            <p className="text-[17px] font-bold text-primary-foreground leading-tight mt-0.5">Carnaval no<br/>Splendido 🎭</p>
+            <p className="text-[11px] text-primary-foreground/70 mt-1">Dia 01/03 às 15h · Área de lazer</p>
           </div>
         </div>
 
