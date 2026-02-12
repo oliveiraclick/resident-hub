@@ -23,24 +23,55 @@ const navItems = [
 const MoradorLayout = ({ children, showSearch = false }: MoradorLayoutProps) => {
   const { user } = useAuth();
   const [profileName, setProfileName] = useState<string | null>(null);
+  const [condominioName, setCondominioName] = useState<string | null>(null);
+  const [condominioLogo, setCondominioLogo] = useState<string | null>(null);
+  const [aprovado, setAprovado] = useState(true);
 
   useEffect(() => {
     if (!user) return;
-    const fetchProfile = async () => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("nome")
-        .eq("user_id", user.id)
-        .maybeSingle();
-      if (data?.nome) setProfileName(data.nome);
+
+    const fetchData = async () => {
+      // Fetch profile, role and condominio in parallel
+      const [profileRes, roleRes] = await Promise.all([
+        supabase.from("profiles").select("nome").eq("user_id", user.id).maybeSingle(),
+        supabase.from("user_roles").select("condominio_id, aprovado").eq("user_id", user.id).eq("role", "morador").maybeSingle(),
+      ]);
+
+      if (profileRes.data?.nome) setProfileName(profileRes.data.nome);
+
+      if (roleRes.data) {
+        setAprovado(roleRes.data.aprovado ?? true);
+
+        if (roleRes.data.condominio_id) {
+          const { data: condo } = await supabase
+            .from("condominios")
+            .select("nome, logo_url")
+            .eq("id", roleRes.data.condominio_id)
+            .maybeSingle();
+
+          if (condo) {
+            setCondominioName(condo.nome);
+            setCondominioLogo(condo.logo_url);
+          }
+        }
+      }
     };
-    fetchProfile();
+
+    fetchData();
   }, [user]);
 
   const userName = profileName || (user?.user_metadata?.nome as string) || "Morador";
 
   return (
-    <AppShell moduleName="Morador" navItems={navItems} userName={userName} showSearch={showSearch}>
+    <AppShell
+      moduleName="Morador"
+      navItems={navItems}
+      userName={userName}
+      showSearch={showSearch}
+      condominioName={condominioName}
+      condominioLogo={condominioLogo}
+      aprovado={aprovado}
+    >
       {children}
     </AppShell>
   );

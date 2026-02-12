@@ -563,6 +563,7 @@ export type Database = {
       }
       user_roles: {
         Row: {
+          aprovado: boolean
           condominio_id: string | null
           created_at: string
           id: string
@@ -570,6 +571,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          aprovado?: boolean
           condominio_id?: string | null
           created_at?: string
           id?: string
@@ -577,6 +579,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          aprovado?: boolean
           condominio_id?: string | null
           created_at?: string
           id?: string
@@ -618,6 +621,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      is_approved: {
+        Args: { _condominio_id: string; _user_id: string }
         Returns: boolean
       }
       is_platform_admin: { Args: { p_user_id: string }; Returns: boolean }

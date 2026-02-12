@@ -19,6 +19,9 @@ interface AppShellProps {
   userName?: string;
   showSearch?: boolean;
   onQrPress?: () => void;
+  condominioName?: string | null;
+  condominioLogo?: string | null;
+  aprovado?: boolean;
 }
 
 interface SearchResult {
@@ -27,7 +30,7 @@ interface SearchResult {
   descricao: string | null;
 }
 
-const AppShell = ({ children, moduleName, navItems, userName, showSearch = false, onQrPress }: AppShellProps) => {
+const AppShell = ({ children, moduleName, navItems, userName, showSearch = false, onQrPress, condominioName, condominioLogo, aprovado = true }: AppShellProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [showResults, setShowResults] = useState(false);
@@ -99,8 +102,14 @@ const AppShell = ({ children, moduleName, navItems, userName, showSearch = false
       <header className="sticky top-0 z-20 bg-card px-5 pt-4 pb-3" style={{ borderBottom: "1px solid hsl(var(--border))" }}>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2.5">
-            <img src={logoMorador} alt="Morador.app" className="h-9 w-9 object-contain" />
-            <span className="font-semibold text-[15px] text-foreground tracking-tight">Morador.app</span>
+            {condominioLogo ? (
+              <img src={condominioLogo} alt={condominioName || "Condomínio"} className="h-9 w-9 rounded-lg object-cover" />
+            ) : (
+              <img src={logoMorador} alt="Morador.app" className="h-9 w-9 object-contain" />
+            )}
+            <span className="font-semibold text-[15px] text-foreground tracking-tight">
+              {condominioName || "Morador.app"}
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -175,6 +184,14 @@ const AppShell = ({ children, moduleName, navItems, userName, showSearch = false
           </div>
         )}
       </header>
+
+      {/* Pending approval banner */}
+      {!aprovado && (
+        <div className="mx-5 mt-4 rounded-2xl bg-accent/50 border border-accent px-4 py-3">
+          <p className="text-[13px] font-semibold text-accent-foreground">⏳ Cadastro em análise</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">Seu acesso está pendente de aprovação. Enquanto isso, você pode visualizar o conteúdo.</p>
+        </div>
+      )}
 
       {/* Scrollable content */}
       <main className="px-5 pt-6 pb-[90px]">{children}</main>
