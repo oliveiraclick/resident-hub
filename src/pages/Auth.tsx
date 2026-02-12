@@ -1,4 +1,5 @@
 import { useState } from "react";
+import logoMorador from "@/assets/logo-morador.png";
 import { Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -100,9 +101,7 @@ const Auth = () => {
     <div className="flex min-h-screen flex-col bg-background">
       {/* Header */}
       <div className="flex flex-col items-center pt-16 pb-8 px-6">
-        <div className="flex h-14 w-14 items-center justify-center rounded-card bg-primary">
-          <span className="text-title-lg text-primary-foreground">M</span>
-        </div>
+        <img src={logoMorador} alt="Morador.app" className="h-14 w-14 object-contain" />
         <h1 className="mt-4 text-title-lg text-foreground">Morador.app</h1>
         <p className="mt-1 text-subtitle text-muted-foreground">
           {isLogin ? "Acesse sua conta" : "Crie sua conta"}

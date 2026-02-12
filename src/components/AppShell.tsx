@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Bell, QrCode, Search, Wrench, X } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import logoMorador from "@/assets/logo-morador.png";
 import { useAuth } from "@/hooks/useAuth";
 
 export interface NavItem {
@@ -98,10 +99,8 @@ const AppShell = ({ children, moduleName, navItems, userName, showSearch = false
       <header className="sticky top-0 z-20 bg-card px-5 pt-4 pb-3" style={{ borderBottom: "1px solid hsl(var(--border))" }}>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2.5">
-            <div className="h-9 w-9 rounded-full bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">S</span>
-            </div>
-            <span className="font-semibold text-[15px] text-foreground tracking-tight">Splendido</span>
+            <img src={logoMorador} alt="Morador.app" className="h-9 w-9 object-contain" />
+            <span className="font-semibold text-[15px] text-foreground tracking-tight">Morador.app</span>
           </div>
           <div className="flex items-center gap-2">
             <button
