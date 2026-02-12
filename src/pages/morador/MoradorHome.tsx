@@ -2,7 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
-import { Package, Wrench, Zap, Droplets, TreePine, SprayCan, Paintbrush, Hammer, ShoppingBag, ChevronLeft, ChevronRight, Repeat } from "lucide-react";
+import { Package, Wrench, Zap, Droplets, TreePine, SprayCan, Paintbrush, Hammer, ShoppingBag, ChevronLeft, ChevronRight, Repeat, Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import bannerCarnaval from "@/assets/banner-carnaval.jpg";
@@ -132,9 +133,21 @@ const MoradorHome = () => {
         {/* Vitrine E-shop */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <ShoppingBag size={16} className="text-primary" />
               <h2 className="text-[16px] font-semibold text-foreground">Vitrine E-shop</h2>
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button className="text-muted-foreground">
+                      <Info size={14} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="max-w-[200px] text-[12px]">
+                    Produtos e serviços oferecidos por prestadores do seu condomínio.
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
             <button
               onClick={() => navigate("/morador/produtos")}
@@ -194,9 +207,21 @@ const MoradorHome = () => {
         {/* Vitrine Desapego */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <Repeat size={16} className="text-primary" />
               <h2 className="text-[16px] font-semibold text-foreground">Desapego</h2>
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button className="text-muted-foreground">
+                      <Info size={14} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="max-w-[200px] text-[12px]">
+                    Itens usados à venda ou doação entre moradores do condomínio.
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
             <button
               onClick={() => navigate("/morador/desapegos")}
