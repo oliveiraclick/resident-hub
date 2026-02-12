@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -23,14 +26,40 @@ const Login = () => {
   };
 
   return (
-    <div style={{ padding: 40, maxWidth: 360, margin: "0 auto", fontFamily: "sans-serif" }}>
-      <h1>Login</h1>
-      <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input placeholder="Senha" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        {error && <p style={{ color: "red", margin: 0 }}>{error}</p>}
-        <button type="submit" disabled={loading}>{loading ? "Entrando..." : "Entrar"}</button>
-      </form>
+    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <Card className="w-full max-w-sm rounded-[24px]">
+        <CardContent className="flex flex-col gap-4 p-6">
+          <h1 className="text-center text-xl font-bold text-foreground">Entrar</h1>
+          <form onSubmit={handleLogin} className="flex flex-col gap-3">
+            <Input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="h-[52px] rounded-[16px]"
+            />
+            <Input
+              type="password"
+              placeholder="Senha"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="h-[52px] rounded-[16px]"
+            />
+            <Button
+              type="submit"
+              disabled={loading}
+              className="h-[52px] rounded-[16px] bg-primary text-primary-foreground font-semibold"
+            >
+              {loading ? "Entrando..." : "Entrar"}
+            </Button>
+            {error && (
+              <p className="text-sm text-destructive text-center">{error}</p>
+            )}
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };
