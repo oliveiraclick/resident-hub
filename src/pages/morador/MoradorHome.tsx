@@ -63,7 +63,7 @@ const MoradorHome = () => {
           </div>
 
           <div className="grid grid-cols-4 gap-3">
-            {serviceShortcuts.map((item) => (
+            {serviceShortcuts.slice(0, 4).map((item) => (
               <button
                 key={item.label}
                 onClick={() => navigate(item.path)}
