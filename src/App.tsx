@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import MoradorDashboard from "./pages/morador/MoradorDashboard";
 import PrestadorDashboard from "./pages/prestador/PrestadorDashboard";
+import MasterDashboard from "./pages/master/MasterDashboard";
 import NotFound from "./pages/NotFound";
 import TesteSupabase from "./pages/TesteSupabase";
 import TesteAuth from "./pages/TesteAuth";
@@ -60,6 +61,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <PrestadorDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/master/*"
+              element={
+                <ProtectedRoute>
+                  <MasterDashboard />
                 </ProtectedRoute>
               }
             />

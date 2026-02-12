@@ -510,6 +510,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_platform_admin: { Args: { p_user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "morador" | "prestador" | "admin" | "platform_admin"
