@@ -80,22 +80,16 @@ workflows:
       - name: Build IPA
         script: |
           if [ -d "ios/App/App.xcworkspace" ]; then
-            echo "Using workspace ios/App/App.xcworkspace"
             xcode-project build-ipa \
               --workspace ios/App/App.xcworkspace \
               --scheme App \
-              --export-options-plist export_options.plist
-          elif [ -d "ios/App.xcworkspace" ]; then
-            echo "Using workspace ios/App.xcworkspace"
-            xcode-project build-ipa \
-              --workspace ios/App.xcworkspace \
-              --scheme App \
+              --archive-xcargs "CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=D46N5J26Z5" \
               --export-options-plist export_options.plist
           else
-            echo "Using project ios/App/App.xcodeproj"
             xcode-project build-ipa \
               --project ios/App/App.xcodeproj \
               --scheme App \
+              --archive-xcargs "CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=D46N5J26Z5" \
               --export-options-plist export_options.plist
           fi
 
