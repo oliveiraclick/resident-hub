@@ -204,6 +204,10 @@ const Auth = () => {
           </div>
         )}
       </form>
+
+      <div className="mt-auto pt-8 pb-6 text-center">
+        <p className="text-xs text-muted-foreground/50">app desenvolvido por ia&co. tecnologia</p>
+      </div>
     </div>
   );
 };
