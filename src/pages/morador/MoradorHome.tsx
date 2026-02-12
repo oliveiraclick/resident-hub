@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
-import { Package, Wrench, Zap, Droplets, TreePine, SprayCan, Paintbrush, Hammer, ShoppingBag, ChevronLeft, ChevronRight } from "lucide-react";
+import { Package, Wrench, Zap, Droplets, TreePine, SprayCan, Paintbrush, Hammer, ShoppingBag, ChevronLeft, ChevronRight, Repeat } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import bannerCarnaval from "@/assets/banner-carnaval.jpg";
@@ -10,6 +10,10 @@ import productBolo from "@/assets/product-bolo.jpg";
 import productSabonete from "@/assets/product-sabonete.jpg";
 import productBrigadeiro from "@/assets/product-brigadeiro.jpg";
 import productVela from "@/assets/product-vela.jpg";
+import desapegoBike from "@/assets/desapego-bike.jpg";
+import desapegoSofa from "@/assets/desapego-sofa.jpg";
+import desapegoLivros from "@/assets/desapego-livros.jpg";
+import desapegoCarrinho from "@/assets/desapego-carrinho.jpg";
 
 
 const serviceShortcuts = [
@@ -28,10 +32,11 @@ const MoradorHome = () => {
   const { user } = useAuth();
   const [pendingCount, setPendingCount] = useState(0);
   const shopRef = useRef<HTMLDivElement>(null);
+  const desapegoRef = useRef<HTMLDivElement>(null);
 
-  const scrollShop = (dir: "left" | "right") => {
-    if (!shopRef.current) return;
-    shopRef.current.scrollBy({ left: dir === "left" ? -160 : 160, behavior: "smooth" });
+  const scrollCarousel = (ref: React.RefObject<HTMLDivElement | null>, dir: "left" | "right") => {
+    if (!ref.current) return;
+    ref.current.scrollBy({ left: dir === "left" ? -160 : 160, behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -141,7 +146,7 @@ const MoradorHome = () => {
 
           <div className="relative">
             <button
-              onClick={() => scrollShop("left")}
+              onClick={() => scrollCarousel(shopRef, "left")}
               className="absolute -left-2 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-card shadow-md flex items-center justify-center"
             >
               <ChevronLeft size={16} className="text-foreground" />
@@ -178,7 +183,69 @@ const MoradorHome = () => {
             </div>
 
             <button
-              onClick={() => scrollShop("right")}
+              onClick={() => scrollCarousel(shopRef, "right")}
+              className="absolute -right-2 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-card shadow-md flex items-center justify-center"
+            >
+              <ChevronRight size={16} className="text-foreground" />
+            </button>
+          </div>
+        </div>
+
+        {/* Vitrine Desapego */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Repeat size={16} className="text-primary" />
+              <h2 className="text-[16px] font-semibold text-foreground">Desapego</h2>
+            </div>
+            <button
+              onClick={() => navigate("/morador/desapegos")}
+              className="text-[11px] font-semibold text-primary uppercase tracking-wide"
+            >
+              Ver tudo
+            </button>
+          </div>
+
+          <div className="relative">
+            <button
+              onClick={() => scrollCarousel(desapegoRef, "left")}
+              className="absolute -left-2 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-card shadow-md flex items-center justify-center"
+            >
+              <ChevronLeft size={16} className="text-foreground" />
+            </button>
+
+            <div
+              ref={desapegoRef}
+              className="flex gap-3 overflow-x-auto pb-2 px-1 scrollbar-hide"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            >
+              {[
+                { name: "Bicicleta Aro 29", price: "R$ 450,00", tag: "Esporte", img: desapegoBike },
+                { name: "Sofá 3 Lugares", price: "R$ 800,00", tag: "Móveis", img: desapegoSofa },
+                { name: "Livros Diversos", price: "R$ 5,00", tag: "Livros", img: desapegoLivros },
+                { name: "Carrinho de Bebê", price: "R$ 350,00", tag: "Bebê", img: desapegoCarrinho },
+              ].map((item) => (
+                <button
+                  key={item.name}
+                  onClick={() => navigate("/morador/desapegos")}
+                  className="flex-shrink-0 w-[140px] active:scale-95 transition-transform"
+                >
+                  <Card className="border-0 shadow-sm overflow-hidden">
+                    <div className="h-[100px] overflow-hidden">
+                      <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
+                    </div>
+                    <CardContent className="p-3">
+                      <span className="text-[9px] font-semibold text-primary uppercase">{item.tag}</span>
+                      <p className="text-[13px] font-medium text-foreground mt-0.5 leading-tight truncate">{item.name}</p>
+                      <p className="text-[13px] font-bold text-primary mt-1">{item.price}</p>
+                    </CardContent>
+                  </Card>
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => scrollCarousel(desapegoRef, "right")}
               className="absolute -right-2 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-card shadow-md flex items-center justify-center"
             >
               <ChevronRight size={16} className="text-foreground" />
