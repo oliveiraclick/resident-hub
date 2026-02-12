@@ -1,12 +1,14 @@
 import { ReactNode } from "react";
 import AppShell from "@/components/AppShell";
 import { Home, Wrench, Package, DollarSign, User } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 interface MoradorLayoutProps {
   children: ReactNode;
   title?: string;
   showBack?: boolean;
   showNav?: boolean;
+  showSearch?: boolean;
 }
 
 const navItems = [
@@ -17,9 +19,12 @@ const navItems = [
   { icon: User, label: "Perfil", path: "/morador/qr-id" },
 ];
 
-const MoradorLayout = ({ children }: MoradorLayoutProps) => {
+const MoradorLayout = ({ children, showSearch = false }: MoradorLayoutProps) => {
+  const { user } = useAuth();
+  const userName = (user?.user_metadata?.nome as string) || "Morador";
+
   return (
-    <AppShell moduleName="Morador" navItems={navItems}>
+    <AppShell moduleName="Morador" navItems={navItems} userName={userName} showSearch={showSearch}>
       {children}
     </AppShell>
   );
