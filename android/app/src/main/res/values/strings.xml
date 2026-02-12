@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">morador-hub</string>
+    <string name="title_activity_main">morador-hub</string>
+    <string name="package_name">app.lovable.c65121437fca49578025576dccbd06ec</string>
+    <string name="custom_url_scheme">app.lovable.c65121437fca49578025576dccbd06ec</string>
+</resources>
