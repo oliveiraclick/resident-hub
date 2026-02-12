@@ -1,7 +1,10 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Package, Wrench, Zap, Droplets, TreePine, SprayCan, Paintbrush, Hammer } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 const categories = [
   { label: "Serviços", active: true },
@@ -22,6 +25,21 @@ const serviceShortcuts = [
 
 const MoradorHome = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchPending = async () => {
+      const { count } = await supabase
+        .from("pacotes")
+        .select("id", { count: "exact", head: true })
+        .eq("morador_id", user.id)
+        .in("status", ["RECEBIDO", "AGUARDANDO_RETIRADA", "TRIADO"]);
+      setPendingCount(count || 0);
+    };
+    fetchPending();
+  }, [user]);
 
   return (
     <MoradorLayout title="Início" showSearch>
@@ -42,16 +60,23 @@ const MoradorHome = () => {
           ))}
         </div>
 
-        {/* Banner */}
-        <div className="rounded-card bg-primary/5 p-5 flex items-center gap-4">
-          <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-            <Package size={26} className="text-primary" />
-          </div>
-          <div>
-            <p className="text-[14px] font-semibold text-foreground">Você tem encomendas!</p>
-            <p className="text-[12px] text-muted-foreground mt-0.5">Confira suas entregas pendentes</p>
-          </div>
-        </div>
+        {/* Banner de encomendas - só aparece se tiver pendentes */}
+        {pendingCount > 0 && (
+          <button
+            onClick={() => navigate("/morador/encomendas")}
+            className="rounded-card bg-primary/5 p-4 flex items-center gap-4 w-full text-left active:scale-[0.98] transition-transform"
+          >
+            <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <Package size={24} className="text-primary" />
+            </div>
+            <div>
+              <p className="text-[14px] font-semibold text-foreground">
+                Você tem {pendingCount} encomenda{pendingCount > 1 ? "s" : ""}!
+              </p>
+              <p className="text-[12px] text-muted-foreground mt-0.5">Confira suas entregas pendentes</p>
+            </div>
+          </button>
+        )}
 
         {/* Ad Banner */}
         <div className="rounded-card overflow-hidden relative bg-gradient-to-r from-primary to-primary-hover h-[140px] flex items-center px-5">
