@@ -163,7 +163,7 @@ const MoradorHome = () => {
           <div className="relative">
             <button
               onClick={() => scrollCarousel(shopRef, "left")}
-              className="absolute -left-2 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-card shadow-md flex items-center justify-center"
+              className="absolute left-1 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-card shadow-md flex items-center justify-center"
             >
               <ChevronLeft size={16} className="text-foreground" />
             </button>
@@ -200,7 +200,7 @@ const MoradorHome = () => {
 
             <button
               onClick={() => scrollCarousel(shopRef, "right")}
-              className="absolute -right-2 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-card shadow-md flex items-center justify-center"
+              className="absolute right-1 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-card shadow-md flex items-center justify-center"
             >
               <ChevronRight size={16} className="text-foreground" />
             </button>
@@ -247,7 +247,7 @@ const MoradorHome = () => {
           <div className="relative">
             <button
               onClick={() => scrollCarousel(desapegoRef, "left")}
-              className="absolute -left-2 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-card shadow-md flex items-center justify-center"
+              className="absolute left-1 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-card shadow-md flex items-center justify-center"
             >
               <ChevronLeft size={16} className="text-foreground" />
             </button>
@@ -284,7 +284,7 @@ const MoradorHome = () => {
 
             <button
               onClick={() => scrollCarousel(desapegoRef, "right")}
-              className="absolute -right-2 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-card shadow-md flex items-center justify-center"
+              className="absolute right-1 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-card shadow-md flex items-center justify-center"
             >
               <ChevronRight size={16} className="text-foreground" />
             </button>
