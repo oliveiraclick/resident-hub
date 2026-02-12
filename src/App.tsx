@@ -14,6 +14,7 @@ import PrestadorDashboard from "./pages/prestador/PrestadorDashboard";
 import NotFound from "./pages/NotFound";
 import TesteSupabase from "./pages/TesteSupabase";
 import TesteAuth from "./pages/TesteAuth";
+import Login from "./pages/Login";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/teste-supabase" element={<TesteSupabase />} />
             <Route path="/teste-auth" element={<TesteAuth />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/auth" element={<Auth />} />
             <Route
               path="/dashboard"
