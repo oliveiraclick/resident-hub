@@ -97,7 +97,7 @@ const MoradorHome = () => {
         {/* Breaking News Ticker */}
         <div className="rounded-full bg-foreground/5 px-4 py-2.5 overflow-hidden relative">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold text-primary uppercase tracking-wider flex-shrink-0 bg-primary/10 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-bold text-primary-foreground uppercase tracking-wider flex-shrink-0 bg-primary px-2.5 py-0.5 rounded-full">
               News
             </span>
             <div className="overflow-hidden flex-1">
