@@ -462,21 +462,21 @@ export type Database = {
       }
       user_roles: {
         Row: {
-          condominio_id: string
+          condominio_id: string | null
           created_at: string
           id: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Insert: {
-          condominio_id: string
+          condominio_id?: string | null
           created_at?: string
           id?: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Update: {
-          condominio_id?: string
+          condominio_id?: string | null
           created_at?: string
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
@@ -512,7 +512,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "morador" | "prestador" | "admin"
+      app_role: "morador" | "prestador" | "admin" | "platform_admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -640,7 +640,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["morador", "prestador", "admin"],
+      app_role: ["morador", "prestador", "admin", "platform_admin"],
     },
   },
 } as const
