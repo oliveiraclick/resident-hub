@@ -20,6 +20,7 @@ const signupSchema = loginSchema.extend({
 const Auth = () => {
   const { user, loading } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
+  const [isForgot, setIsForgot] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nome, setNome] = useState("");
@@ -60,6 +61,26 @@ const Auth = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isForgot) {
+      if (!email.trim()) {
+        setErrors({ email: "Informe seu email" });
+        return;
+      }
+      setSubmitting(true);
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: window.location.origin,
+      });
+      setSubmitting(false);
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Email de recuperação enviado! Verifique sua caixa de entrada.");
+        setIsForgot(false);
+      }
+      return;
+    }
+
     if (!validate()) return;
 
     setSubmitting(true);
@@ -105,13 +126,13 @@ const Auth = () => {
         </div>
         <h1 className="mt-4 text-title-lg text-foreground">Morador.app</h1>
         <p className="mt-1 text-subtitle text-muted-foreground">
-          {isLogin ? "Acesse sua conta" : "Crie sua conta"}
+          {isForgot ? "Recuperar senha" : isLogin ? "Acesse sua conta" : "Crie sua conta"}
         </p>
       </div>
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-6 max-w-md mx-auto w-full">
-        {!isLogin && (
+        {!isLogin && !isForgot && (
           <div className="flex flex-col gap-1">
             <label className="ml-1">Nome completo</label>
             <Input
@@ -140,38 +161,62 @@ const Auth = () => {
           )}
         </div>
 
-        <div className="flex flex-col gap-1">
-          <label className="ml-1">Senha</label>
-          <div className="relative">
-            <Input
-              type={showPassword ? "text" : "password"}
-              placeholder="Mínimo 6 caracteres"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete={isLogin ? "current-password" : "new-password"}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground"
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
+        {!isForgot && (
+          <div className="flex flex-col gap-1">
+            <label className="ml-1">Senha</label>
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder="Mínimo 6 caracteres"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete={isLogin ? "current-password" : "new-password"}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            {errors.password && (
+              <span className="text-label text-destructive ml-1">{errors.password}</span>
+            )}
           </div>
-          {errors.password && (
-            <span className="text-label text-destructive ml-1">{errors.password}</span>
-          )}
-        </div>
+        )}
 
         <Button type="submit" disabled={submitting} className="mt-2">
           {submitting
             ? "Aguarde..."
+            : isForgot
+            ? "Enviar email de recuperação"
             : isLogin
             ? "Entrar"
             : "Criar conta"}
         </Button>
 
-        {isLogin && (
+        {isLogin && !isForgot && (
+          <button
+            type="button"
+            onClick={() => { setIsForgot(true); setErrors({}); }}
+            className="text-sm font-semibold text-primary text-center"
+          >
+            Esqueci minha senha
+          </button>
+        )}
+
+        {isForgot && (
+          <button
+            type="button"
+            onClick={() => { setIsForgot(false); setErrors({}); }}
+            className="text-sm font-semibold text-primary text-center"
+          >
+            Voltar ao login
+          </button>
+        )}
+
+        {isLogin && !isForgot && (
           <div className="flex flex-col items-center gap-3 py-4">
             <span className="text-sm text-muted-foreground">Não tem conta? Cadastre-se como:</span>
             <div className="flex gap-3 w-full">
