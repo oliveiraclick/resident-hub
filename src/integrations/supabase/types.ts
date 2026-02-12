@@ -494,7 +494,24 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      prestador_profiles: {
+        Row: {
+          avatar_url: string | null
+          nome: string | null
+          user_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          nome?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          nome?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       belongs_to_condominio: {
