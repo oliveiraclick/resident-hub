@@ -132,7 +132,7 @@ const CadastroPrestador = () => {
           <span className="text-sm">Voltar</span>
         </Link>
         <div className="flex h-14 w-14 items-center justify-center rounded-card bg-primary">
-          <span className="text-xl font-bold text-primary-foreground">S</span>
+          <span className="text-xl font-bold text-primary-foreground">M</span>
         </div>
         <h1 className="mt-4 text-foreground">Cadastro Prestador</h1>
         <p className="mt-1 text-muted-foreground">Ofereça seus serviços no condomínio</p>

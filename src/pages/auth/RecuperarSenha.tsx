@@ -32,7 +32,7 @@ const RecuperarSenha = () => {
     <div className="flex min-h-screen flex-col bg-background">
       <div className="flex flex-col items-center pt-16 pb-8 px-6">
         <div className="flex h-14 w-14 items-center justify-center rounded-card bg-primary">
-          <span className="text-title-lg text-primary-foreground">S</span>
+          <span className="text-title-lg text-primary-foreground">M</span>
         </div>
         <h1 className="mt-4 text-title-lg text-foreground">Recuperar senha</h1>
         <p className="mt-1 text-subtitle text-muted-foreground">
