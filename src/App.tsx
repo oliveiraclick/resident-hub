@@ -14,6 +14,8 @@ import PrestadorDashboard from "./pages/prestador/PrestadorDashboard";
 import MasterDashboard from "./pages/master/MasterDashboard";
 import NotFound from "./pages/NotFound";
 import { Navigate } from "react-router-dom";
+import RecuperarSenha from "./pages/auth/RecuperarSenha";
+import ResetarSenha from "./pages/auth/ResetarSenha";
 import CadastroMorador from "./pages/CadastroMorador";
 import CadastroPrestador from "./pages/CadastroPrestador";
 
@@ -30,6 +32,8 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Navigate to="/auth" replace />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/auth/recuperar" element={<RecuperarSenha />} />
+            <Route path="/auth/resetar" element={<ResetarSenha />} />
             <Route path="/cadastro/morador" element={<CadastroMorador />} />
             <Route path="/cadastro/prestador" element={<CadastroPrestador />} />
             <Route
