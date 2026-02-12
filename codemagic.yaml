@@ -29,6 +29,7 @@ workflows:
       - android/app/build/outputs/**/*.aab
 
 
+
   ios-release:
     name: iOS Release Build
     environment:
@@ -48,11 +49,18 @@ workflows:
         script: |
           npx cap sync ios
 
+      - name: Install CocoaPods
+        script: |
+          cd ios/App
+          pod install
+          cd ../..
+
       - name: Build IPA
         script: |
           xcode-project build-ipa \
             --workspace ios/App/App.xcworkspace \
-            --scheme App
+            --scheme App \
+            --archive-xcargs "CODE_SIGN_STYLE=Automatic"
 
     artifacts:
       - build/ios/ipa/*.ipa
