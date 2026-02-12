@@ -53,6 +53,20 @@ const MoradorHome = () => {
           </div>
         </div>
 
+        {/* Ad Banner */}
+        <div className="rounded-card overflow-hidden relative bg-gradient-to-r from-primary to-primary-hover h-[140px] flex items-center px-5">
+          <div className="relative z-10 flex-1">
+            <p className="text-[11px] font-semibold text-primary-foreground/70 uppercase tracking-wide">Patrocinado</p>
+            <p className="text-[18px] font-bold text-primary-foreground mt-1 leading-tight">Limpeza completa<br/>com 20% OFF</p>
+            <button className="mt-2.5 px-4 py-1.5 rounded-full bg-card text-primary text-[12px] font-semibold">
+              Saiba mais
+            </button>
+          </div>
+          <div className="absolute right-4 bottom-0 opacity-10">
+            <SprayCan size={120} className="text-primary-foreground" />
+          </div>
+        </div>
+
         {/* Service Shortcuts - 4 per row */}
         <div>
           <div className="flex items-center justify-between mb-3">
