@@ -79,7 +79,7 @@ const MasterUsuarios = () => {
   const openEdit = (u: UserRow) => {
     setEditTarget(u);
     setEditRole(u.role);
-    setEditCondominio(u.condominioId || "");
+    setEditCondominio(u.condominioId || "none");
     setEditAprovado(u.aprovado);
   };
 
@@ -88,7 +88,7 @@ const MasterUsuarios = () => {
     setSaving(true);
     const { error } = await supabase.from("user_roles").update({
       role: editRole as any,
-      condominio_id: editCondominio || null,
+      condominio_id: editCondominio === "none" ? null : editCondominio || null,
       aprovado: editAprovado,
     }).eq("id", editTarget.roleId);
     setSaving(false);
@@ -201,7 +201,7 @@ const MasterUsuarios = () => {
               <Select value={editCondominio} onValueChange={setEditCondominio}>
                 <SelectTrigger className="h-[52px]"><SelectValue placeholder="Nenhum (global)" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Nenhum (global)</SelectItem>
+                  <SelectItem value="none">Nenhum (global)</SelectItem>
                   {condominios.map((c) => (
                     <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>
                   ))}
