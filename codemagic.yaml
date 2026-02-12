@@ -2,7 +2,7 @@ workflows:
   android-release:
     name: Android Release Build
     environment:
-      node: 20
+      node: 22
       java: 17
     scripts:
       - name: Install dependencies
