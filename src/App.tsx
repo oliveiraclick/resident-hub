@@ -13,9 +13,7 @@ import MoradorDashboard from "./pages/morador/MoradorDashboard";
 import PrestadorDashboard from "./pages/prestador/PrestadorDashboard";
 import MasterDashboard from "./pages/master/MasterDashboard";
 import NotFound from "./pages/NotFound";
-import TesteSupabase from "./pages/TesteSupabase";
-import TesteAuth from "./pages/TesteAuth";
-import Login from "./pages/Login";
+import { Navigate } from "react-router-dom";
 import CadastroMorador from "./pages/CadastroMorador";
 import CadastroPrestador from "./pages/CadastroPrestador";
 
@@ -30,9 +28,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/teste-supabase" element={<TesteSupabase />} />
-            <Route path="/teste-auth" element={<TesteAuth />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={<Navigate to="/auth" replace />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/cadastro/morador" element={<CadastroMorador />} />
             <Route path="/cadastro/prestador" element={<CadastroPrestador />} />
