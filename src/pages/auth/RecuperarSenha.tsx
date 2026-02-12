@@ -32,7 +32,7 @@ const RecuperarSenha = () => {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <div className="flex flex-col items-center pt-16 pb-8 px-6">
-        <img src={logoMorador} alt="Morador.app" className="h-14 w-14 object-contain" />
+        <img src={logoMorador} alt="Morador.app" className="h-20 w-20 object-contain" />
         <h1 className="mt-4 text-title-lg text-foreground">Recuperar senha</h1>
         <p className="mt-1 text-subtitle text-muted-foreground">
           Informe seu email para receber o link de recuperação
