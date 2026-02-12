@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Bell, QrCode } from "lucide-react";
+import { Bell, QrCode, Search } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 export interface NavItem {
@@ -19,6 +19,8 @@ interface AppShellProps {
 }
 
 const AppShell = ({ children, moduleName, navItems, userName, showSearch = false, onQrPress }: AppShellProps) => {
+  const [searchTerm, setSearchTerm] = useState("");
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -56,13 +58,25 @@ const AppShell = ({ children, moduleName, navItems, userName, showSearch = false
 
         {/* Search */}
         {showSearch && (
-          <div className="relative">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (searchTerm.trim()) {
+                navigate(`/morador/servicos?q=${encodeURIComponent(searchTerm.trim())}`);
+                setSearchTerm("");
+              }
+            }}
+            className="relative"
+          >
+            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Buscar serviços, produtos..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Buscar prestadores, serviços..."
               className="w-full h-11 rounded-full bg-muted pl-11 pr-4 text-[13px] text-foreground placeholder:text-muted-foreground outline-none border-0 focus:ring-2 focus:ring-primary/20"
             />
-          </div>
+          </form>
         )}
       </header>
 
