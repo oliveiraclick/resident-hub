@@ -1,7 +1,9 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Bell, QrCode, Search } from "lucide-react";
+import { Bell, QrCode, Search, Wrench, X } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 export interface NavItem {
   icon: LucideIcon;
@@ -18,11 +20,72 @@ interface AppShellProps {
   onQrPress?: () => void;
 }
 
+interface SearchResult {
+  id: string;
+  especialidade: string;
+  descricao: string | null;
+}
+
 const AppShell = ({ children, moduleName, navItems, userName, showSearch = false, onQrPress }: AppShellProps) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [showResults, setShowResults] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Live search
+  useEffect(() => {
+    if (!searchTerm.trim() || !user) {
+      setResults([]);
+      setShowResults(false);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      const { data } = await supabase
+        .from("prestadores")
+        .select("id, especialidade, descricao")
+        .ilike("especialidade", `%${searchTerm.trim()}%`)
+        .limit(8);
+
+      if (data && data.length > 0) {
+        // Deduplicate by especialidade
+        const unique = data.reduce((acc: SearchResult[], curr) => {
+          if (!acc.find((r) => r.especialidade === curr.especialidade)) {
+            acc.push(curr);
+          }
+          return acc;
+        }, []);
+        setResults(unique);
+        setShowResults(true);
+      } else {
+        setResults([]);
+        setShowResults(true);
+      }
+    }, 250);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm, user]);
+
+  // Close on click outside
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowResults(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const handleSelectResult = (especialidade: string) => {
+    setSearchTerm("");
+    setShowResults(false);
+    navigate(`/morador/servicos?q=${encodeURIComponent(especialidade)}`);
+  };
 
   return (
     <div className="min-h-screen bg-background mx-auto max-w-[480px]">
@@ -58,25 +121,54 @@ const AppShell = ({ children, moduleName, navItems, userName, showSearch = false
 
         {/* Search */}
         {showSearch && (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (searchTerm.trim()) {
-                navigate(`/morador/servicos?q=${encodeURIComponent(searchTerm.trim())}`);
-                setSearchTerm("");
-              }
-            }}
-            className="relative"
-          >
-            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <div ref={searchRef} className="relative">
+            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground z-10" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              onFocus={() => { if (results.length > 0) setShowResults(true); }}
               placeholder="Buscar prestadores, serviços..."
-              className="w-full h-11 rounded-full bg-muted pl-11 pr-4 text-[13px] text-foreground placeholder:text-muted-foreground outline-none border-0 focus:ring-2 focus:ring-primary/20"
+              className="w-full h-11 rounded-full bg-muted pl-11 pr-10 text-[13px] text-foreground placeholder:text-muted-foreground outline-none border-0 focus:ring-2 focus:ring-primary/20"
             />
-          </form>
+            {searchTerm && (
+              <button
+                onClick={() => { setSearchTerm(""); setShowResults(false); }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+              >
+                <X size={14} />
+              </button>
+            )}
+
+            {/* Dropdown results */}
+            {showResults && searchTerm.trim() && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-card rounded-2xl shadow-lg border overflow-hidden z-30 max-h-[280px] overflow-y-auto">
+                {results.length === 0 ? (
+                  <div className="px-4 py-3 text-[13px] text-muted-foreground text-center">
+                    Nenhum resultado para "{searchTerm}"
+                  </div>
+                ) : (
+                  results.map((r) => (
+                    <button
+                      key={r.especialidade}
+                      onClick={() => handleSelectResult(r.especialidade)}
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/50 active:bg-muted transition-colors text-left"
+                    >
+                      <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Wrench size={16} className="text-primary" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[13px] font-medium text-foreground truncate">{r.especialidade}</p>
+                        {r.descricao && (
+                          <p className="text-[11px] text-muted-foreground truncate">{r.descricao}</p>
+                        )}
+                      </div>
+                    </button>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
         )}
       </header>
 
