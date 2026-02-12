@@ -16,6 +16,9 @@ import desapegoSofa from "@/assets/desapego-sofa.jpg";
 import desapegoLivros from "@/assets/desapego-livros.jpg";
 import desapegoCarrinho from "@/assets/desapego-carrinho.jpg";
 
+const fallbackShopImages = [productBolo, productSabonete, productBrigadeiro, productVela];
+const fallbackDesapegoImages = [desapegoBike, desapegoSofa, desapegoLivros, desapegoCarrinho];
+
 
 const serviceShortcuts = [
   { label: "Jardinagem", icon: TreePine, path: "/morador/servicos?q=Jardinagem" },
@@ -32,6 +35,8 @@ const MoradorHome = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [pendingCount, setPendingCount] = useState(0);
+  const [produtos, setProdutos] = useState<any[]>([]);
+  const [desapegos, setDesapegos] = useState<any[]>([]);
   const shopRef = useRef<HTMLDivElement>(null);
   const desapegoRef = useRef<HTMLDivElement>(null);
 
@@ -42,6 +47,7 @@ const MoradorHome = () => {
 
   useEffect(() => {
     if (!user) return;
+
     const fetchPending = async () => {
       const { count } = await supabase
         .from("pacotes")
@@ -50,7 +56,30 @@ const MoradorHome = () => {
         .in("status", ["RECEBIDO", "AGUARDANDO_RETIRADA", "TRIADO"]);
       setPendingCount(count || 0);
     };
+
+    const fetchProdutos = async () => {
+      const { data } = await supabase
+        .from("produtos")
+        .select("id, titulo, preco, status")
+        .eq("status", "ativo")
+        .order("created_at", { ascending: false })
+        .limit(8);
+      setProdutos(data || []);
+    };
+
+    const fetchDesapegos = async () => {
+      const { data } = await supabase
+        .from("desapegos")
+        .select("id, titulo, preco, status")
+        .eq("status", "ativo")
+        .order("created_at", { ascending: false })
+        .limit(8);
+      setDesapegos(data || []);
+    };
+
     fetchPending();
+    fetchProdutos();
+    fetchDesapegos();
   }, [user]);
 
   return (
@@ -173,25 +202,29 @@ const MoradorHome = () => {
               className="flex gap-3 overflow-x-auto pb-2 px-1 scrollbar-hide"
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
-              {[
-                { name: "Bolo Caseiro", price: "R$ 25,00", tag: "Food", img: productBolo },
-                { name: "Sabonete Artesanal", price: "R$ 12,00", tag: "Beleza", img: productSabonete },
-                { name: "Brigadeiro Gourmet", price: "R$ 3,50", tag: "Food", img: productBrigadeiro },
-                { name: "Vela Aromática", price: "R$ 18,00", tag: "Casa", img: productVela },
-              ].map((product) => (
+              {(produtos.length > 0 ? produtos : [
+                { id: "mock-1", titulo: "Bolo Caseiro", preco: 25, status: "ativo" },
+                { id: "mock-2", titulo: "Sabonete Artesanal", preco: 12, status: "ativo" },
+                { id: "mock-3", titulo: "Brigadeiro Gourmet", preco: 3.5, status: "ativo" },
+                { id: "mock-4", titulo: "Vela Aromática", preco: 18, status: "ativo" },
+              ]).map((product, idx) => (
                 <button
-                  key={product.name}
-                  onClick={() => navigate("/morador/produtos")}
+                  key={product.id}
+                  onClick={() => product.id.startsWith("mock") ? navigate("/morador/produtos") : navigate(`/morador/produtos/${product.id}`)}
                   className="flex-shrink-0 w-[140px] active:scale-95 transition-transform"
                 >
                   <Card className="border-0 shadow-sm overflow-hidden">
                     <div className="h-[100px] overflow-hidden">
-                      <img src={product.img} alt={product.name} className="w-full h-full object-cover" />
+                      <img src={fallbackShopImages[idx % fallbackShopImages.length]} alt={product.titulo} className="w-full h-full object-cover" />
                     </div>
                     <CardContent className="p-3">
-                      <span className="text-[9px] font-semibold text-primary uppercase">{product.tag}</span>
-                      <p className="text-[13px] font-medium text-foreground mt-0.5 leading-tight truncate">{product.name}</p>
-                      <p className="text-[13px] font-bold text-primary mt-1">{product.price}</p>
+                      <span className="text-[9px] font-semibold text-primary uppercase">Loja</span>
+                      <p className="text-[13px] font-medium text-foreground mt-0.5 leading-tight truncate">{product.titulo}</p>
+                      {product.preco != null && (
+                        <p className="text-[13px] font-bold text-primary mt-1">
+                          R$ {Number(product.preco).toFixed(2).replace(".", ",")}
+                        </p>
+                      )}
                     </CardContent>
                   </Card>
                 </button>
@@ -257,25 +290,29 @@ const MoradorHome = () => {
               className="flex gap-3 overflow-x-auto pb-2 px-1 scrollbar-hide"
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
-              {[
-                { name: "Bicicleta Aro 29", price: "R$ 450,00", tag: "Esporte", img: desapegoBike },
-                { name: "Sofá 3 Lugares", price: "R$ 800,00", tag: "Móveis", img: desapegoSofa },
-                { name: "Livros Diversos", price: "R$ 5,00", tag: "Livros", img: desapegoLivros },
-                { name: "Carrinho de Bebê", price: "R$ 350,00", tag: "Bebê", img: desapegoCarrinho },
-              ].map((item) => (
+              {(desapegos.length > 0 ? desapegos : [
+                { id: "mock-1", titulo: "Bicicleta Aro 29", preco: 450, status: "ativo" },
+                { id: "mock-2", titulo: "Sofá 3 Lugares", preco: 800, status: "ativo" },
+                { id: "mock-3", titulo: "Livros Diversos", preco: 5, status: "ativo" },
+                { id: "mock-4", titulo: "Carrinho de Bebê", preco: 350, status: "ativo" },
+              ]).map((item, idx) => (
                 <button
-                  key={item.name}
-                  onClick={() => navigate("/morador/desapegos")}
+                  key={item.id}
+                  onClick={() => item.id.startsWith("mock") ? navigate("/morador/desapegos") : navigate(`/morador/desapegos/${item.id}`)}
                   className="flex-shrink-0 w-[140px] active:scale-95 transition-transform"
                 >
                   <Card className="border-0 shadow-sm overflow-hidden">
                     <div className="h-[100px] overflow-hidden">
-                      <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
+                      <img src={fallbackDesapegoImages[idx % fallbackDesapegoImages.length]} alt={item.titulo} className="w-full h-full object-cover" />
                     </div>
                     <CardContent className="p-3">
-                      <span className="text-[9px] font-semibold text-primary uppercase">{item.tag}</span>
-                      <p className="text-[13px] font-medium text-foreground mt-0.5 leading-tight truncate">{item.name}</p>
-                      <p className="text-[13px] font-bold text-primary mt-1">{item.price}</p>
+                      <span className="text-[9px] font-semibold text-primary uppercase">Desapego</span>
+                      <p className="text-[13px] font-medium text-foreground mt-0.5 leading-tight truncate">{item.titulo}</p>
+                      {item.preco != null && (
+                        <p className="text-[13px] font-bold text-primary mt-1">
+                          R$ {Number(item.preco).toFixed(2).replace(".", ",")}
+                        </p>
+                      )}
                     </CardContent>
                   </Card>
                 </button>
