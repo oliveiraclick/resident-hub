@@ -6,6 +6,10 @@ import { Package, Wrench, Zap, Droplets, TreePine, SprayCan, Paintbrush, Hammer,
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import bannerCarnaval from "@/assets/banner-carnaval.jpg";
+import productBolo from "@/assets/product-bolo.jpg";
+import productSabonete from "@/assets/product-sabonete.jpg";
+import productBrigadeiro from "@/assets/product-brigadeiro.jpg";
+import productVela from "@/assets/product-vela.jpg";
 
 const categories = [
   { label: "Serviços", active: true },
@@ -151,10 +155,10 @@ const MoradorHome = () => {
 
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
             {[
-              { name: "Bolo Caseiro", price: "R$ 25,00", tag: "Food" },
-              { name: "Sabonete Artesanal", price: "R$ 12,00", tag: "Beleza" },
-              { name: "Brigadeiro Gourmet", price: "R$ 3,50", tag: "Food" },
-              { name: "Vela Aromática", price: "R$ 18,00", tag: "Casa" },
+              { name: "Bolo Caseiro", price: "R$ 25,00", tag: "Food", img: productBolo },
+              { name: "Sabonete Artesanal", price: "R$ 12,00", tag: "Beleza", img: productSabonete },
+              { name: "Brigadeiro Gourmet", price: "R$ 3,50", tag: "Food", img: productBrigadeiro },
+              { name: "Vela Aromática", price: "R$ 18,00", tag: "Casa", img: productVela },
             ].map((product) => (
               <button
                 key={product.name}
@@ -162,8 +166,8 @@ const MoradorHome = () => {
                 className="flex-shrink-0 w-[140px] active:scale-95 transition-transform"
               >
                 <Card className="border-0 shadow-sm overflow-hidden">
-                  <div className="h-[100px] bg-muted flex items-center justify-center">
-                    <ShoppingBag size={28} className="text-muted-foreground/40" />
+                  <div className="h-[100px] overflow-hidden">
+                    <img src={product.img} alt={product.name} className="w-full h-full object-cover" />
                   </div>
                   <CardContent className="p-3">
                     <span className="text-[9px] font-semibold text-primary uppercase">{product.tag}</span>
