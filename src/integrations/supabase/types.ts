@@ -494,29 +494,20 @@ export type Database = {
       }
     }
     Views: {
-      prestador_profiles: {
-        Row: {
-          avatar_url: string | null
-          nome: string | null
-          user_id: string | null
-        }
-        Insert: {
-          avatar_url?: string | null
-          nome?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          avatar_url?: string | null
-          nome?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       belongs_to_condominio: {
         Args: { _condominio_id: string; _user_id: string }
         Returns: boolean
+      }
+      get_prestador_profiles: {
+        Args: { _user_ids: string[] }
+        Returns: {
+          avatar_url: string
+          nome: string
+          user_id: string
+        }[]
       }
       get_user_condominio_ids: { Args: { _user_id: string }; Returns: string[] }
       has_role: {
