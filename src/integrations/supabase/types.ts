@@ -356,6 +356,8 @@ export type Database = {
           created_at: string
           id: string
           nome: string
+          numero_casa: string | null
+          rua: string | null
           telefone: string | null
           user_id: string
         }
@@ -364,6 +366,8 @@ export type Database = {
           created_at?: string
           id?: string
           nome?: string
+          numero_casa?: string | null
+          rua?: string | null
           telefone?: string | null
           user_id: string
         }
@@ -372,6 +376,8 @@ export type Database = {
           created_at?: string
           id?: string
           nome?: string
+          numero_casa?: string | null
+          rua?: string | null
           telefone?: string | null
           user_id?: string
         }
