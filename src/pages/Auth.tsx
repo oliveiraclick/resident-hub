@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -171,21 +171,32 @@ const Auth = () => {
             : "Criar conta"}
         </Button>
 
-        <div className="flex items-center justify-center gap-1 py-4">
-          <span className="text-body text-muted-foreground">
-            {isLogin ? "Não tem conta?" : "Já tem conta?"}
-          </span>
-          <button
-            type="button"
-            onClick={() => {
-              setIsLogin(!isLogin);
-              setErrors({});
-            }}
-            className="text-body font-semibold text-primary"
-          >
-            {isLogin ? "Cadastre-se" : "Faça login"}
-          </button>
-        </div>
+        {isLogin && (
+          <div className="flex flex-col items-center gap-3 py-4">
+            <span className="text-sm text-muted-foreground">Não tem conta? Cadastre-se como:</span>
+            <div className="flex gap-3 w-full">
+              <Button variant="outline" className="flex-1" asChild>
+                <Link to="/cadastro/morador">Morador</Link>
+              </Button>
+              <Button variant="outline" className="flex-1" asChild>
+                <Link to="/cadastro/prestador">Prestador</Link>
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {!isLogin && (
+          <div className="flex items-center justify-center gap-1 py-4">
+            <span className="text-sm text-muted-foreground">Já tem conta?</span>
+            <button
+              type="button"
+              onClick={() => { setIsLogin(true); setErrors({}); }}
+              className="text-sm font-semibold text-primary"
+            >
+              Faça login
+            </button>
+          </div>
+        )}
       </form>
     </div>
   );
