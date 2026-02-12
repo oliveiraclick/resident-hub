@@ -103,7 +103,8 @@ const Auth = () => {
       <div className="flex flex-col items-center pt-16 pb-8 px-6">
         <img src={logoMorador} alt="Morador.app" className="h-20 w-20 object-contain" />
         <h1 className="mt-4 text-title-lg text-foreground">Morador.app</h1>
-        <p className="mt-1 text-subtitle text-muted-foreground">
+        <p className="mt-1 text-subtitle text-muted-foreground">Clicou, Achou!</p>
+        <p className="mt-2 text-sm text-muted-foreground">
           {isLogin ? "Acesse sua conta" : "Crie sua conta"}
         </p>
       </div>
