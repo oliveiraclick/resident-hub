@@ -119,10 +119,10 @@ const MoradorServicos = () => {
         return;
       }
 
-      // Fetch profiles for these prestadores (secure function - no telefone exposed)
+      // Fetch profiles for these prestadores (secure function - only prestador data)
       const userIds = prestadoresFiltrados.map((p) => p.user_id);
       const { data: profiles } = await supabase
-        .rpc("get_prestador_profiles", { _user_ids: userIds });
+        .rpc("get_prestador_profiles", { _user_ids: userIds }) as { data: { user_id: string; nome: string; avatar_url: string | null; telefone: string | null }[] | null };
 
       // Fetch servicos for these prestadores
       const prestadorIds = prestadoresFiltrados.map((p) => p.id);
