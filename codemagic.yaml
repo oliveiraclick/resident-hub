@@ -4,17 +4,25 @@ workflows:
     environment:
       node: 22
       java: 17
+
     scripts:
       - name: Install dependencies
-        script: npm install
+        script: |
+          npm install
+
       - name: Build web app
-        script: npm run build
+        script: |
+          npm run build
+
       - name: Sync Capacitor
-        script: npx cap sync android
+        script: |
+          npx cap sync android
+
       - name: Build Android AAB
-  script: |
-    cd android
-    chmod +x gradlew
-    ./gradlew bundleRelease
+        script: |
+          cd android
+          chmod +x gradlew
+          ./gradlew bundleRelease
+
     artifacts:
       - android/app/build/outputs/**/*.aab
