@@ -11,7 +11,7 @@ const navItems = [
   { icon: Wrench, label: "Serviços", path: "/prestador/servicos" },
   { icon: ShoppingBag, label: "Produtos", path: "/prestador/produtos" },
   { icon: DollarSign, label: "Financeiro", path: "/prestador/financeiro" },
-  { icon: User, label: "Perfil", path: "/prestador/agenda" },
+  { icon: User, label: "Perfil", path: "/prestador/perfil" },
 ];
 
 const PrestadorLayout = ({ children }: PrestadorLayoutProps) => {
