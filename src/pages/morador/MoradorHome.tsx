@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
-import { Package, Wrench, Zap, Droplets, TreePine, SprayCan, Paintbrush, Hammer, ShoppingBag } from "lucide-react";
+import { Package, Wrench, Zap, Droplets, TreePine, SprayCan, Paintbrush, Hammer, ShoppingBag, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import bannerCarnaval from "@/assets/banner-carnaval.jpg";
@@ -32,6 +32,12 @@ const MoradorHome = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [pendingCount, setPendingCount] = useState(0);
+  const shopRef = useRef<HTMLDivElement>(null);
+
+  const scrollShop = (dir: "left" | "right") => {
+    if (!shopRef.current) return;
+    shopRef.current.scrollBy({ left: dir === "left" ? -160 : 160, behavior: "smooth" });
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -153,30 +159,50 @@ const MoradorHome = () => {
             </button>
           </div>
 
-          <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
-            {[
-              { name: "Bolo Caseiro", price: "R$ 25,00", tag: "Food", img: productBolo },
-              { name: "Sabonete Artesanal", price: "R$ 12,00", tag: "Beleza", img: productSabonete },
-              { name: "Brigadeiro Gourmet", price: "R$ 3,50", tag: "Food", img: productBrigadeiro },
-              { name: "Vela Aromática", price: "R$ 18,00", tag: "Casa", img: productVela },
-            ].map((product) => (
-              <button
-                key={product.name}
-                onClick={() => navigate("/morador/produtos")}
-                className="flex-shrink-0 w-[140px] active:scale-95 transition-transform"
-              >
-                <Card className="border-0 shadow-sm overflow-hidden">
-                  <div className="h-[100px] overflow-hidden">
-                    <img src={product.img} alt={product.name} className="w-full h-full object-cover" />
-                  </div>
-                  <CardContent className="p-3">
-                    <span className="text-[9px] font-semibold text-primary uppercase">{product.tag}</span>
-                    <p className="text-[13px] font-medium text-foreground mt-0.5 leading-tight truncate">{product.name}</p>
-                    <p className="text-[13px] font-bold text-primary mt-1">{product.price}</p>
-                  </CardContent>
-                </Card>
-              </button>
-            ))}
+          <div className="relative">
+            <button
+              onClick={() => scrollShop("left")}
+              className="absolute -left-2 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-card shadow-md flex items-center justify-center"
+            >
+              <ChevronLeft size={16} className="text-foreground" />
+            </button>
+
+            <div
+              ref={shopRef}
+              className="flex gap-3 overflow-x-auto pb-2 px-1 scrollbar-hide"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            >
+              {[
+                { name: "Bolo Caseiro", price: "R$ 25,00", tag: "Food", img: productBolo },
+                { name: "Sabonete Artesanal", price: "R$ 12,00", tag: "Beleza", img: productSabonete },
+                { name: "Brigadeiro Gourmet", price: "R$ 3,50", tag: "Food", img: productBrigadeiro },
+                { name: "Vela Aromática", price: "R$ 18,00", tag: "Casa", img: productVela },
+              ].map((product) => (
+                <button
+                  key={product.name}
+                  onClick={() => navigate("/morador/produtos")}
+                  className="flex-shrink-0 w-[140px] active:scale-95 transition-transform"
+                >
+                  <Card className="border-0 shadow-sm overflow-hidden">
+                    <div className="h-[100px] overflow-hidden">
+                      <img src={product.img} alt={product.name} className="w-full h-full object-cover" />
+                    </div>
+                    <CardContent className="p-3">
+                      <span className="text-[9px] font-semibold text-primary uppercase">{product.tag}</span>
+                      <p className="text-[13px] font-medium text-foreground mt-0.5 leading-tight truncate">{product.name}</p>
+                      <p className="text-[13px] font-bold text-primary mt-1">{product.price}</p>
+                    </CardContent>
+                  </Card>
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => scrollShop("right")}
+              className="absolute -right-2 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-card shadow-md flex items-center justify-center"
+            >
+              <ChevronRight size={16} className="text-foreground" />
+            </button>
           </div>
         </div>
       </div>
