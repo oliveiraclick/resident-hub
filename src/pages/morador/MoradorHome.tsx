@@ -95,13 +95,13 @@ const MoradorHome = () => {
         </div>
 
         {/* Breaking News Ticker */}
-        <div className="rounded-full bg-foreground/5 px-4 py-2.5 overflow-hidden relative">
+        <div className="rounded-full bg-primary px-4 py-2.5 overflow-hidden relative">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold text-primary-foreground uppercase tracking-wider flex-shrink-0 bg-primary px-2.5 py-0.5 rounded-full">
+            <span className="text-[10px] font-bold text-primary-foreground uppercase tracking-wider flex-shrink-0 bg-primary-foreground/20 px-2.5 py-0.5 rounded-full">
               News
             </span>
             <div className="overflow-hidden flex-1">
-              <p className="whitespace-nowrap animate-[ticker_18s_linear_infinite] text-[12px] font-medium text-foreground">
+              <p className="whitespace-nowrap animate-[ticker_18s_linear_infinite] text-[12px] font-medium text-primary-foreground">
                 🚰 Manutenção na piscina dia 05/03 · 🔧 Elevador B em manutenção até 28/02 · 🎉 Assembleia geral dia 10/03 às 19h · 📦 Horário da portaria alterado: 7h às 22h
               </p>
             </div>
