@@ -132,6 +132,9 @@ const MoradorHome = () => {
 
         {/* Vitrine E-shop */}
         <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[10px] font-semibold text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full">De prestadores</span>
+          </div>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-1.5">
               <ShoppingBag size={16} className="text-primary" />
@@ -204,8 +207,18 @@ const MoradorHome = () => {
           </div>
         </div>
 
+        {/* Separador */}
+        <div className="flex items-center gap-3">
+          <div className="flex-1 h-[1px] bg-border" />
+          <span className="text-[10px] text-muted-foreground font-medium">•</span>
+          <div className="flex-1 h-[1px] bg-border" />
+        </div>
+
         {/* Vitrine Desapego */}
         <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[10px] font-semibold text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full">Entre vizinhos</span>
+          </div>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-1.5">
               <Repeat size={16} className="text-primary" />
