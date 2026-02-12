@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
-import { Package, Wrench, Zap, Droplets, TreePine, SprayCan, Paintbrush, Hammer } from "lucide-react";
+import { Package, Wrench, Zap, Droplets, TreePine, SprayCan, Paintbrush, Hammer, ShoppingBag } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import bannerCarnaval from "@/assets/banner-carnaval.jpg";
@@ -129,6 +129,48 @@ const MoradorHome = () => {
                 <span className="text-[11px] font-medium text-foreground leading-tight text-center">
                   {item.label}
                 </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Vitrine E-shop */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <ShoppingBag size={16} className="text-primary" />
+              <h2 className="text-[16px] font-semibold text-foreground">Vitrine E-shop</h2>
+            </div>
+            <button
+              onClick={() => navigate("/morador/produtos")}
+              className="text-[11px] font-semibold text-primary uppercase tracking-wide"
+            >
+              Ver tudo
+            </button>
+          </div>
+
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+            {[
+              { name: "Bolo Caseiro", price: "R$ 25,00", tag: "Food" },
+              { name: "Sabonete Artesanal", price: "R$ 12,00", tag: "Beleza" },
+              { name: "Brigadeiro Gourmet", price: "R$ 3,50", tag: "Food" },
+              { name: "Vela Aromática", price: "R$ 18,00", tag: "Casa" },
+            ].map((product) => (
+              <button
+                key={product.name}
+                onClick={() => navigate("/morador/produtos")}
+                className="flex-shrink-0 w-[140px] active:scale-95 transition-transform"
+              >
+                <Card className="border-0 shadow-sm overflow-hidden">
+                  <div className="h-[100px] bg-muted flex items-center justify-center">
+                    <ShoppingBag size={28} className="text-muted-foreground/40" />
+                  </div>
+                  <CardContent className="p-3">
+                    <span className="text-[9px] font-semibold text-primary uppercase">{product.tag}</span>
+                    <p className="text-[13px] font-medium text-foreground mt-0.5 leading-tight truncate">{product.name}</p>
+                    <p className="text-[13px] font-bold text-primary mt-1">{product.price}</p>
+                  </CardContent>
+                </Card>
               </button>
             ))}
           </div>
