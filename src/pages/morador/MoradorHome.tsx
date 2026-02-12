@@ -11,11 +11,6 @@ import productSabonete from "@/assets/product-sabonete.jpg";
 import productBrigadeiro from "@/assets/product-brigadeiro.jpg";
 import productVela from "@/assets/product-vela.jpg";
 
-const categories = [
-  { label: "Serviços", active: true },
-  { label: "Food", active: false },
-  { label: "Entretenimento", active: false },
-];
 
 const serviceShortcuts = [
   { label: "Jardinagem", icon: TreePine, path: "/morador/servicos" },
@@ -55,20 +50,31 @@ const MoradorHome = () => {
   return (
     <MoradorLayout title="Início" showSearch>
       <div className="flex flex-col gap-6">
-        {/* Category Tabs */}
-        <div className="flex gap-2">
-          {categories.map((cat) => (
-            <button
-              key={cat.label}
-              className={`px-5 py-2 rounded-full text-[13px] font-semibold transition-colors ${
-                cat.active
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground"
-              }`}
-            >
-              {cat.label}
+        {/* Serviços - 4 por linha */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-[16px] font-semibold text-foreground">Serviços</h2>
+            <button className="text-[11px] font-semibold text-primary uppercase tracking-wide">
+              Ver tudo
             </button>
-          ))}
+          </div>
+
+          <div className="grid grid-cols-4 gap-3">
+            {serviceShortcuts.slice(0, 4).map((item) => (
+              <button
+                key={item.label}
+                onClick={() => navigate(item.path)}
+                className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform"
+              >
+                <div className="h-14 w-14 rounded-2xl bg-card shadow-sm flex items-center justify-center">
+                  <item.icon size={22} className="text-primary" />
+                </div>
+                <span className="text-[11px] font-medium text-foreground leading-tight text-center">
+                  {item.label}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Banner de encomendas - só aparece se tiver pendentes */}
@@ -115,32 +121,6 @@ const MoradorHome = () => {
                 🚰 Manutenção na piscina dia 05/03 · 🔧 Elevador B em manutenção até 28/02 · 🎉 Assembleia geral dia 10/03 às 19h · 📦 Horário da portaria alterado: 7h às 22h
               </p>
             </div>
-          </div>
-        </div>
-
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-[16px] font-semibold text-foreground">Serviços</h2>
-            <button className="text-[11px] font-semibold text-primary uppercase tracking-wide">
-              Ver tudo
-            </button>
-          </div>
-
-          <div className="grid grid-cols-4 gap-3">
-            {serviceShortcuts.slice(0, 4).map((item) => (
-              <button
-                key={item.label}
-                onClick={() => navigate(item.path)}
-                className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform"
-              >
-                <div className="h-14 w-14 rounded-2xl bg-card shadow-sm flex items-center justify-center">
-                  <item.icon size={22} className="text-primary" />
-                </div>
-                <span className="text-[11px] font-medium text-foreground leading-tight text-center">
-                  {item.label}
-                </span>
-              </button>
-            ))}
           </div>
         </div>
 
