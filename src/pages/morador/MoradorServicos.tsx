@@ -7,6 +7,24 @@ import { supabase } from "@/integrations/supabase/client";
 import { Wrench, Search, MessageCircle, Star, ArrowLeft, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+import coverJardinagem from "@/assets/cover-jardinagem.jpg";
+import coverFaxina from "@/assets/cover-faxina.jpg";
+import coverEletricista from "@/assets/cover-eletricista.jpg";
+import coverEncanador from "@/assets/cover-encanador.jpg";
+import coverPintura from "@/assets/cover-pintura.jpg";
+import coverReparos from "@/assets/cover-reparos.jpg";
+import coverLimpeza from "@/assets/cover-limpeza.jpg";
+
+const coverImages: Record<string, string> = {
+  Jardinagem: coverJardinagem,
+  Faxina: coverFaxina,
+  Eletricista: coverEletricista,
+  Encanador: coverEncanador,
+  Pintura: coverPintura,
+  Reparos: coverReparos,
+  Limpeza: coverLimpeza,
+};
+
 interface Categoria {
   nome: string;
   count: number;
@@ -176,10 +194,20 @@ const MoradorServicos = () => {
           ) : (
             prestadoresCompletos.map((prestador) => (
               <Card key={prestador.id} className="overflow-hidden">
-                <CardContent className="p-4 flex flex-col gap-3">
-                  {/* Header: Avatar + Name */}
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                {/* Cover image */}
+                <div className="relative h-[120px] overflow-hidden">
+                  <img
+                    src={coverImages[prestador.especialidade] || coverImages.Jardinagem}
+                    alt={prestador.especialidade}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent" />
+                </div>
+
+                <CardContent className="p-4 -mt-8 relative flex flex-col gap-3">
+                  {/* Avatar overlapping cover */}
+                  <div className="flex items-end gap-3">
+                    <div className="h-14 w-14 rounded-full bg-card border-[3px] border-card flex items-center justify-center flex-shrink-0 overflow-hidden shadow-md">
                       {prestador.avatar_url ? (
                         <img
                           src={prestador.avatar_url}
@@ -187,10 +215,10 @@ const MoradorServicos = () => {
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <User size={22} className="text-primary" />
+                        <User size={24} className="text-primary" />
                       )}
                     </div>
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-0 flex-1 pb-0.5">
                       <p className="text-[15px] font-semibold text-foreground truncate">
                         {prestador.nome}
                       </p>
