@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
+import logoMorador from "@/assets/logo-morador.png";
 
 const ResetarSenha = () => {
   const navigate = useNavigate();
@@ -68,9 +69,7 @@ const ResetarSenha = () => {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <div className="flex flex-col items-center pt-16 pb-8 px-6">
-        <div className="flex h-14 w-14 items-center justify-center rounded-card bg-primary">
-          <span className="text-title-lg text-primary-foreground">M</span>
-        </div>
+        <img src={logoMorador} alt="Morador.app" className="h-14 w-14 object-contain" />
         <h1 className="mt-4 text-title-lg text-foreground">Nova senha</h1>
         <p className="mt-1 text-subtitle text-muted-foreground">
           Defina sua nova senha

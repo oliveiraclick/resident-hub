@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import logoMorador from "@/assets/logo-morador.png";
 
 const schema = z.object({
   nome: z.string().trim().min(2, "Mínimo 2 caracteres").max(100),
@@ -131,9 +132,7 @@ const CadastroPrestador = () => {
           <ArrowLeft size={18} />
           <span className="text-sm">Voltar</span>
         </Link>
-        <div className="flex h-14 w-14 items-center justify-center rounded-card bg-primary">
-          <span className="text-xl font-bold text-primary-foreground">M</span>
-        </div>
+        <img src={logoMorador} alt="Morador.app" className="h-14 w-14 object-contain" />
         <h1 className="mt-4 text-foreground">Cadastro Prestador</h1>
         <p className="mt-1 text-muted-foreground">Ofereça seus serviços no condomínio</p>
       </div>
