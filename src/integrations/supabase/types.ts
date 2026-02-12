@@ -506,6 +506,7 @@ export type Database = {
         Returns: {
           avatar_url: string
           nome: string
+          telefone: string
           user_id: string
         }[]
       }
