@@ -79,30 +79,30 @@ export type Database = {
           created_at: string
           descricao: string | null
           id: string
+          morador_id: string
           preco: number | null
           status: string
           titulo: string
-          user_id: string
         }
         Insert: {
           condominio_id: string
           created_at?: string
           descricao?: string | null
           id?: string
+          morador_id: string
           preco?: number | null
           status?: string
           titulo: string
-          user_id: string
         }
         Update: {
           condominio_id?: string
           created_at?: string
           descricao?: string | null
           id?: string
+          morador_id?: string
           preco?: number | null
           status?: string
           titulo?: string
-          user_id?: string
         }
         Relationships: [
           {
@@ -120,9 +120,9 @@ export type Database = {
           created_at: string
           descricao: string | null
           id: string
+          prestador_id: string | null
           status: string
           tipo: string
-          unidade_id: string | null
           valor: number
           vencimento: string | null
         }
@@ -131,9 +131,9 @@ export type Database = {
           created_at?: string
           descricao?: string | null
           id?: string
+          prestador_id?: string | null
           status?: string
           tipo: string
-          unidade_id?: string | null
           valor: number
           vencimento?: string | null
         }
@@ -142,9 +142,9 @@ export type Database = {
           created_at?: string
           descricao?: string | null
           id?: string
+          prestador_id?: string | null
           status?: string
           tipo?: string
-          unidade_id?: string | null
           valor?: number
           vencimento?: string | null
         }
@@ -157,10 +157,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "financeiro_lancamentos_unidade_id_fkey"
-            columns: ["unidade_id"]
+            foreignKeyName: "financeiro_lancamentos_prestador_id_fkey"
+            columns: ["prestador_id"]
             isOneToOne: false
-            referencedRelation: "unidades"
+            referencedRelation: "prestadores"
             referencedColumns: ["id"]
           },
         ]
@@ -309,9 +309,9 @@ export type Database = {
           descricao: string | null
           id: string
           preco: number | null
+          prestador_id: string
           status: string
           titulo: string
-          user_id: string
         }
         Insert: {
           condominio_id: string
@@ -319,9 +319,9 @@ export type Database = {
           descricao?: string | null
           id?: string
           preco?: number | null
+          prestador_id: string
           status?: string
           titulo: string
-          user_id: string
         }
         Update: {
           condominio_id?: string
@@ -329,9 +329,9 @@ export type Database = {
           descricao?: string | null
           id?: string
           preco?: number | null
+          prestador_id?: string
           status?: string
           titulo?: string
-          user_id?: string
         }
         Relationships: [
           {
@@ -339,6 +339,13 @@ export type Database = {
             columns: ["condominio_id"]
             isOneToOne: false
             referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "produtos_prestador_id_fkey"
+            columns: ["prestador_id"]
+            isOneToOne: false
+            referencedRelation: "prestadores"
             referencedColumns: ["id"]
           },
         ]
@@ -424,24 +431,24 @@ export type Database = {
           condominio_id: string
           created_at: string
           id: string
+          morador_id: string | null
           numero: string
-          user_id: string | null
         }
         Insert: {
           bloco?: string | null
           condominio_id: string
           created_at?: string
           id?: string
+          morador_id?: string | null
           numero: string
-          user_id?: string | null
         }
         Update: {
           bloco?: string | null
           condominio_id?: string
           created_at?: string
           id?: string
+          morador_id?: string | null
           numero?: string
-          user_id?: string | null
         }
         Relationships: [
           {

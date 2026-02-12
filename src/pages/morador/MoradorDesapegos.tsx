@@ -43,7 +43,7 @@ const MoradorDesapegos = () => {
 
     const { error } = await supabase.from("desapegos").insert({
       condominio_id: condominioId,
-      user_id: user.id,
+      morador_id: user.id,
       titulo: titulo.trim(),
       descricao: descricao.trim() || null,
       preco: preco ? parseFloat(preco) : null,

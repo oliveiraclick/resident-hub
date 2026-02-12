@@ -20,7 +20,7 @@ const Triagem = () => {
     if (!condominioId) return;
     supabase
       .from("unidades")
-      .select("id, bloco, numero, user_id")
+      .select("id, bloco, numero, morador_id")
       .eq("condominio_id", condominioId)
       .then(({ data }) => {
         if (data) setUnidades(data);
@@ -52,7 +52,7 @@ const Triagem = () => {
       .from("pacotes")
       .update({
         unidade_id: selectedUnidade,
-        morador_id: unidade?.user_id || null,
+        morador_id: unidade?.morador_id || null,
         status: "AGUARDANDO_RETIRADA",
       } as any)
       .eq("id", pacote.id);
