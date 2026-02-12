@@ -144,7 +144,7 @@ const MoradorHome = () => {
                     </button>
                   </TooltipTrigger>
                   <TooltipContent side="bottom" className="max-w-[200px] text-[12px]">
-                    Produtos e serviços oferecidos por prestadores do seu condomínio.
+                    Produtos e serviços oferecidos por prestadores cadastrados na plataforma.
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
