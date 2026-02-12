@@ -16,6 +16,8 @@ import NotFound from "./pages/NotFound";
 import TesteSupabase from "./pages/TesteSupabase";
 import TesteAuth from "./pages/TesteAuth";
 import Login from "./pages/Login";
+import CadastroMorador from "./pages/CadastroMorador";
+import CadastroPrestador from "./pages/CadastroPrestador";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +34,8 @@ const App = () => (
             <Route path="/teste-auth" element={<TesteAuth />} />
             <Route path="/login" element={<Login />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/cadastro/morador" element={<CadastroMorador />} />
+            <Route path="/cadastro/prestador" element={<CadastroPrestador />} />
             <Route
               path="/dashboard"
               element={
