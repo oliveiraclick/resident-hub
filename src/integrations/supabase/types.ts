@@ -14,16 +14,473 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      avaliacoes: {
+        Row: {
+          avaliado_id: string
+          avaliador_id: string
+          comentario: string | null
+          condominio_id: string
+          created_at: string
+          id: string
+          nota: number
+        }
+        Insert: {
+          avaliado_id: string
+          avaliador_id: string
+          comentario?: string | null
+          condominio_id: string
+          created_at?: string
+          id?: string
+          nota: number
+        }
+        Update: {
+          avaliado_id?: string
+          avaliador_id?: string
+          comentario?: string | null
+          condominio_id?: string
+          created_at?: string
+          id?: string
+          nota?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "avaliacoes_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      condominios: {
+        Row: {
+          created_at: string
+          endereco: string | null
+          id: string
+          nome: string
+        }
+        Insert: {
+          created_at?: string
+          endereco?: string | null
+          id?: string
+          nome: string
+        }
+        Update: {
+          created_at?: string
+          endereco?: string | null
+          id?: string
+          nome?: string
+        }
+        Relationships: []
+      }
+      desapegos: {
+        Row: {
+          condominio_id: string
+          created_at: string
+          descricao: string | null
+          id: string
+          preco: number | null
+          status: string
+          titulo: string
+          user_id: string
+        }
+        Insert: {
+          condominio_id: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          preco?: number | null
+          status?: string
+          titulo: string
+          user_id: string
+        }
+        Update: {
+          condominio_id?: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          preco?: number | null
+          status?: string
+          titulo?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "desapegos_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financeiro_lancamentos: {
+        Row: {
+          condominio_id: string
+          created_at: string
+          descricao: string | null
+          id: string
+          status: string
+          tipo: string
+          unidade_id: string | null
+          valor: number
+          vencimento: string | null
+        }
+        Insert: {
+          condominio_id: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          status?: string
+          tipo: string
+          unidade_id?: string | null
+          valor: number
+          vencimento?: string | null
+        }
+        Update: {
+          condominio_id?: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          status?: string
+          tipo?: string
+          unidade_id?: string | null
+          valor?: number
+          vencimento?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financeiro_lancamentos_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financeiro_lancamentos_unidade_id_fkey"
+            columns: ["unidade_id"]
+            isOneToOne: false
+            referencedRelation: "unidades"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lotes: {
+        Row: {
+          condominio_id: string
+          created_at: string
+          descricao: string | null
+          id: string
+          status: string
+        }
+        Insert: {
+          condominio_id: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          status?: string
+        }
+        Update: {
+          condominio_id?: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lotes_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pacotes: {
+        Row: {
+          condominio_id: string
+          created_at: string
+          descricao: string | null
+          id: string
+          recebido_em: string | null
+          status: string
+          unidade_id: string
+        }
+        Insert: {
+          condominio_id: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          recebido_em?: string | null
+          status?: string
+          unidade_id: string
+        }
+        Update: {
+          condominio_id?: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          recebido_em?: string | null
+          status?: string
+          unidade_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pacotes_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pacotes_unidade_id_fkey"
+            columns: ["unidade_id"]
+            isOneToOne: false
+            referencedRelation: "unidades"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prestadores: {
+        Row: {
+          condominio_id: string
+          created_at: string
+          descricao: string | null
+          especialidade: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          condominio_id: string
+          created_at?: string
+          descricao?: string | null
+          especialidade: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          condominio_id?: string
+          created_at?: string
+          descricao?: string | null
+          especialidade?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prestadores_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      produtos: {
+        Row: {
+          condominio_id: string
+          created_at: string
+          descricao: string | null
+          id: string
+          preco: number | null
+          status: string
+          titulo: string
+          user_id: string
+        }
+        Insert: {
+          condominio_id: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          preco?: number | null
+          status?: string
+          titulo: string
+          user_id: string
+        }
+        Update: {
+          condominio_id?: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          preco?: number | null
+          status?: string
+          titulo?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "produtos_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          id: string
+          nome: string
+          telefone: string | null
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          nome?: string
+          telefone?: string | null
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          nome?: string
+          telefone?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      servicos: {
+        Row: {
+          condominio_id: string
+          created_at: string
+          descricao: string | null
+          id: string
+          preco: number | null
+          prestador_id: string
+          status: string
+          titulo: string
+        }
+        Insert: {
+          condominio_id: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          preco?: number | null
+          prestador_id: string
+          status?: string
+          titulo: string
+        }
+        Update: {
+          condominio_id?: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          preco?: number | null
+          prestador_id?: string
+          status?: string
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "servicos_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "servicos_prestador_id_fkey"
+            columns: ["prestador_id"]
+            isOneToOne: false
+            referencedRelation: "prestadores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      unidades: {
+        Row: {
+          bloco: string | null
+          condominio_id: string
+          created_at: string
+          id: string
+          numero: string
+          user_id: string | null
+        }
+        Insert: {
+          bloco?: string | null
+          condominio_id: string
+          created_at?: string
+          id?: string
+          numero: string
+          user_id?: string | null
+        }
+        Update: {
+          bloco?: string | null
+          condominio_id?: string
+          created_at?: string
+          id?: string
+          numero?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unidades_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          condominio_id: string
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          condominio_id: string
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          condominio_id?: string
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      belongs_to_condominio: {
+        Args: { _condominio_id: string; _user_id: string }
+        Returns: boolean
+      }
+      get_user_condominio_ids: { Args: { _user_id: string }; Returns: string[] }
+      has_role: {
+        Args: {
+          _condominio_id: string
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "morador" | "prestador" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +607,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["morador", "prestador", "admin"],
+    },
   },
 } as const
