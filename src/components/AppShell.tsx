@@ -93,7 +93,7 @@ const AppShell = ({ children, moduleName, navItems, userName, showSearch = false
   };
 
   return (
-    <div className="min-h-screen bg-background mx-auto max-w-[480px]">
+    <div className="min-h-screen bg-background mx-auto max-w-[480px] overflow-x-hidden">
       {/* TopBar */}
       <header className="sticky top-0 z-20 bg-card px-5 pt-4 pb-3" style={{ borderBottom: "1px solid hsl(var(--border))" }}>
         <div className="flex items-center justify-between mb-3">
