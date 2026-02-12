@@ -51,13 +51,20 @@ const MoradorServicos = () => {
     fetchPrestadores();
   }, [condominioId]);
 
-  // Clear URL param after reading
+  // Auto-select category if exact match from URL param
   useEffect(() => {
-    if (queryFromUrl) {
-      setSearchTerm(queryFromUrl);
+    if (queryFromUrl && categorias.length > 0) {
+      const exactMatch = categorias.find(
+        (c) => c.nome.toLowerCase() === queryFromUrl.toLowerCase()
+      );
+      if (exactMatch) {
+        setSelectedCategoria(exactMatch.nome);
+      } else {
+        setSearchTerm(queryFromUrl);
+      }
       setSearchParams({}, { replace: true });
     }
-  }, [queryFromUrl]);
+  }, [queryFromUrl, categorias]);
 
   useEffect(() => {
     if (!condominioId || !selectedCategoria) return;
