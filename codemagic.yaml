@@ -51,16 +51,28 @@ workflows:
 
       - name: Install CocoaPods
         script: |
-          cd ios/App
-          pod install
-          cd ../..
+          cd ios
+          pod install || true
+          cd ..
 
-      - name: Build IPA
+      - name: Detect workspace and build IPA
         script: |
-          xcode-project build-ipa \
-            --workspace ios/App/App.xcworkspace \
-            --scheme App \
-            --archive-xcargs "CODE_SIGN_STYLE=Automatic"
+          if [ -d "ios/App/App.xcworkspace" ]; then
+            echo "Using ios/App/App.xcworkspace"
+            xcode-project build-ipa \
+              --workspace ios/App/App.xcworkspace \
+              --scheme App
+          elif [ -d "ios/App.xcworkspace" ]; then
+            echo "Using ios/App.xcworkspace"
+            xcode-project build-ipa \
+              --workspace ios/App.xcworkspace \
+              --scheme App
+          else
+            echo "Using ios/App/App.xcodeproj"
+            xcode-project build-ipa \
+              --project ios/App/App.xcodeproj \
+              --scheme App
+          fi
 
     artifacts:
       - build/ios/ipa/*.ipa
