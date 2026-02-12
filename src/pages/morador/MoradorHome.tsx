@@ -94,7 +94,20 @@ const MoradorHome = () => {
           </div>
         </div>
 
-        {/* Service Shortcuts - 4 per row */}
+        {/* Breaking News Ticker */}
+        <div className="rounded-full bg-foreground/5 px-4 py-2.5 overflow-hidden relative">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold text-primary uppercase tracking-wider flex-shrink-0 bg-primary/10 px-2 py-0.5 rounded-full">
+              News
+            </span>
+            <div className="overflow-hidden flex-1">
+              <p className="whitespace-nowrap animate-[ticker_18s_linear_infinite] text-[12px] font-medium text-foreground">
+                🚰 Manutenção na piscina dia 05/03 · 🔧 Elevador B em manutenção até 28/02 · 🎉 Assembleia geral dia 10/03 às 19h · 📦 Horário da portaria alterado: 7h às 22h
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-[16px] font-semibold text-foreground">Serviços</h2>
