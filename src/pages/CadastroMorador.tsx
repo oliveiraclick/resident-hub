@@ -116,7 +116,7 @@ const CadastroMorador = () => {
           <ArrowLeft size={18} />
           <span className="text-sm">Voltar</span>
         </Link>
-        <img src={logoMorador} alt="Morador.app" className="h-14 w-14 object-contain" />
+        <img src={logoMorador} alt="Morador.app" className="h-20 w-20 object-contain" />
         <h1 className="mt-4 text-foreground">Cadastro Morador</h1>
         <p className="mt-1 text-muted-foreground">Crie sua conta de morador</p>
       </div>
