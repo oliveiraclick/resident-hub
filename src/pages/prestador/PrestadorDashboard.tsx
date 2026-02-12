@@ -1,12 +1,13 @@
-import PrestadorLayout from "@/components/PrestadorLayout";
+import { Routes, Route } from "react-router-dom";
+import PrestadorHome from "./PrestadorHome";
+import PrestadorProdutos from "./PrestadorProdutos";
 
 const PrestadorDashboard = () => {
   return (
-    <PrestadorLayout>
-      <div className="flex items-center justify-center py-20">
-        <p className="text-muted-foreground">Painel Prestador (a construir)</p>
-      </div>
-    </PrestadorLayout>
+    <Routes>
+      <Route path="/" element={<PrestadorHome />} />
+      <Route path="produtos" element={<PrestadorProdutos />} />
+    </Routes>
   );
 };
 
