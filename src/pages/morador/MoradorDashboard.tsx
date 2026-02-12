@@ -7,6 +7,7 @@ import MoradorEncomendas from "./MoradorEncomendas";
 import MoradorQrId from "./MoradorQrId";
 import MoradorAvaliacoes from "./MoradorAvaliacoes";
 import MoradorPerfil from "./MoradorPerfil";
+import MoradorReservas from "./MoradorReservas";
 
 const MoradorDashboard = () => {
   return (
@@ -19,6 +20,7 @@ const MoradorDashboard = () => {
       <Route path="qr-id" element={<MoradorQrId />} />
       <Route path="avaliacoes" element={<MoradorAvaliacoes />} />
       <Route path="perfil" element={<MoradorPerfil />} />
+      <Route path="reservas" element={<MoradorReservas />} />
     </Routes>
   );
 };

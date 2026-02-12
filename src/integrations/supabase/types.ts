@@ -114,6 +114,41 @@ export type Database = {
           },
         ]
       }
+      espacos: {
+        Row: {
+          capacidade: number | null
+          condominio_id: string
+          created_at: string
+          descricao: string | null
+          id: string
+          nome: string
+        }
+        Insert: {
+          capacidade?: number | null
+          condominio_id: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome: string
+        }
+        Update: {
+          capacidade?: number | null
+          condominio_id?: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "espacos_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       financeiro_lancamentos: {
         Row: {
           condominio_id: string
@@ -382,6 +417,57 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      reservas: {
+        Row: {
+          condominio_id: string
+          created_at: string
+          data: string
+          espaco_id: string
+          horario_fim: string
+          horario_inicio: string
+          id: string
+          morador_id: string
+          status: string
+        }
+        Insert: {
+          condominio_id: string
+          created_at?: string
+          data: string
+          espaco_id: string
+          horario_fim: string
+          horario_inicio: string
+          id?: string
+          morador_id: string
+          status?: string
+        }
+        Update: {
+          condominio_id?: string
+          created_at?: string
+          data?: string
+          espaco_id?: string
+          horario_fim?: string
+          horario_inicio?: string
+          id?: string
+          morador_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reservas_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reservas_espaco_id_fkey"
+            columns: ["espaco_id"]
+            isOneToOne: false
+            referencedRelation: "espacos"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       servicos: {
         Row: {
