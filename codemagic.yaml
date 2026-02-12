@@ -55,23 +55,48 @@ workflows:
           pod install || true
           cd ..
 
-      - name: Detect workspace and build IPA
+      - name: Create Export Options Plist
+        script: |
+          cat > export_options.plist <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+          "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>method</key>
+              <string>app-store</string>
+              <key>destination</key>
+              <string>export</string>
+              <key>signingStyle</key>
+              <string>automatic</string>
+              <key>stripSwiftSymbols</key>
+              <true/>
+              <key>compileBitcode</key>
+              <false/>
+          </dict>
+          </plist>
+          EOF
+
+      - name: Build IPA
         script: |
           if [ -d "ios/App/App.xcworkspace" ]; then
-            echo "Using ios/App/App.xcworkspace"
+            echo "Using workspace ios/App/App.xcworkspace"
             xcode-project build-ipa \
               --workspace ios/App/App.xcworkspace \
-              --scheme App
+              --scheme App \
+              --export-options-plist export_options.plist
           elif [ -d "ios/App.xcworkspace" ]; then
-            echo "Using ios/App.xcworkspace"
+            echo "Using workspace ios/App.xcworkspace"
             xcode-project build-ipa \
               --workspace ios/App.xcworkspace \
-              --scheme App
+              --scheme App \
+              --export-options-plist export_options.plist
           else
-            echo "Using ios/App/App.xcodeproj"
+            echo "Using project ios/App/App.xcodeproj"
             xcode-project build-ipa \
               --project ios/App/App.xcodeproj \
-              --scheme App
+              --scheme App \
+              --export-options-plist export_options.plist
           fi
 
     artifacts:
