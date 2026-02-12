@@ -57,19 +57,28 @@ export type Database = {
           created_at: string
           endereco: string | null
           id: string
+          logo_url: string | null
           nome: string
+          responsavel: string | null
+          telefone: string | null
         }
         Insert: {
           created_at?: string
           endereco?: string | null
           id?: string
+          logo_url?: string | null
           nome: string
+          responsavel?: string | null
+          telefone?: string | null
         }
         Update: {
           created_at?: string
           endereco?: string | null
           id?: string
+          logo_url?: string | null
           nome?: string
+          responsavel?: string | null
+          telefone?: string | null
         }
         Relationships: []
       }
