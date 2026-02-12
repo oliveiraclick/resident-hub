@@ -2,10 +2,10 @@ import { useState, useEffect, createContext, useContext, ReactNode } from "react
 import { supabase } from "@/integrations/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
 
-type AppRole = "morador" | "prestador" | "admin";
+type AppRole = "morador" | "prestador" | "admin" | "platform_admin";
 
 interface UserRole {
-  condominio_id: string;
+  condominio_id: string | null;
   role: AppRole;
 }
 
@@ -17,6 +17,7 @@ interface AuthContextType {
   rolesLoading: boolean;
   signOut: () => Promise<void>;
   hasRole: (condominioId: string, role: AppRole) => boolean;
+  isPlatformAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -79,9 +80,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  const isPlatformAdmin = roles.some((r) => r.role === "platform_admin");
+
   return (
     <AuthContext.Provider
-      value={{ user, session, loading, roles, rolesLoading, signOut, hasRole }}
+      value={{ user, session, loading, roles, rolesLoading, signOut, hasRole, isPlatformAdmin }}
     >
       {children}
     </AuthContext.Provider>
