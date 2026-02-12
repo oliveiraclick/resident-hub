@@ -2,7 +2,9 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import MoradorHome from "./MoradorHome";
 import MoradorServicos from "./MoradorServicos";
 import MoradorDesapegos from "./MoradorDesapegos";
+import MoradorDesapegoDetalhe from "./MoradorDesapegoDetalhe";
 import MoradorProdutos from "./MoradorProdutos";
+import MoradorProdutoDetalhe from "./MoradorProdutoDetalhe";
 import MoradorEncomendas from "./MoradorEncomendas";
 import MoradorQrId from "./MoradorQrId";
 import MoradorAvaliacoes from "./MoradorAvaliacoes";
@@ -15,7 +17,9 @@ const MoradorDashboard = () => {
       <Route path="/" element={<MoradorHome />} />
       <Route path="servicos" element={<MoradorServicos />} />
       <Route path="desapegos" element={<MoradorDesapegos />} />
+      <Route path="desapegos/:id" element={<MoradorDesapegoDetalhe />} />
       <Route path="produtos" element={<MoradorProdutos />} />
+      <Route path="produtos/:id" element={<MoradorProdutoDetalhe />} />
       <Route path="encomendas" element={<MoradorEncomendas />} />
       <Route path="qr-id" element={<MoradorQrId />} />
       <Route path="avaliacoes" element={<MoradorAvaliacoes />} />
