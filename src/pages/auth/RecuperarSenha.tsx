@@ -17,8 +17,9 @@ const RecuperarSenha = () => {
       return;
     }
     setSubmitting(true);
+    const redirectBase = window.location.origin;
     const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: window.location.origin + "/auth/resetar",
+      redirectTo: `${redirectBase}/auth/resetar`,
     });
     setSubmitting(false);
     if (error) {
