@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
-import { Package, Wrench, Repeat, ShoppingBag, QrCode, Star } from "lucide-react";
+import { Package, Wrench, Zap, Droplets, TreePine, SprayCan, Paintbrush, Hammer } from "lucide-react";
 
 const categories = [
   { label: "Serviços", active: true },
@@ -9,43 +9,15 @@ const categories = [
   { label: "Entretenimento", active: false },
 ];
 
-const quickActions = [
-  {
-    label: "Serviços",
-    description: "Encontre prestadores",
-    icon: Wrench,
-    path: "/morador/servicos",
-  },
-  {
-    label: "Desapego",
-    description: "Doe ou venda itens",
-    icon: Repeat,
-    path: "/morador/desapegos",
-  },
-  {
-    label: "E-shop",
-    description: "Produtos do condomínio",
-    icon: ShoppingBag,
-    path: "/morador/produtos",
-  },
-  {
-    label: "Encomendas",
-    description: "Confirme retiradas",
-    icon: Package,
-    path: "/morador/encomendas",
-  },
-  {
-    label: "Meu QR ID",
-    description: "Identificação pessoal",
-    icon: QrCode,
-    path: "/morador/qr-id",
-  },
-  {
-    label: "Avaliações",
-    description: "Avalie prestadores",
-    icon: Star,
-    path: "/morador/avaliacoes",
-  },
+const serviceShortcuts = [
+  { label: "Jardinagem", icon: TreePine, path: "/morador/servicos" },
+  { label: "Faxina", icon: SprayCan, path: "/morador/servicos" },
+  { label: "Eletricista", icon: Zap, path: "/morador/servicos" },
+  { label: "Encanador", icon: Droplets, path: "/morador/servicos" },
+  { label: "Pintura", icon: Paintbrush, path: "/morador/servicos" },
+  { label: "Reparos", icon: Hammer, path: "/morador/servicos" },
+  { label: "Limpeza", icon: Wrench, path: "/morador/servicos" },
+  { label: "Outros", icon: Wrench, path: "/morador/servicos" },
 ];
 
 const MoradorHome = () => {
@@ -70,10 +42,10 @@ const MoradorHome = () => {
           ))}
         </div>
 
-        {/* Banner Placeholder */}
+        {/* Banner */}
         <div className="rounded-card bg-primary/5 p-5 flex items-center gap-4">
-          <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-            <Package size={28} className="text-primary" />
+          <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+            <Package size={26} className="text-primary" />
           </div>
           <div>
             <p className="text-[14px] font-semibold text-foreground">Você tem encomendas!</p>
@@ -81,32 +53,29 @@ const MoradorHome = () => {
           </div>
         </div>
 
-        {/* Section: Quick Actions */}
+        {/* Service Shortcuts - 4 per row */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-[16px] font-semibold text-foreground">Atalhos</h2>
+            <h2 className="text-[16px] font-semibold text-foreground">Serviços</h2>
             <button className="text-[11px] font-semibold text-primary uppercase tracking-wide">
               Ver tudo
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            {quickActions.map((action) => (
-              <Card
-                key={action.path}
-                className="cursor-pointer active:scale-[0.97] transition-transform border-0 shadow-sm"
-                onClick={() => navigate(action.path)}
+          <div className="grid grid-cols-4 gap-3">
+            {serviceShortcuts.map((item) => (
+              <button
+                key={item.label}
+                onClick={() => navigate(item.path)}
+                className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform"
               >
-                <CardContent className="flex flex-col items-center gap-2.5 p-4 text-center">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/8">
-                    <action.icon size={22} className="text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-[14px] font-semibold text-foreground">{action.label}</p>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">{action.description}</p>
-                  </div>
-                </CardContent>
-              </Card>
+                <div className="h-14 w-14 rounded-2xl bg-card shadow-sm flex items-center justify-center">
+                  <item.icon size={22} className="text-primary" />
+                </div>
+                <span className="text-[11px] font-medium text-foreground leading-tight text-center">
+                  {item.label}
+                </span>
+              </button>
             ))}
           </div>
         </div>

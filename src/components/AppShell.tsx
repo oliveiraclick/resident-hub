@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Bell, Search } from "lucide-react";
+import { Bell, QrCode } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 export interface NavItem {
@@ -15,9 +15,10 @@ interface AppShellProps {
   navItems: NavItem[];
   userName?: string;
   showSearch?: boolean;
+  onQrPress?: () => void;
 }
 
-const AppShell = ({ children, moduleName, navItems, userName, showSearch = false }: AppShellProps) => {
+const AppShell = ({ children, moduleName, navItems, userName, showSearch = false, onQrPress }: AppShellProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -33,14 +34,15 @@ const AppShell = ({ children, moduleName, navItems, userName, showSearch = false
             <span className="font-semibold text-[15px] text-foreground tracking-tight">Splendido</span>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              onClick={onQrPress || (() => navigate("/morador/qr-id"))}
+              className="h-10 w-10 rounded-full bg-muted flex items-center justify-center"
+            >
+              <QrCode size={18} className="text-muted-foreground" />
+            </button>
             <button className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
               <Bell size={18} className="text-muted-foreground" />
             </button>
-            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
-              <span className="text-primary font-semibold text-xs">
-                {(userName || moduleName).charAt(0).toUpperCase()}
-              </span>
-            </div>
           </div>
         </div>
 
@@ -55,7 +57,6 @@ const AppShell = ({ children, moduleName, navItems, userName, showSearch = false
         {/* Search */}
         {showSearch && (
           <div className="relative">
-            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
               placeholder="Buscar serviços, produtos..."
