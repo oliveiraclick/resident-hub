@@ -169,22 +169,28 @@ export type Database = {
         Row: {
           condominio_id: string
           created_at: string
+          data_recebimento: string
           descricao: string | null
           id: string
+          quantidade_itens: number
           status: string
         }
         Insert: {
           condominio_id: string
           created_at?: string
+          data_recebimento?: string
           descricao?: string | null
           id?: string
+          quantidade_itens?: number
           status?: string
         }
         Update: {
           condominio_id?: string
           created_at?: string
+          data_recebimento?: string
           descricao?: string | null
           id?: string
+          quantidade_itens?: number
           status?: string
         }
         Relationships: [
@@ -203,7 +209,11 @@ export type Database = {
           created_at: string
           descricao: string | null
           id: string
+          lote_id: string | null
+          morador_id: string | null
+          qr_code: string | null
           recebido_em: string | null
+          retirado_em: string | null
           status: string
           unidade_id: string
         }
@@ -212,7 +222,11 @@ export type Database = {
           created_at?: string
           descricao?: string | null
           id?: string
+          lote_id?: string | null
+          morador_id?: string | null
+          qr_code?: string | null
           recebido_em?: string | null
+          retirado_em?: string | null
           status?: string
           unidade_id: string
         }
@@ -221,7 +235,11 @@ export type Database = {
           created_at?: string
           descricao?: string | null
           id?: string
+          lote_id?: string | null
+          morador_id?: string | null
+          qr_code?: string | null
           recebido_em?: string | null
+          retirado_em?: string | null
           status?: string
           unidade_id?: string
         }
@@ -231,6 +249,13 @@ export type Database = {
             columns: ["condominio_id"]
             isOneToOne: false
             referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pacotes_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
             referencedColumns: ["id"]
           },
           {
