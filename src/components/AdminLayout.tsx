@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import AppShell from "@/components/AppShell";
-import { Home, Wrench, Package, DollarSign, User } from "lucide-react";
+import { Home, Package, DollarSign, Users, User } from "lucide-react";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -10,10 +10,10 @@ interface AdminLayoutProps {
 
 const navItems = [
   { icon: Home, label: "Home", path: "/admin" },
-  { icon: Wrench, label: "Serviços", path: "/admin/encomendas" },
-  { icon: Package, label: "Encomendas", path: "/admin/encomendas/triagem" },
-  { icon: DollarSign, label: "Financeiro", path: "/admin/encomendas/historico" },
-  { icon: User, label: "Perfil", path: "/admin/encomendas/retirada" },
+  { icon: Package, label: "Encomendas", path: "/admin/encomendas" },
+  { icon: DollarSign, label: "Financeiro", path: "/admin/financeiro" },
+  { icon: Users, label: "Usuários", path: "/admin/usuarios" },
+  { icon: User, label: "Perfil", path: "/admin/perfil" },
 ];
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
