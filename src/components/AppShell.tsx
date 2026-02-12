@@ -36,6 +36,11 @@ const AppShell = ({ children, moduleName, navItems, userName, showSearch = false
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Always scroll to top on mount / route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   // Live search
   useEffect(() => {
     if (!searchTerm.trim() || !user) {
