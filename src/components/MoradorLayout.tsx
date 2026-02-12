@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from "react";
 import AppShell from "@/components/AppShell";
-import { Home, CalendarCheck, Package, User } from "lucide-react";
+import { Home, Wrench, ShoppingBag, Package, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -13,8 +13,9 @@ interface MoradorLayoutProps {
 }
 
 const navItems = [
-  { icon: Home, label: "Home", path: "/morador" },
-  { icon: CalendarCheck, label: "Reservas", path: "/morador/reservas" },
+  { icon: Home, label: "Início", path: "/morador" },
+  { icon: Wrench, label: "Serviços", path: "/morador/servicos" },
+  { icon: ShoppingBag, label: "Shop", path: "/morador/produtos" },
   { icon: Package, label: "Encomendas", path: "/morador/encomendas" },
   { icon: User, label: "Perfil", path: "/morador/perfil" },
 ];
