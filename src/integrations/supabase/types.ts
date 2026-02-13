@@ -52,6 +52,50 @@ export type Database = {
           },
         ]
       }
+      banners: {
+        Row: {
+          ativo: boolean
+          condominio_id: string
+          created_at: string
+          id: string
+          imagem_url: string | null
+          link: string | null
+          ordem: number
+          subtitulo: string | null
+          titulo: string
+        }
+        Insert: {
+          ativo?: boolean
+          condominio_id: string
+          created_at?: string
+          id?: string
+          imagem_url?: string | null
+          link?: string | null
+          ordem?: number
+          subtitulo?: string | null
+          titulo: string
+        }
+        Update: {
+          ativo?: boolean
+          condominio_id?: string
+          created_at?: string
+          id?: string
+          imagem_url?: string | null
+          link?: string | null
+          ordem?: number
+          subtitulo?: string | null
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "banners_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       condominios: {
         Row: {
           created_at: string
