@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.c65121437fca49578025576dccbd06ec',
+  appId: 'app.morador.app',
   appName: 'morador-hub',
   webDir: 'dist',
   server: {

@@ -1,44 +1,33 @@
 workflows:
   ios-release:
     name: iOS Release Build
+
     environment:
       xcode: latest
-
       ios_signing:
         distribution_type: app_store
         bundle_identifier: app.morador.app
 
     scripts:
       - name: Install dependencies
-        script: |
-          npm install
+        script: npm install
 
       - name: Build web
-        script: |
-          npm run build
+        script: npm run build
 
-      - name: Sync Capacitor iOS
-        script: |
-          npx cap sync ios
+      - name: Sync Capacitor
+        script: npx cap sync ios
 
       - name: Install CocoaPods
         script: |
           cd ios/App
-          pod install || true
-          cd ../..
+          pod install
 
       - name: Build IPA
         script: |
           xcode-project build-ipa \
             --project ios/App/App.xcodeproj \
-            --scheme App \
-            --config Release \
-            --automatic-code-signing
+            --scheme App
 
     artifacts:
       - build/ios/ipa/*.ipa
-      - build/ios/archive/*.xcarchive
-
-    publishing:
-      app_store_connect:
-        submit_to_testflight: true
