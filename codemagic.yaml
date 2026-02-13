@@ -3,9 +3,9 @@ workflows:
     name: iOS Manual Build
     environment:
       xcode: latest
-      # Adicione isso para usar a chave que você configurou na Codemagic
-      groups:
-        - app_store_credentials 
+      # Isso conecta o workflow à sua chave de API configurada no painel
+      integrations:
+        - app_store_connect
     scripts:
       - npm install
       - npm run build
@@ -17,9 +17,8 @@ workflows:
             -scheme morador-hub \
             -configuration Release \
             -archivePath build/App.xarchive \
-            archive
-    # Adicione esta seção para a Codemagic buscar os certificados sozinha
+            archive \
+            -allowProvisioningUpdates
     publishing:
       app_store_connect:
         auth: integration
-        api_key: J6P4Z38793 # Use o ID da chave que aparece no seu print
