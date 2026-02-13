@@ -4,6 +4,8 @@ import { Home, Wrench, ShoppingBag, DollarSign, User } from "lucide-react";
 
 interface PrestadorLayoutProps {
   children: ReactNode;
+  title?: string;
+  showBack?: boolean;
 }
 
 const navItems = [
@@ -14,9 +16,9 @@ const navItems = [
   { icon: User, label: "Perfil", path: "/prestador/perfil" },
 ];
 
-const PrestadorLayout = ({ children }: PrestadorLayoutProps) => {
+const PrestadorLayout = ({ children, title, showBack }: PrestadorLayoutProps) => {
   return (
-    <AppShell moduleName="Prestador" navItems={navItems}>
+    <AppShell moduleName="Prestador" navItems={navItems} title={title} showBack={showBack}>
       {children}
     </AppShell>
   );
