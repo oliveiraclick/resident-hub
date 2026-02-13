@@ -4,6 +4,7 @@ import MasterCondominios from "./MasterCondominios";
 import MasterUsuarios from "./MasterUsuarios";
 import MasterFinanceiro from "./MasterFinanceiro";
 import MasterMetricas from "./MasterMetricas";
+import MasterPerfil from "./MasterPerfil";
 
 const MasterDashboard = () => {
   return (
@@ -13,6 +14,7 @@ const MasterDashboard = () => {
       <Route path="/usuarios" element={<MasterUsuarios />} />
       <Route path="/financeiro" element={<MasterFinanceiro />} />
       <Route path="/metricas" element={<MasterMetricas />} />
+      <Route path="/perfil" element={<MasterPerfil />} />
     </Routes>
   );
 };
