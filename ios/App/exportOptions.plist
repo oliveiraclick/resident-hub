@@ -6,9 +6,5 @@
     <string>app-store</string>
     <key>teamID</key>
     <string>D46N5J26Z5</string>
-    <key>signingStyle</key>
-    <string>automatic</string>
-    <key>compileBitcode</key>
-    <false/>
 </dict>
 </plist>
