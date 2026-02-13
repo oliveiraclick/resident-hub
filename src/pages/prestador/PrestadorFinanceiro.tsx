@@ -332,18 +332,24 @@ const PrestadorFinanceiro = () => {
           </TabsList>
 
           <TabsContent value="receber">
-            <div className="mb-3">
-              <Button onClick={() => openNew("receita")} className="w-full rounded-[var(--radius-button)]" variant="outline">
-                <Plus size={16} className="mr-2" /> Nova Conta a Receber
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              <Button onClick={() => openNew("receita")} className="rounded-[var(--radius-button)]" variant="outline">
+                <ArrowDownCircle size={16} className="mr-2 text-success" /> A Receber
+              </Button>
+              <Button onClick={() => openNew("despesa")} className="rounded-[var(--radius-button)]" variant="outline">
+                <ArrowUpCircle size={16} className="mr-2 text-destructive" /> A Pagar
               </Button>
             </div>
             {renderList(receber, "Nenhuma conta a receber", true)}
           </TabsContent>
 
           <TabsContent value="pagar">
-            <div className="mb-3">
-              <Button onClick={() => openNew("despesa")} className="w-full rounded-[var(--radius-button)]" variant="outline">
-                <Plus size={16} className="mr-2" /> Nova Conta a Pagar
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              <Button onClick={() => openNew("receita")} className="rounded-[var(--radius-button)]" variant="outline">
+                <ArrowDownCircle size={16} className="mr-2 text-success" /> A Receber
+              </Button>
+              <Button onClick={() => openNew("despesa")} className="rounded-[var(--radius-button)]" variant="outline">
+                <ArrowUpCircle size={16} className="mr-2 text-destructive" /> A Pagar
               </Button>
             </div>
             {renderList(pagar, "Nenhuma conta a pagar", false)}
