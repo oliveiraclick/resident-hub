@@ -1,6 +1,6 @@
 workflows:
   ios-release:
-    name: iOS Release Build
+    name: iOS Release
 
     environment:
       xcode: latest
@@ -22,8 +22,7 @@ workflows:
         script: |
           xcode-project build-ipa \
             --project ios/App/App.xcodeproj \
-            --scheme App \
-            --archive-flags="-destination generic/platform=iOS"
+            --scheme App
 
     artifacts:
       - build/ios/ipa/*.ipa
