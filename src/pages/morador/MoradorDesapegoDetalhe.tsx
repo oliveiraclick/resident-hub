@@ -47,12 +47,11 @@ const MoradorDesapegoDetalhe = () => {
         return;
       }
 
-      // Fetch profile
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("nome, telefone, avatar_url")
-        .eq("user_id", data.morador_id)
-        .single();
+      // Fetch profile via secure RPC
+      const { data: profiles } = await supabase.rpc("get_desapego_owner_profile", {
+        _user_id: data.morador_id,
+      });
+      const profile = profiles && profiles.length > 0 ? profiles[0] : null;
 
       // Fetch unidade
       const { data: unidade } = await supabase
@@ -63,7 +62,7 @@ const MoradorDesapegoDetalhe = () => {
 
       setItem({
         ...data,
-        profile: profile || undefined,
+        profile: profile ? { nome: profile.nome, telefone: profile.telefone, avatar_url: profile.avatar_url } : undefined,
         unidade: unidade || undefined,
       });
       setLoading(false);

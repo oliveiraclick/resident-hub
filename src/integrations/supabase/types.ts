@@ -649,6 +649,15 @@ export type Database = {
         Args: { _condominio_id: string; _user_id: string }
         Returns: boolean
       }
+      get_desapego_owner_profile: {
+        Args: { _user_id: string }
+        Returns: {
+          avatar_url: string
+          nome: string
+          telefone: string
+          user_id: string
+        }[]
+      }
       get_prestador_profiles: {
         Args: { _user_ids: string[] }
         Returns: {
