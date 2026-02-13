@@ -18,23 +18,12 @@ workflows:
       - name: Sync Capacitor
         script: npx cap sync ios
 
-      - name: Archive app
+      - name: Build IPA
         script: |
-          xcodebuild \
-          -project ios/App/App.xcodeproj \
-          -scheme App \
-          -configuration Release \
-          -archivePath build/App.xcarchive \
-          archive \
-          -allowProvisioningUpdates \
-          DEVELOPMENT_TEAM=D46N5J26Z5
-
-      - name: Export IPA
-        script: |
-          xcodebuild -exportArchive \
-          -archivePath build/App.xcarchive \
-          -exportOptionsPlist ios/App/exportOptions.plist \
-          -exportPath build
+          cd ios/App
+          xcode-project build-ipa \
+            --project App.xcodeproj \
+            --scheme App
 
     artifacts:
-      - build/*.ipa
+      - ios/App/build/ios/ipa/*.ipa
