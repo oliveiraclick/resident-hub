@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { Wrench, Search, MessageCircle, Star, ArrowLeft, User } from "lucide-react";
+import { Wrench, Search, MessageCircle, Star, ArrowLeft, User, Flower2, PaintBucket, SprayCan, Zap, Droplets, Hammer, Scissors, Truck, UtensilsCrossed, ShieldCheck, LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import coverJardinagem from "@/assets/cover-jardinagem.jpg";
@@ -23,6 +23,24 @@ const coverImages: Record<string, string> = {
   Pintura: coverPintura,
   Reparos: coverReparos,
   Limpeza: coverLimpeza,
+};
+
+const categoryIcons: Record<string, LucideIcon> = {
+  Jardinagem: Flower2,
+  Faxina: SprayCan,
+  Eletricista: Zap,
+  Encanador: Droplets,
+  Pintura: PaintBucket,
+  Reparos: Hammer,
+  Limpeza: SprayCan,
+  Confeitaria: UtensilsCrossed,
+  Costura: Scissors,
+  Mudança: Truck,
+  Segurança: ShieldCheck,
+};
+
+const getCategoryIcon = (nome: string): LucideIcon => {
+  return categoryIcons[nome] || Wrench;
 };
 
 interface Categoria {
@@ -330,9 +348,14 @@ const MoradorServicos = () => {
               onClick={() => setSelectedCategoria(cat.nome)}
             >
               <CardContent className="flex items-center gap-4 p-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10">
-                  <Wrench size={20} className="text-primary" />
-                </div>
+                {(() => {
+                  const Icon = getCategoryIcon(cat.nome);
+                  return (
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10">
+                      <Icon size={20} className="text-primary" />
+                    </div>
+                  );
+                })()}
                 <div className="flex-1">
                   <p className="text-[14px] font-semibold text-foreground">{cat.nome}</p>
                   <p className="text-[12px] text-muted-foreground">
