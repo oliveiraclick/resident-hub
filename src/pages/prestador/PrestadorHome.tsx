@@ -36,7 +36,7 @@ const PrestadorHome = () => {
       // Profile + prestador in parallel
       const [profileRes, prestRes] = await Promise.all([
         supabase.from("profiles").select("nome").eq("user_id", user.id).maybeSingle(),
-        supabase.from("prestadores").select("id").eq("user_id", user.id).eq("condominio_id", condominioId).maybeSingle(),
+        supabase.from("prestadores").select("id").eq("user_id", user.id).eq("condominio_id", condominioId).limit(1).maybeSingle(),
       ]);
 
       if (profileRes.data?.nome) setProfileName(profileRes.data.nome);
