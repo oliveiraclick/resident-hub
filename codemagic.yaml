@@ -1,11 +1,8 @@
 workflows:
   ios-release:
     name: iOS Release Build
-
     environment:
       xcode: latest
-      groups:
-        - app_store_credentials
 
       ios_signing:
         distribution_type: app_store
@@ -13,28 +10,35 @@ workflows:
 
     scripts:
       - name: Install dependencies
-        script: npm install
+        script: |
+          npm install
 
       - name: Build web
-        script: npm run build
+        script: |
+          npm run build
 
       - name: Sync Capacitor iOS
-        script: npx cap sync ios
+        script: |
+          npx cap sync ios
+
+      - name: Install CocoaPods
+        script: |
+          cd ios/App
+          pod install || true
+          cd ../..
 
       - name: Build IPA
         script: |
           xcode-project build-ipa \
             --project ios/App/App.xcodeproj \
             --scheme App \
-            --archive-xcargs "DEVELOPMENT_TEAM=D46N5J26Z5"
+            --config Release \
+            --automatic-code-signing
 
     artifacts:
       - build/ios/ipa/*.ipa
+      - build/ios/archive/*.xcarchive
 
     publishing:
       app_store_connect:
-        auth: api_key
-        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
-        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
-        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-        submit_to_app_store: true
+        submit_to_testflight: true
