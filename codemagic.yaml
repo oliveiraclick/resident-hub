@@ -1,5 +1,4 @@
 workflows:
-
   ios-release:
     name: iOS Release Build
 
@@ -10,26 +9,30 @@ workflows:
         distribution_type: app_store
         bundle_identifier: app.morador.app
 
+    integrations:
+      app_store_connect: codemagic
+
     scripts:
       - name: Install dependencies
         script: npm install
 
-      - name: Build web app
+      - name: Build web
         script: npm run build
 
       - name: Sync Capacitor iOS
         script: npx cap sync ios
 
-      - name: Install CocoaPods
-        script: |
-          cd ios/App
-          pod install
-
       - name: Build IPA
         script: |
           xcode-project build-ipa \
             --project ios/App/App.xcodeproj \
-            --scheme App
+            --scheme App \
+            --archive-xcargs "DEVELOPMENT_TEAM=D46N5J26Z5"
 
     artifacts:
       - build/ios/ipa/*.ipa
+
+    publishing:
+      app_store_connect:
+        integration: codemagic
+        submit_to_app_store: true
