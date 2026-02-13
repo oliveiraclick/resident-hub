@@ -9,16 +9,13 @@ workflows:
 
     scripts:
       - name: Install dependencies
-        script: |
-          npm install
+        script: npm install
 
       - name: Build web app
-        script: |
-          npm run build
+        script: npm run build
 
       - name: Sync Capacitor Android
-        script: |
-          npx cap sync android
+        script: npx cap sync android
 
       - name: Build Android AAB
         script: |
@@ -34,8 +31,12 @@ workflows:
   ios-release:
     name: iOS Release Build
 
+    integrations:
+      app_store_connect: codemagic
+
     environment:
       xcode: latest
+
       groups:
         - app_store_credentials
 
@@ -45,16 +46,13 @@ workflows:
 
     scripts:
       - name: Install dependencies
-        script: |
-          npm install
+        script: npm install
 
       - name: Build web app
-        script: |
-          npm run build
+        script: npm run build
 
       - name: Sync Capacitor iOS
-        script: |
-          npx cap sync ios
+        script: npx cap sync ios
 
       - name: Install CocoaPods
         script: |
