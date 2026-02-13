@@ -1,6 +1,6 @@
 workflows:
   ios-release:
-    name: iOS Release
+    name: iOS Release Build
 
     environment:
       xcode: latest
@@ -21,22 +21,20 @@ workflows:
       - name: Archive app
         script: |
           xcodebuild \
-            -project ios/App/App.xcodeproj \
-            -scheme App \
-            -configuration Release \
-            -archivePath build/App.xcarchive \
-            archive \
-            DEVELOPMENT_TEAM=D46N5J26Z5 \
-            CODE_SIGN_STYLE=Automatic
+          -project ios/App/App.xcodeproj \
+          -scheme App \
+          -configuration Release \
+          -archivePath build/App.xcarchive \
+          archive \
+          -allowProvisioningUpdates \
+          DEVELOPMENT_TEAM=D46N5J26Z5
 
       - name: Export IPA
         script: |
-          mkdir -p build/ipa
-          xcodebuild \
-            -exportArchive \
-            -archivePath build/App.xcarchive \
-            -exportOptionsPlist ios/App/exportOptions.plist \
-            -exportPath build/ipa
+          xcodebuild -exportArchive \
+          -archivePath build/App.xcarchive \
+          -exportOptionsPlist ios/App/exportOptions.plist \
+          -exportPath build
 
     artifacts:
-      - build/ipa/*.ipa
+      - build/*.ipa
