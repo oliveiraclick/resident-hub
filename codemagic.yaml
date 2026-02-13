@@ -1,29 +1,24 @@
 workflows:
   ios-release:
-    name: iOS Release Build
+    name: iOS Manual Build
 
     environment:
       xcode: latest
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: app.morador.app
 
     scripts:
-      - name: Install dependencies
-        script: npm install
+      - npm install
+      - npm run build
+      - npx cap sync ios
 
-      - name: Build web
-        script: npm run build
-
-      - name: Sync Capacitor
-        script: npx cap sync ios
-
-      - name: Build IPA
+      - name: Archive
         script: |
-          cd ios/App
-          xcode-project build-ipa \
-            --project App.xcodeproj \
-            --scheme App
+          xcodebuild \
+          -project ios/App/App.xcodeproj \
+          -scheme App \
+          -configuration Release \
+          -archivePath build/App.xcarchive \
+          archive \
+          CODE_SIGN_STYLE=Manual
 
     artifacts:
-      - ios/App/build/ios/ipa/*.ipa
+      - build/App.xcarchive
