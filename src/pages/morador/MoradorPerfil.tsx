@@ -68,7 +68,7 @@ const MoradorPerfil = () => {
   if (!user) return null;
 
   return (
-    <MoradorLayout>
+    <MoradorLayout title="Perfil" showBack>
       <div className="flex flex-col gap-4 max-w-md mx-auto pb-6">
         {/* QR ID */}
         <Card>
