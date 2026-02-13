@@ -6,7 +6,6 @@ import { Package, Wrench, Zap, Droplets, TreePine, SprayCan, Paintbrush, Hammer,
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import bannerCarnaval from "@/assets/banner-carnaval.jpg";
 import productBolo from "@/assets/product-bolo.jpg";
 import productSabonete from "@/assets/product-sabonete.jpg";
 import productBrigadeiro from "@/assets/product-brigadeiro.jpg";
@@ -37,6 +36,8 @@ const MoradorHome = () => {
   const [pendingCount, setPendingCount] = useState(0);
   const [produtos, setProdutos] = useState<any[]>([]);
   const [desapegos, setDesapegos] = useState<any[]>([]);
+  const [banners, setBanners] = useState<any[]>([]);
+  const [bannerIdx, setBannerIdx] = useState(0);
   const shopRef = useRef<HTMLDivElement>(null);
   const desapegoRef = useRef<HTMLDivElement>(null);
 
@@ -77,9 +78,19 @@ const MoradorHome = () => {
       setDesapegos(data || []);
     };
 
+    const fetchBanners = async () => {
+      const { data } = await supabase
+        .from("banners")
+        .select("*")
+        .eq("ativo", true)
+        .order("ordem", { ascending: true });
+      setBanners(data || []);
+    };
+
     fetchPending();
     fetchProdutos();
     fetchDesapegos();
+    fetchBanners();
   }, [user]);
 
   return (
@@ -130,20 +141,42 @@ const MoradorHome = () => {
           </button>
         )}
 
-        {/* Ad Banner - Imagem */}
-        <div className="rounded-card overflow-hidden relative h-[160px] active:scale-[0.98] transition-transform cursor-pointer">
-          <img
-            src={bannerCarnaval}
-            alt="Festa de Carnaval no Splendido"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-foreground/60 to-transparent" />
-          <div className="relative z-10 flex flex-col justify-end h-full p-4">
-            <p className="text-[10px] font-semibold text-primary-foreground/80 uppercase tracking-wide">Evento</p>
-            <p className="text-[17px] font-bold text-primary-foreground leading-tight mt-0.5">Carnaval no<br/>Splendido 🎭</p>
-            <p className="text-[11px] text-primary-foreground/70 mt-1">Dia 01/03 às 15h · Área de lazer</p>
+        {/* Ad Banner - Dinâmico */}
+        {banners.length > 0 && (
+          <div
+            className="rounded-card overflow-hidden relative h-[160px] active:scale-[0.98] transition-transform cursor-pointer"
+            onClick={() => {
+              const link = banners[bannerIdx]?.link;
+              if (link) window.open(link, "_blank");
+            }}
+          >
+            {banners[bannerIdx]?.imagem_url ? (
+              <img
+                src={banners[bannerIdx].imagem_url}
+                alt={banners[bannerIdx].titulo}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            ) : (
+              <div className="absolute inset-0 bg-primary/20" />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-r from-foreground/60 to-transparent" />
+            <div className="relative z-10 flex flex-col justify-end h-full p-4">
+              <p className="text-[17px] font-bold text-primary-foreground leading-tight mt-0.5">{banners[bannerIdx]?.titulo}</p>
+              {banners[bannerIdx]?.subtitulo && (
+                <p className="text-[11px] text-primary-foreground/70 mt-1">{banners[bannerIdx].subtitulo}</p>
+              )}
+            </div>
+            {banners.length > 1 && (
+              <div className="absolute bottom-2 right-3 z-10 flex gap-1">
+                {banners.map((_, i) => (
+                  <button key={i} onClick={(e) => { e.stopPropagation(); setBannerIdx(i); }}
+                    className={`w-2 h-2 rounded-full ${i === bannerIdx ? "bg-primary-foreground" : "bg-primary-foreground/40"}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-        </div>
+        )}
 
         {/* Breaking News Ticker */}
         <div className="rounded-full bg-primary px-4 py-2.5 overflow-hidden relative">
