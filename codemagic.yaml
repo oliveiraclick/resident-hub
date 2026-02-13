@@ -1,11 +1,10 @@
 workflows:
   ios-release:
     name: iOS Manual Build
+    integrations:
+      - app_store_connect
     environment:
       xcode: latest
-      # Isso conecta o workflow à sua chave de API configurada no painel
-      integrations:
-        - app_store_connect
     scripts:
       - npm install
       - npm run build
