@@ -20,7 +20,7 @@ const navItems = [
   { icon: User, label: "Perfil", path: "/morador/perfil" },
 ];
 
-const MoradorLayout = ({ children, showSearch = false }: MoradorLayoutProps) => {
+const MoradorLayout = ({ children, showSearch = false, title, showBack = false }: MoradorLayoutProps) => {
   const { user } = useAuth();
   const [profileName, setProfileName] = useState<string | null>(null);
   const [condominioName, setCondominioName] = useState<string | null>(null);
@@ -71,6 +71,8 @@ const MoradorLayout = ({ children, showSearch = false }: MoradorLayoutProps) => 
       condominioName={condominioName}
       condominioLogo={condominioLogo}
       aprovado={aprovado}
+      title={title}
+      showBack={showBack}
     >
       {children}
     </AppShell>

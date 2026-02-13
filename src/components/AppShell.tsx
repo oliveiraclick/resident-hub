@@ -1,6 +1,6 @@
 import { ReactNode, useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Bell, QrCode, Search, Wrench, X } from "lucide-react";
+import { ArrowLeft, Bell, QrCode, Search, Wrench, X } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import logoMorador from "@/assets/logo-morador.png";
@@ -22,6 +22,8 @@ interface AppShellProps {
   condominioName?: string | null;
   condominioLogo?: string | null;
   aprovado?: boolean;
+  title?: string;
+  showBack?: boolean;
 }
 
 interface SearchResult {
@@ -30,7 +32,7 @@ interface SearchResult {
   descricao: string | null;
 }
 
-const AppShell = ({ children, moduleName, navItems, userName, showSearch = false, onQrPress, condominioName, condominioLogo, aprovado = true }: AppShellProps) => {
+const AppShell = ({ children, moduleName, navItems, userName, showSearch = false, onQrPress, condominioName, condominioLogo, aprovado = true, title, showBack = false }: AppShellProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [showResults, setShowResults] = useState(false);
@@ -124,8 +126,18 @@ const AppShell = ({ children, moduleName, navItems, userName, showSearch = false
           </div>
         </div>
 
+        {/* Back + Title */}
+        {showBack && title && (
+          <div className="flex items-center gap-2 mb-3">
+            <button onClick={() => navigate(-1)} className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
+              <ArrowLeft size={18} className="text-foreground" />
+            </button>
+            <h1 className="text-[17px] font-bold text-foreground">{title}</h1>
+          </div>
+        )}
+
         {/* Greeting */}
-        {userName && (
+        {userName && !showBack && (
           <div className="mb-3">
             <p className="text-muted-foreground text-[13px]">Olá,</p>
             <h1 className="text-[20px] font-bold text-foreground leading-tight">{userName} 👋</h1>
