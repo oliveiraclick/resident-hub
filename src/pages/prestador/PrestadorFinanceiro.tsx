@@ -63,7 +63,7 @@ const PrestadorFinanceiro = () => {
         .select("id")
         .eq("user_id", user.id)
         .eq("condominio_id", condominioId)
-        .maybeSingle();
+        .limit(1).maybeSingle();
       setPrestadorId(data?.id || null);
     };
     fetch();
