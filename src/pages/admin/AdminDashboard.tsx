@@ -11,6 +11,7 @@ import Triagem from "./encomendas/Triagem";
 import Retirada from "./encomendas/Retirada";
 import Historico from "./encomendas/Historico";
 import AdminBanners from "./AdminBanners";
+import AdminAvisos from "./AdminAvisos";
 
 const AdminDashboard = () => {
   return (
@@ -25,6 +26,7 @@ const AdminDashboard = () => {
       <Route path="financeiro" element={<AdminFinanceiro />} />
       <Route path="usuarios" element={<AdminUsuarios />} />
       <Route path="banners" element={<AdminBanners />} />
+      <Route path="avisos" element={<AdminAvisos />} />
       <Route path="configuracoes" element={<AdminConfiguracoes />} />
       <Route path="perfil" element={<AdminPerfil />} />
     </Routes>
