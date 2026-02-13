@@ -197,8 +197,14 @@ const MoradorHome = () => {
                 News
               </span>
               <div className="overflow-hidden flex-1">
-                <p className="whitespace-nowrap animate-[ticker_18s_linear_infinite] text-[12px] font-medium text-primary-foreground">
-                  {avisos.map((a) => a.texto).join(" · ")}
+                <p className="whitespace-nowrap animate-[ticker_18s_linear_infinite] text-[12px] font-medium text-primary-foreground flex items-center gap-1">
+                  {avisos.map((a, i) => (
+                    <span key={a.id} className="inline-flex items-center gap-1">
+                      {i > 0 && <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary-foreground/50 mx-2 flex-shrink-0" />}
+                      <span>📢</span>
+                      <span>{a.texto}</span>
+                    </span>
+                  ))}
                 </p>
               </div>
             </div>
