@@ -1,40 +1,11 @@
 workflows:
-
-  android-release:
-    name: Android Release Build
-    environment:
-      node: 22
-      java: 21
-
-    scripts:
-      - name: Install dependencies
-        script: |
-          npm install
-
-      - name: Build web app
-        script: |
-          npm run build
-
-      - name: Sync Capacitor Android
-        script: |
-          npx cap sync android
-
-      - name: Build Android AAB
-        script: |
-          cd android
-          chmod +x gradlew
-          ./gradlew bundleRelease
-
-    artifacts:
-      - android/app/build/outputs/**/*.aab
-
-
-
   ios-release:
     name: iOS Release Build
     environment:
-      node: 22
       xcode: latest
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: app.morador.app
 
     scripts:
       - name: Install dependencies
@@ -51,47 +22,15 @@ workflows:
 
       - name: Install CocoaPods
         script: |
-          cd ios
-          pod install || true
-          cd ..
-
-      - name: Create Export Options Plist
-        script: |
-          cat > export_options.plist <<EOF
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
-          "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-              <key>method</key>
-              <string>app-store</string>
-              <key>destination</key>
-              <string>export</string>
-              <key>signingStyle</key>
-              <string>automatic</string>
-              <key>stripSwiftSymbols</key>
-              <true/>
-              <key>compileBitcode</key>
-              <false/>
-          </dict>
-          </plist>
-          EOF
+          cd ios/App
+          pod install
+          cd ../../
 
       - name: Build IPA
         script: |
-          if [ -d "ios/App/App.xcworkspace" ]; then
-            xcode-project build-ipa \
-              --workspace ios/App/App.xcworkspace \
-              --scheme App \
-              --archive-xcargs "CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=D46N5J26Z5" \
-              --export-options-plist export_options.plist
-          else
-            xcode-project build-ipa \
-              --project ios/App/App.xcodeproj \
-              --scheme App \
-              --archive-xcargs "CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=D46N5J26Z5" \
-              --export-options-plist export_options.plist
-          fi
+          xcode-project build-ipa \
+            --workspace ios/App/App.xcworkspace \
+            --scheme App
 
     artifacts:
       - build/ios/ipa/*.ipa
