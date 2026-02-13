@@ -37,6 +37,7 @@ const MoradorHome = () => {
   const [produtos, setProdutos] = useState<any[]>([]);
   const [desapegos, setDesapegos] = useState<any[]>([]);
   const [banners, setBanners] = useState<any[]>([]);
+  const [avisos, setAvisos] = useState<any[]>([]);
   const [bannerIdx, setBannerIdx] = useState(0);
   const shopRef = useRef<HTMLDivElement>(null);
   const desapegoRef = useRef<HTMLDivElement>(null);
@@ -87,10 +88,20 @@ const MoradorHome = () => {
       setBanners(data || []);
     };
 
+    const fetchAvisos = async () => {
+      const { data } = await supabase
+        .from("avisos")
+        .select("id, texto")
+        .eq("ativo", true)
+        .order("ordem", { ascending: true });
+      setAvisos(data || []);
+    };
+
     fetchPending();
     fetchProdutos();
     fetchDesapegos();
     fetchBanners();
+    fetchAvisos();
   }, [user]);
 
   return (
@@ -179,18 +190,20 @@ const MoradorHome = () => {
         )}
 
         {/* Breaking News Ticker */}
-        <div className="rounded-full bg-primary px-4 py-2.5 overflow-hidden relative">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold text-primary-foreground uppercase tracking-wider flex-shrink-0 bg-primary-foreground/20 px-2.5 py-0.5 rounded-full">
-              News
-            </span>
-            <div className="overflow-hidden flex-1">
-              <p className="whitespace-nowrap animate-[ticker_18s_linear_infinite] text-[12px] font-medium text-primary-foreground">
-                🚰 Manutenção na piscina dia 05/03 · 🔧 Elevador B em manutenção até 28/02 · 🎉 Assembleia geral dia 10/03 às 19h · 📦 Horário da portaria alterado: 7h às 22h
-              </p>
+        {avisos.length > 0 && (
+          <div className="rounded-full bg-primary px-4 py-2.5 overflow-hidden relative">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold text-primary-foreground uppercase tracking-wider flex-shrink-0 bg-primary-foreground/20 px-2.5 py-0.5 rounded-full">
+                News
+              </span>
+              <div className="overflow-hidden flex-1">
+                <p className="whitespace-nowrap animate-[ticker_18s_linear_infinite] text-[12px] font-medium text-primary-foreground">
+                  {avisos.map((a) => a.texto).join(" · ")}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Vitrine E-shop */}
         <div>
