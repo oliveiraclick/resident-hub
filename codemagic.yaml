@@ -5,6 +5,9 @@ workflows:
     environment:
       xcode: latest
 
+      groups:
+        - app_store_credentials
+
       ios_signing:
         distribution_type: app_store
         bundle_identifier: app.morador.app
