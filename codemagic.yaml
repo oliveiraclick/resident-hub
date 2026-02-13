@@ -9,28 +9,32 @@ workflows:
 
     scripts:
       - name: Install dependencies
-        script: |
-          npm install
+        script: npm install
 
-      - name: Build web app
-        script: |
-          npm run build
+      - name: Build web
+        script: npm run build
 
-      - name: Sync Capacitor iOS
-        script: |
-          npx cap sync ios
+      - name: Sync Capacitor
+        script: npx cap sync ios
 
-      - name: Install CocoaPods
+      - name: Install pods
         script: |
           cd ios/App
           pod install
           cd ../../
 
-      - name: Build IPA
+      - name: Build IPA (automatic signing)
         script: |
           xcode-project build-ipa \
             --project ios/App/App.xcodeproj \
-            --scheme App
+            --scheme App \
+            --clean
 
     artifacts:
       - build/ios/ipa/*.ipa
+
+    publishing:
+      app_store_connect:
+        api_key: YBD8XAS39B
+        key_id: YBD8XAS39B
+        issuer_id: 61436aad-2e28-4060-b6a0-23761165b8f0
