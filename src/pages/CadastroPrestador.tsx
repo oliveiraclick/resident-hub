@@ -82,36 +82,20 @@ const CadastroPrestador = () => {
         email: email.trim(),
         password,
         options: {
-          data: { nome: nome.trim(), role: "prestador", condominio_id: condominioId },
+          data: {
+            nome: nome.trim(),
+            role: "prestador",
+            condominio_id: condominioId,
+            telefone: telefone.trim(),
+            especialidade: especialidade.trim(),
+            descricao: descricao.trim() || null,
+          },
           emailRedirectTo: window.location.origin,
         },
       });
       if (signUpError) throw signUpError;
 
-      const userId = signUpData.user?.id;
-      if (userId) {
-        // Create profile with phone
-        await supabase.from("profiles").insert({
-          user_id: userId,
-          nome: nome.trim(),
-          telefone: telefone.trim(),
-        });
-
-        // Assign role
-        await supabase.from("user_roles").insert({
-          user_id: userId,
-          role: "prestador",
-          condominio_id: condominioId,
-        });
-
-        // Create prestador record
-        await supabase.from("prestadores").insert({
-          user_id: userId,
-          condominio_id: condominioId,
-          especialidade: especialidade.trim(),
-          descricao: descricao.trim() || null,
-        });
-      }
+      // Profile, role and prestador record are created automatically by database trigger
 
       toast.success("Cadastro realizado! Verifique seu email para confirmar.");
       navigate("/auth");

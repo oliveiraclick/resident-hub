@@ -81,21 +81,7 @@ const CadastroMorador = () => {
       });
       if (signUpError) throw signUpError;
 
-      const userId = signUpData.user?.id;
-      if (userId) {
-        // Create profile
-        await supabase.from("profiles").insert({
-          user_id: userId,
-          nome: nome.trim(),
-        });
-
-        // Assign role
-        await supabase.from("user_roles").insert({
-          user_id: userId,
-          role: "morador",
-          condominio_id: condominioId,
-        });
-      }
+      // Profile and role are created automatically by database trigger
 
       toast.success("Cadastro realizado! Verifique seu email para confirmar.");
       navigate("/auth");
