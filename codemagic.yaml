@@ -4,16 +4,12 @@ workflows:
 
     environment:
       xcode: latest
-
       groups:
         - app_store_credentials
 
       ios_signing:
         distribution_type: app_store
         bundle_identifier: app.morador.app
-
-    integrations:
-      app_store_connect: codemagic
 
     scripts:
       - name: Install dependencies
@@ -37,5 +33,8 @@ workflows:
 
     publishing:
       app_store_connect:
-        integration: codemagic
+        auth: api_key
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         submit_to_app_store: true
