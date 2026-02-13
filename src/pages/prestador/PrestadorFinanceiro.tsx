@@ -3,9 +3,14 @@ import { useAuth } from "@/hooks/useAuth";
 import PrestadorLayout from "@/components/PrestadorLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowDownCircle, ArrowUpCircle, DollarSign, Filter, Calendar, TrendingUp, TrendingDown } from "lucide-react";
+import { ArrowDownCircle, ArrowUpCircle, DollarSign, Filter, Calendar, TrendingUp, TrendingDown, Plus, Pencil, Trash2, X } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 interface Lancamento {
   id: string;
@@ -39,6 +44,17 @@ const PrestadorFinanceiro = () => {
   const [filtroStatus, setFiltroStatus] = useState("todos");
   const [filtroPeriodo, setFiltroPeriodo] = useState("todos");
 
+  // Form state
+  const [showForm, setShowForm] = useState(false);
+  const [editTarget, setEditTarget] = useState<Lancamento | null>(null);
+  const [formTipo, setFormTipo] = useState("receita");
+  const [formDescricao, setFormDescricao] = useState("");
+  const [formValor, setFormValor] = useState("");
+  const [formStatus, setFormStatus] = useState("pendente");
+  const [formVencimento, setFormVencimento] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
   useEffect(() => {
     if (!user || !condominioId) return;
     const fetch = async () => {
@@ -53,29 +69,93 @@ const PrestadorFinanceiro = () => {
     fetch();
   }, [user, condominioId]);
 
-  useEffect(() => {
+  const fetchLancamentos = async () => {
     if (!prestadorId || !condominioId) return;
-    const fetchLancamentos = async () => {
-      setLoading(true);
-      const { data } = await supabase
-        .from("financeiro_lancamentos")
-        .select("id, descricao, tipo, valor, status, vencimento, created_at")
-        .eq("condominio_id", condominioId)
-        .eq("prestador_id", prestadorId)
-        .order("created_at", { ascending: false });
-      setLancamentos((data as Lancamento[]) || []);
-      setLoading(false);
-    };
+    setLoading(true);
+    const { data } = await supabase
+      .from("financeiro_lancamentos")
+      .select("id, descricao, tipo, valor, status, vencimento, created_at")
+      .eq("condominio_id", condominioId)
+      .eq("prestador_id", prestadorId)
+      .order("created_at", { ascending: false });
+    setLancamentos((data as Lancamento[]) || []);
+    setLoading(false);
+  };
+
+  useEffect(() => {
     fetchLancamentos();
   }, [prestadorId, condominioId]);
 
+  const resetForm = () => {
+    setFormTipo("receita");
+    setFormDescricao("");
+    setFormValor("");
+    setFormStatus("pendente");
+    setFormVencimento("");
+    setEditTarget(null);
+    setShowForm(false);
+  };
+
+  const openNew = (tipo: string) => {
+    resetForm();
+    setFormTipo(tipo);
+    setShowForm(true);
+  };
+
+  const openEdit = (l: Lancamento) => {
+    setEditTarget(l);
+    setFormTipo(l.tipo);
+    setFormDescricao(l.descricao || "");
+    setFormValor(l.valor.toString());
+    setFormStatus(l.status);
+    setFormVencimento(l.vencimento || "");
+    setShowForm(true);
+  };
+
+  const handleSave = async () => {
+    if (!formValor || !prestadorId || !condominioId) {
+      toast.error("Valor é obrigatório");
+      return;
+    }
+    setSaving(true);
+    const payload = {
+      condominio_id: condominioId,
+      prestador_id: prestadorId,
+      descricao: formDescricao || null,
+      tipo: formTipo,
+      valor: parseFloat(formValor),
+      status: formStatus,
+      vencimento: formVencimento || null,
+    };
+
+    if (editTarget) {
+      const { error } = await supabase.from("financeiro_lancamentos").update(payload).eq("id", editTarget.id);
+      setSaving(false);
+      if (error) { toast.error("Erro ao atualizar"); return; }
+      toast.success("Lançamento atualizado");
+    } else {
+      const { error } = await supabase.from("financeiro_lancamentos").insert(payload);
+      setSaving(false);
+      if (error) { toast.error("Erro ao criar lançamento"); return; }
+      toast.success("Lançamento criado");
+    }
+    resetForm();
+    fetchLancamentos();
+  };
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    const { error } = await supabase.from("financeiro_lancamentos").delete().eq("id", deleteId);
+    if (error) toast.error("Erro ao excluir");
+    else { toast.success("Lançamento excluído"); fetchLancamentos(); }
+    setDeleteId(null);
+  };
+
   const filteredLancamentos = useMemo(() => {
     let filtered = lancamentos;
-
     if (filtroStatus !== "todos") {
       filtered = filtered.filter((l) => l.status === filtroStatus);
     }
-
     if (filtroPeriodo !== "todos") {
       const now = new Date();
       const start = new Date();
@@ -84,7 +164,6 @@ const PrestadorFinanceiro = () => {
       else if (filtroPeriodo === "90d") start.setDate(now.getDate() - 90);
       filtered = filtered.filter((l) => new Date(l.created_at) >= start);
     }
-
     return filtered;
   }, [lancamentos, filtroStatus, filtroPeriodo]);
 
@@ -98,6 +177,8 @@ const PrestadorFinanceiro = () => {
   const saldo = totalRecebido - totalPagoVal;
 
   const formatCurrency = (v: number) => `R$ ${v.toFixed(2).replace(".", ",")}`;
+
+  const [activeTab, setActiveTab] = useState("receber");
 
   const renderList = (items: Lancamento[], emptyMsg: string, isReceita: boolean) => {
     if (!prestadorId) {
@@ -142,13 +223,23 @@ const PrestadorFinanceiro = () => {
                     )}
                   </div>
                 </div>
-                <div className="flex flex-col items-end gap-1">
-                  <p className={`text-[14px] font-bold ${isReceita ? "text-success" : "text-destructive"}`}>
-                    {isReceita ? "+" : "-"} {formatCurrency(Number(l.valor))}
-                  </p>
-                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${statusStyle[l.status] || "bg-muted text-muted-foreground"}`}>
-                    {statusLabel[l.status] || l.status}
-                  </span>
+                <div className="flex items-center gap-2">
+                  <div className="flex flex-col items-end gap-1">
+                    <p className={`text-[14px] font-bold ${isReceita ? "text-success" : "text-destructive"}`}>
+                      {isReceita ? "+" : "-"} {formatCurrency(Number(l.valor))}
+                    </p>
+                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${statusStyle[l.status] || "bg-muted text-muted-foreground"}`}>
+                      {statusLabel[l.status] || l.status}
+                    </span>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <button onClick={() => openEdit(l)} className="h-7 w-7 rounded-full bg-muted flex items-center justify-center">
+                      <Pencil size={12} className="text-muted-foreground" />
+                    </button>
+                    <button onClick={() => setDeleteId(l.id)} className="h-7 w-7 rounded-full bg-muted flex items-center justify-center">
+                      <Trash2 size={12} className="text-destructive" />
+                    </button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -230,7 +321,7 @@ const PrestadorFinanceiro = () => {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="receber" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="receber" className="text-[12px]">
               A Receber ({receber.length})
@@ -241,14 +332,86 @@ const PrestadorFinanceiro = () => {
           </TabsList>
 
           <TabsContent value="receber">
+            <div className="mb-3">
+              <Button onClick={() => openNew("receita")} className="w-full rounded-[var(--radius-button)]" variant="outline">
+                <Plus size={16} className="mr-2" /> Nova Conta a Receber
+              </Button>
+            </div>
             {renderList(receber, "Nenhuma conta a receber", true)}
           </TabsContent>
 
           <TabsContent value="pagar">
+            <div className="mb-3">
+              <Button onClick={() => openNew("despesa")} className="w-full rounded-[var(--radius-button)]" variant="outline">
+                <Plus size={16} className="mr-2" /> Nova Conta a Pagar
+              </Button>
+            </div>
             {renderList(pagar, "Nenhuma conta a pagar", false)}
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Form Dialog */}
+      <Dialog open={showForm} onOpenChange={(open) => { if (!open) resetForm(); }}>
+        <DialogContent className="max-w-[95vw] rounded-[var(--radius-card)]">
+          <DialogHeader>
+            <DialogTitle className="text-[16px]">
+              {editTarget ? "Editar Lançamento" : formTipo === "receita" ? "Nova Conta a Receber" : "Nova Conta a Pagar"}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <Input
+              placeholder="Descrição"
+              value={formDescricao}
+              onChange={(e) => setFormDescricao(e.target.value)}
+              className="h-[48px]"
+            />
+            <Input
+              type="number"
+              step="0.01"
+              placeholder="Valor *"
+              value={formValor}
+              onChange={(e) => setFormValor(e.target.value)}
+              className="h-[48px]"
+            />
+            <Select value={formStatus} onValueChange={setFormStatus}>
+              <SelectTrigger className="h-[48px]"><SelectValue placeholder="Status" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pendente">Pendente</SelectItem>
+                <SelectItem value="pago">Pago</SelectItem>
+                <SelectItem value="cancelado">Cancelado</SelectItem>
+              </SelectContent>
+            </Select>
+            <Input
+              type="date"
+              placeholder="Vencimento"
+              value={formVencimento}
+              onChange={(e) => setFormVencimento(e.target.value)}
+              className="h-[48px]"
+            />
+          </div>
+          <DialogFooter className="flex gap-2 mt-2">
+            <Button variant="outline" onClick={resetForm} className="flex-1">Cancelar</Button>
+            <Button onClick={handleSave} disabled={saving} className="flex-1">
+              {saving ? "Salvando..." : editTarget ? "Atualizar" : "Salvar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={!!deleteId} onOpenChange={(open) => { if (!open) setDeleteId(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir lançamento?</AlertDialogTitle>
+            <AlertDialogDescription>Esta ação é irreversível.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground">Excluir</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </PrestadorLayout>
   );
 };
