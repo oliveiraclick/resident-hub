@@ -2,7 +2,7 @@ workflows:
   ios-release:
     name: iOS Manual Build
     integrations:
-      - app_store_connect
+      app_store_connect: morador.app
     environment:
       xcode: latest
     scripts:
