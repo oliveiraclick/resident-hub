@@ -9,19 +9,13 @@ workflows:
       - npm install
       - npm run build
       - npx cap sync ios
-      - name: Archive
+      - name: Build and Sign IPA
         script: |
-          xcodebuild \
+          # Este comando substitui o xcodebuild manual e resolve os problemas de chave
+          xcode-project build-ipa \
             -project ios/App/App.xcodeproj \
             -scheme App \
-            -configuration Release \
-            -archivePath build/App.xarchive \
-            archive \
-            -allowProvisioningUpdates \
-            -authenticationKeyID "J6P4Z38793" \
-            -authenticationKeyIssuerID "61436aad-2e28-4060-b6a0-23761165b8f0" \
-            -authenticationKeyPath $APP_STORE_CONNECT_AUTH_KEY_PATH \
-            DEVELOPMENT_TEAM=AR9789SH9Q
+            --bundle-id "app.morador.app"
     publishing:
       app_store_connect:
         auth: integration
