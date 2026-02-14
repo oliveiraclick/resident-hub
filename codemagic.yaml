@@ -3,11 +3,10 @@ workflows:
     name: iOS Release Build
     instance_type: mac_mini_m2
 
-    integrations:
-      app_store_connect: NewKey
-
     environment:
       xcode: latest
+      groups:
+        - app_store_credentials
 
     scripts:
       - npm install
@@ -21,4 +20,7 @@ workflows:
 
     publishing:
       app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         submit_to_testflight: true
