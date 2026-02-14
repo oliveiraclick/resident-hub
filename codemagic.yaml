@@ -18,7 +18,10 @@ workflows:
             -archivePath build/App.xarchive \
             archive \
             -allowProvisioningUpdates \
-            DEVELOPMENT_TEAM=SEU_TEAM_ID_AQUI
+            DEVELOPMENT_TEAM=SEU_TEAM_ID_AQUI \
+            -authenticationKeyID J6P4Z38793 \
+            -authenticationKeyIssuerID SEU_ISSUER_ID_AQUI \
+            -authenticationKeyPath $APP_STORE_CONNECT_AUTH_KEY_PATH
     publishing:
       app_store_connect:
         auth: integration
