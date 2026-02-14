@@ -2,7 +2,7 @@ workflows:
   ios-release:
     name: iOS Manual Build
     integrations:
-      app_store_connect: morador.app
+      app_store_connect: NewKey
     environment:
       xcode: latest
     scripts:
@@ -16,11 +16,8 @@ workflows:
             -scheme App \
             -configuration Release \
             -archivePath build/App.xarchive \
-            -allowProvisioningUpdates \
-            -authenticationKeyID "J6P4Z38793" \
-            -authenticationKeyIssuerID "COLE_SEU_ISSUER_ID_AQUI" \
-            -authenticationKeyPath $APP_STORE_CONNECT_AUTH_KEY_PATH \
             archive \
+            -allowProvisioningUpdates \
             DEVELOPMENT_TEAM=AR9789SH9Q
     publishing:
       app_store_connect:
