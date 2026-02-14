@@ -12,12 +12,15 @@ workflows:
         script: npm run build
       - name: Capacitor Sync
         script: npx cap sync ios
+      - name: Set up code signing
+        script: | 
+          xcode-project use-profiles
       - name: Build IPA
         script: |
-          xcode-project use-profiles
           xcode-project build-ipa \
             --project ios/App/App.xcodeproj \
-            --scheme App
+            --scheme App \
+            --bundle-id app.morador.app
     publishing:
       app_store_connect:
         auth: integration
