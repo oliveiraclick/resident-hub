@@ -14,6 +14,7 @@ workflows:
         script: |
           npx cap add ios || true
           npx cap sync ios
+          npx cap copy ios
       - name: Build IPA
         script: |
           xcode-project build-ipa \
