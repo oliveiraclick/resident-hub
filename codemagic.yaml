@@ -11,12 +11,27 @@ workflows:
     scripts:
       - npm install
       - npm run build
+      - npx cap add ios || true
       - npx cap sync ios
-      - xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release -archivePath build/App.xcarchive archive
-      - xcodebuild -exportArchive -archivePath build/App.xcarchive -exportOptionsPlist ios/exportOptions.plist -exportPath build
+
+      - cd ios/App
+      - pod install
+
+      - xcodebuild \
+          -workspace App.xcworkspace \
+          -scheme App \
+          -configuration Release \
+          -archivePath build/App.xcarchive \
+          archive
+
+      - xcodebuild \
+          -exportArchive \
+          -archivePath build/App.xcarchive \
+          -exportOptionsPlist exportOptions.plist \
+          -exportPath build
 
     artifacts:
-      - build/*.ipa
+      - ios/App/build/*.ipa
 
     publishing:
       app_store_connect:
