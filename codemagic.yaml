@@ -14,11 +14,10 @@ workflows:
         script: npx cap sync ios
       - name: Build IPA
         script: |
-          xcode-project use-profiles --bundle-id app.morador.app
+          xcode-project use-profiles
           xcode-project build-ipa \
             --project ios/App/App.xcodeproj \
-            --scheme App \
-            --export-method app-store
+            --scheme App
     publishing:
       app_store_connect:
         auth: integration
