@@ -1,25 +1,27 @@
 workflows:
   ios-release:
     name: iOS Manual Build
+    integrations:
+      app_store_connect: NewKey
     environment:
       xcode: latest
-      # Adicione isso para usar a chave que você configurou na Codemagic
-      groups:
-        - app_store_credentials 
+      vars:
+        XCODE_PROJECT: "ios/App/App.xcodeproj"
+        XCODE_SCHEME: "App"
     scripts:
       - npm install
       - npm run build
       - npx cap sync ios
-      - name: Archive
+      - name: Build IPA
         script: |
           xcodebuild \
-            -project ios/App/App.xcodeproj \
-            -scheme morador-hub \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
             -configuration Release \
             -archivePath build/App.xarchive \
-            archive
-    # Adicione esta seção para a Codemagic buscar os certificados sozinha
+            archive \
+            -allowProvisioningUpdates \
+            DEVELOPMENT_TEAM=AR9789SH9Q
     publishing:
       app_store_connect:
         auth: integration
-        api_key: J6P4Z38793 # Use o ID da chave que aparece no seu print

@@ -20,7 +20,8 @@ workflows:
             -configuration Release \
             -archivePath build/App.xarchive \
             archive \
-            -allowProvisioningUpdates
+            -allowProvisioningUpdates \
+            DEVELOPMENT_TEAM=AR9789SH9Q
     publishing:
       app_store_connect:
         auth: integration
