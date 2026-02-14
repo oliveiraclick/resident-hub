@@ -1,12 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import PrestadorLayout from "@/components/PrestadorLayout";
 import { Card, CardContent } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import {
   ShoppingBag, Wrench, DollarSign, Star,
-  ArrowRight,
+  ArrowRight, MapPin,
 } from "lucide-react";
 
 const PrestadorHome = () => {
@@ -17,6 +19,9 @@ const PrestadorHome = () => {
   const [prestadorId, setPrestadorId] = useState<string | null>(null);
   const [profileName, setProfileName] = useState("");
   const [loading, setLoading] = useState(true);
+  const [visivel, setVisivel] = useState(false);
+  const [visivelAte, setVisivelAte] = useState<string | null>(null);
+  const [togglingVisibility, setTogglingVisibility] = useState(false);
 
   const [stats, setStats] = useState({
     servicos: 0,
@@ -31,7 +36,7 @@ const PrestadorHome = () => {
     const fetchData = async () => {
       const [profileRes, prestRes] = await Promise.all([
         supabase.from("profiles").select("nome").eq("user_id", user.id).maybeSingle(),
-        supabase.from("prestadores").select("id").eq("user_id", user.id).eq("condominio_id", condominioId).limit(1).maybeSingle(),
+        supabase.from("prestadores").select("id, visivel, visivel_ate").eq("user_id", user.id).eq("condominio_id", condominioId).limit(1).maybeSingle(),
       ]);
 
       if (profileRes.data?.nome) setProfileName(profileRes.data.nome);
@@ -39,6 +44,11 @@ const PrestadorHome = () => {
 
       const pid = prestRes.data.id;
       setPrestadorId(pid);
+
+      // Check if visibility is still valid
+      const isStillVisible = prestRes.data.visivel && prestRes.data.visivel_ate && new Date(prestRes.data.visivel_ate) > new Date();
+      setVisivel(!!isStillVisible);
+      setVisivelAte(prestRes.data.visivel_ate);
 
       const [servicosRes, produtosRes, avalRes] = await Promise.all([
         supabase.from("servicos").select("id", { count: "exact", head: true }).eq("prestador_id", pid).eq("status", "ativo"),
@@ -61,7 +71,47 @@ const PrestadorHome = () => {
     fetchData();
   }, [user, condominioId]);
 
-  
+  // Auto-expire check
+  useEffect(() => {
+    if (!visivel || !visivelAte) return;
+    const expiresAt = new Date(visivelAte).getTime();
+    const remaining = expiresAt - Date.now();
+    if (remaining <= 0) {
+      setVisivel(false);
+      return;
+    }
+    const timer = setTimeout(() => {
+      setVisivel(false);
+      toast.info("Sua presença no condomínio expirou (45 min).");
+    }, remaining);
+    return () => clearTimeout(timer);
+  }, [visivel, visivelAte]);
+
+  const toggleVisibility = useCallback(async (checked: boolean) => {
+    if (!prestadorId) return;
+    setTogglingVisibility(true);
+    try {
+      if (checked) {
+        const expiresAt = new Date(Date.now() + 45 * 60 * 1000).toISOString();
+        await supabase.from("prestadores").update({ visivel: true, visivel_ate: expiresAt } as any).eq("id", prestadorId);
+        setVisivel(true);
+        setVisivelAte(expiresAt);
+        toast.success("Você está visível no condomínio por 45 minutos!");
+      } else {
+        await supabase.from("prestadores").update({ visivel: false, visivel_ate: null } as any).eq("id", prestadorId);
+        setVisivel(false);
+        setVisivelAte(null);
+        toast.info("Você não está mais visível no condomínio.");
+      }
+    } catch {
+      toast.error("Erro ao atualizar visibilidade.");
+    } finally {
+      setTogglingVisibility(false);
+    }
+  }, [prestadorId]);
+
+  const remainingMinutes = visivelAte ? Math.max(0, Math.ceil((new Date(visivelAte).getTime() - Date.now()) / 60000)) : 0;
+
 
   return (
     <PrestadorLayout>
@@ -84,6 +134,26 @@ const PrestadorHome = () => {
           </Card>
         ) : (
           <>
+            {/* Presence Toggle */}
+            <Card className={visivel ? "border-primary/30 bg-primary/5" : ""}>
+              <CardContent className="flex items-center gap-3 p-4">
+                <div className={`h-11 w-11 rounded-2xl flex items-center justify-center ${visivel ? "bg-primary/20" : "bg-muted"}`}>
+                  <MapPin size={20} className={visivel ? "text-primary" : "text-muted-foreground"} />
+                </div>
+                <div className="flex-1">
+                  <p className="text-[14px] font-semibold text-foreground">Estou no condomínio</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    {visivel ? `Visível por mais ${remainingMinutes} min` : "Ative para moradores te encontrarem"}
+                  </p>
+                </div>
+                <Switch
+                  checked={visivel}
+                  onCheckedChange={toggleVisibility}
+                  disabled={togglingVisibility}
+                />
+              </CardContent>
+            </Card>
+
             {/* Activity Stats */}
             <div>
               <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">Meu Negócio</p>

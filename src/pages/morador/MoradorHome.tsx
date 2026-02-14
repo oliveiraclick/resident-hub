@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
-import { Package, Wrench, Zap, Droplets, TreePine, SprayCan, Paintbrush, Hammer, ShoppingBag, ChevronLeft, ChevronRight, Repeat, Info } from "lucide-react";
+import { Package, Wrench, Zap, Droplets, TreePine, SprayCan, Paintbrush, Hammer, ShoppingBag, ChevronLeft, ChevronRight, Repeat, Info, MapPin } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -38,6 +38,7 @@ const MoradorHome = () => {
   const [desapegos, setDesapegos] = useState<any[]>([]);
   const [banners, setBanners] = useState<any[]>([]);
   const [avisos, setAvisos] = useState<any[]>([]);
+  const [prestadoresVisiveis, setPrestadoresVisiveis] = useState<any[]>([]);
   const [bannerIdx, setBannerIdx] = useState(0);
   const shopRef = useRef<HTMLDivElement>(null);
   const desapegoRef = useRef<HTMLDivElement>(null);
@@ -97,11 +98,31 @@ const MoradorHome = () => {
       setAvisos(data || []);
     };
 
+    const fetchPrestadoresVisiveis = async () => {
+      const { data } = await supabase
+        .from("prestadores")
+        .select("id, user_id, especialidade, visivel_ate")
+        .eq("visivel", true)
+        .gt("visivel_ate", new Date().toISOString());
+      if (data && data.length > 0) {
+        const userIds = data.map((p: any) => p.user_id);
+        const { data: profiles } = await supabase.rpc("get_prestador_profiles", { _user_ids: userIds });
+        const merged = data.map((p: any) => {
+          const profile = (profiles || []).find((pr: any) => pr.user_id === p.user_id);
+          return { ...p, nome: profile?.nome || "Prestador", avatar_url: profile?.avatar_url };
+        });
+        setPrestadoresVisiveis(merged);
+      } else {
+        setPrestadoresVisiveis([]);
+      }
+    };
+
     fetchPending();
     fetchProdutos();
     fetchDesapegos();
     fetchBanners();
     fetchAvisos();
+    fetchPrestadoresVisiveis();
   }, [user]);
 
   return (
@@ -133,6 +154,37 @@ const MoradorHome = () => {
             ))}
           </div>
         </div>
+
+        {/* Prestadores no condomínio */}
+        {prestadoresVisiveis.length > 0 && (
+          <div>
+            <div className="flex items-center gap-1.5 mb-3">
+              <MapPin size={16} className="text-primary" />
+              <h2 className="text-[16px] font-semibold text-foreground">No condomínio agora</h2>
+            </div>
+            <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide" style={{ scrollbarWidth: "none" }}>
+              {prestadoresVisiveis.map((p) => {
+                const mins = Math.max(0, Math.ceil((new Date(p.visivel_ate).getTime() - Date.now()) / 60000));
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() => navigate(`/morador/servicos?q=${encodeURIComponent(p.especialidade)}`)}
+                    className="flex-shrink-0 flex items-center gap-3 rounded-xl bg-primary/5 border border-primary/10 px-4 py-3 active:scale-[0.97] transition-transform"
+                  >
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-[14px] font-bold text-primary">
+                      {p.nome?.charAt(0)?.toUpperCase() || "P"}
+                    </div>
+                    <div className="text-left">
+                      <p className="text-[13px] font-semibold text-foreground leading-tight">{p.nome}</p>
+                      <p className="text-[11px] text-primary font-medium">{p.especialidade}</p>
+                      <p className="text-[10px] text-muted-foreground">Disponível por {mins} min</p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Banner de encomendas - só aparece se tiver pendentes */}
         {pendingCount > 0 && (
