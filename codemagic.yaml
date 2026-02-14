@@ -9,32 +9,17 @@ workflows:
       groups:
         - app_store_credentials
 
+    ios_signing:
+      distribution_type: app_store
+      bundle_identifier: app.morador.app
+
     scripts:
-      - name: Install dependencies
-        script: npm install
+      - npm install
+      - npm run build
+      - npx cap sync ios
 
-      - name: Build web
-        script: npm run build
-
-      - name: Sync Capacitor
-        script: npx cap sync ios
-
-      - name: Archive iOS App
-        script: |
-          xcodebuild \
-          -project ios/App/App.xcodeproj \
-          -scheme App \
-          -configuration Release \
-          -archivePath ios/build/App.xcarchive \
-          archive
-
-      - name: Export IPA
-        script: |
-          xcodebuild \
-          -exportArchive \
-          -archivePath ios/build/App.xcarchive \
-          -exportOptionsPlist ios/exportOptions.plist \
-          -exportPath ios/build
+      - xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -archivePath ios/build/App.xcarchive archive
+      - xcodebuild -exportArchive -archivePath ios/build/App.xcarchive -exportOptionsPlist ios/exportOptions.plist -exportPath ios/build
 
     artifacts:
       - ios/build/*.ipa
