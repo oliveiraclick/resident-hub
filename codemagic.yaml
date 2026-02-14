@@ -5,17 +5,22 @@ workflows:
       app_store_connect: NewKey
     environment:
       xcode: latest
+      vars:
+        XCODE_PROJECT: "ios/App/App.xcodeproj"
+        XCODE_SCHEME: "App"
     scripts:
       - npm install
       - npm run build
       - npx cap sync ios
-      - name: Build and Sign IPA
+      - name: Build IPA
         script: |
-          # Usando o projeto diretamente para evitar erro de workspace inexistente
-          xcode-project build-ipa \
-            --project ios/App/App.xcodeproj \
-            --scheme App \
-            --bundle-id "app.morador.app"
+          xcodebuild \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -configuration Release \
+            -archivePath build/App.xarchive \
+            archive \
+            -allowProvisioningUpdates
     publishing:
       app_store_connect:
         auth: integration
