@@ -5,15 +5,22 @@ workflows:
       app_store_connect: NewKey
     environment:
       xcode: latest
+      vars:
+        XCODE_SCHEME: "App"
+        XCODE_PROJECT: "ios/App/App.xcodeproj"
     scripts:
       - npm install
       - npm run build
       - npx cap sync ios
+      - name: Fetch Provisioning Profiles
+        script: |
+          # Este comando da Codemagic baixa os perfis automaticamente
+          app-store-connect fetch-signing-files "app.morador.app" --type IOS_APP_STORE --create
       - name: Archive
         script: |
           xcodebuild \
-            -project ios/App/App.xcodeproj \
-            -scheme App \
+            -project $XCODE_PROJECT \
+            -scheme $XCODE_SCHEME \
             -configuration Release \
             -archivePath build/App.xarchive \
             archive \
