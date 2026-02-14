@@ -1,19 +1,10 @@
-workflows:
-  ios-release:
-    name: iOS Manual Build
-    integrations:
-      app_store_connect: NewKey
-    environment:
-      xcode: latest
-      vars:
-        XCODE_PROJECT: "ios/App/App.xcodeproj"
-        XCODE_SCHEME: "App"
-    scripts:
+scripts:
       - npm install
       - npm run build
       - npx cap sync ios
       - name: Build IPA
         script: |
+          # Forçando o Xcode a aceitar a assinatura manual via CLI
           xcodebuild \
             -project "$XCODE_PROJECT" \
             -scheme "$XCODE_SCHEME" \
@@ -21,7 +12,6 @@ workflows:
             -archivePath build/App.xarchive \
             archive \
             -allowProvisioningUpdates \
-            DEVELOPMENT_TEAM=AR9789SH9Q
-    publishing:
-      app_store_connect:
-        auth: integration
+            CODE_SIGN_STYLE=Manual \
+            DEVELOPMENT_TEAM=AR9789SH9Q \
+            CODE_SIGN_IDENTITY="Apple Distribution"
