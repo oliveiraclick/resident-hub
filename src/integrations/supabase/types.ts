@@ -398,6 +398,8 @@ export type Database = {
           especialidade: string
           id: string
           user_id: string
+          visivel: boolean
+          visivel_ate: string | null
         }
         Insert: {
           condominio_id: string
@@ -406,6 +408,8 @@ export type Database = {
           especialidade: string
           id?: string
           user_id: string
+          visivel?: boolean
+          visivel_ate?: string | null
         }
         Update: {
           condominio_id?: string
@@ -414,6 +418,8 @@ export type Database = {
           especialidade?: string
           id?: string
           user_id?: string
+          visivel?: boolean
+          visivel_ate?: string | null
         }
         Relationships: [
           {
