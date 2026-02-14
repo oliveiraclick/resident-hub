@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import PrestadorLayout from "@/components/PrestadorLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ShoppingBag, Plus, Pencil, Trash2, X } from "lucide-react";
+import { ShoppingBag, Plus, Pencil, Trash2, X, Camera, ImagePlus } from "lucide-react";
 
 interface Produto {
   id: string;
@@ -15,6 +15,7 @@ interface Produto {
   descricao: string | null;
   preco: number | null;
   status: string;
+  imagem_url: string | null;
 }
 
 const PrestadorProdutos = () => {
@@ -32,6 +33,10 @@ const PrestadorProdutos = () => {
   const [descricao, setDescricao] = useState("");
   const [preco, setPreco] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   // Fetch prestador ID
   useEffect(() => {
@@ -54,7 +59,7 @@ const PrestadorProdutos = () => {
     setLoading(true);
     const { data } = await supabase
       .from("produtos")
-      .select("id, titulo, descricao, preco, status")
+      .select("id, titulo, descricao, preco, status, imagem_url")
       .eq("prestador_id", prestadorId)
       .order("created_at", { ascending: false });
     setProdutos((data as Produto[]) || []);
@@ -71,6 +76,8 @@ const PrestadorProdutos = () => {
     setPreco("");
     setEditingId(null);
     setShowForm(false);
+    setImageFile(null);
+    setImagePreview(null);
   };
 
   const openEdit = (p: Produto) => {
@@ -78,47 +85,73 @@ const PrestadorProdutos = () => {
     setDescricao(p.descricao || "");
     setPreco(p.preco != null ? String(p.preco) : "");
     setEditingId(p.id);
+    setImageFile(null);
+    setImagePreview(p.imagem_url || null);
     setShowForm(true);
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Imagem deve ter no máximo 5MB");
+      return;
+    }
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
+  const uploadImage = async (file: File, productId: string): Promise<string | null> => {
+    const ext = file.name.split(".").pop();
+    const path = `${prestadorId}/${productId}.${ext}`;
+    const { error } = await supabase.storage.from("produtos").upload(path, file, { upsert: true });
+    if (error) { toast.error("Erro ao enviar imagem"); return null; }
+    const { data } = supabase.storage.from("produtos").getPublicUrl(path);
+    return data.publicUrl;
   };
 
   const handleSubmit = async () => {
     if (!titulo.trim() || !prestadorId || !condominioId) return;
     setSubmitting(true);
 
-    const payload = {
-      titulo: titulo.trim(),
-      descricao: descricao.trim() || null,
-      preco: preco ? parseFloat(preco) : null,
-    };
+    try {
+      const payload: any = {
+        titulo: titulo.trim(),
+        descricao: descricao.trim() || null,
+        preco: preco ? parseFloat(preco) : null,
+      };
 
-    if (editingId) {
-      const { error } = await supabase
-        .from("produtos")
-        .update(payload)
-        .eq("id", editingId);
-      if (error) {
-        toast.error("Erro ao atualizar produto");
-      } else {
+      if (editingId) {
+        if (imageFile) {
+          const url = await uploadImage(imageFile, editingId);
+          if (url) payload.imagem_url = url;
+        }
+        const { error } = await supabase.from("produtos").update(payload).eq("id", editingId);
+        if (error) throw error;
         toast.success("Produto atualizado!");
-        resetForm();
-        fetchProdutos();
-      }
-    } else {
-      const { error } = await supabase.from("produtos").insert({
-        ...payload,
-        prestador_id: prestadorId,
-        condominio_id: condominioId,
-        status: "ativo",
-      });
-      if (error) {
-        toast.error("Erro ao criar produto");
       } else {
+        const tempId = crypto.randomUUID();
+        if (imageFile) {
+          const url = await uploadImage(imageFile, tempId);
+          if (url) payload.imagem_url = url;
+        }
+        const { error } = await supabase.from("produtos").insert({
+          id: tempId,
+          ...payload,
+          prestador_id: prestadorId,
+          condominio_id: condominioId,
+          status: "ativo",
+        });
+        if (error) throw error;
         toast.success("Produto criado!");
-        resetForm();
-        fetchProdutos();
       }
+      resetForm();
+      fetchProdutos();
+    } catch (e: any) {
+      toast.error(e.message || "Erro ao salvar produto");
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
   const handleDelete = async (id: string) => {
@@ -190,6 +223,61 @@ const PrestadorProdutos = () => {
                 />
               </div>
 
+              {/* Image upload */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[12px] font-medium text-muted-foreground ml-1">Foto do produto</label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
+                <input
+                  ref={cameraInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
+                {imagePreview ? (
+                  <div className="relative">
+                    <img src={imagePreview} alt="Preview" className="w-full h-40 object-cover rounded-lg" />
+                    <button
+                      type="button"
+                      onClick={() => { setImageFile(null); setImagePreview(null); }}
+                      className="absolute top-1 right-1 bg-background/80 rounded-full p-1"
+                    >
+                      <X size={14} className="text-destructive" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 gap-1.5"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <ImagePlus size={16} />
+                      Galeria
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 gap-1.5"
+                      onClick={() => cameraInputRef.current?.click()}
+                    >
+                      <Camera size={16} />
+                      Câmera
+                    </Button>
+                  </div>
+                )}
+              </div>
+
               <div className="flex flex-col gap-1">
                 <label className="text-[12px] font-medium text-muted-foreground ml-1">Preço (R$)</label>
                 <Input
@@ -222,7 +310,10 @@ const PrestadorProdutos = () => {
           </div>
         ) : (
           produtos.map((p) => (
-            <Card key={p.id} className={p.status === "inativo" ? "opacity-60" : ""}>
+            <Card key={p.id} className={`overflow-hidden ${p.status === "inativo" ? "opacity-60" : ""}`}>
+              {p.imagem_url && (
+                <img src={p.imagem_url} alt={p.titulo} className="w-full h-36 object-cover" />
+              )}
               <CardContent className="flex flex-col gap-2 p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
