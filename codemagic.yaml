@@ -1,19 +1,21 @@
-scripts:
+workflows:
+  ios-release:
+    name: iOS Manual Build
+    integrations:
+      app_store_connect: NewKey
+    environment:
+      xcode: latest
+    scripts:
       - npm install
       - npm run build
       - npx cap sync ios
       - name: Codemagic Code Signing
         script: |
-          # 1. Prepara o ambiente para a nova assinatura
           keychain initialize
-          
-          # 2. Gera o novo certificado e a chave privada (.p12) na hora
           app-store-connect fetch-signing-files "app.morador.app" \
             --type IOS_APP_STORE \
             --create \
             --save-keys
-            
-          # 3. Instala a nova assinatura no sistema da build
           keychain add-certificates
       - name: Archive
         script: |
