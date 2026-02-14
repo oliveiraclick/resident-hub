@@ -10,8 +10,10 @@ workflows:
         script: npm install
       - name: Build Web Project
         script: npm run build
-      - name: Capacitor Sync
-        script: npx cap sync ios
+      - name: Capacitor Sync and Add
+        script: |
+          npx cap add ios || true
+          npx cap sync ios
       - name: Build IPA
         script: |
           xcode-project build-ipa \
