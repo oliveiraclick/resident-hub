@@ -8,10 +8,17 @@ workflows:
       vars:
         XCODE_PROJECT: "ios/App/App.xcodeproj"
         XCODE_SCHEME: "App"
+        BUNDLE_ID: "app.morador.app"
     scripts:
       - npm install
       - npm run build
       - npx cap sync ios
+      - name: Fetch Signing Files
+        script: |
+          # Busca o perfil de distribuição e instala no servidor
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE \
+            --create
       - name: Build IPA
         script: |
           xcodebuild \
