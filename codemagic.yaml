@@ -13,7 +13,7 @@ workflows:
         script: |
           xcodebuild \
             -project ios/App/App.xcodeproj \
-            -scheme morador-hub \
+            -scheme App \
             -configuration Release \
             -archivePath build/App.xarchive \
             archive \
