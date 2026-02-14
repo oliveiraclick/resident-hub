@@ -16,12 +16,12 @@ workflows:
             -scheme App \
             -configuration Release \
             -archivePath build/App.xarchive \
-            archive \
             -allowProvisioningUpdates \
-            DEVELOPMENT_TEAM=SEU_TEAM_ID_AQUI \
-            -authenticationKeyID J6P4Z38793 \
-            -authenticationKeyIssuerID SEU_ISSUER_ID_AQUI \
-            -authenticationKeyPath $APP_STORE_CONNECT_AUTH_KEY_PATH
+            -authenticationKeyID "J6P4Z38793" \
+            -authenticationKeyIssuerID "COLE_SEU_ISSUER_ID_AQUI" \
+            -authenticationKeyPath $APP_STORE_CONNECT_AUTH_KEY_PATH \
+            archive \
+            DEVELOPMENT_TEAM=AR9789SH9Q
     publishing:
       app_store_connect:
         auth: integration
