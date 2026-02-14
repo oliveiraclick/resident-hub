@@ -15,6 +15,9 @@ workflows:
       - npx cap sync ios
       - name: Build IPA
         script: |
+          # Encontrando o caminho real da chave de autenticação no servidor
+          AUTH_KEY_PATH=$(find /Users/builder/Library/MobileDevice/Certificates -name "AuthKey_*.p8" | head -n 1)
+          
           xcodebuild \
             -project "$XCODE_PROJECT" \
             -scheme "$XCODE_SCHEME" \
@@ -24,7 +27,7 @@ workflows:
             -allowProvisioningUpdates \
             -authenticationKeyID "J6P4Z38793" \
             -authenticationKeyIssuerID "61436aad-2e28-4060-b6a0-23761165b8f0" \
-            -authenticationKeyPath $APP_STORE_CONNECT_AUTH_KEY_PATH \
+            -authenticationKeyPath "$AUTH_KEY_PATH" \
             DEVELOPMENT_TEAM=AR9789SH9Q
     publishing:
       app_store_connect:
