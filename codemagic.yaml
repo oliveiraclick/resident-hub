@@ -11,10 +11,10 @@ workflows:
       - npx cap sync ios
       - name: Build and Sign IPA
         script: |
-          # Este comando substitui o xcodebuild manual e resolve os problemas de chave
+          # Comando corrigido: workspace/project deve vir por último
           xcode-project build-ipa \
-            -project ios/App/App.xcodeproj \
-            -scheme App \
+            --workspace ios/App/App.xcworkspace \
+            --scheme App \
             --bundle-id "app.morador.app"
     publishing:
       app_store_connect:
