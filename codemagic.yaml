@@ -1,6 +1,6 @@
 workflows:
   ios-release:
-    name: iOS Release (Capacitor)
+    name: iOS Release
     instance_type: mac_mini_m2
     max_build_duration: 120
 
@@ -10,34 +10,16 @@ workflows:
         - app_store_credentials
 
     scripts:
-      - name: Install dependencies
-        script: npm install
+      - npm install
+      - npm run build
+      - npx cap sync ios
 
-      - name: Build web app
-        script: npm run build
-
-      - name: Sync Capacitor
-        script: npx cap sync ios
-
-      - name: Build iOS
-        script: |
-          cd ios/App
-          xcodebuild -workspace App.xcworkspace \
-          -scheme App \
-          -configuration Release \
-          -archivePath App.xcarchive \
-          archive
-
-      - name: Export IPA
-        script: |
-          cd ios/App
-          xcodebuild -exportArchive \
-          -archivePath App.xcarchive \
-          -exportOptionsPlist exportOptions.plist \
-          -exportPath build
+      - cd ios
+      - xcodebuild -project App/App.xcodeproj -scheme App -configuration Release -archivePath build/App.xcarchive archive
+      - xcodebuild -exportArchive -archivePath build/App.xcarchive -exportOptionsPlist App/exportOptions.plist -exportPath build
 
     artifacts:
-      - ios/App/build/*.ipa
+      - ios/build/*.ipa
 
     publishing:
       app_store_connect:
