@@ -9,14 +9,6 @@ workflows:
       - npm install
       - npm run build
       - npx cap sync ios
-      - name: Codemagic Code Signing
-        script: |
-          keychain initialize
-          # Removida a flag --save-keys que causou o erro
-          app-store-connect fetch-signing-files "app.morador.app" \
-            --type IOS_APP_STORE \
-            --create
-          keychain add-certificates
       - name: Archive
         script: |
           xcodebuild \
@@ -26,6 +18,9 @@ workflows:
             -archivePath build/App.xarchive \
             archive \
             -allowProvisioningUpdates \
+            -authenticationKeyID "J6P4Z38793" \
+            -authenticationKeyIssuerID "61436aad-2e28-4060-b6a0-23761165b8f0" \
+            -authenticationKeyPath $APP_STORE_CONNECT_AUTH_KEY_PATH \
             DEVELOPMENT_TEAM=AR9789SH9Q
     publishing:
       app_store_connect:
