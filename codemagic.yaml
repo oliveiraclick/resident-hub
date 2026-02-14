@@ -1,23 +1,5 @@
-workflows:
-  ios-release:
-    name: iOS Production Build
-    max_build_duration: 60
-    instance_type: mac_mini_m2
-    integrations:
-      app_store_connect: NewKey
-    scripts:
-      - name: Install dependencies
-        script: npm install
-      - name: Build Web Project
-        script: npm run build
-      - name: Capacitor Sync
-        script: npx cap sync ios
-      - name: Build IPA
-        script: |
-          xcode-project use-profiles
-          xcode-project build-ipa \
-            --project ios/App/App.xcodeproj \
-            --scheme App
-    publishing:
-      app_store_connect:
-        auth: integration
+  scripts:
+    - name: Build IPA
+      script: |
+        flutter build ipa --release \
+          --export-options-plist=ios/exportOptions.plist
