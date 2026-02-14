@@ -1,26 +1,19 @@
-workflows:
-  ios-release:
-    name: iOS Manual Build
-    integrations:
-      app_store_connect: NewKey
-    environment:
-      xcode: latest
-    scripts:
+scripts:
       - npm install
       - npm run build
       - npx cap sync ios
       - name: Codemagic Code Signing
         script: |
-          # 1. Cria o chaveiro temporário no servidor da Codemagic
+          # 1. Prepara o ambiente para a nova assinatura
           keychain initialize
           
-          # 2. Usa a NewKey para gerar o certificado e o perfil (.p12 e .mobileprovision)
-          # Isso resolve o erro de "private key" criando uma nova no ato
+          # 2. Gera o novo certificado e a chave privada (.p12) na hora
           app-store-connect fetch-signing-files "app.morador.app" \
             --type IOS_APP_STORE \
-            --create
+            --create \
+            --save-keys
             
-          # 3. Instala tudo o que foi gerado no chaveiro para o Xcode enxergar
+          # 3. Instala a nova assinatura no sistema da build
           keychain add-certificates
       - name: Archive
         script: |
