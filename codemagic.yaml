@@ -11,11 +11,9 @@ workflows:
     scripts:
       - npm install
       - npm run build
-      - npx cap add ios || true
       - npx cap sync ios
 
       - cd ios/App
-      - pod install
 
       - xcodebuild \
           -workspace App.xcworkspace \
