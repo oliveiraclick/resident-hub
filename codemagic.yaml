@@ -4,21 +4,41 @@ workflows:
     instance_type: mac_mini_m2
     max_build_duration: 120
 
+    integrations:
+      app_store_connect: Codemagic
+
     environment:
-      flutter: stable
       xcode: latest
 
     scripts:
-      - name: Get packages
-        script: flutter pub get
+      - name: Install dependencies
+        script: npm install
 
-      - name: Build IPA
-        script: flutter build ipa --release
+      - name: Build web app
+        script: npm run build
+
+      - name: Sync Capacitor
+        script: npx cap sync ios
+
+      - name: Build iOS archive
+        script: |
+          xcodebuild \
+            -workspace ios/App/App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -archivePath build/App.xcarchive \
+            archive
+
+      - name: Export IPA
+        script: |
+          xcodebuild -exportArchive \
+            -archivePath build/App.xcarchive \
+            -exportOptionsPlist ios/exportOptions.plist \
+            -exportPath build
 
     artifacts:
-      - build/ios/ipa/*.ipa
+      - build/*.ipa
 
     publishing:
       app_store_connect:
-        auth: integration
         submit_to_testflight: true
