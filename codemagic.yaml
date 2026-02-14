@@ -13,22 +13,8 @@ workflows:
       - npm install
       - npm run build
       - npx cap sync ios
-      - name: Fetch Signing Files
-        script: |
-          # Inicializa o chaveiro temporário no servidor da Codemagic
-          keychain initialize
-          
-          # Gera o certificado e o perfil de provisionamento (.p12 e .mobileprovision)
-          # A flag --create é o que gera a chave privada que estava faltando
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --type IOS_APP_STORE \
-            --create
-            
-          # Adiciona os certificados gerados ao chaveiro para o Xcode usar
-          keychain add-certificates
       - name: Build IPA
         script: |
-          # Realiza o Archive do app forçando a assinatura manual com seu Team ID
           xcodebuild \
             -project "$XCODE_PROJECT" \
             -scheme "$XCODE_SCHEME" \
@@ -36,9 +22,10 @@ workflows:
             -archivePath build/App.xarchive \
             archive \
             -allowProvisioningUpdates \
-            CODE_SIGN_STYLE=Manual \
-            DEVELOPMENT_TEAM=AR9789SH9Q \
-            CODE_SIGN_IDENTITY="Apple Distribution"
+            -authenticationKeyID "J6P4Z38793" \
+            -authenticationKeyIssuerID "61436aad-2e28-4060-b6a0-23761165b8f0" \
+            -authenticationKeyPath $APP_STORE_CONNECT_AUTH_KEY_PATH \
+            DEVELOPMENT_TEAM=AR9789SH9Q
     publishing:
       app_store_connect:
         auth: integration
