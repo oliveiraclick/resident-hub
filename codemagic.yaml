@@ -15,8 +15,8 @@ workflows:
       - npx cap sync ios
 
       - cd ios
-      - xcodebuild -project App/App.xcodeproj -scheme App -configuration Release -archivePath build/App.xcarchive archive
-      - xcodebuild -exportArchive -archivePath build/App.xcarchive -exportOptionsPlist App/exportOptions.plist -exportPath build
+      - xcodebuild -project App.xcodeproj -scheme App -configuration Release -archivePath build/App.xcarchive archive
+      - xcodebuild -exportArchive -archivePath build/App.xcarchive -exportOptionsPlist exportOptions.plist -exportPath build
 
     artifacts:
       - ios/build/*.ipa
