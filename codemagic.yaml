@@ -1,18 +1,24 @@
-scripts:
+workflows:
+  ios-release:
+    name: iOS Manual Build
+    integrations:
+      app_store_connect: NewKey
+    environment:
+      xcode: latest
+      vars:
+        XCODE_PROJECT: "ios/App/App.xcodeproj"
+        XCODE_SCHEME: "App"
+        BUNDLE_ID: "app.morador.app"
+    scripts:
       - npm install
       - npm run build
       - npx cap sync ios
       - name: Fetch Signing Files
         script: |
-          # Inicializa o chaveiro para guardar a nova chave privada
           keychain initialize
-          
-          # Gera um novo certificado e perfil, criando a chave privada no servidor
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE \
             --create
-            
-          # Registra o certificado gerado no sistema de build
           keychain add-certificates
       - name: Build IPA
         script: |
@@ -26,3 +32,6 @@ scripts:
             CODE_SIGN_STYLE=Manual \
             DEVELOPMENT_TEAM=AR9789SH9Q \
             CODE_SIGN_IDENTITY="Apple Distribution"
+    publishing:
+      app_store_connect:
+        auth: integration
