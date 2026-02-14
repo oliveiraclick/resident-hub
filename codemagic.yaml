@@ -6,32 +6,23 @@ workflows:
     environment:
       xcode: latest
       vars:
-        XCODE_PROJECT: "ios/App/App.xcodeproj"
-        XCODE_SCHEME: "App"
         BUNDLE_ID: "app.morador.app"
     scripts:
       - npm install
       - npm run build
       - npx cap sync ios
-      - name: Set up code signing
+      - name: Code Signing
         script: |
-          # 1. Inicializa o chaveiro
           keychain initialize
-          # 2. Busca os perfis da Apple usando sua NewKey
           app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
-          # 3. Força o Xcode a usar os perfis baixados (resolve o erro de No Accounts)
-          xcode-project use-profiles
+          keychain add-certificates
+          # Este comando abaixo é o que "conserta" o projeto para você
+          xcode-project use-profiles --bundle-id "$BUNDLE_ID"
       - name: Build IPA
         script: |
-          xcodebuild \
-            -project "$XCODE_PROJECT" \
-            -scheme "$XCODE_SCHEME" \
-            -configuration Release \
-            -archivePath build/App.xarchive \
-            archive \
-            CODE_SIGN_STYLE=Manual \
-            DEVELOPMENT_TEAM=AR9789SH9Q \
-            CODE_SIGN_IDENTITY="Apple Distribution"
+          xcode-project build-ipa \
+            --project ios/App/App.xcodeproj \
+            --scheme App
     publishing:
       app_store_connect:
         auth: integration
