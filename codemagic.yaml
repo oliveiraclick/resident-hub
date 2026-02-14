@@ -5,22 +5,28 @@ workflows:
       app_store_connect: NewKey
     environment:
       xcode: latest
-      vars:
-        XCODE_SCHEME: "App"
-        XCODE_PROJECT: "ios/App/App.xcodeproj"
     scripts:
       - npm install
       - npm run build
       - npx cap sync ios
-      - name: Fetch Provisioning Profiles
+      - name: Codemagic Code Signing
         script: |
-          # Este comando da Codemagic baixa os perfis automaticamente
-          app-store-connect fetch-signing-files "app.morador.app" --type IOS_APP_STORE --create
+          # 1. Cria o chaveiro temporário no servidor da Codemagic
+          keychain initialize
+          
+          # 2. Usa a NewKey para gerar o certificado e o perfil (.p12 e .mobileprovision)
+          # Isso resolve o erro de "private key" criando uma nova no ato
+          app-store-connect fetch-signing-files "app.morador.app" \
+            --type IOS_APP_STORE \
+            --create
+            
+          # 3. Instala tudo o que foi gerado no chaveiro para o Xcode enxergar
+          keychain add-certificates
       - name: Archive
         script: |
           xcodebuild \
-            -project $XCODE_PROJECT \
-            -scheme $XCODE_SCHEME \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
             -configuration Release \
             -archivePath build/App.xarchive \
             archive \
