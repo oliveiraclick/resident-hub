@@ -11,9 +11,9 @@ workflows:
       - npx cap sync ios
       - name: Build and Sign IPA
         script: |
-          # Comando corrigido: workspace/project deve vir por último
+          # Usando o projeto diretamente para evitar erro de workspace inexistente
           xcode-project build-ipa \
-            --workspace ios/App/App.xcworkspace \
+            --project ios/App/App.xcodeproj \
             --scheme App \
             --bundle-id "app.morador.app"
     publishing:
