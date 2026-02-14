@@ -12,10 +12,10 @@ workflows:
       - name: Codemagic Code Signing
         script: |
           keychain initialize
+          # Removida a flag --save-keys que causou o erro
           app-store-connect fetch-signing-files "app.morador.app" \
             --type IOS_APP_STORE \
-            --create \
-            --save-keys
+            --create
           keychain add-certificates
       - name: Archive
         script: |
