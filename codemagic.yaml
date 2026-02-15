@@ -8,7 +8,7 @@ workflows:
       xcode: latest
 
     integrations:
-      app_store_connect: NewKey
+      app_store_connect: NewKey   # use exatamente o nome da sua key
 
     scripts:
       - name: Install dependencies
@@ -19,16 +19,19 @@ workflows:
         script: |
           npm run build
 
-      - name: Sync Capacitor iOS
+      - name: Sync Capacitor
         script: |
           npx cap sync ios
+
+      - name: Set up code signing
+        script: |
+          xcode-project use-profiles
 
       - name: Archive iOS
         script: |
           cd ios/App
-          xcode-project use-profiles
           xcodebuild \
-            -workspace App.xcworkspace \
+            -project App.xcodeproj \
             -scheme App \
             -configuration Release \
             -archivePath build/App.xcarchive \
