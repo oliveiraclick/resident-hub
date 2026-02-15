@@ -33,12 +33,15 @@ workflows:
 
 
   ios-build:
-    name: iOS Build (Capacitor SPM)
+    name: iOS Build (Signed - App Store)
     max_build_duration: 60
 
     environment:
       node: 22
       xcode: latest
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: app.morador.app
 
     scripts:
       - name: Install dependencies
@@ -53,16 +56,13 @@ workflows:
         script: |
           npx cap sync ios
 
-      - name: Build iOS Archive
+      - name: Archive iOS
         script: |
           cd ios/App
           xcodebuild \
             -scheme App \
             -configuration Release \
-            -sdk iphoneos \
             -archivePath build/App.xcarchive \
-            DEVELOPMENT_TEAM=AR9789SH9Q \
-            -allowProvisioningUpdates \
             archive
 
     artifacts:
