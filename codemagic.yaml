@@ -27,10 +27,16 @@ workflows:
           chmod +x gradlew
           ./gradlew bundleRelease
 
+      - name: Install CocoaPods
+        script: |
+          cd ios/App
+          pod install
+
       - name: Build iOS Archive
         script: |
-          cd ios
-          xcodebuild -workspace App.xcworkspace \
+          cd ios/App
+          xcodebuild \
+          -workspace App.xcworkspace \
           -scheme App \
           -configuration Release \
           -sdk iphoneos \
@@ -39,4 +45,4 @@ workflows:
 
     artifacts:
       - android/app/build/outputs/**/*.aab
-      - ios/build/**/*.xcarchive
+      - ios/App/build/**/*.xcarchive
