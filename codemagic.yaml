@@ -6,8 +6,6 @@ workflows:
     environment:
       node: 18
       xcode: latest
-      groups:
-        - keystore_credentials # só se já tiver configurado no Codemagic
 
     scripts:
       - name: Install dependencies
@@ -22,22 +20,22 @@ workflows:
         script: |
           npx cap sync
 
-      # ANDROID BUILD
-      - name: Build Android
+      - name: Build Android AAB
         script: |
           cd android
+          chmod +x gradlew
           ./gradlew bundleRelease
 
-      # iOS BUILD
-      - name: Build iOS
+      - name: Build iOS Archive
         script: |
           cd ios
           xcodebuild -workspace App.xcworkspace \
           -scheme App \
           -configuration Release \
           -sdk iphoneos \
-          -archivePath build/App.xcarchive archive
+          -archivePath build/App.xcarchive \
+          archive
 
     artifacts:
       - android/app/build/outputs/**/*.aab
-      - ios/build/**/*.ipa
+      - ios/build/**/*.xcarchive
