@@ -1,11 +1,14 @@
 workflows:
   ios-workflow:
-    name: iOS Build
+    name: iOS App Store Build
     max_build_duration: 60
 
     environment:
       node: 22
       xcode: latest
+
+    integrations:
+      app_store_connect: NewKey
 
     scripts:
       - name: Install dependencies
@@ -16,22 +19,19 @@ workflows:
         script: |
           npm run build
 
-      - name: Sync Capacitor
+      - name: Sync Capacitor iOS
         script: |
           npx cap sync ios
 
       - name: Archive iOS
         script: |
           cd ios/App
+          xcode-project use-profiles
           xcodebuild \
+            -workspace App.xcworkspace \
             -scheme App \
             -configuration Release \
-            -sdk iphoneos \
             -archivePath build/App.xcarchive \
-            -allowProvisioningUpdates \
-            DEVELOPMENT_TEAM=AR9789SH9Q \
-            PRODUCT_BUNDLE_IDENTIFIER=app.morador.app \
-            CODE_SIGN_STYLE=Automatic \
             archive
 
     artifacts:
