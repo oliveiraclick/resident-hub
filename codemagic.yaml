@@ -17,23 +17,20 @@ workflows:
       - name: Build web app
         script: |
           npm run build
-      - name: Sync Capacitor
+      - name: Sync Capacitor iOS
         script: |
           npx cap sync ios
       - name: Set up code signing
         script: |
           xcode-project use-profiles
-      - name: Archive iOS
+      - name: Build iOS IPA
         script: |
-          cd ios/App
-          xcodebuild \
-            -project App.xcodeproj \
-            -scheme App \
-            -configuration Release \
-            -archivePath build/App.xcarchive \
-            -allowProvisioningUpdates \
-            archive \
-            CODE_SIGN_STYLE=Manual \
-            DEVELOPMENT_TEAM=AR9789SH9Q
+          xcode-project build-ipa \
+            --workspace ios/App/App.xcworkspace \
+            --scheme App
     artifacts:
-      - ios/App/build/**/*.xcarchive
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
