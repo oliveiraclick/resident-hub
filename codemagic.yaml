@@ -24,14 +24,15 @@ workflows:
         script: |
           cd ios/App
           xcodebuild \
-          -scheme App \
-          -configuration Release \
-          -sdk iphoneos \
-          -archivePath build/App.xcarchive \
-          DEVELOPMENT_TEAM=AR9789SH9Q \
-          CODE_SIGN_STYLE=Automatic \
-          -allowProvisioningUpdates \
-          archive
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath build/App.xcarchive \
+            -allowProvisioningUpdates \
+            DEVELOPMENT_TEAM=AR9789SH9Q \
+            PRODUCT_BUNDLE_IDENTIFIER=app.morador.app \
+            CODE_SIGN_STYLE=Automatic \
+            archive
 
     artifacts:
       - ios/App/build/**/*.xcarchive
