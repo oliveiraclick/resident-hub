@@ -8,7 +8,7 @@ workflows:
       xcode: latest
 
     integrations:
-      app_store_connect: NewKey   # use exatamente o nome da sua key
+      app_store_connect: NewKey
 
     scripts:
       - name: Install dependencies
@@ -22,6 +22,10 @@ workflows:
       - name: Sync Capacitor
         script: |
           npx cap sync ios
+
+      - name: Inject development team
+        script: |
+          sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Automatic;\n\t\t\t\tDEVELOPMENT_TEAM = AR9789SH9Q;/' ios/App/App.xcodeproj/project.pbxproj
 
       - name: Set up code signing
         script: |
