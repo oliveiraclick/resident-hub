@@ -1,0 +1,10 @@
+workflows:
+  flutter-workflow:
+    name: Flutter Build
+    environment:
+      flutter: stable
+    scripts:
+      - flutter pub get
+      - flutter build apk
+    artifacts:
+      - build/**/outputs/**/*.apk
