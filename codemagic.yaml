@@ -2,35 +2,27 @@ workflows:
   ios-workflow:
     name: iOS App Store Build
     max_build_duration: 60
-
     environment:
       node: 22
       xcode: latest
-
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: app.morador.app
     integrations:
       app_store_connect: NewKey
-
     scripts:
       - name: Install dependencies
         script: |
           npm install
-
       - name: Build web app
         script: |
           npm run build
-
       - name: Sync Capacitor
         script: |
           npx cap sync ios
-
-      - name: Inject development team
-        script: |
-          sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Automatic;\n\t\t\t\tDEVELOPMENT_TEAM = AR9789SH9Q;/' ios/App/App.xcodeproj/project.pbxproj
-
       - name: Set up code signing
         script: |
           xcode-project use-profiles
-
       - name: Archive iOS
         script: |
           cd ios/App
@@ -39,7 +31,9 @@ workflows:
             -scheme App \
             -configuration Release \
             -archivePath build/App.xcarchive \
-            archive
-
+            -allowProvisioningUpdates \
+            archive \
+            CODE_SIGN_STYLE=Manual \
+            DEVELOPMENT_TEAM=AR9789SH9Q
     artifacts:
       - ios/App/build/**/*.xcarchive
