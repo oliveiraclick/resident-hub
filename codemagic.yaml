@@ -1,47 +1,11 @@
 workflows:
-
-  android-build:
-    name: Android Build (Capacitor)
-    max_build_duration: 60
-
-    environment:
-      node: 22
-      java: 21
-
-    scripts:
-      - name: Install dependencies
-        script: |
-          npm install
-
-      - name: Build web app
-        script: |
-          npm run build
-
-      - name: Sync Capacitor Android
-        script: |
-          npx cap sync android
-
-      - name: Build Android AAB
-        script: |
-          cd android
-          chmod +x gradlew
-          ./gradlew bundleRelease
-
-    artifacts:
-      - android/app/build/outputs/**/*.aab
-
-
-
-  ios-build:
-    name: iOS Build (Signed - App Store)
+  ios-workflow:
+    name: iOS Build
     max_build_duration: 60
 
     environment:
       node: 22
       xcode: latest
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: app.morador.app
 
     scripts:
       - name: Install dependencies
@@ -52,7 +16,7 @@ workflows:
         script: |
           npm run build
 
-      - name: Sync Capacitor iOS
+      - name: Sync Capacitor
         script: |
           npx cap sync ios
 
@@ -60,10 +24,14 @@ workflows:
         script: |
           cd ios/App
           xcodebuild \
-            -scheme App \
-            -configuration Release \
-            -archivePath build/App.xcarchive \
-            archive
+          -scheme App \
+          -configuration Release \
+          -sdk iphoneos \
+          -archivePath build/App.xcarchive \
+          DEVELOPMENT_TEAM=AR9789SH9Q \
+          CODE_SIGN_STYLE=Automatic \
+          -allowProvisioningUpdates \
+          archive
 
     artifacts:
       - ios/App/build/**/*.xcarchive
