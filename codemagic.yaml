@@ -1,6 +1,6 @@
 workflows:
 
-  android-workflow:
+  android-build:
     name: Android Build (Capacitor)
     max_build_duration: 60
 
@@ -31,15 +31,15 @@ workflows:
       - android/app/build/outputs/**/*.aab
 
 
-  ios-workflow:
+
+  ios-build:
     name: iOS Build (Capacitor SPM)
     max_build_duration: 60
 
     environment:
-      groups:
-        - app_store_credentials
       node: 22
       xcode: latest
+      java: 21
 
     scripts:
       - name: Install dependencies
@@ -62,8 +62,6 @@ workflows:
             -configuration Release \
             -sdk iphoneos \
             -archivePath build/App.xcarchive \
-            DEVELOPMENT_TEAM=$CM_DEVELOPER_TEAM \
-            PRODUCT_BUNDLE_IDENTIFIER=$BUNDLE_ID \
             -allowProvisioningUpdates \
             archive
 
