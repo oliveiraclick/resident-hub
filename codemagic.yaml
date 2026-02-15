@@ -39,7 +39,6 @@ workflows:
     environment:
       node: 22
       xcode: latest
-      java: 21
 
     scripts:
       - name: Install dependencies
@@ -62,6 +61,7 @@ workflows:
             -configuration Release \
             -sdk iphoneos \
             -archivePath build/App.xcarchive \
+            DEVELOPMENT_TEAM=AR9789SH9Q \
             -allowProvisioningUpdates \
             archive
 
