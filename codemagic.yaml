@@ -8,6 +8,10 @@ workflows:
       xcode: latest
       java: 21
 
+    ios_signing:
+      distribution_type: app_store
+      bundle_identifier: app.morador.app
+
     scripts:
       - name: Install dependencies
         script: |
@@ -19,7 +23,8 @@ workflows:
 
       - name: Sync Capacitor
         script: |
-          npx cap sync
+          npx cap sync ios
+          npx cap sync android
 
       - name: Build Android AAB
         script: |
@@ -27,16 +32,13 @@ workflows:
           chmod +x gradlew
           ./gradlew bundleRelease
 
-      - name: Build iOS Archive (SPM)
+      - name: Build iOS Archive
         script: |
-          cd ios/App
-          xcodebuild \
-          -scheme App \
-          -configuration Release \
-          -sdk iphoneos \
-          -archivePath build/App.xcarchive \
-          archive
+          xcode-project build-ipa \
+            --project ios/App/App.xcodeproj \
+            --scheme App \
+            --archive-xcargs "CODE_SIGN_STYLE=Automatic"
 
     artifacts:
       - android/app/build/outputs/**/*.aab
-      - ios/App/build/**/*.xcarchive
+      - build/ios/ipa/*.ipa
