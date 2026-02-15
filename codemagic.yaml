@@ -19,7 +19,8 @@ workflows:
 
       - name: Sync Capacitor
         script: |
-          npx cap sync
+          npx cap sync ios
+          npx cap sync android
 
       - name: Build Android AAB
         script: |
@@ -29,14 +30,14 @@ workflows:
 
       - name: Install CocoaPods
         script: |
-          cd ios/App
+          cd ios
           pod install
 
       - name: Build iOS Archive
         script: |
-          cd ios/App
+          cd ios
           xcodebuild \
-          -workspace App.xcworkspace \
+          -workspace App/App.xcworkspace \
           -scheme App \
           -configuration Release \
           -sdk iphoneos \
@@ -45,4 +46,4 @@ workflows:
 
     artifacts:
       - android/app/build/outputs/**/*.aab
-      - ios/App/build/**/*.xcarchive
+      - ios/build/**/*.xcarchive
