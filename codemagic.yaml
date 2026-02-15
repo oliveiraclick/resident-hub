@@ -1,10 +1,43 @@
 workflows:
-  flutter-workflow:
-    name: Flutter Build
+  capacitor-workflow:
+    name: Android + iOS Build
+    max_build_duration: 60
+
     environment:
-      flutter: stable
+      node: 18
+      xcode: latest
+      groups:
+        - keystore_credentials # só se já tiver configurado no Codemagic
+
     scripts:
-      - flutter pub get
-      - flutter build apk
+      - name: Install dependencies
+        script: |
+          npm install
+
+      - name: Build web app
+        script: |
+          npm run build
+
+      - name: Sync Capacitor
+        script: |
+          npx cap sync
+
+      # ANDROID BUILD
+      - name: Build Android
+        script: |
+          cd android
+          ./gradlew bundleRelease
+
+      # iOS BUILD
+      - name: Build iOS
+        script: |
+          cd ios
+          xcodebuild -workspace App.xcworkspace \
+          -scheme App \
+          -configuration Release \
+          -sdk iphoneos \
+          -archivePath build/App.xcarchive archive
+
     artifacts:
-      - build/**/outputs/**/*.apk
+      - android/app/build/outputs/**/*.aab
+      - ios/build/**/*.ipa
