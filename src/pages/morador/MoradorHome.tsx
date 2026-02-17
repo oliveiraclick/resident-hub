@@ -93,7 +93,7 @@ const MoradorHome = () => {
   const [avisos, setAvisos] = useState<any[]>([]);
   const [prestadoresVisiveis, setPrestadoresVisiveis] = useState<any[]>([]);
   const [bannerIdx, setBannerIdx] = useState(0);
-  const [showAllServices, setShowAllServices] = useState(false);
+  
   const shopRef = useRef<HTMLDivElement>(null);
   const desapegoRef = useRef<HTMLDivElement>(null);
 
@@ -186,55 +186,27 @@ const MoradorHome = () => {
         <div>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-[16px] font-semibold text-foreground">Serviços</h2>
-            <button onClick={() => setShowAllServices((v) => !v)} className="text-[11px] font-semibold text-primary uppercase tracking-wide">
-              {showAllServices ? "Ver menos" : "Ver tudo"}
+            <button onClick={() => navigate("/morador/servicos")} className="text-[11px] font-semibold text-primary uppercase tracking-wide">
+              Ver tudo
             </button>
           </div>
 
-          {!showAllServices ? (
-            <div className="grid grid-cols-4 gap-3">
-              {allServiceItems.slice(0, 4).map((item) => (
-                <button
-                  key={item.label}
-                  onClick={() => navigate(item.path)}
-                  className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform"
-                >
-                  <div className="h-14 w-14 rounded-2xl bg-card shadow-sm flex items-center justify-center">
-                    <item.icon size={22} className="text-primary" />
-                  </div>
-                  <span className="text-[11px] font-medium text-foreground leading-tight text-center">
-                    {item.label}
-                  </span>
-                </button>
-              ))}
-            </div>
-          ) : (
-            <div className="flex flex-col gap-4">
-              {serviceCategories.map((cat) => (
-                <div key={cat.group}>
-                  <p className="text-[12px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-                    {cat.group}
-                  </p>
-                  <div className="grid grid-cols-4 gap-3">
-                    {cat.items.map((item) => (
-                      <button
-                        key={item.label}
-                        onClick={() => navigate(item.path)}
-                        className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform"
-                      >
-                        <div className="h-14 w-14 rounded-2xl bg-card shadow-sm flex items-center justify-center">
-                          <item.icon size={22} className="text-primary" />
-                        </div>
-                        <span className="text-[11px] font-medium text-foreground leading-tight text-center">
-                          {item.label}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
+          <div className="grid grid-cols-4 gap-3">
+            {allServiceItems.slice(0, 4).map((item) => (
+              <button
+                key={item.label}
+                onClick={() => navigate(item.path)}
+                className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform"
+              >
+                <div className="h-14 w-14 rounded-2xl bg-card shadow-sm flex items-center justify-center">
+                  <item.icon size={22} className="text-primary" />
                 </div>
-              ))}
-            </div>
-          )}
+                <span className="text-[11px] font-medium text-foreground leading-tight text-center">
+                  {item.label}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Prestadores no condomínio */}
