@@ -18,6 +18,7 @@ import RecuperarSenha from "./pages/auth/RecuperarSenha";
 import ResetarSenha from "./pages/auth/ResetarSenha";
 import CadastroMorador from "./pages/CadastroMorador";
 import CadastroPrestador from "./pages/CadastroPrestador";
+import PreviewHome from "./pages/PreviewHome";
 
 const queryClient = new QueryClient();
 
@@ -76,6 +77,7 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route path="/preview-home" element={<PreviewHome />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
