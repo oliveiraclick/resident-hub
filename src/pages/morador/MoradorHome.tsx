@@ -40,6 +40,7 @@ const MoradorHome = () => {
   const [avisos, setAvisos] = useState<any[]>([]);
   const [prestadoresVisiveis, setPrestadoresVisiveis] = useState<any[]>([]);
   const [bannerIdx, setBannerIdx] = useState(0);
+  const [showAllServices, setShowAllServices] = useState(false);
   const shopRef = useRef<HTMLDivElement>(null);
   const desapegoRef = useRef<HTMLDivElement>(null);
 
@@ -132,13 +133,13 @@ const MoradorHome = () => {
         <div>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-[16px] font-semibold text-foreground">Serviços</h2>
-            <button onClick={() => navigate("/morador/servicos")} className="text-[11px] font-semibold text-primary uppercase tracking-wide">
-              Ver tudo
+            <button onClick={() => setShowAllServices((v) => !v)} className="text-[11px] font-semibold text-primary uppercase tracking-wide">
+              {showAllServices ? "Ver menos" : "Ver tudo"}
             </button>
           </div>
 
           <div className="grid grid-cols-4 gap-3">
-            {serviceShortcuts.slice(0, 4).map((item) => (
+            {(showAllServices ? serviceShortcuts : serviceShortcuts.slice(0, 4)).map((item) => (
               <button
                 key={item.label}
                 onClick={() => navigate(item.path)}
