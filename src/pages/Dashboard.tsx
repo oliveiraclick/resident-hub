@@ -19,6 +19,7 @@ const Dashboard = () => {
   if (firstRole === "admin") return <Navigate to="/admin" replace />;
   if (firstRole === "prestador") return <Navigate to="/prestador" replace />;
   if (firstRole === "morador") return <Navigate to="/morador" replace />;
+  if ((firstRole as string) === "porteiro") return <Navigate to="/porteiro" replace />;
 
   // Sem role atribuída ainda
   return (
