@@ -21,6 +21,7 @@ import CadastroPrestador from "./pages/CadastroPrestador";
 import PreviewHome from "./pages/PreviewHome";
 import PreviewHome2 from "./pages/PreviewHome2";
 import PreviewHome3 from "./pages/PreviewHome3";
+import PreviewHome4 from "./pages/PreviewHome4";
 
 const queryClient = new QueryClient();
 
@@ -82,6 +83,7 @@ const App = () => (
             <Route path="/preview-home" element={<PreviewHome />} />
             <Route path="/preview-home2" element={<PreviewHome2 />} />
             <Route path="/preview-home3" element={<PreviewHome3 />} />
+            <Route path="/preview-home4" element={<PreviewHome4 />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
