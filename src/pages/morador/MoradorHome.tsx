@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
-import { Package, Wrench, Zap, Droplets, TreePine, SprayCan, Paintbrush, Hammer, ShoppingBag, ChevronLeft, ChevronRight, Repeat, Info, MapPin } from "lucide-react";
+import { Package, Wrench, Zap, Droplets, TreePine, SprayCan, Paintbrush, Hammer, ShoppingBag, ChevronLeft, ChevronRight, Repeat, Info, MapPin, Home, Smartphone, UtensilsCrossed, Scissors, Car, Truck, PawPrint, Sofa, AirVent, Bug, Wifi, Shirt, Dumbbell, Sparkles } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -19,16 +19,69 @@ const fallbackShopImages = [productBolo, productSabonete, productBrigadeiro, pro
 const fallbackDesapegoImages = [desapegoBike, desapegoSofa, desapegoLivros, desapegoCarrinho];
 
 
-const serviceShortcuts = [
-  { label: "Jardinagem", icon: TreePine, path: "/morador/servicos?q=Jardinagem" },
-  { label: "Faxina", icon: SprayCan, path: "/morador/servicos?q=Faxina" },
-  { label: "Eletricista", icon: Zap, path: "/morador/servicos?q=Eletricista" },
-  { label: "Encanador", icon: Droplets, path: "/morador/servicos?q=Encanador" },
-  { label: "Pintura", icon: Paintbrush, path: "/morador/servicos?q=Pintura" },
-  { label: "Reparos", icon: Hammer, path: "/morador/servicos?q=Reparos" },
-  { label: "Limpeza", icon: Wrench, path: "/morador/servicos?q=Limpeza" },
-  { label: "Outros", icon: Wrench, path: "/morador/servicos" },
+const serviceCategories = [
+  {
+    group: "Para sua Casa",
+    items: [
+      { label: "Eletricista", icon: Zap, path: "/morador/servicos?q=Eletricista" },
+      { label: "Encanador", icon: Droplets, path: "/morador/servicos?q=Encanador" },
+      { label: "Pintura", icon: Paintbrush, path: "/morador/servicos?q=Pintura" },
+      { label: "Reparos", icon: Hammer, path: "/morador/servicos?q=Reparos" },
+      { label: "Jardinagem", icon: TreePine, path: "/morador/servicos?q=Jardinagem" },
+      { label: "Faxina", icon: SprayCan, path: "/morador/servicos?q=Faxina" },
+      { label: "Limpeza", icon: Sparkles, path: "/morador/servicos?q=Limpeza" },
+      { label: "Móveis", icon: Sofa, path: "/morador/servicos?q=Móveis" },
+      { label: "Ar Cond.", icon: AirVent, path: "/morador/servicos?q=Ar Condicionado" },
+      { label: "Dedetização", icon: Bug, path: "/morador/servicos?q=Dedetização" },
+    ],
+  },
+  {
+    group: "Tecnologia",
+    items: [
+      { label: "Internet", icon: Wifi, path: "/morador/servicos?q=Internet" },
+      { label: "Eletrônicos", icon: Smartphone, path: "/morador/servicos?q=Eletrônicos" },
+    ],
+  },
+  {
+    group: "Alimentação",
+    items: [
+      { label: "Confeitaria", icon: UtensilsCrossed, path: "/morador/servicos?q=Confeitaria" },
+      { label: "Marmitas", icon: UtensilsCrossed, path: "/morador/servicos?q=Marmitas" },
+    ],
+  },
+  {
+    group: "Pra Você",
+    items: [
+      { label: "Costura", icon: Scissors, path: "/morador/servicos?q=Costura" },
+      { label: "Lavanderia", icon: Shirt, path: "/morador/servicos?q=Lavanderia" },
+      { label: "Personal", icon: Dumbbell, path: "/morador/servicos?q=Personal" },
+    ],
+  },
+  {
+    group: "Para seu Veículo",
+    items: [
+      { label: "Mecânico", icon: Car, path: "/morador/servicos?q=Mecânico" },
+      { label: "Lavagem", icon: Car, path: "/morador/servicos?q=Lavagem" },
+    ],
+  },
+  {
+    group: "Mudança",
+    items: [
+      { label: "Mudança", icon: Truck, path: "/morador/servicos?q=Mudança" },
+      { label: "Carreto", icon: Truck, path: "/morador/servicos?q=Carreto" },
+    ],
+  },
+  {
+    group: "Para seu Pet",
+    items: [
+      { label: "Pet Shop", icon: PawPrint, path: "/morador/servicos?q=Pet Shop" },
+      { label: "Dog Walker", icon: PawPrint, path: "/morador/servicos?q=Dog Walker" },
+    ],
+  },
 ];
+
+// Flat list for initial preview (first 4)
+const allServiceItems = serviceCategories.flatMap((c) => c.items);
 
 const MoradorHome = () => {
   const navigate = useNavigate();
@@ -129,7 +182,7 @@ const MoradorHome = () => {
   return (
     <MoradorLayout title="Início" showSearch>
       <div className="flex flex-col gap-6">
-        {/* Serviços - 4 por linha */}
+        {/* Serviços */}
         <div>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-[16px] font-semibold text-foreground">Serviços</h2>
@@ -138,22 +191,50 @@ const MoradorHome = () => {
             </button>
           </div>
 
-          <div className="grid grid-cols-4 gap-3">
-            {(showAllServices ? serviceShortcuts : serviceShortcuts.slice(0, 4)).map((item) => (
-              <button
-                key={item.label}
-                onClick={() => navigate(item.path)}
-                className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform"
-              >
-                <div className="h-14 w-14 rounded-2xl bg-card shadow-sm flex items-center justify-center">
-                  <item.icon size={22} className="text-primary" />
+          {!showAllServices ? (
+            <div className="grid grid-cols-4 gap-3">
+              {allServiceItems.slice(0, 4).map((item) => (
+                <button
+                  key={item.label}
+                  onClick={() => navigate(item.path)}
+                  className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform"
+                >
+                  <div className="h-14 w-14 rounded-2xl bg-card shadow-sm flex items-center justify-center">
+                    <item.icon size={22} className="text-primary" />
+                  </div>
+                  <span className="text-[11px] font-medium text-foreground leading-tight text-center">
+                    {item.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {serviceCategories.map((cat) => (
+                <div key={cat.group}>
+                  <p className="text-[12px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                    {cat.group}
+                  </p>
+                  <div className="grid grid-cols-4 gap-3">
+                    {cat.items.map((item) => (
+                      <button
+                        key={item.label}
+                        onClick={() => navigate(item.path)}
+                        className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform"
+                      >
+                        <div className="h-14 w-14 rounded-2xl bg-card shadow-sm flex items-center justify-center">
+                          <item.icon size={22} className="text-primary" />
+                        </div>
+                        <span className="text-[11px] font-medium text-foreground leading-tight text-center">
+                          {item.label}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <span className="text-[11px] font-medium text-foreground leading-tight text-center">
-                  {item.label}
-                </span>
-              </button>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Prestadores no condomínio */}
