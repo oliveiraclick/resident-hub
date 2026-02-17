@@ -1,0 +1,39 @@
+import { useNavigate } from "react-router-dom";
+import MoradorLayout from "@/components/MoradorLayout";
+import { serviceCategories } from "@/data/serviceCategories";
+
+const MoradorServicosCategorias = () => {
+  const navigate = useNavigate();
+
+  return (
+    <MoradorLayout title="Serviços" showBack>
+      <div className="flex flex-col gap-5">
+        {serviceCategories.map((cat) => (
+          <div key={cat.group}>
+            <p className="text-[12px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+              {cat.group}
+            </p>
+            <div className="grid grid-cols-4 gap-3">
+              {cat.items.map((item) => (
+                <button
+                  key={item.label}
+                  onClick={() => navigate(item.path)}
+                  className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform"
+                >
+                  <div className="h-14 w-14 rounded-2xl bg-card shadow-sm flex items-center justify-center">
+                    <item.icon size={22} className="text-primary" />
+                  </div>
+                  <span className="text-[11px] font-medium text-foreground leading-tight text-center">
+                    {item.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </MoradorLayout>
+  );
+};
+
+export default MoradorServicosCategorias;
