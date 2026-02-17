@@ -4,7 +4,8 @@ import { useSearchParams } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { Wrench, Search, MessageCircle, Star, ArrowLeft, User, Flower2, PaintBucket, SprayCan, Zap, Droplets, Hammer, Scissors, Truck, UtensilsCrossed, ShieldCheck, LucideIcon, TreePine, Paintbrush, Sofa, AirVent, Bug, Wifi, Smartphone, Shirt, Dumbbell, Sparkles, Car, PawPrint } from "lucide-react";
+import { Wrench, Search, MessageCircle, ArrowLeft, User } from "lucide-react";
+import { getIcon } from "@/lib/iconMap";
 import { Button } from "@/components/ui/button";
 
 import coverJardinagem from "@/assets/cover-jardinagem.jpg";
@@ -25,37 +26,11 @@ const coverImages: Record<string, string> = {
   Limpeza: coverLimpeza,
 };
 
-const categoryIcons: Record<string, LucideIcon> = {
-  Jardinagem: TreePine,
-  Faxina: SprayCan,
-  Eletricista: Zap,
-  Encanador: Droplets,
-  Pintura: Paintbrush,
-  Reparos: Hammer,
-  Limpeza: Sparkles,
-  Confeitaria: UtensilsCrossed,
-  Marmitas: UtensilsCrossed,
-  Costura: Scissors,
-  Lavanderia: Shirt,
-  Personal: Dumbbell,
-  Mudança: Truck,
-  Carreto: Truck,
-  Segurança: ShieldCheck,
-  "Ar Condicionado": AirVent,
-  Dedetização: Bug,
-  Internet: Wifi,
-  Eletrônicos: Smartphone,
-  Mecânico: Car,
-  Lavagem: Car,
-  Móveis: Sofa,
-  "Pet Shop": PawPrint,
-  "Dog Walker": PawPrint,
-};
+interface CategoriaIconMap {
+  [nome: string]: string; // icon name string
+}
 
 
-const getCategoryIcon = (nome: string): LucideIcon => {
-  return categoryIcons[nome] || Wrench;
-};
 
 interface Categoria {
   nome: string;
@@ -85,6 +60,7 @@ const MoradorServicos = () => {
   const queryFromUrl = searchParams.get("q") || "";
 
   const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const [iconMap, setIconMap] = useState<CategoriaIconMap>({});
   const [allPrestadores, setAllPrestadores] = useState<any[]>([]);
   const [selectedCategoria, setSelectedCategoria] = useState<string | null>(null);
   const [prestadoresCompletos, setPrestadoresCompletos] = useState<PrestadorCompleto[]>([]);
@@ -98,6 +74,18 @@ const MoradorServicos = () => {
 
     const fetchPrestadores = async () => {
       setLoading(true);
+
+      // Fetch icon map from categorias_servico
+      const { data: catData } = await supabase
+        .from("categorias_servico")
+        .select("nome, icone")
+        .eq("ativo", true);
+      if (catData) {
+        const map: CategoriaIconMap = {};
+        (catData as { nome: string; icone: string }[]).forEach((c) => { map[c.nome] = c.icone; });
+        setIconMap(map);
+      }
+
       const { data } = await supabase
         .from("prestadores")
         .select("id, especialidade, descricao, user_id")
@@ -355,7 +343,7 @@ const MoradorServicos = () => {
           </div>
         ) : (
           filteredCategorias.map((cat) => {
-            const Icon = getCategoryIcon(cat.nome);
+            const Icon = getIcon(iconMap[cat.nome] || "Wrench");
             return (
               <Card
                 key={cat.nome}
