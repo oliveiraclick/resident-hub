@@ -1,10 +1,14 @@
 import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import QrDisplay from "@/components/QrDisplay";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { UserPlus } from "lucide-react";
 
 const MoradorQrId = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   if (!user) return null;
 
@@ -32,6 +36,15 @@ const MoradorQrId = () => {
             </div>
           </CardContent>
         </Card>
+
+        <Button
+          variant="outline"
+          className="w-full gap-2"
+          onClick={() => navigate("/morador/convites")}
+        >
+          <UserPlus size={18} />
+          Convidar visitante
+        </Button>
 
         <p className="text-label text-muted-foreground text-center px-4">
           Este QR code é sua identificação pessoal. Use na portaria para retirar encomendas.
