@@ -132,7 +132,7 @@ const MoradorHome = () => {
         <div>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-[16px] font-semibold text-foreground">Serviços</h2>
-            <button className="text-[11px] font-semibold text-primary uppercase tracking-wide">
+            <button onClick={() => navigate("/morador/servicos")} className="text-[11px] font-semibold text-primary uppercase tracking-wide">
               Ver tudo
             </button>
           </div>
