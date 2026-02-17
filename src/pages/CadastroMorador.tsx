@@ -97,14 +97,28 @@ const CadastroMorador = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <div className="flex flex-col items-center pt-12 pb-6 px-6">
-        <Link to="/auth" className="self-start mb-6 flex items-center gap-1 text-muted-foreground">
-          <ArrowLeft size={18} />
-          <span className="text-sm">Voltar</span>
-        </Link>
-        <img src={logoMorador} alt="Morador.app" className="h-20 w-20 object-contain" />
-        <h1 className="mt-4 text-foreground">Cadastro Morador</h1>
-        <p className="mt-1 text-muted-foreground">Crie sua conta de morador</p>
+      {/* Header with gradient */}
+      <div className="relative overflow-hidden">
+        <div
+          className="relative flex flex-col items-center pt-10 pb-14 px-6"
+          style={{
+            background: "linear-gradient(145deg, hsl(var(--header-bg)) 0%, hsl(var(--header-mid)) 40%, hsl(var(--primary)) 100%)",
+          }}
+        >
+          <div className="absolute top-5 -right-8 w-44 h-44 rounded-full opacity-10" style={{ background: "hsl(var(--primary-light))", filter: "blur(40px)" }} />
+          <div className="absolute bottom-10 -left-10 w-28 h-28 rounded-full opacity-10" style={{ background: "hsl(var(--primary))", filter: "blur(30px)" }} />
+
+          <Link to="/auth" className="self-start mb-4 flex items-center gap-1 text-white/70 relative z-10">
+            <ArrowLeft size={18} />
+            <span className="text-sm">Voltar</span>
+          </Link>
+          <img src={logoMorador} alt="Morador.app" className="h-16 w-16 object-contain relative z-10" />
+          <h1 className="mt-3 text-white text-[20px] font-bold relative z-10">Cadastro Morador</h1>
+          <p className="mt-1 text-white/60 text-[13px] relative z-10">Crie sua conta de morador</p>
+        </div>
+        <svg viewBox="0 0 430 40" preserveAspectRatio="none" className="absolute -bottom-[1px] left-0 w-full h-[35px] block">
+          <path d="M0,20 Q107,45 215,20 Q323,-5 430,20 L430,40 L0,40 Z" fill="hsl(var(--background))" />
+        </svg>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-6 max-w-md mx-auto w-full pb-8">
