@@ -116,7 +116,7 @@ const Auth = () => {
           <p className="mt-1 text-subtitle text-white/60 relative z-[1]">Clicou, Achou!</p>
         </div>
         {/* Wave cutout */}
-        <svg viewBox="0 0 430 40" className="absolute bottom-0 left-0 w-full block">
+        <svg viewBox="0 0 430 40" preserveAspectRatio="none" className="absolute -bottom-[1px] left-0 w-full h-[35px] block">
           <path d="M0,20 Q107,45 215,20 Q323,-5 430,20 L430,40 L0,40 Z" fill="hsl(var(--background))" />
         </svg>
       </div>
