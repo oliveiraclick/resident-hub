@@ -99,15 +99,31 @@ const Auth = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      {/* Header */}
-      <div className="flex flex-col items-center pt-16 pb-8 px-6">
-        <img src={logoMorador} alt="Morador.app" className="h-20 w-20 object-contain" />
-        <h1 className="mt-4 text-title-lg text-foreground">Morador.app</h1>
-        <p className="mt-1 text-subtitle text-muted-foreground">Clicou, Achou!</p>
-        <p className="mt-4 text-sm text-muted-foreground">
-          {isLogin ? "Acesse sua conta" : "Crie sua conta"}
-        </p>
+      {/* Header with gradient */}
+      <div className="relative overflow-hidden">
+        <div
+          className="flex flex-col items-center pt-16 pb-16 px-6"
+          style={{
+            background: "linear-gradient(145deg, hsl(var(--header-bg)) 0%, hsl(var(--header-mid)) 40%, hsl(var(--primary)) 100%)",
+          }}
+        >
+          {/* Decorative blobs */}
+          <div className="absolute top-5 -right-8 w-44 h-44 rounded-full" style={{ background: "hsla(var(--primary), 0.15)", filter: "blur(40px)" }} />
+          <div className="absolute bottom-10 -left-10 w-28 h-28 rounded-full" style={{ background: "hsla(var(--primary), 0.1)", filter: "blur(30px)" }} />
+
+          <img src={logoMorador} alt="Morador.app" className="h-20 w-20 object-contain relative z-[1]" />
+          <h1 className="mt-4 text-title-lg text-white relative z-[1]">Morador.app</h1>
+          <p className="mt-1 text-subtitle text-white/60 relative z-[1]">Clicou, Achou!</p>
+        </div>
+        {/* Wave cutout */}
+        <svg viewBox="0 0 430 40" className="absolute bottom-0 left-0 w-full block">
+          <path d="M0,20 Q107,45 215,20 Q323,-5 430,20 L430,40 L0,40 Z" fill="hsl(var(--background))" />
+        </svg>
       </div>
+
+      <p className="text-sm text-muted-foreground text-center mt-4 mb-2">
+        {isLogin ? "Acesse sua conta" : "Crie sua conta"}
+      </p>
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-6 max-w-md mx-auto w-full">
