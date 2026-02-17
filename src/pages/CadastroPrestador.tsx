@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
+import { useCategorias } from "@/hooks/useCategorias";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,7 @@ interface Condominio {
 
 const CadastroPrestador = () => {
   const { user, loading } = useAuth();
+  const { grouped, loading: categoriasLoading } = useCategorias();
   const navigate = useNavigate();
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
@@ -174,7 +176,21 @@ const CadastroPrestador = () => {
 
         <div className="flex flex-col gap-1">
           <label className="ml-1">Especialidade</label>
-          <Input placeholder="Ex: Eletricista, Encanador..." value={especialidade} onChange={(e) => setEspecialidade(e.target.value)} />
+          <Select value={especialidade} onValueChange={setEspecialidade}>
+            <SelectTrigger className="h-[52px]">
+              <SelectValue placeholder="Selecione sua especialidade" />
+            </SelectTrigger>
+            <SelectContent>
+              {grouped.map((g) => (
+                <div key={g.group}>
+                  <p className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">{g.group}</p>
+                  {g.items.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.nome}>{cat.nome}</SelectItem>
+                  ))}
+                </div>
+              ))}
+            </SelectContent>
+          </Select>
           {errors.especialidade && <span className="text-xs text-destructive ml-1">{errors.especialidade}</span>}
         </div>
 
