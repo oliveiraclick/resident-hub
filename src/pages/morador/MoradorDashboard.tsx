@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import MoradorHome from "./MoradorHome";
 import MoradorServicos from "./MoradorServicos";
+import MoradorServicosCategorias from "./MoradorServicosCategorias";
 import MoradorDesapegos from "./MoradorDesapegos";
 import MoradorDesapegoDetalhe from "./MoradorDesapegoDetalhe";
 import MoradorProdutos from "./MoradorProdutos";
@@ -16,6 +17,7 @@ const MoradorDashboard = () => {
     <Routes>
       <Route path="/" element={<MoradorHome />} />
       <Route path="servicos" element={<MoradorServicos />} />
+      <Route path="servicos/categorias" element={<MoradorServicosCategorias />} />
       <Route path="desapegos" element={<MoradorDesapegos />} />
       <Route path="desapegos/:id" element={<MoradorDesapegoDetalhe />} />
       <Route path="produtos" element={<MoradorProdutos />} />

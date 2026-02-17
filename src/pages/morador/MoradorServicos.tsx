@@ -52,15 +52,6 @@ const categoryIcons: Record<string, LucideIcon> = {
   "Dog Walker": PawPrint,
 };
 
-const serviceGroupOrder = [
-  { group: "Para sua Casa", keys: ["Eletricista", "Encanador", "Pintura", "Reparos", "Jardinagem", "Faxina", "Limpeza", "Móveis", "Ar Condicionado", "Dedetização"] },
-  { group: "Tecnologia", keys: ["Internet", "Eletrônicos"] },
-  { group: "Alimentação", keys: ["Confeitaria", "Marmitas"] },
-  { group: "Pra Você", keys: ["Costura", "Lavanderia", "Personal"] },
-  { group: "Para seu Veículo", keys: ["Mecânico", "Lavagem"] },
-  { group: "Mudança", keys: ["Mudança", "Carreto"] },
-  { group: "Para seu Pet", keys: ["Pet Shop", "Dog Walker"] },
-];
 
 const getCategoryIcon = (nome: string): LucideIcon => {
   return categoryIcons[nome] || Wrench;
@@ -332,28 +323,11 @@ const MoradorServicos = () => {
     );
   }
 
-  // Group categories into sections
-  const groupedSections = serviceGroupOrder
-    .map((sg) => {
-      const items = sg.keys
-        .map((key) => categorias.find((c) => c.nome === key))
-        .filter(Boolean) as Categoria[];
-      // Also check search filter
-      const filtered = searchTerm
-        ? items.filter((c) => c.nome.toLowerCase().includes(searchTerm.toLowerCase()))
-        : items;
-      return { group: sg.group, items: filtered };
-    })
-    .filter((sg) => sg.items.length > 0);
-
-  // Categories not in any group
-  const groupedKeys = serviceGroupOrder.flatMap((sg) => sg.keys);
-  const ungrouped = categorias.filter((c) => !groupedKeys.includes(c.nome));
-  const filteredUngrouped = searchTerm
-    ? ungrouped.filter((c) => c.nome.toLowerCase().includes(searchTerm.toLowerCase()))
-    : ungrouped;
-
-  const hasResults = groupedSections.length > 0 || filteredUngrouped.length > 0;
+  const filteredCategorias = searchTerm
+    ? categorias.filter((cat) =>
+        cat.nome.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : categorias;
 
   return (
     <MoradorLayout title="Serviços">
@@ -372,7 +346,7 @@ const MoradorServicos = () => {
 
         {loading ? (
           <p className="text-[13px] text-muted-foreground text-center py-8">Carregando...</p>
-        ) : !hasResults ? (
+        ) : filteredCategorias.length === 0 ? (
           <div className="flex flex-col items-center gap-3 py-12">
             <Wrench size={40} className="text-muted-foreground" />
             <p className="text-[14px] text-muted-foreground">
@@ -380,72 +354,28 @@ const MoradorServicos = () => {
             </p>
           </div>
         ) : (
-          <div className="flex flex-col gap-5">
-            {groupedSections.map((section) => (
-              <div key={section.group}>
-                <p className="text-[12px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-                  {section.group}
-                </p>
-                <div className="flex flex-col gap-2">
-                  {section.items.map((cat) => {
-                    const Icon = getCategoryIcon(cat.nome);
-                    return (
-                      <Card
-                        key={cat.nome}
-                        className="cursor-pointer active:scale-[0.98] transition-transform"
-                        onClick={() => setSelectedCategoria(cat.nome)}
-                      >
-                        <CardContent className="flex items-center gap-4 p-4">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10">
-                            <Icon size={20} className="text-primary" />
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-[14px] font-semibold text-foreground">{cat.nome}</p>
-                            <p className="text-[12px] text-muted-foreground">
-                              {cat.count} prestador{cat.count > 1 ? "es" : ""}
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-
-            {/* Ungrouped */}
-            {filteredUngrouped.length > 0 && (
-              <div>
-                <p className="text-[12px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-                  Outros
-                </p>
-                <div className="flex flex-col gap-2">
-                  {filteredUngrouped.map((cat) => {
-                    const Icon = getCategoryIcon(cat.nome);
-                    return (
-                      <Card
-                        key={cat.nome}
-                        className="cursor-pointer active:scale-[0.98] transition-transform"
-                        onClick={() => setSelectedCategoria(cat.nome)}
-                      >
-                        <CardContent className="flex items-center gap-4 p-4">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10">
-                            <Icon size={20} className="text-primary" />
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-[14px] font-semibold text-foreground">{cat.nome}</p>
-                            <p className="text-[12px] text-muted-foreground">
-                              {cat.count} prestador{cat.count > 1 ? "es" : ""}
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
+          filteredCategorias.map((cat) => {
+            const Icon = getCategoryIcon(cat.nome);
+            return (
+              <Card
+                key={cat.nome}
+                className="cursor-pointer active:scale-[0.98] transition-transform"
+                onClick={() => setSelectedCategoria(cat.nome)}
+              >
+                <CardContent className="flex items-center gap-4 p-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10">
+                    <Icon size={20} className="text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-[14px] font-semibold text-foreground">{cat.nome}</p>
+                    <p className="text-[12px] text-muted-foreground">
+                      {cat.count} prestador{cat.count > 1 ? "es" : ""}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })
         )}
       </div>
     </MoradorLayout>
