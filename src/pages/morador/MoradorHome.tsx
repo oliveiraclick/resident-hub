@@ -19,11 +19,13 @@ const fallbackShopImages = [productBolo, productSabonete, productBrigadeiro, pro
 const fallbackDesapegoImages = [desapegoBike, desapegoSofa, desapegoLivros, desapegoCarrinho];
 
 
-import { allServiceItems } from "@/data/serviceCategories";
+import { useCategorias } from "@/hooks/useCategorias";
+import { getIcon } from "@/lib/iconMap";
 
 const MoradorHome = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { categorias: allCategorias } = useCategorias();
   const [pendingCount, setPendingCount] = useState(0);
   const [produtos, setProdutos] = useState<any[]>([]);
   const [desapegos, setDesapegos] = useState<any[]>([]);
@@ -130,20 +132,23 @@ const MoradorHome = () => {
           </div>
 
           <div className="grid grid-cols-4 gap-3">
-            {allServiceItems.slice(0, 4).map((item) => (
-              <button
-                key={item.label}
-                onClick={() => navigate(item.path)}
-                className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform"
-              >
-                <div className="h-14 w-14 rounded-2xl bg-card shadow-sm flex items-center justify-center">
-                  <item.icon size={22} className="text-primary" />
-                </div>
-                <span className="text-[11px] font-medium text-foreground leading-tight text-center">
-                  {item.label}
-                </span>
-              </button>
-            ))}
+            {allCategorias.slice(0, 4).map((item) => {
+              const Icon = getIcon(item.icone);
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => navigate(`/morador/servicos?q=${encodeURIComponent(item.nome)}`)}
+                  className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform"
+                >
+                  <div className="h-14 w-14 rounded-2xl bg-card shadow-sm flex items-center justify-center">
+                    <Icon size={22} className="text-primary" />
+                  </div>
+                  <span className="text-[11px] font-medium text-foreground leading-tight text-center">
+                    {item.nome}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
 

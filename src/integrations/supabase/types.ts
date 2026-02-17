@@ -131,6 +131,36 @@ export type Database = {
           },
         ]
       }
+      categorias_servico: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          grupo: string
+          icone: string
+          id: string
+          nome: string
+          ordem: number
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          grupo?: string
+          icone?: string
+          id?: string
+          nome: string
+          ordem?: number
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          grupo?: string
+          icone?: string
+          id?: string
+          nome?: string
+          ordem?: number
+        }
+        Relationships: []
+      }
       condominios: {
         Row: {
           created_at: string
