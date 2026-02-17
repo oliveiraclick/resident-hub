@@ -18,6 +18,8 @@ import RecuperarSenha from "./pages/auth/RecuperarSenha";
 import ResetarSenha from "./pages/auth/ResetarSenha";
 import CadastroMorador from "./pages/CadastroMorador";
 import CadastroPrestador from "./pages/CadastroPrestador";
+import PorteiroDashboard from "./pages/porteiro/PorteiroDashboard";
+import VisitanteRegistro from "./pages/visitante/VisitanteRegistro";
 import PreviewHome from "./pages/PreviewHome";
 import PreviewHome2 from "./pages/PreviewHome2";
 import PreviewHome3 from "./pages/PreviewHome3";
@@ -74,6 +76,14 @@ const App = () => (
               }
             />
             <Route
+              path="/porteiro/*"
+              element={
+                <ProtectedRoute>
+                  <PorteiroDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/master/*"
               element={
                 <ProtectedRoute>
@@ -81,6 +91,7 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route path="/visitante/:token" element={<VisitanteRegistro />} />
             <Route path="/preview-home" element={<PreviewHome />} />
             <Route path="/preview-home2" element={<PreviewHome2 />} />
             <Route path="/preview-home3" element={<PreviewHome3 />} />

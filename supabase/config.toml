@@ -1,1 +1,4 @@
 project_id = "qfprslmwsuetqabexwkf"
+
+[functions.convite-visitante]
+verify_jwt = false

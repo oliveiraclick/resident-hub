@@ -191,6 +191,65 @@ export type Database = {
         }
         Relationships: []
       }
+      convites_visitante: {
+        Row: {
+          condominio_id: string
+          created_at: string
+          data_visita: string
+          foto_url: string | null
+          horario_fim: string
+          horario_inicio: string
+          id: string
+          morador_id: string
+          nome_registrado: string | null
+          nome_visitante: string
+          qr_code: string | null
+          status: string
+          token: string
+          usado_em: string | null
+        }
+        Insert: {
+          condominio_id: string
+          created_at?: string
+          data_visita: string
+          foto_url?: string | null
+          horario_fim: string
+          horario_inicio: string
+          id?: string
+          morador_id: string
+          nome_registrado?: string | null
+          nome_visitante: string
+          qr_code?: string | null
+          status?: string
+          token?: string
+          usado_em?: string | null
+        }
+        Update: {
+          condominio_id?: string
+          created_at?: string
+          data_visita?: string
+          foto_url?: string | null
+          horario_fim?: string
+          horario_inicio?: string
+          id?: string
+          morador_id?: string
+          nome_registrado?: string | null
+          nome_visitante?: string
+          qr_code?: string | null
+          status?: string
+          token?: string
+          usado_em?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "convites_visitante_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       desapegos: {
         Row: {
           condominio_id: string

@@ -39,6 +39,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     admin: ["/admin", "/dashboard"],
     morador: ["/morador", "/dashboard"],
     prestador: ["/prestador", "/dashboard"],
+    porteiro: ["/porteiro", "/dashboard"],
   };
 
   if (firstRole && !isPlatformAdmin) {
@@ -51,6 +52,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         admin: "/admin",
         morador: "/morador",
         prestador: "/prestador",
+        porteiro: "/porteiro",
       };
       return <Navigate to={redirectMap[firstRole] || "/dashboard"} replace />;
     }
