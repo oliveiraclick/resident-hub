@@ -204,6 +204,55 @@ const PreviewHome5 = () => {
       {/* ═══ CONTENT ═══ */}
       <div style={{ padding: "20px 20px 110px", display: "flex", flexDirection: "column", gap: 28 }}>
 
+        {/* Banner */}
+        {banners.length > 0 && (
+          <div onClick={() => { const link = banners[bannerIdx]?.link; if (link) window.open(link, "_blank"); }} style={{ borderRadius: 22, overflow: "hidden", position: "relative", height: 180, cursor: "pointer", boxShadow: "0 6px 24px rgba(0,0,0,0.1)" }}>
+            {banners[bannerIdx]?.imagem_url ? (
+              <img src={banners[bannerIdx].imagem_url} alt={banners[bannerIdx].titulo} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+            ) : (
+              <div style={{ position: "absolute", inset: 0, background: `linear-gradient(135deg, ${X.headerBg}, ${X.accent})` }} />
+            )}
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 50%, transparent)" }} />
+            <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", justifyContent: "flex-end", height: "100%", padding: 20 }}>
+              <p style={{ fontSize: 20, fontWeight: 800, color: X.white, margin: 0, lineHeight: 1.15, letterSpacing: -0.3 }}>{banners[bannerIdx]?.titulo}</p>
+              {banners[bannerIdx]?.subtitulo && <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", margin: "6px 0 0" }}>{banners[bannerIdx].subtitulo}</p>}
+            </div>
+            {banners.length > 1 && (
+              <div style={{ position: "absolute", bottom: 14, right: 18, zIndex: 1, display: "flex", gap: 6 }}>
+                {banners.map((_, i) => (
+                  <button key={i} onClick={(e) => { e.stopPropagation(); setBannerIdx(i); }} style={{
+                    width: i === bannerIdx ? 24 : 8, height: 8, borderRadius: 4,
+                    background: i === bannerIdx ? X.accent : "rgba(255,255,255,0.35)",
+                    border: "none", cursor: "pointer", transition: "all 0.2s ease",
+                  }} />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* News ticker */}
+        {avisos.length > 0 && (
+          <div style={{ borderRadius: 16, background: X.headerBg, padding: "12px 16px", overflow: "hidden", position: "relative" }}>
+            <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 60, background: `linear-gradient(to right, transparent, ${X.headerBg})`, zIndex: 2 }} />
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 9, fontWeight: 800, color: X.accent, textTransform: "uppercase", letterSpacing: 1.5, flexShrink: 0, background: "rgba(255,87,34,0.15)", padding: "4px 10px", borderRadius: 8, display: "flex", alignItems: "center", gap: 4 }}>
+                <Sparkles size={10} /> News
+              </span>
+              <div style={{ overflow: "hidden", flex: 1 }}>
+                <p style={{ whiteSpace: "nowrap", animation: "ticker 18s linear infinite", fontSize: 12, fontWeight: 400, color: "rgba(255,255,255,0.7)", margin: 0, display: "flex", alignItems: "center", gap: 4 }}>
+                  {avisos.map((a: any, i: number) => (
+                    <span key={a.id} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                      {i > 0 && <span style={{ display: "inline-block", width: 4, height: 4, borderRadius: "50%", background: X.accent, margin: "0 12px", flexShrink: 0, opacity: 0.6 }} />}
+                      <span>📢</span><span>{a.texto}</span>
+                    </span>
+                  ))}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Serviços - chips style */}
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
@@ -289,56 +338,6 @@ const PreviewHome5 = () => {
             </div>
           </button>
         )}
-
-        {/* Banner */}
-        {banners.length > 0 && (
-          <div onClick={() => { const link = banners[bannerIdx]?.link; if (link) window.open(link, "_blank"); }} style={{ borderRadius: 22, overflow: "hidden", position: "relative", height: 180, cursor: "pointer", boxShadow: "0 6px 24px rgba(0,0,0,0.1)" }}>
-            {banners[bannerIdx]?.imagem_url ? (
-              <img src={banners[bannerIdx].imagem_url} alt={banners[bannerIdx].titulo} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-            ) : (
-              <div style={{ position: "absolute", inset: 0, background: `linear-gradient(135deg, ${X.headerBg}, ${X.accent})` }} />
-            )}
-            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 50%, transparent)" }} />
-            <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", justifyContent: "flex-end", height: "100%", padding: 20 }}>
-              <p style={{ fontSize: 20, fontWeight: 800, color: X.white, margin: 0, lineHeight: 1.15, letterSpacing: -0.3 }}>{banners[bannerIdx]?.titulo}</p>
-              {banners[bannerIdx]?.subtitulo && <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", margin: "6px 0 0" }}>{banners[bannerIdx].subtitulo}</p>}
-            </div>
-            {banners.length > 1 && (
-              <div style={{ position: "absolute", bottom: 14, right: 18, zIndex: 1, display: "flex", gap: 6 }}>
-                {banners.map((_, i) => (
-                  <button key={i} onClick={(e) => { e.stopPropagation(); setBannerIdx(i); }} style={{
-                    width: i === bannerIdx ? 24 : 8, height: 8, borderRadius: 4,
-                    background: i === bannerIdx ? X.accent : "rgba(255,255,255,0.35)",
-                    border: "none", cursor: "pointer", transition: "all 0.2s ease",
-                  }} />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* News ticker */}
-        {avisos.length > 0 && (
-          <div style={{ borderRadius: 16, background: X.headerBg, padding: "12px 16px", overflow: "hidden", position: "relative" }}>
-            <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 60, background: `linear-gradient(to right, transparent, ${X.headerBg})`, zIndex: 2 }} />
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: 9, fontWeight: 800, color: X.accent, textTransform: "uppercase", letterSpacing: 1.5, flexShrink: 0, background: "rgba(255,87,34,0.15)", padding: "4px 10px", borderRadius: 8, display: "flex", alignItems: "center", gap: 4 }}>
-                <Sparkles size={10} /> News
-              </span>
-              <div style={{ overflow: "hidden", flex: 1 }}>
-                <p style={{ whiteSpace: "nowrap", animation: "ticker 18s linear infinite", fontSize: 12, fontWeight: 400, color: "rgba(255,255,255,0.7)", margin: 0, display: "flex", alignItems: "center", gap: 4 }}>
-                  {avisos.map((a: any, i: number) => (
-                    <span key={a.id} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
-                      {i > 0 && <span style={{ display: "inline-block", width: 4, height: 4, borderRadius: "50%", background: X.accent, margin: "0 12px", flexShrink: 0, opacity: 0.6 }} />}
-                      <span>📢</span><span>{a.texto}</span>
-                    </span>
-                  ))}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* ═══ VITRINE E-SHOP — 2-column grid ═══ */}
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
