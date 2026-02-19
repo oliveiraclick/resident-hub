@@ -39,68 +39,92 @@ const MoradorHome = () => {
     if (!user) return;
 
     const fetchPending = async () => {
-      const { count } = await supabase
-        .from("pacotes")
-        .select("id", { count: "exact", head: true })
-        .eq("morador_id", user.id)
-        .in("status", ["RECEBIDO", "AGUARDANDO_RETIRADA", "TRIADO"]);
-      setPendingCount(count || 0);
+      try {
+        const { count } = await supabase
+          .from("pacotes")
+          .select("id", { count: "exact", head: true })
+          .eq("morador_id", user.id)
+          .in("status", ["RECEBIDO", "AGUARDANDO_RETIRADA", "TRIADO"]);
+        setPendingCount(count || 0);
+      } catch (e) {
+        console.error("fetchPending error", e);
+      }
     };
 
     const fetchProdutos = async () => {
-      const { data } = await supabase
-        .from("produtos")
-        .select("id, titulo, preco, status")
-        .eq("status", "ativo")
-        .order("created_at", { ascending: false })
-        .limit(8);
-      setProdutos(data || []);
+      try {
+        const { data } = await supabase
+          .from("produtos")
+          .select("id, titulo, preco, status")
+          .eq("status", "ativo")
+          .order("created_at", { ascending: false })
+          .limit(8);
+        setProdutos(data || []);
+      } catch (e) {
+        console.error("fetchProdutos error", e);
+      }
     };
 
     const fetchDesapegos = async () => {
-      const { data } = await supabase
-        .from("desapegos")
-        .select("id, titulo, preco, status")
-        .eq("status", "ativo")
-        .order("created_at", { ascending: false })
-        .limit(8);
-      setDesapegos(data || []);
+      try {
+        const { data } = await supabase
+          .from("desapegos")
+          .select("id, titulo, preco, status")
+          .eq("status", "ativo")
+          .order("created_at", { ascending: false })
+          .limit(8);
+        setDesapegos(data || []);
+      } catch (e) {
+        console.error("fetchDesapegos error", e);
+      }
     };
 
     const fetchBanners = async () => {
-      const { data } = await supabase
-        .from("banners")
-        .select("*")
-        .eq("ativo", true)
-        .order("ordem", { ascending: true });
-      setBanners(data || []);
+      try {
+        const { data } = await supabase
+          .from("banners")
+          .select("*")
+          .eq("ativo", true)
+          .order("ordem", { ascending: true });
+        setBanners(data || []);
+      } catch (e) {
+        console.error("fetchBanners error", e);
+      }
     };
 
     const fetchAvisos = async () => {
-      const { data } = await supabase
-        .from("avisos")
-        .select("id, texto")
-        .eq("ativo", true)
-        .order("ordem", { ascending: true });
-      setAvisos(data || []);
+      try {
+        const { data } = await supabase
+          .from("avisos")
+          .select("id, texto")
+          .eq("ativo", true)
+          .order("ordem", { ascending: true });
+        setAvisos(data || []);
+      } catch (e) {
+        console.error("fetchAvisos error", e);
+      }
     };
 
     const fetchPrestadoresVisiveis = async () => {
-      const { data } = await supabase
-        .from("prestadores")
-        .select("id, user_id, especialidade, visivel_ate")
-        .eq("visivel", true)
-        .gt("visivel_ate", new Date().toISOString());
-      if (data && data.length > 0) {
-        const userIds = data.map((p: any) => p.user_id);
-        const { data: profiles } = await supabase.rpc("get_prestador_profiles", { _user_ids: userIds });
-        const merged = data.map((p: any) => {
-          const profile = (profiles || []).find((pr: any) => pr.user_id === p.user_id);
-          return { ...p, nome: profile?.nome || "Prestador", avatar_url: profile?.avatar_url };
-        });
-        setPrestadoresVisiveis(merged);
-      } else {
-        setPrestadoresVisiveis([]);
+      try {
+        const { data } = await supabase
+          .from("prestadores")
+          .select("id, user_id, especialidade, visivel_ate")
+          .eq("visivel", true)
+          .gt("visivel_ate", new Date().toISOString());
+        if (data && data.length > 0) {
+          const userIds = data.map((p: any) => p.user_id);
+          const { data: profiles } = await supabase.rpc("get_prestador_profiles", { _user_ids: userIds });
+          const merged = data.map((p: any) => {
+            const profile = (profiles || []).find((pr: any) => pr.user_id === p.user_id);
+            return { ...p, nome: profile?.nome || "Prestador", avatar_url: profile?.avatar_url };
+          });
+          setPrestadoresVisiveis(merged);
+        } else {
+          setPrestadoresVisiveis([]);
+        }
+      } catch (e) {
+        console.error("fetchPrestadoresVisiveis error", e);
       }
     };
 

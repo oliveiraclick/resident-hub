@@ -31,29 +31,33 @@ const MoradorLayout = ({ children, showSearch = false, title, showBack = false }
     if (!user) return;
 
     const fetchData = async () => {
-      // Fetch profile, role and condominio in parallel
-      const [profileRes, roleRes] = await Promise.all([
-        supabase.from("profiles").select("nome").eq("user_id", user.id).maybeSingle(),
-        supabase.from("user_roles").select("condominio_id, aprovado").eq("user_id", user.id).eq("role", "morador").maybeSingle(),
-      ]);
+      try {
+        // Fetch profile, role and condominio in parallel
+        const [profileRes, roleRes] = await Promise.all([
+          supabase.from("profiles").select("nome").eq("user_id", user.id).maybeSingle(),
+          supabase.from("user_roles").select("condominio_id, aprovado").eq("user_id", user.id).eq("role", "morador").maybeSingle(),
+        ]);
 
-      if (profileRes.data?.nome) setProfileName(profileRes.data.nome);
+        if (profileRes.data?.nome) setProfileName(profileRes.data.nome);
 
-      if (roleRes.data) {
-        setAprovado(roleRes.data.aprovado ?? true);
+        if (roleRes.data) {
+          setAprovado(roleRes.data.aprovado ?? true);
 
-        if (roleRes.data.condominio_id) {
-          const { data: condo } = await supabase
-            .from("condominios")
-            .select("nome, logo_url")
-            .eq("id", roleRes.data.condominio_id)
-            .maybeSingle();
+          if (roleRes.data.condominio_id) {
+            const { data: condo } = await supabase
+              .from("condominios")
+              .select("nome, logo_url")
+              .eq("id", roleRes.data.condominio_id)
+              .maybeSingle();
 
-          if (condo) {
-            setCondominioName(condo.nome);
-            setCondominioLogo(condo.logo_url);
+            if (condo) {
+              setCondominioName(condo.nome);
+              setCondominioLogo(condo.logo_url);
+            }
           }
         }
+      } catch (e) {
+        console.error("MoradorLayout fetchData error", e);
       }
     };
 
