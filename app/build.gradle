@@ -21,8 +21,8 @@ android {
         applicationId = "morador.app"
         minSdk = 24
         targetSdk = 36
-        versionCode = 253
-        versionName = "2.8.1"
+        versionCode = 288
+        versionName = "2.8.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
