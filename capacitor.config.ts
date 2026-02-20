@@ -13,7 +13,8 @@ const config: CapacitorConfig = {
     scheme: 'morador-hub'
   },
   android: {
-    allowMixedContent: true
+    allowMixedContent: true,
+    webContentsDebuggingEnabled: true
   },
   plugins: {
     SplashScreen: {
