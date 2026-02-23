@@ -111,11 +111,22 @@ const MasterUsuarios = () => {
 
     if (error) { setSaving(false); toast.error("Erro ao atualizar: " + error.message); return; }
 
-    // Update especialidade if prestador
-    if (editTarget.prestadorId && editEspecialidade.trim()) {
-      await supabase.from("prestadores").update({
-        especialidade: editEspecialidade.trim(),
-      }).eq("id", editTarget.prestadorId);
+    // Handle prestador record
+    if (editRole === "prestador" && editEspecialidade.trim()) {
+      const condId = editCondominio === "none" ? null : editCondominio;
+      if (editTarget.prestadorId) {
+        // Update existing prestador
+        await supabase.from("prestadores").update({
+          especialidade: editEspecialidade.trim(),
+        }).eq("id", editTarget.prestadorId);
+      } else if (condId) {
+        // Create prestador record when changing role to prestador
+        await supabase.from("prestadores").insert({
+          user_id: editTarget.userId,
+          condominio_id: condId,
+          especialidade: editEspecialidade.trim(),
+        });
+      }
     }
 
     setSaving(false);
@@ -238,7 +249,7 @@ const MasterUsuarios = () => {
               </Select>
             </div>
             {/* Especialidade - only for prestadores */}
-            {editTarget?.role === "prestador" && editTarget?.prestadorId && (
+            {editRole === "prestador" && (
               <div>
                 <label className="text-sm text-muted-foreground mb-1 block">Especialidade</label>
                 <Select value={editEspecialidade} onValueChange={setEditEspecialidade}>
