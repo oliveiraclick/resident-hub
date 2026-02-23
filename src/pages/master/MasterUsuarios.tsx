@@ -15,6 +15,7 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
+import { useCategorias } from "@/hooks/useCategorias";
 
 interface UserRow {
   roleId: string;
@@ -25,6 +26,8 @@ interface UserRow {
   condominioNome: string | null;
   aprovado: boolean;
   createdAt: string;
+  especialidade: string | null;
+  prestadorId: string | null;
 }
 
 interface Condominio {
@@ -42,34 +45,45 @@ const MasterUsuarios = () => {
   const [editRole, setEditRole] = useState("");
   const [editCondominio, setEditCondominio] = useState("");
   const [editAprovado, setEditAprovado] = useState(false);
+  const [editEspecialidade, setEditEspecialidade] = useState("");
   const [saving, setSaving] = useState(false);
+  const { categorias } = useCategorias();
 
   const fetchData = async () => {
     setLoading(true);
-    const [rolesRes, profilesRes, condRes] = await Promise.all([
+    const [rolesRes, profilesRes, condRes, prestadoresRes] = await Promise.all([
       supabase.from("user_roles").select("*"),
       supabase.from("profiles").select("*"),
       supabase.from("condominios").select("id, nome"),
+      supabase.from("prestadores").select("id, user_id, condominio_id, especialidade"),
     ]);
     const roles = rolesRes.data || [];
     const profiles = profilesRes.data || [];
     const conds = condRes.data || [];
+    const prestadores = prestadoresRes.data || [];
     setCondominios(conds);
 
     const condMap = new Map(conds.map((c) => [c.id, c.nome]));
     const profileMap = new Map(profiles.map((p) => [p.user_id, p]));
+    // Map by user_id+condominio_id for prestador lookup
+    const prestadorMap = new Map(prestadores.map((p: any) => [`${p.user_id}_${p.condominio_id}`, p]));
 
     setUsers(
-      roles.map((r: any) => ({
-        roleId: r.id,
-        userId: r.user_id,
-        nome: profileMap.get(r.user_id)?.nome || "Sem nome",
-        role: r.role,
-        condominioId: r.condominio_id,
-        condominioNome: r.condominio_id ? condMap.get(r.condominio_id) || "—" : "Global",
-        aprovado: r.aprovado ?? true,
-        createdAt: r.created_at,
-      }))
+      roles.map((r: any) => {
+        const prest = prestadorMap.get(`${r.user_id}_${r.condominio_id}`);
+        return {
+          roleId: r.id,
+          userId: r.user_id,
+          nome: profileMap.get(r.user_id)?.nome || "Sem nome",
+          role: r.role,
+          condominioId: r.condominio_id,
+          condominioNome: r.condominio_id ? condMap.get(r.condominio_id) || "—" : "Global",
+          aprovado: r.aprovado ?? true,
+          createdAt: r.created_at,
+          especialidade: prest?.especialidade || null,
+          prestadorId: prest?.id || null,
+        };
+      })
     );
     setLoading(false);
   };
@@ -81,18 +95,30 @@ const MasterUsuarios = () => {
     setEditRole(u.role);
     setEditCondominio(u.condominioId || "none");
     setEditAprovado(u.aprovado);
+    setEditEspecialidade(u.especialidade || "");
   };
 
   const handleSaveEdit = async () => {
     if (!editTarget) return;
     setSaving(true);
+
+    // Update user_roles
     const { error } = await supabase.from("user_roles").update({
       role: editRole as any,
       condominio_id: editCondominio === "none" ? null : editCondominio || null,
       aprovado: editAprovado,
     }).eq("id", editTarget.roleId);
+
+    if (error) { setSaving(false); toast.error("Erro ao atualizar: " + error.message); return; }
+
+    // Update especialidade if prestador
+    if (editTarget.prestadorId && editEspecialidade.trim()) {
+      await supabase.from("prestadores").update({
+        especialidade: editEspecialidade.trim(),
+      }).eq("id", editTarget.prestadorId);
+    }
+
     setSaving(false);
-    if (error) { toast.error("Erro ao atualizar: " + error.message); return; }
     toast.success("Usuário atualizado");
     setEditTarget(null);
     fetchData();
@@ -151,6 +177,9 @@ const MasterUsuarios = () => {
                       )}
                     </div>
                     <p className="text-xs text-muted-foreground">{u.condominioNome}</p>
+                    {u.especialidade && (
+                      <p className="text-xs text-muted-foreground">🔧 {u.especialidade}</p>
+                    )}
                   </div>
                   <div className="flex items-center gap-1">
                     <Badge variant="secondary" className="text-[10px]">{u.role}</Badge>
@@ -208,6 +237,20 @@ const MasterUsuarios = () => {
                 </SelectContent>
               </Select>
             </div>
+            {/* Especialidade - only for prestadores */}
+            {editTarget?.role === "prestador" && editTarget?.prestadorId && (
+              <div>
+                <label className="text-sm text-muted-foreground mb-1 block">Especialidade</label>
+                <Select value={editEspecialidade} onValueChange={setEditEspecialidade}>
+                  <SelectTrigger className="h-[52px]"><SelectValue placeholder="Selecione a especialidade" /></SelectTrigger>
+                  <SelectContent>
+                    {categorias.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.nome}>{cat.nome}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             <div className="flex items-center gap-2">
               <input type="checkbox" checked={editAprovado} onChange={(e) => setEditAprovado(e.target.checked)}
                 className="h-4 w-4 rounded border-border" id="aprovado-check" />
