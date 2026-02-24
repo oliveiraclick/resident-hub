@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import MasterLayout from "@/components/MasterLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Pencil, Trash2, CheckCircle, XCircle, Plus } from "lucide-react";
+import { Pencil, Trash2, CheckCircle, XCircle, Plus, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -36,10 +37,13 @@ interface Condominio {
 }
 
 const MasterUsuarios = () => {
+  const [searchParams] = useSearchParams();
+  const initialFilter = searchParams.get("filter") || "all";
   const [users, setUsers] = useState<UserRow[]>([]);
   const [condominios, setCondominios] = useState<Condominio[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filterRole, setFilterRole] = useState<string>("all");
+  const [filterRole, setFilterRole] = useState<string>(initialFilter === "bloqueados" ? "all" : initialFilter);
+  const [showBloqueados, setShowBloqueados] = useState(initialFilter === "bloqueados");
   const [deleteTarget, setDeleteTarget] = useState<UserRow | null>(null);
   const [editTarget, setEditTarget] = useState<UserRow | null>(null);
   const [editRole, setEditRole] = useState("");
@@ -149,12 +153,23 @@ const MasterUsuarios = () => {
     else { toast.success(u.aprovado ? "Usuário desaprovado" : "Usuário aprovado"); fetchData(); }
   };
 
-  const filtered = filterRole === "all" ? users : users.filter((u) => u.role === filterRole);
+  const roleFiltered = filterRole === "all" ? users : users.filter((u) => u.role === filterRole);
+  const filtered = showBloqueados ? roleFiltered.filter((u) => !u.aprovado) : roleFiltered;
+  const bloqueadosCount = users.filter((u) => !u.aprovado).length;
+
+  const handleAprovarTodos = async () => {
+    const bloqueados = users.filter((u) => !u.aprovado);
+    if (bloqueados.length === 0) return;
+    const ids = bloqueados.map((u) => u.roleId);
+    const { error } = await supabase.from("user_roles").update({ aprovado: true }).in("id", ids);
+    if (error) toast.error("Erro ao aprovar: " + error.message);
+    else { toast.success(`${bloqueados.length} usuário(s) aprovado(s)`); fetchData(); }
+  };
 
   return (
     <MasterLayout title="Usuários">
-      <div className="mb-4">
-        <Select value={filterRole} onValueChange={setFilterRole}>
+      <div className="mb-4 space-y-3">
+        <Select value={filterRole} onValueChange={(v) => { setFilterRole(v); setShowBloqueados(false); }}>
           <SelectTrigger className="w-full h-[52px]">
             <SelectValue placeholder="Filtrar por role" />
           </SelectTrigger>
@@ -166,6 +181,23 @@ const MasterUsuarios = () => {
             <SelectItem value="platform_admin">Platform Admin</SelectItem>
           </SelectContent>
         </Select>
+        <div className="flex gap-2">
+          <Button
+            variant={showBloqueados ? "default" : "outline"}
+            size="sm"
+            onClick={() => setShowBloqueados(!showBloqueados)}
+            className="text-xs"
+          >
+            <XCircle size={14} className="mr-1" />
+            Bloqueados ({bloqueadosCount})
+          </Button>
+          {showBloqueados && bloqueadosCount > 0 && (
+            <Button size="sm" variant="outline" onClick={handleAprovarTodos} className="text-xs">
+              <ShieldCheck size={14} className="mr-1" />
+              Aprovar todos
+            </Button>
+          )}
+        </div>
       </div>
 
       {loading ? (
