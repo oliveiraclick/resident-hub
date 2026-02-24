@@ -35,6 +35,7 @@ const CadastroMorador = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [condominios, setCondominios] = useState<Condominio[]>([]);
   const [lgpdAceito, setLgpdAceito] = useState(false);
+  const [isencaoAceita, setIsencaoAceita] = useState(false);
 
   useEffect(() => {
     supabase.from("condominios").select("id, nome").order("nome").then(({ data }) => {
@@ -182,9 +183,21 @@ const CadastroMorador = () => {
             <a href="/termos-de-uso" target="_blank" className="text-primary underline">Termos de Uso</a>, em conformidade com a Lei Geral de Proteção de Dados (LGPD).
           </label>
         </div>
-        {errors.lgpd && <span className="text-xs text-destructive ml-1">{errors.lgpd}</span>}
 
-        <Button type="submit" disabled={submitting || !lgpdAceito} className="mt-2">
+        <div className="flex items-start gap-3">
+          <input
+            type="checkbox"
+            id="isencao-morador"
+            checked={isencaoAceita}
+            onChange={(e) => setIsencaoAceita(e.target.checked)}
+            className="h-4 w-4 rounded border-border mt-0.5 flex-shrink-0"
+          />
+          <label htmlFor="isencao-morador" className="text-xs text-muted-foreground leading-relaxed">
+            Estou ciente de que o <strong>Morador.app</strong> é apenas uma plataforma de referência e conexão entre moradores e prestadores, não se responsabilizando pela qualidade, negociação ou pagamento dos serviços e produtos anunciados.
+          </label>
+        </div>
+
+        <Button type="submit" disabled={submitting || !lgpdAceito || !isencaoAceita} className="mt-2">
           {submitting ? "Aguarde..." : "Criar conta"}
         </Button>
 
