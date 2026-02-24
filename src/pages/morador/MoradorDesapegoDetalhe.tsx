@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, MessageCircle, AlertTriangle, User } from "lucide-react";
+import { ArrowLeft, MessageCircle, AlertTriangle, User, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 interface DesapegoDetail {
   id: string;
@@ -30,6 +34,7 @@ const MoradorDesapegoDetalhe = () => {
   const navigate = useNavigate();
   const [item, setItem] = useState<DesapegoDetail | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showSafetyTip, setShowSafetyTip] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -77,6 +82,10 @@ const MoradorDesapegoDetalhe = () => {
     const fullPhone = phone.startsWith("55") ? phone : `55${phone}`;
     const text = encodeURIComponent(`Olá, tenho interesse no produto ${item.titulo}`);
     window.open(`https://wa.me/${fullPhone}?text=${text}`, "_blank");
+  };
+
+  const handleContactClick = () => {
+    setShowSafetyTip(true);
   };
 
   const isActive = item?.status === "ativo";
@@ -184,12 +193,33 @@ const MoradorDesapegoDetalhe = () => {
       {/* Fixed WhatsApp button */}
       {isActive && item.profile?.telefone && (
         <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-20 bg-card px-5 py-4" style={{ borderTop: "1px solid hsl(var(--border))" }}>
-          <Button onClick={openWhatsApp} className="w-full h-[52px] rounded-2xl gap-2 text-[15px] font-semibold bg-[#25D366] hover:bg-[#1da851] text-white">
+          <Button onClick={handleContactClick} className="w-full h-[52px] rounded-2xl gap-2 text-[15px] font-semibold bg-[#25D366] hover:bg-[#1da851] text-white">
             <MessageCircle size={20} />
             Falar no WhatsApp
           </Button>
         </div>
       )}
+
+      {/* Safety tip dialog */}
+      <AlertDialog open={showSafetyTip} onOpenChange={setShowSafetyTip}>
+        <AlertDialogContent className="max-w-[360px] rounded-2xl">
+          <AlertDialogHeader>
+            <div className="flex items-center gap-2 mb-1">
+              <ShieldCheck size={20} className="text-primary" />
+              <AlertDialogTitle className="text-[16px]">Dica de segurança</AlertDialogTitle>
+            </div>
+            <AlertDialogDescription className="text-[13px] leading-relaxed text-muted-foreground">
+              Como o Desapego é uma ferramenta entre moradores do condomínio, recomendamos que você <strong className="text-foreground">combine a entrega pessoalmente</strong> e veja o produto antes de qualquer pagamento. Assim todo mundo fica tranquilo! 😊
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-row gap-2">
+            <AlertDialogCancel className="mt-0 flex-1">Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={openWhatsApp} className="flex-1 bg-[#25D366] hover:bg-[#1da851] text-white">
+              Entendi, continuar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
