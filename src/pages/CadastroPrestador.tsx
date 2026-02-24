@@ -241,7 +241,8 @@ const CadastroPrestador = () => {
             className="h-4 w-4 rounded border-border mt-0.5 flex-shrink-0"
           />
           <label htmlFor="isencao-prestador" className="text-xs text-muted-foreground leading-relaxed">
-            Estou ciente de que o <strong>Morador.app</strong> é apenas uma plataforma de visibilidade e conexão, não se responsabilizando pela negociação, pagamento ou qualidade dos serviços e produtos que eu oferecer.
+            Li e concordo com o{" "}
+            <a href="/termo-responsabilidade" target="_blank" className="text-primary underline">Termo de Isenção de Responsabilidade</a>.
           </label>
         </div>
 
