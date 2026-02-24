@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { formatBRL } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import MasterLayout from "@/components/MasterLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -136,7 +137,7 @@ const MasterFinanceiro = () => {
       <div className="flex items-center justify-between mb-4">
         <div>
           <p className="text-xs text-muted-foreground">Total geral</p>
-          <p className="text-lg font-bold text-primary">R$ {totalGeral.toFixed(2).replace(".", ",")}</p>
+          <p className="text-lg font-bold text-primary">R$ {formatBRL(totalGeral)}</p>
         </div>
         <Button onClick={() => { resetForm(); setShowForm(!showForm); }} className="rounded-[var(--radius-button)]">
           <Plus size={16} className="mr-2" /> Novo Lançamento
@@ -198,7 +199,7 @@ const MasterFinanceiro = () => {
                   </div>
                   <div className="flex items-center gap-1">
                     <span className={`text-sm font-bold ${r.tipo === "receita" ? "text-primary" : "text-destructive"}`}>
-                      R$ {r.valor.toFixed(2).replace(".", ",")}
+                      R$ {formatBRL(r.valor)}
                     </span>
                     <button onClick={() => openEdit(r)} className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
                       <Pencil size={14} className="text-muted-foreground" />

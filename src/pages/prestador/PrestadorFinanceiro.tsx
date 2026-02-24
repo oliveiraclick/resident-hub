@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { formatBRL } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import PrestadorLayout from "@/components/PrestadorLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -176,7 +177,7 @@ const PrestadorFinanceiro = () => {
   const totalPagoVal = pagar.filter((l) => l.status === "pago").reduce((s, l) => s + Number(l.valor), 0);
   const saldo = totalRecebido - totalPagoVal;
 
-  const formatCurrency = (v: number) => `R$ ${v.toFixed(2).replace(".", ",")}`;
+  const formatCurrency = (v: number) => `R$ ${formatBRL(v)}`;
 
   const [activeTab, setActiveTab] = useState("receber");
 

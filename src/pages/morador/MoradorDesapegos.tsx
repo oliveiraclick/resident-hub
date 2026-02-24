@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { formatBRL } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import MoradorLayout from "@/components/MoradorLayout";
@@ -190,7 +191,7 @@ const MoradorDesapegos = () => {
                 )}
                 {d.preco ? (
                   <p className="text-body font-semibold text-primary">
-                    R$ {Number(d.preco).toFixed(2)}
+                    R$ {formatBRL(d.preco)}
                   </p>
                 ) : (
                   <p className="text-subtitle text-success font-medium">Gratuito</p>

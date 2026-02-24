@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { formatBRL } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import {
   Package, ShoppingBag, ChevronLeft, ChevronRight, Repeat, Info, MapPin,
@@ -341,7 +342,7 @@ const PreviewHome2 = () => {
                     <div style={{ padding: "12px 12px 14px" }}>
                       <span style={{ fontSize: 10, fontWeight: 500, color: C.primary, textTransform: "uppercase", letterSpacing: 0.3 }}>Loja</span>
                       <p style={{ fontSize: 15, fontWeight: 600, color: C.textDark, margin: "4px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", lineHeight: 1.4 }}>{product.titulo}</p>
-                      {product.preco != null && <p style={{ fontSize: 15, fontWeight: 700, color: C.primary, margin: "6px 0 0" }}>R$ {Number(product.preco).toFixed(2).replace(".", ",")}</p>}
+                      {product.preco != null && <p style={{ fontSize: 15, fontWeight: 700, color: C.primary, margin: "6px 0 0" }}>R$ {formatBRL(product.preco)}</p>}
                     </div>
                   </div>
                 </button>
@@ -399,7 +400,7 @@ const PreviewHome2 = () => {
                     <div style={{ padding: "12px 12px 14px" }}>
                       <span style={{ fontSize: 10, fontWeight: 500, color: C.primary, textTransform: "uppercase", letterSpacing: 0.3 }}>Desapego</span>
                       <p style={{ fontSize: 15, fontWeight: 600, color: C.textDark, margin: "4px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", lineHeight: 1.4 }}>{item.titulo}</p>
-                      {item.preco != null && <p style={{ fontSize: 15, fontWeight: 700, color: C.primary, margin: "6px 0 0" }}>R$ {Number(item.preco).toFixed(2).replace(".", ",")}</p>}
+                      {item.preco != null && <p style={{ fontSize: 15, fontWeight: 700, color: C.primary, margin: "6px 0 0" }}>R$ {formatBRL(item.preco)}</p>}
                     </div>
                   </div>
                 </button>

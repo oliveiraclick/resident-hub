@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { formatBRL } from "@/lib/utils";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, MessageCircle, AlertTriangle, User, ShieldCheck } from "lucide-react";
@@ -160,7 +161,7 @@ const MoradorDesapegoDetalhe = () => {
         {/* Price */}
         {item.preco != null && (
           <p className="mt-2 text-[24px] font-bold text-primary">
-            R$ {Number(item.preco).toFixed(2).replace(".", ",")}
+            R$ {formatBRL(item.preco)}
           </p>
         )}
 

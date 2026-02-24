@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { formatBRL } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { useSearchParams } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
@@ -277,7 +278,7 @@ const MoradorServicos = () => {
                             </div>
                             {s.preco != null && (
                               <span className="text-[13px] font-bold text-primary ml-2 flex-shrink-0">
-                                R$ {Number(s.preco).toFixed(2).replace(".", ",")}
+                                R$ {formatBRL(s.preco)}
                               </span>
                             )}
                           </div>

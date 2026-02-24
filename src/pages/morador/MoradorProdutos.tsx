@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { formatBRL } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import MoradorLayout from "@/components/MoradorLayout";
@@ -53,7 +54,7 @@ const MoradorProdutos = () => {
                   <p className="text-body font-medium truncate">{p.titulo}</p>
                   {p.preco && (
                     <p className="text-body font-semibold text-primary">
-                      R$ {Number(p.preco).toFixed(2)}
+                      R$ {formatBRL(p.preco)}
                     </p>
                   )}
                 </CardContent>

@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { formatBRL } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import {
   Package, ShoppingBag, Repeat, Info, MapPin,
@@ -352,7 +353,7 @@ const PreviewHome4 = () => {
                   </div>
                   <div style={{ padding: "12px 14px 14px" }}>
                     <p style={{ fontSize: 14, fontWeight: 500, color: V.textDark, margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", lineHeight: 1.4 }}>{product.titulo}</p>
-                    {product.preco != null && <p style={{ fontSize: 16, fontWeight: 700, color: V.primary, margin: "6px 0 0" }}>R$ {Number(product.preco).toFixed(2).replace(".", ",")}</p>}
+                    {product.preco != null && <p style={{ fontSize: 16, fontWeight: 700, color: V.primary, margin: "6px 0 0" }}>R$ {formatBRL(product.preco)}</p>}
                   </div>
                 </div>
               </button>
@@ -397,7 +398,7 @@ const PreviewHome4 = () => {
                   </div>
                   <div style={{ padding: "12px 14px 14px" }}>
                     <p style={{ fontSize: 14, fontWeight: 500, color: V.textDark, margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", lineHeight: 1.4 }}>{item.titulo}</p>
-                    {item.preco != null && <p style={{ fontSize: 16, fontWeight: 700, color: V.primary, margin: "6px 0 0" }}>R$ {Number(item.preco).toFixed(2).replace(".", ",")}</p>}
+                    {item.preco != null && <p style={{ fontSize: 16, fontWeight: 700, color: V.primary, margin: "6px 0 0" }}>R$ {formatBRL(item.preco)}</p>}
                   </div>
                 </div>
               </button>

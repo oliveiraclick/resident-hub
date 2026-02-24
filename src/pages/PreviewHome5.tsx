@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { formatBRL } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import {
   Package, ShoppingBag, Repeat, MapPin,
@@ -361,7 +362,7 @@ const PreviewHome5 = () => {
                     <p style={{ fontSize: 14, fontWeight: 600, color: X.textDark, margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", lineHeight: 1.4 }}>{product.titulo}</p>
                     {product.preco != null && (
                       <p style={{ fontSize: 18, fontWeight: 800, color: X.accent, margin: "6px 0 0", letterSpacing: -0.3 }}>
-                        R$ {Number(product.preco).toFixed(2).replace(".", ",")}
+                        R$ {formatBRL(product.preco)}
                       </p>
                     )}
                   </div>
@@ -394,7 +395,7 @@ const PreviewHome5 = () => {
                     <p style={{ fontSize: 14, fontWeight: 600, color: X.textDark, margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", lineHeight: 1.4 }}>{item.titulo}</p>
                     {item.preco != null && (
                       <p style={{ fontSize: 18, fontWeight: 800, color: X.accent, margin: "6px 0 0", letterSpacing: -0.3 }}>
-                        R$ {Number(item.preco).toFixed(2).replace(".", ",")}
+                        R$ {formatBRL(item.preco)}
                       </p>
                     )}
                   </div>
