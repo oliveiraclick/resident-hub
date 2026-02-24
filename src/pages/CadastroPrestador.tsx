@@ -242,7 +242,7 @@ const CadastroPrestador = () => {
           />
           <label htmlFor="isencao-prestador" className="text-xs text-muted-foreground leading-relaxed">
             Li e concordo com o{" "}
-            <a href="/termo-responsabilidade" target="_blank" className="text-primary underline">Termo de Isenção de Responsabilidade</a>.
+            <a href="/condicoes-de-uso" target="_blank" className="text-primary underline">Condições de Uso</a> da plataforma.
           </label>
         </div>
 
