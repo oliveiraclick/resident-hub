@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import MasterLayout from "@/components/MasterLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +17,7 @@ interface Stats {
 }
 
 const MasterHome = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -99,21 +101,21 @@ const MasterHome = () => {
       </div>
 
       <div className="grid grid-cols-3 gap-3 mb-6">
-        <Card className="rounded-[var(--radius-card)]">
+        <Card className="rounded-[var(--radius-card)] cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate("/master/usuarios?filter=bloqueados")}>
           <CardContent className="p-4 flex flex-col items-center gap-1 text-center">
             <ShieldOff className="text-destructive" size={22} />
             <p className="text-muted-foreground text-[10px]">Bloqueados</p>
             <p className="text-lg font-bold">{stats?.totalBloqueados}</p>
           </CardContent>
         </Card>
-        <Card className="rounded-[var(--radius-card)]">
+        <Card className="rounded-[var(--radius-card)] cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate("/master/usuarios?filter=morador")}>
           <CardContent className="p-4 flex flex-col items-center gap-1 text-center">
             <Home className="text-primary" size={22} />
             <p className="text-muted-foreground text-[10px]">Moradores</p>
             <p className="text-lg font-bold">{stats?.totalMoradores}</p>
           </CardContent>
         </Card>
-        <Card className="rounded-[var(--radius-card)]">
+        <Card className="rounded-[var(--radius-card)] cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate("/master/usuarios?filter=prestador")}>
           <CardContent className="p-4 flex flex-col items-center gap-1 text-center">
             <Wrench className="text-primary" size={22} />
             <p className="text-muted-foreground text-[10px]">Prestadores</p>
