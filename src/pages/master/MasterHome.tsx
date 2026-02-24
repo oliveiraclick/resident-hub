@@ -2,13 +2,16 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import MasterLayout from "@/components/MasterLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2, Users, Package, DollarSign } from "lucide-react";
+import { Building2, Users, Package, DollarSign, ShieldOff, Home, Wrench } from "lucide-react";
 
 interface Stats {
   mrr: number;
   totalCondominios: number;
   totalUsuarios: number;
   totalPacotesAtivos: number;
+  totalBloqueados: number;
+  totalMoradores: number;
+  totalPrestadores: number;
   ultimosCondominios: Array<{ id: string; nome: string; created_at: string }>;
 }
 
@@ -18,11 +21,14 @@ const MasterHome = () => {
 
   useEffect(() => {
     const fetchStats = async () => {
-      const [condominiosRes, rolesRes, pacotesRes, lancamentosRes] = await Promise.all([
+      const [condominiosRes, rolesRes, pacotesRes, lancamentosRes, bloqueadosRes, moradoresRes, prestadoresRes] = await Promise.all([
         supabase.from("condominios").select("id, nome, created_at").order("created_at", { ascending: false }),
         supabase.from("user_roles").select("id"),
         supabase.from("pacotes").select("id").in("status", ["RECEBIDO", "TRIADO"]),
         supabase.from("financeiro_lancamentos").select("valor"),
+        supabase.from("user_roles").select("id").eq("aprovado", false),
+        supabase.from("user_roles").select("id").eq("role", "morador"),
+        supabase.from("user_roles").select("id").eq("role", "prestador"),
       ]);
 
       const condominios = condominiosRes.data || [];
@@ -33,6 +39,9 @@ const MasterHome = () => {
         totalCondominios: condominios.length,
         totalUsuarios: (rolesRes.data || []).length,
         totalPacotesAtivos: (pacotesRes.data || []).length,
+        totalBloqueados: (bloqueadosRes.data || []).length,
+        totalMoradores: (moradoresRes.data || []).length,
+        totalPrestadores: (prestadoresRes.data || []).length,
         ultimosCondominios: condominios.slice(0, 5),
       });
       setLoading(false);
@@ -85,6 +94,30 @@ const MasterHome = () => {
               <p className="text-muted-foreground text-xs">Pacotes Ativos</p>
               <p className="text-lg font-bold">{stats?.totalPacotesAtivos}</p>
             </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-3 gap-3 mb-6">
+        <Card className="rounded-[var(--radius-card)]">
+          <CardContent className="p-4 flex flex-col items-center gap-1 text-center">
+            <ShieldOff className="text-destructive" size={22} />
+            <p className="text-muted-foreground text-[10px]">Bloqueados</p>
+            <p className="text-lg font-bold">{stats?.totalBloqueados}</p>
+          </CardContent>
+        </Card>
+        <Card className="rounded-[var(--radius-card)]">
+          <CardContent className="p-4 flex flex-col items-center gap-1 text-center">
+            <Home className="text-primary" size={22} />
+            <p className="text-muted-foreground text-[10px]">Moradores</p>
+            <p className="text-lg font-bold">{stats?.totalMoradores}</p>
+          </CardContent>
+        </Card>
+        <Card className="rounded-[var(--radius-card)]">
+          <CardContent className="p-4 flex flex-col items-center gap-1 text-center">
+            <Wrench className="text-primary" size={22} />
+            <p className="text-muted-foreground text-[10px]">Prestadores</p>
+            <p className="text-lg font-bold">{stats?.totalPrestadores}</p>
           </CardContent>
         </Card>
       </div>
