@@ -43,6 +43,7 @@ const CadastroPrestador = () => {
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [condominios, setCondominios] = useState<Condominio[]>([]);
+  const [lgpdAceito, setLgpdAceito] = useState(false);
 
   useEffect(() => {
     supabase.from("condominios").select("id, nome").order("nome").then(({ data }) => {
@@ -214,7 +215,24 @@ const CadastroPrestador = () => {
           {errors.descricao && <span className="text-xs text-destructive ml-1">{errors.descricao}</span>}
         </div>
 
-        <Button type="submit" disabled={submitting} className="mt-2">
+        <div className="flex items-start gap-3 mt-1">
+          <input
+            type="checkbox"
+            id="lgpd-prestador"
+            checked={lgpdAceito}
+            onChange={(e) => setLgpdAceito(e.target.checked)}
+            className="h-4 w-4 rounded border-border mt-0.5 flex-shrink-0"
+          />
+          <label htmlFor="lgpd-prestador" className="text-xs text-muted-foreground leading-relaxed">
+            Li e concordo com a{" "}
+            <a href="/politica-privacidade" target="_blank" className="text-primary underline">Política de Privacidade</a>{" "}
+            e os{" "}
+            <a href="/termos-de-uso" target="_blank" className="text-primary underline">Termos de Uso</a>, em conformidade com a Lei Geral de Proteção de Dados (LGPD).
+          </label>
+        </div>
+        {errors.lgpd && <span className="text-xs text-destructive ml-1">{errors.lgpd}</span>}
+
+        <Button type="submit" disabled={submitting || !lgpdAceito} className="mt-2">
           {submitting ? "Aguarde..." : "Criar conta"}
         </Button>
 
