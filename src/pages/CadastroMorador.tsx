@@ -193,7 +193,8 @@ const CadastroMorador = () => {
             className="h-4 w-4 rounded border-border mt-0.5 flex-shrink-0"
           />
           <label htmlFor="isencao-morador" className="text-xs text-muted-foreground leading-relaxed">
-            Estou ciente de que o <strong>Morador.app</strong> é apenas uma plataforma de referência e conexão entre moradores e prestadores, não se responsabilizando pela qualidade, negociação ou pagamento dos serviços e produtos anunciados.
+            Li e concordo com o{" "}
+            <a href="/termo-responsabilidade" target="_blank" className="text-primary underline">Termo de Isenção de Responsabilidade</a>.
           </label>
         </div>
 
