@@ -1,0 +1,1 @@
+UPDATE condominios SET nome = 'Morador Splendido' WHERE id = '31b484d2-0826-4541-a183-3698ac5763c1';
