@@ -256,6 +256,7 @@ export type Database = {
           created_at: string
           descricao: string | null
           id: string
+          imagem_url: string | null
           morador_id: string
           preco: number | null
           status: string
@@ -266,6 +267,7 @@ export type Database = {
           created_at?: string
           descricao?: string | null
           id?: string
+          imagem_url?: string | null
           morador_id: string
           preco?: number | null
           status?: string
@@ -276,6 +278,7 @@ export type Database = {
           created_at?: string
           descricao?: string | null
           id?: string
+          imagem_url?: string | null
           morador_id?: string
           preco?: number | null
           status?: string

@@ -18,6 +18,7 @@ interface DesapegoDetail {
   status: string;
   created_at: string;
   morador_id: string;
+  imagem_url: string | null;
   profile?: {
     nome: string;
     telefone: string | null;
@@ -43,7 +44,7 @@ const MoradorDesapegoDetalhe = () => {
     const fetch = async () => {
       const { data, error } = await supabase
         .from("desapegos")
-        .select("id, titulo, descricao, preco, status, created_at, morador_id")
+        .select("id, titulo, descricao, preco, status, created_at, morador_id, imagem_url")
         .eq("id", id)
         .single();
 
@@ -136,10 +137,14 @@ const MoradorDesapegoDetalhe = () => {
 
         {/* Image placeholder - full width 16:9 */}
         <div className="w-full aspect-video rounded-card bg-muted flex items-center justify-center overflow-hidden">
-          <div className="flex flex-col items-center gap-2 text-muted-foreground">
-            <span className="text-[40px]">📦</span>
-            <span className="text-[12px]">Sem imagem</span>
-          </div>
+          {item.imagem_url ? (
+            <img src={item.imagem_url} alt={item.titulo} className="w-full h-full object-cover" />
+          ) : (
+            <div className="flex flex-col items-center gap-2 text-muted-foreground">
+              <span className="text-[40px]">📦</span>
+              <span className="text-[12px]">Sem imagem</span>
+            </div>
+          )}
         </div>
 
         {/* Badge */}
