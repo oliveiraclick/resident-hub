@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { formatBRL } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import {
@@ -330,7 +331,7 @@ const MoradorHome = () => {
                     <p className="text-[14px] font-semibold text-foreground m-0 truncate leading-snug">{product.titulo}</p>
                     {product.preco != null && (
                       <p className="text-[18px] font-extrabold text-primary mt-1.5 m-0 tracking-tight">
-                        R$ {Number(product.preco).toFixed(2).replace(".", ",")}
+                        R$ {formatBRL(product.preco)}
                       </p>
                     )}
                   </div>
@@ -369,7 +370,7 @@ const MoradorHome = () => {
                     <p className="text-[14px] font-semibold text-foreground m-0 truncate leading-snug">{item.titulo}</p>
                     {item.preco != null && (
                       <p className="text-[18px] font-extrabold text-primary mt-1.5 m-0 tracking-tight">
-                        R$ {Number(item.preco).toFixed(2).replace(".", ",")}
+                        R$ {formatBRL(item.preco)}
                       </p>
                     )}
                   </div>

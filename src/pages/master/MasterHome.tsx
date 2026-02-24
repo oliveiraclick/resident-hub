@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { formatBRL } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import MasterLayout from "@/components/MasterLayout";
@@ -67,7 +68,7 @@ const MasterHome = () => {
             <DollarSign className="text-primary" size={24} />
             <div>
               <p className="text-muted-foreground text-xs">MRR Total</p>
-              <p className="text-lg font-bold">R$ {stats?.mrr.toFixed(2)}</p>
+              <p className="text-lg font-bold">R$ {formatBRL(stats?.mrr ?? 0)}</p>
             </div>
           </CardContent>
         </Card>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { formatBRL } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import PrestadorLayout from "@/components/PrestadorLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -208,7 +209,7 @@ const PrestadorServicos = () => {
 
                 {s.preco != null && (
                   <p className="text-[15px] font-bold text-primary">
-                    R$ {Number(s.preco).toFixed(2).replace(".", ",")}
+                    R$ {formatBRL(s.preco)}
                   </p>
                 )}
 
