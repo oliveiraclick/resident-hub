@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import TermsAcceptanceModal from "@/components/TermsAcceptanceModal";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -58,7 +59,12 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     }
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      <TermsAcceptanceModal />
+      {children}
+    </>
+  );
 };
 
 export default ProtectedRoute;

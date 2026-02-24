@@ -574,32 +574,38 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          condicoes_aceitas_em: string | null
           created_at: string
           id: string
           nome: string
           numero_casa: string | null
           rua: string | null
           telefone: string | null
+          termos_aceitos_em: string | null
           user_id: string
         }
         Insert: {
           avatar_url?: string | null
+          condicoes_aceitas_em?: string | null
           created_at?: string
           id?: string
           nome?: string
           numero_casa?: string | null
           rua?: string | null
           telefone?: string | null
+          termos_aceitos_em?: string | null
           user_id: string
         }
         Update: {
           avatar_url?: string | null
+          condicoes_aceitas_em?: string | null
           created_at?: string
           id?: string
           nome?: string
           numero_casa?: string | null
           rua?: string | null
           telefone?: string | null
+          termos_aceitos_em?: string | null
           user_id?: string
         }
         Relationships: []
