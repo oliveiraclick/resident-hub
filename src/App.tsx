@@ -25,6 +25,9 @@ import PreviewHome2 from "./pages/PreviewHome2";
 import PreviewHome3 from "./pages/PreviewHome3";
 import PreviewHome4 from "./pages/PreviewHome4";
 import PreviewHome5 from "./pages/PreviewHome5";
+import PoliticaPrivacidade from "./pages/PoliticaPrivacidade";
+import TermosDeUso from "./pages/TermosDeUso";
+import CondicoesDeUso from "./pages/CondicoesDeUso";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +46,9 @@ const App = () => (
             <Route path="/auth/resetar" element={<ResetarSenha />} />
             <Route path="/cadastro/morador" element={<CadastroMorador />} />
             <Route path="/cadastro/prestador" element={<CadastroPrestador />} />
+            <Route path="/politica-privacidade" element={<PoliticaPrivacidade />} />
+            <Route path="/termos-de-uso" element={<TermosDeUso />} />
+            <Route path="/condicoes-de-uso" element={<CondicoesDeUso />} />
             <Route
               path="/dashboard"
               element={
