@@ -15,6 +15,7 @@ interface ProdutoDetail {
   created_at: string;
   prestador_id: string;
   prestador_user_id?: string;
+  imagem_url: string | null;
   profile?: {
     nome: string;
     telefone: string | null;
@@ -35,7 +36,7 @@ const MoradorProdutoDetalhe = () => {
     const fetch = async () => {
       const { data, error } = await supabase
         .from("produtos")
-        .select("id, titulo, descricao, preco, status, created_at, prestador_id")
+        .select("id, titulo, descricao, preco, status, created_at, prestador_id, imagem_url")
         .eq("id", id)
         .single();
 
@@ -134,10 +135,14 @@ const MoradorProdutoDetalhe = () => {
 
         {/* Image placeholder */}
         <div className="w-full aspect-video rounded-card bg-muted flex items-center justify-center overflow-hidden">
-          <div className="flex flex-col items-center gap-2 text-muted-foreground">
-            <span className="text-[40px]">🛍️</span>
-            <span className="text-[12px]">Sem imagem</span>
-          </div>
+          {item.imagem_url ? (
+            <img src={item.imagem_url} alt={item.titulo} className="w-full h-full object-cover" />
+          ) : (
+            <div className="flex flex-col items-center gap-2 text-muted-foreground">
+              <span className="text-[40px]">🛍️</span>
+              <span className="text-[12px]">Sem imagem</span>
+            </div>
+          )}
         </div>
 
         {/* Badges */}
