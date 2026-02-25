@@ -1,6 +1,6 @@
 import { ReactNode, useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, Bell, QrCode, Search, Wrench, X, Sparkles } from "lucide-react";
+import { ArrowLeft, Bell, QrCode, Search, Wrench, X, Sparkles, Menu } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import logoMorador from "@/assets/logo-morador.png";
@@ -16,6 +16,7 @@ interface AppShellProps {
   children: ReactNode;
   moduleName: string;
   navItems: NavItem[];
+  menuItems?: NavItem[];
   userName?: string;
   showSearch?: boolean;
   onQrPress?: () => void;
@@ -32,10 +33,11 @@ interface SearchResult {
   descricao: string | null;
 }
 
-const AppShell = ({ children, moduleName, navItems, userName, showSearch = false, onQrPress, condominioName, condominioLogo, aprovado = true, title, showBack = false }: AppShellProps) => {
+const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSearch = false, onQrPress, condominioName, condominioLogo, aprovado = true, title, showBack = false }: AppShellProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
 
@@ -367,6 +369,81 @@ const AppShell = ({ children, moduleName, navItems, userName, showSearch = false
             </button>
           );
         })}
+        {menuItems && menuItems.length > 0 && (
+          <div className="relative">
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="flex flex-col items-center gap-[3px] border-none cursor-pointer"
+              style={{
+                background: menuOpen || menuItems.some(mi => location.pathname.startsWith(mi.path))
+                  ? "hsla(var(--primary), 0.15)" : "transparent",
+                padding: "8px 14px",
+                borderRadius: 14,
+              }}
+            >
+              <Menu
+                size={20}
+                color={menuOpen || menuItems.some(mi => location.pathname.startsWith(mi.path))
+                  ? "hsl(var(--primary))" : "rgba(255,255,255,0.45)"}
+                strokeWidth={menuOpen || menuItems.some(mi => location.pathname.startsWith(mi.path)) ? 2.5 : 1.8}
+              />
+              <span
+                style={{
+                  fontSize: 9,
+                  fontWeight: menuOpen || menuItems.some(mi => location.pathname.startsWith(mi.path)) ? 700 : 400,
+                  color: menuOpen || menuItems.some(mi => location.pathname.startsWith(mi.path))
+                    ? "hsl(var(--primary))" : "rgba(255,255,255,0.45)",
+                  letterSpacing: 0.3,
+                }}
+              >
+                Mais
+              </span>
+            </button>
+            {menuOpen && (
+              <>
+                <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
+                <div
+                  className="absolute z-20 rounded-xl shadow-lg border border-border overflow-hidden"
+                  style={{
+                    bottom: "calc(100% + 12px)",
+                    right: 0,
+                    minWidth: 180,
+                    background: "hsl(var(--header-bg))",
+                  }}
+                >
+                  {menuItems.map((mi) => {
+                    const isMenuActive = location.pathname.startsWith(mi.path);
+                    return (
+                      <button
+                        key={mi.path}
+                        onClick={() => { navigate(mi.path); setMenuOpen(false); }}
+                        className="flex items-center gap-3 w-full px-4 py-3 border-none cursor-pointer"
+                        style={{
+                          background: isMenuActive ? "hsla(var(--primary), 0.15)" : "transparent",
+                        }}
+                      >
+                        <mi.icon
+                          size={18}
+                          color={isMenuActive ? "hsl(var(--primary))" : "rgba(255,255,255,0.6)"}
+                          strokeWidth={isMenuActive ? 2.5 : 1.8}
+                        />
+                        <span
+                          style={{
+                            fontSize: 13,
+                            fontWeight: isMenuActive ? 600 : 400,
+                            color: isMenuActive ? "hsl(var(--primary))" : "rgba(255,255,255,0.75)",
+                          }}
+                        >
+                          {mi.label}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </div>
+        )}
       </nav>
     </div>
   );
