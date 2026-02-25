@@ -85,10 +85,7 @@ const VisitanteRegistro = () => {
       toast.error("Informe seu nome");
       return;
     }
-    if (!fotoFile) {
-      toast.error("Tire uma foto para identificação");
-      return;
-    }
+    // Foto é opcional
     if (!convite || !token) return;
 
     setSubmitting(true);
@@ -206,7 +203,7 @@ const VisitanteRegistro = () => {
 
             {/* Photo capture */}
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium ml-1">Foto para identificação</label>
+              <label className="text-sm font-medium ml-1">Foto para identificação (opcional)</label>
               <input
                 ref={fileInputRef}
                 type="file"
