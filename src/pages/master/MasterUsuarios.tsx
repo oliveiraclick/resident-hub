@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Pencil, Trash2, CheckCircle, XCircle, Plus, ShieldCheck } from "lucide-react";
+import { Pencil, Trash2, CheckCircle, XCircle, Plus, ShieldCheck, Search } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -44,6 +44,7 @@ const MasterUsuarios = () => {
   const [loading, setLoading] = useState(true);
   const [filterRole, setFilterRole] = useState<string>(initialFilter === "bloqueados" ? "all" : initialFilter);
   const [showBloqueados, setShowBloqueados] = useState(initialFilter === "bloqueados");
+  const [search, setSearch] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<UserRow | null>(null);
   const [editTarget, setEditTarget] = useState<UserRow | null>(null);
   const [editRole, setEditRole] = useState("");
@@ -154,7 +155,8 @@ const MasterUsuarios = () => {
   };
 
   const roleFiltered = filterRole === "all" ? users : users.filter((u) => u.role === filterRole);
-  const filtered = showBloqueados ? roleFiltered.filter((u) => !u.aprovado) : roleFiltered;
+  const searchFiltered = search ? roleFiltered.filter((u) => u.nome.toLowerCase().includes(search.toLowerCase())) : roleFiltered;
+  const filtered = showBloqueados ? searchFiltered.filter((u) => !u.aprovado) : searchFiltered;
   const bloqueadosCount = users.filter((u) => !u.aprovado).length;
 
   const handleAprovarTodos = async () => {
@@ -169,6 +171,15 @@ const MasterUsuarios = () => {
   return (
     <MasterLayout title="Usuários">
       <div className="mb-4 space-y-3">
+        <div className="relative">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Buscar por nome..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
         <Select value={filterRole} onValueChange={(v) => { setFilterRole(v); setShowBloqueados(false); }}>
           <SelectTrigger className="w-full h-[52px]">
             <SelectValue placeholder="Filtrar por role" />
