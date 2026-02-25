@@ -8,3 +8,5 @@ android/app/release/
 *.aab
 *.apk
 *.zip
+node_modules/
+dist/
