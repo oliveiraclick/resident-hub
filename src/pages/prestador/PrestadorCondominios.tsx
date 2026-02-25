@@ -166,7 +166,24 @@ const PrestadorCondominios = () => {
             <Loader2 className="animate-spin text-primary" size={32} />
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
+          <>
+            {/* Cards resumo */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-2xl border border-border bg-card p-4 text-center" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}>
+                <Building2 size={20} className="text-primary mx-auto mb-1.5" />
+                <p className="text-[22px] font-extrabold text-foreground">{condominios.length}</p>
+                <p className="text-[11px] text-muted-foreground font-medium">Condomínios</p>
+              </div>
+              <div className="rounded-2xl border border-border bg-card p-4 text-center" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}>
+                <Users size={20} className="text-primary mx-auto mb-1.5" />
+                <p className="text-[22px] font-extrabold text-foreground">
+                  {condominios.reduce((sum, c) => sum + c.totalMoradores, 0)}
+                </p>
+                <p className="text-[11px] text-muted-foreground font-medium">Moradores cadastrados</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
             {condominios.map((c) => (
               <div
                 key={c.id}
@@ -231,7 +248,8 @@ const PrestadorCondominios = () => {
                 )}
               </div>
             ))}
-          </div>
+            </div>
+          </>
         )}
       </div>
     </PrestadorLayout>
