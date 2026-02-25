@@ -19,7 +19,8 @@ interface CondominioRow {
   responsavel: string | null;
   logo_url: string | null;
   created_at: string;
-  totalUsuarios: number;
+  totalMoradores: number;
+  totalPrestadores: number;
   totalUnidades: number;
 }
 
@@ -42,7 +43,7 @@ const MasterCondominios = () => {
     setLoading(true);
     const [condRes, rolesRes, unidadesRes] = await Promise.all([
       supabase.from("condominios").select("*").order("created_at", { ascending: false }),
-      supabase.from("user_roles").select("condominio_id"),
+      supabase.from("user_roles").select("condominio_id,role"),
       supabase.from("unidades").select("condominio_id"),
     ]);
     const conds = condRes.data || [];
@@ -51,7 +52,8 @@ const MasterCondominios = () => {
     setCondominios(
       conds.map((c: any) => ({
         ...c,
-        totalUsuarios: roles.filter((r) => r.condominio_id === c.id).length,
+        totalMoradores: roles.filter((r) => r.condominio_id === c.id && r.role === 'morador').length,
+        totalPrestadores: roles.filter((r) => r.condominio_id === c.id && r.role === 'prestador').length,
         totalUnidades: unidades.filter((u) => u.condominio_id === c.id).length,
       }))
     );
@@ -196,10 +198,16 @@ const MasterCondominios = () => {
                         </button>
                       </div>
                     </div>
-                    <div className="flex gap-4 mt-2 text-xs text-muted-foreground">
-                      <span>{c.totalUsuarios} usuários</span>
-                      <span>{c.totalUnidades} unidades</span>
-                      <span>{new Date(c.created_at).toLocaleDateString("pt-BR")}</span>
+                    <div className="flex gap-3 mt-2">
+                      <span className="inline-flex items-center gap-1 text-xs font-medium bg-primary/10 text-primary rounded-full px-2.5 py-1">
+                        🏠 {c.totalMoradores} moradores
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-xs font-medium bg-accent/60 text-accent-foreground rounded-full px-2.5 py-1">
+                        🔧 {c.totalPrestadores} prestadores
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                        {c.totalUnidades} un.
+                      </span>
                     </div>
                   </div>
                 </div>
