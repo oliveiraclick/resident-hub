@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import PrestadorLayout from "@/components/PrestadorLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { LogOut, Save, User, Phone, Briefcase, FileText } from "lucide-react";
+import { LogOut, Save, User, Phone, Briefcase, FileText, Camera } from "lucide-react";
 import { useCategorias } from "@/hooks/useCategorias";
 
 const PrestadorPerfil = () => {
@@ -19,22 +19,25 @@ const PrestadorPerfil = () => {
   const [telefone, setTelefone] = useState("");
   const [especialidade, setEspecialidade] = useState("");
   const [descricao, setDescricao] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [prestadorId, setPrestadorId] = useState<string | null>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!user || !condominioId) return;
 
     const fetchData = async () => {
       const [profileRes, prestadorRes] = await Promise.all([
-        supabase.from("profiles").select("nome, telefone").eq("user_id", user.id).maybeSingle(),
+        supabase.from("profiles").select("nome, telefone, avatar_url").eq("user_id", user.id).maybeSingle(),
         supabase.from("prestadores").select("id, especialidade, descricao").eq("user_id", user.id).eq("condominio_id", condominioId).limit(1).maybeSingle(),
       ]);
 
       if (profileRes.data) {
         setNome(profileRes.data.nome || "");
         setTelefone((profileRes.data as any).telefone || "");
+        setAvatarUrl((profileRes.data as any).avatar_url || null);
       }
       if (prestadorRes.data) {
         setPrestadorId(prestadorRes.data.id);
@@ -46,6 +49,21 @@ const PrestadorPerfil = () => {
 
     fetchData();
   }, [user, condominioId]);
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    if (file.size > 5 * 1024 * 1024) { toast.error("Imagem deve ter no máximo 5MB"); return; }
+    const ext = file.name.split(".").pop();
+    const path = `${user.id}/avatar.${ext}`;
+    const { error } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+    if (error) { toast.error("Erro ao enviar foto"); return; }
+    const { data } = supabase.storage.from("avatars").getPublicUrl(path);
+    const url = `${data.publicUrl}?t=${Date.now()}`;
+    await supabase.from("profiles").update({ avatar_url: url } as any).eq("user_id", user.id);
+    setAvatarUrl(url);
+    toast.success("Foto atualizada!");
+  };
 
   const handleSave = async () => {
     if (!user) return;
@@ -97,9 +115,20 @@ const PrestadorPerfil = () => {
               style={{ background: "hsl(var(--primary))", filter: "blur(40px)" }} />
 
             {/* Avatar */}
-            <div className="relative z-10 h-20 w-20 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center border-2 border-white/20 shadow-lg">
-              <User size={36} className="text-white" />
-            </div>
+            <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
+            <button
+              onClick={() => avatarInputRef.current?.click()}
+              className="relative z-10 h-20 w-20 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center border-2 border-white/20 shadow-lg overflow-hidden group"
+            >
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="Avatar" className="h-full w-full object-cover" />
+              ) : (
+                <User size={36} className="text-white" />
+              )}
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
+                <Camera size={20} className="text-white" />
+              </div>
+            </button>
 
             {/* Name & email */}
             <p className="relative z-10 mt-3 text-[20px] font-bold text-white">{nome || "Prestador"}</p>
