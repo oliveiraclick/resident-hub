@@ -440,6 +440,30 @@ export type Database = {
           },
         ]
       }
+      indicacoes: {
+        Row: {
+          created_at: string
+          id: string
+          indicado_id: string
+          indicador_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          indicado_id: string
+          indicador_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          indicado_id?: string
+          indicador_id?: string
+          status?: string
+        }
+        Relationships: []
+      }
       lotes: {
         Row: {
           condominio_id: string
