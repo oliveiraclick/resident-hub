@@ -4,6 +4,7 @@ import PrestadorProdutos from "./PrestadorProdutos";
 import PrestadorServicos from "./PrestadorServicos";
 import PrestadorPerfil from "./PrestadorPerfil";
 import PrestadorFinanceiro from "./PrestadorFinanceiro";
+import PrestadorCondominios from "./PrestadorCondominios";
 
 const PrestadorDashboard = () => {
   return (
@@ -13,6 +14,7 @@ const PrestadorDashboard = () => {
       <Route path="servicos" element={<PrestadorServicos />} />
       <Route path="perfil" element={<PrestadorPerfil />} />
       <Route path="financeiro" element={<PrestadorFinanceiro />} />
+      <Route path="condominios" element={<PrestadorCondominios />} />
     </Routes>
   );
 };

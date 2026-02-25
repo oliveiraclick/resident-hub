@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
   ShoppingBag, Wrench, DollarSign, Star,
-  ArrowRight, MapPin,
+  ArrowRight, MapPin, Building2,
 } from "lucide-react";
 
 const PrestadorHome = () => {
@@ -206,6 +206,7 @@ const PrestadorHome = () => {
                   { label: "Gerenciar Serviços", icon: Wrench, path: "/prestador/servicos" },
                   { label: "Gerenciar Produtos", icon: ShoppingBag, path: "/prestador/produtos" },
                   { label: "Financeiro", icon: DollarSign, path: "/prestador/financeiro" },
+                  { label: "Condomínios", icon: Building2, path: "/prestador/condominios" },
                 ].map((action) => (
                   <button
                     key={action.label}
