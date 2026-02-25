@@ -156,20 +156,11 @@ const MoradorHome = () => {
     fetchPrestadoresVisiveis();
   }, [user]);
 
-  // Interleave products and services for the E-shop section
-  const shopItems: any[] = [];
-  const taggedProdutos = produtos.map((p) => ({ ...p, _tipo: "Produto" as const }));
-  const taggedServicos = servicos.map((s) => ({ ...s, _tipo: "Serviço" as const }));
-  const maxLen = Math.max(taggedProdutos.length, taggedServicos.length);
-  for (let i = 0; i < maxLen; i++) {
-    if (i < taggedProdutos.length) shopItems.push(taggedProdutos[i]);
-    if (i < taggedServicos.length) shopItems.push(taggedServicos[i]);
-  }
-  const shopList = shopItems.length > 0 ? shopItems.slice(0, 8) : [
-    { id: "mock-1", titulo: "Bolo Caseiro", preco: 25, status: "ativo", _tipo: "Produto" as const },
-    { id: "mock-2", titulo: "Limpeza Completa", preco: 120, status: "ativo", _tipo: "Serviço" as const },
-    { id: "mock-3", titulo: "Brigadeiro Gourmet", preco: 3.5, status: "ativo", _tipo: "Produto" as const },
-    { id: "mock-4", titulo: "Eletricista", preco: 80, status: "ativo", _tipo: "Serviço" as const },
+  const productList = produtos.length > 0 ? produtos : [
+    { id: "mock-1", titulo: "Bolo Caseiro", preco: 25, status: "ativo" },
+    { id: "mock-2", titulo: "Sabonete Artesanal", preco: 12, status: "ativo" },
+    { id: "mock-3", titulo: "Brigadeiro Gourmet", preco: 3.5, status: "ativo" },
+    { id: "mock-4", titulo: "Vela Aromática", preco: 18, status: "ativo" },
   ];
 
   const desapegoList = desapegos.length > 0 ? desapegos : [
@@ -343,44 +334,30 @@ const MoradorHome = () => {
               Ver tudo <ArrowRight size={14} />
             </button>
           </div>
-          <p className="text-[11px] text-muted-foreground font-medium mb-3">Produtos e serviços do seu condomínio</p>
+          <p className="text-[11px] text-muted-foreground font-medium mb-3">De prestadores do seu condomínio</p>
           <div className="grid grid-cols-2 gap-3">
-            {shopList.slice(0, 4).map((item: any, idx: number) => {
-              const isServico = item._tipo === "Serviço";
-              return (
-                <button
-                  key={`${item._tipo}-${item.id}`}
-                  onClick={() => item.id.startsWith("mock") ? navigate("/morador/produtos") : isServico ? navigate(`/morador/servicos?q=${encodeURIComponent(item.titulo)}`) : navigate(`/morador/produtos/${item.id}`)}
-                  className="bg-transparent border-none cursor-pointer p-0 text-left active:scale-95 transition-transform"
-                >
-                  <div className="rounded-[20px] overflow-hidden bg-card border border-border" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
-                    <div className="h-[130px] overflow-hidden relative">
-                      {item.imagem_url ? (
-                        <img src={item.imagem_url} alt={item.titulo} className="w-full h-full object-cover" />
-                      ) : isServico ? (
-                        <div className="w-full h-full bg-primary/10 flex items-center justify-center">
-                          <Wrench size={36} className="text-primary/40" />
-                        </div>
-                      ) : (
-                        <img src={fallbackShopImages[idx % fallbackShopImages.length]} alt={item.titulo} className="w-full h-full object-cover" />
-                      )}
-                      <div className="absolute bottom-0 left-0 right-0 h-10" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.3), transparent)" }} />
-                      <Badge className={`absolute top-2.5 left-2.5 text-[9px] uppercase tracking-wider ${isServico ? "bg-accent text-accent-foreground" : "bg-primary text-primary-foreground"}`}>
-                        {item._tipo}
-                      </Badge>
-                    </div>
-                    <div className="p-3 pt-3 pb-4">
-                      <p className="text-[14px] font-semibold text-foreground m-0 truncate leading-snug">{item.titulo}</p>
-                      {item.preco != null && (
-                        <p className="text-[18px] font-extrabold text-primary mt-1.5 m-0 tracking-tight">
-                          R$ {formatBRL(item.preco)}
-                        </p>
-                      )}
-                    </div>
+            {productList.slice(0, 4).map((product: any, idx: number) => (
+              <button
+                key={product.id}
+                onClick={() => product.id.startsWith("mock") ? navigate("/morador/produtos") : navigate(`/morador/produtos/${product.id}`)}
+                className="bg-transparent border-none cursor-pointer p-0 text-left active:scale-95 transition-transform"
+              >
+                <div className="rounded-[20px] overflow-hidden bg-card border border-border" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
+                  <div className="h-[130px] overflow-hidden relative">
+                    <img src={product.imagem_url || fallbackShopImages[idx % fallbackShopImages.length]} alt={product.titulo} className="w-full h-full object-cover" />
+                    <div className="absolute bottom-0 left-0 right-0 h-10" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.3), transparent)" }} />
                   </div>
-                </button>
-              );
-            })}
+                  <div className="p-3 pt-3 pb-4">
+                    <p className="text-[14px] font-semibold text-foreground m-0 truncate leading-snug">{product.titulo}</p>
+                    {product.preco != null && (
+                      <p className="text-[18px] font-extrabold text-primary mt-1.5 m-0 tracking-tight">
+                        R$ {formatBRL(product.preco)}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </button>
+            ))}
           </div>
         </div>
 
