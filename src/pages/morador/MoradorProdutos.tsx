@@ -48,8 +48,12 @@ const MoradorProdutos = () => {
             {produtos.map((p) => (
               <Card key={p.id} className="overflow-hidden cursor-pointer active:scale-[0.98] transition-transform" onClick={() => navigate(`/morador/produtos/${p.id}`)}>
                 <CardContent className="flex flex-col gap-2 p-3">
-                  <div className="flex h-24 items-center justify-center rounded-button bg-muted">
-                    <ShoppingBag size={28} className="text-muted-foreground" />
+                  <div className="flex h-24 items-center justify-center rounded-button bg-muted overflow-hidden">
+                    {p.imagem_url ? (
+                      <img src={p.imagem_url} alt={p.titulo} className="w-full h-full object-cover" />
+                    ) : (
+                      <ShoppingBag size={28} className="text-muted-foreground" />
+                    )}
                   </div>
                   <p className="text-body font-medium truncate">{p.titulo}</p>
                   {p.preco && (
