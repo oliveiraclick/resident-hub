@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      assinaturas_prestador: {
+        Row: {
+          condominio_id: string
+          created_at: string
+          id: string
+          kiwify_customer_id: string | null
+          kiwify_subscription_id: string | null
+          prestador_id: string
+          status: string
+          trial_fim: string | null
+          trial_inicio: string | null
+          updated_at: string
+          valor_mensal: number
+        }
+        Insert: {
+          condominio_id: string
+          created_at?: string
+          id?: string
+          kiwify_customer_id?: string | null
+          kiwify_subscription_id?: string | null
+          prestador_id: string
+          status?: string
+          trial_fim?: string | null
+          trial_inicio?: string | null
+          updated_at?: string
+          valor_mensal?: number
+        }
+        Update: {
+          condominio_id?: string
+          created_at?: string
+          id?: string
+          kiwify_customer_id?: string | null
+          kiwify_subscription_id?: string | null
+          prestador_id?: string
+          status?: string
+          trial_fim?: string | null
+          trial_inicio?: string | null
+          updated_at?: string
+          valor_mensal?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assinaturas_prestador_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assinaturas_prestador_prestador_id_fkey"
+            columns: ["prestador_id"]
+            isOneToOne: false
+            referencedRelation: "prestadores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       avaliacoes: {
         Row: {
           avaliado_id: string
