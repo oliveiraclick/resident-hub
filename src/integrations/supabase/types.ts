@@ -568,6 +568,7 @@ export type Database = {
       }
       prestadores: {
         Row: {
+          codigo_indicacao: string | null
           condominio_id: string
           created_at: string
           descricao: string | null
@@ -578,6 +579,7 @@ export type Database = {
           visivel_ate: string | null
         }
         Insert: {
+          codigo_indicacao?: string | null
           condominio_id: string
           created_at?: string
           descricao?: string | null
@@ -588,6 +590,7 @@ export type Database = {
           visivel_ate?: string | null
         }
         Update: {
+          codigo_indicacao?: string | null
           condominio_id?: string
           created_at?: string
           descricao?: string | null
@@ -891,6 +894,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_prestador_codigo: { Args: { p_user_id: string }; Returns: string }
       get_prestador_profiles: {
         Args: { _user_ids: string[] }
         Returns: {

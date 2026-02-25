@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import PrestadorLayout from "@/components/PrestadorLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Gift, Users, Copy, Check, Loader2, Star } from "lucide-react";
+import { Gift, Users, Copy, Check, Loader2, Star, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import QrDisplay from "@/components/QrDisplay";
 
 interface Indicacao {
   id: string;
@@ -19,16 +20,26 @@ const PrestadorIndicacoes = () => {
   const [indicacoes, setIndicacoes] = useState<Indicacao[]>([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [codigoCurto, setCodigoCurto] = useState("");
 
-  const codigoIndicacao = user?.id || "";
   const totalConfirmadas = indicacoes.filter((i) => i.status === "confirmada").length;
   const mesesGratis = Math.floor(totalConfirmadas / 5);
   const faltamPara = 5 - (totalConfirmadas % 5);
 
+  const linkCompartilhavel = codigoCurto
+    ? `${window.location.origin}/cadastro-prestador?ref=${codigoCurto}`
+    : "";
+
   useEffect(() => {
     if (!user) return;
-    const fetchIndicacoes = async () => {
+    const fetchData = async () => {
       setLoading(true);
+
+      // Fetch short code
+      const { data: codeData } = await supabase.rpc("get_prestador_codigo", { p_user_id: user.id });
+      if (codeData) setCodigoCurto(codeData as string);
+
+      // Fetch indicacoes
       const { data } = await supabase
         .from("indicacoes")
         .select("id, indicado_id, status, created_at")
@@ -48,17 +59,36 @@ const PrestadorIndicacoes = () => {
       }
       setLoading(false);
     };
-    fetchIndicacoes();
+    fetchData();
   }, [user]);
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(codigoIndicacao);
+      await navigator.clipboard.writeText(codigoCurto);
       setCopied(true);
       toast.success("Código copiado!");
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast.error("Não foi possível copiar");
+    }
+  };
+
+  const handleShare = async () => {
+    if (!linkCompartilhavel) return;
+    const shareData = {
+      title: "Morador.app – Indicação",
+      text: `Use meu código ${codigoCurto} para se cadastrar como prestador!`,
+      url: linkCompartilhavel,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(linkCompartilhavel);
+        toast.success("Link copiado!");
+      }
+    } catch {
+      // User cancelled share
     }
   };
 
@@ -114,20 +144,38 @@ const PrestadorIndicacoes = () => {
           </div>
         </div>
 
-        {/* Código */}
+        {/* Código + QR */}
         <div className="rounded-2xl border border-border bg-card p-4" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}>
-          <p className="text-[12px] font-semibold text-muted-foreground mb-2">Seu código de indicação</p>
-          <div className="flex items-center gap-2">
-            <div className="flex-1 bg-muted rounded-xl px-4 py-3 font-mono text-[12px] text-foreground truncate">
-              {codigoIndicacao}
+          <p className="text-[12px] font-semibold text-muted-foreground mb-3">Seu código de indicação</p>
+          
+          {codigoCurto && (
+            <div className="flex justify-center mb-4">
+              <QrDisplay value={linkCompartilhavel} size={160} label="Mostre para quem você quer indicar" />
             </div>
-            <Button size="sm" variant="outline" onClick={handleCopy} className="gap-1 rounded-xl h-10">
+          )}
+
+          <div className="flex items-center gap-2 mb-2">
+            <div className="flex-1 bg-muted rounded-xl px-4 py-3 font-mono text-lg font-bold text-foreground text-center tracking-widest">
+              {codigoCurto || "..."}
+            </div>
+            <Button size="sm" variant="outline" onClick={handleCopy} className="gap-1 rounded-xl h-10" disabled={!codigoCurto}>
               {copied ? <Check size={14} /> : <Copy size={14} />}
               {copied ? "Copiado" : "Copiar"}
             </Button>
           </div>
-          <p className="text-[10px] text-muted-foreground mt-2">
-            Compartilhe este código com outros prestadores. Quando eles se cadastrarem informando seu código, conta como indicação!
+
+          <Button
+            variant="default"
+            className="w-full gap-2 rounded-xl"
+            onClick={handleShare}
+            disabled={!codigoCurto}
+          >
+            <Share2 size={16} />
+            Compartilhar link de indicação
+          </Button>
+
+          <p className="text-[10px] text-muted-foreground mt-2 text-center">
+            Compartilhe o código ou link com outros prestadores. Quando eles se cadastrarem, conta como indicação!
           </p>
         </div>
 
