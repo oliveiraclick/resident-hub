@@ -234,7 +234,7 @@ const VisitanteRegistro = () => {
                   onClick={() => fileInputRef.current?.click()}
                 >
                   <Camera size={20} />
-                  Fazer facial
+                  Fazer a Facial
                 </Button>
               )}
             </div>
