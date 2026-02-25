@@ -173,11 +173,14 @@ const PrestadorServicos = () => {
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-[12px] font-medium text-muted-foreground ml-1">Preço (R$)</label>
-                <Input type="number" value={preco} onChange={(e) => setPreco(e.target.value)} placeholder="0,00" step="0.01" />
+                <label className="text-[12px] font-medium text-muted-foreground ml-1">Preço (R$) *</label>
+                <Input type="number" value={preco} onChange={(e) => setPreco(e.target.value)} placeholder="0,00" step="0.01" min="0.01" />
+                <p className="text-[11px] text-warning ml-1 mt-0.5">
+                  ⚠️ Informe o preço real do serviço. Anúncios com valores simbólicos (ex: R$ 1,00) poderão ser removidos.
+                </p>
               </div>
 
-              <Button onClick={handleSubmit} disabled={submitting || !titulo.trim()}>
+              <Button onClick={handleSubmit} disabled={submitting || !titulo.trim() || !preco || Number(preco) <= 0}>
                 {submitting ? "Salvando..." : editingId ? "Salvar alterações" : "Criar serviço"}
               </Button>
             </CardContent>

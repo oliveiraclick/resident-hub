@@ -60,6 +60,7 @@ const MoradorHome = () => {
           .from("produtos")
           .select("id, titulo, preco, status, imagem_url")
           .eq("status", "ativo")
+          .gt("preco", 0)
           .order("created_at", { ascending: false })
           .limit(8);
         setProdutos(data || []);
@@ -88,6 +89,7 @@ const MoradorHome = () => {
           .from("servicos")
           .select("id, titulo, preco, status")
           .eq("status", "ativo")
+          .gt("preco", 0)
           .order("created_at", { ascending: false })
           .limit(8);
         setServicos(data || []);
