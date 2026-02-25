@@ -159,6 +159,15 @@ const MoradorHome = () => {
     fetchPrestadoresVisiveis();
   }, [user]);
 
+  // Auto-rotate banners
+  useEffect(() => {
+    if (banners.length <= 1) return;
+    const timer = setInterval(() => {
+      setBannerIdx((prev) => (prev + 1) % banners.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [banners.length]);
+
   const productList = produtos.length > 0 ? produtos : [
     { id: "mock-1", titulo: "Bolo Caseiro", preco: 25, status: "ativo" },
     { id: "mock-2", titulo: "Sabonete Artesanal", preco: 12, status: "ativo" },
@@ -189,13 +198,8 @@ const MoradorHome = () => {
             ) : (
               <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, hsl(var(--header-bg)), hsl(var(--primary)))" }} />
             )}
-            <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 50%, transparent)" }} />
-            <div className="relative z-[1] flex flex-col justify-end h-full p-5">
-              <p className="text-[20px] font-extrabold text-white m-0 leading-tight tracking-tight">{banners[bannerIdx]?.titulo}</p>
-              {banners[bannerIdx]?.subtitulo && <p className="text-[13px] text-white/70 mt-1.5">{banners[bannerIdx].subtitulo}</p>}
-            </div>
             {banners.length > 1 && (
-              <div className="absolute bottom-3.5 right-[18px] z-[1] flex gap-1.5">
+              <div className="absolute bottom-3.5 left-1/2 -translate-x-1/2 z-[1] flex gap-1.5">
                 {banners.map((_, i) => (
                   <button key={i} onClick={(e) => { e.stopPropagation(); setBannerIdx(i); }}
                     className="border-none cursor-pointer transition-all duration-200"
