@@ -5,14 +5,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LogOut, Save, User, Phone, Briefcase, FileText } from "lucide-react";
+import { useCategorias } from "@/hooks/useCategorias";
 
 const PrestadorPerfil = () => {
   const { user, roles, signOut } = useAuth();
   const condominioId = roles[0]?.condominio_id;
-
+  const { categorias } = useCategorias();
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
   const [especialidade, setEspecialidade] = useState("");
@@ -151,7 +153,18 @@ const PrestadorPerfil = () => {
                     <label className="text-[12px] font-medium text-muted-foreground ml-1 flex items-center gap-1.5">
                       <Briefcase size={12} /> Especialidade
                     </label>
-                    <Input value={especialidade} onChange={(e) => setEspecialidade(e.target.value)} placeholder="Ex: Eletricista, Jardinagem" />
+                    <Select value={especialidade} onValueChange={setEspecialidade}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione sua especialidade" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categorias.map((cat) => (
+                          <SelectItem key={cat.id} value={cat.nome}>
+                            {cat.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="flex flex-col gap-1.5">
