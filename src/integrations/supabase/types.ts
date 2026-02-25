@@ -153,6 +153,7 @@ export type Database = {
           imagem_url: string | null
           link: string | null
           ordem: number
+          publico: string
           subtitulo: string | null
           titulo: string
         }
@@ -164,6 +165,7 @@ export type Database = {
           imagem_url?: string | null
           link?: string | null
           ordem?: number
+          publico?: string
           subtitulo?: string | null
           titulo: string
         }
@@ -175,6 +177,7 @@ export type Database = {
           imagem_url?: string | null
           link?: string | null
           ordem?: number
+          publico?: string
           subtitulo?: string | null
           titulo?: string
         }

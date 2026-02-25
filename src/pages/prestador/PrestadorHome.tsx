@@ -22,6 +22,8 @@ const PrestadorHome = () => {
   const [visivel, setVisivel] = useState(false);
   const [visivelAte, setVisivelAte] = useState<string | null>(null);
   const [togglingVisibility, setTogglingVisibility] = useState(false);
+  const [banners, setBanners] = useState<any[]>([]);
+  const [bannerIdx, setBannerIdx] = useState(0);
 
   const [stats, setStats] = useState({
     servicos: 0,
@@ -50,11 +52,14 @@ const PrestadorHome = () => {
       setVisivel(!!isStillVisible);
       setVisivelAte(prestRes.data.visivel_ate);
 
-      const [servicosRes, produtosRes, avalRes] = await Promise.all([
+      const [servicosRes, produtosRes, avalRes, bannersRes] = await Promise.all([
         supabase.from("servicos").select("id", { count: "exact", head: true }).eq("prestador_id", pid).eq("status", "ativo"),
         supabase.from("produtos").select("id", { count: "exact", head: true }).eq("prestador_id", pid).eq("status", "ativo"),
         supabase.from("avaliacoes").select("nota").eq("avaliado_id", user.id).eq("condominio_id", condominioId),
+        supabase.from("banners").select("*").eq("ativo", true).in("publico", ["prestador", "todos"]).order("ordem", { ascending: true }),
       ]);
+
+      setBanners(bannersRes.data || []);
 
       const notas = avalRes.data || [];
       const media = notas.length > 0 ? notas.reduce((s, a) => s + a.nota, 0) / notas.length : 0;
@@ -112,6 +117,13 @@ const PrestadorHome = () => {
 
   const remainingMinutes = visivelAte ? Math.max(0, Math.ceil((new Date(visivelAte).getTime() - Date.now()) / 60000)) : 0;
 
+  // Auto-rotate banners
+  useEffect(() => {
+    if (banners.length <= 1) return;
+    const timer = setInterval(() => setBannerIdx((p) => (p + 1) % banners.length), 5000);
+    return () => clearInterval(timer);
+  }, [banners.length]);
+
 
   return (
     <PrestadorLayout>
@@ -121,6 +133,36 @@ const PrestadorHome = () => {
           <p className="text-[13px] text-muted-foreground">Bem-vindo,</p>
           <h1 className="text-[20px] font-bold text-foreground">{profileName || "Prestador"} 👋</h1>
         </div>
+
+        {/* Banner para Prestadores */}
+        {banners.length > 0 && (
+          <div
+            onClick={() => { const link = banners[bannerIdx]?.link; if (link) window.open(link, "_blank"); }}
+            className="rounded-[18px] overflow-hidden relative cursor-pointer"
+            style={{ height: 140, boxShadow: "0 4px 16px rgba(0,0,0,0.08)" }}
+          >
+            {banners[bannerIdx]?.imagem_url ? (
+              <img src={banners[bannerIdx].imagem_url} alt={banners[bannerIdx].titulo} className="absolute inset-0 w-full h-full object-cover" />
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-r from-primary to-primary/70 flex items-center justify-center">
+                <p className="text-white font-bold text-lg px-6 text-center">{banners[bannerIdx]?.titulo}</p>
+              </div>
+            )}
+            {banners.length > 1 && (
+              <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex gap-1.5">
+                {banners.map((_, i) => (
+                  <button key={i} onClick={(e) => { e.stopPropagation(); setBannerIdx(i); }}
+                    className="border-none cursor-pointer transition-all duration-200"
+                    style={{
+                      width: i === bannerIdx ? 20 : 7, height: 7, borderRadius: 4,
+                      background: i === bannerIdx ? "hsl(var(--primary))" : "rgba(255,255,255,0.4)",
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {loading ? (
           <p className="text-[13px] text-muted-foreground text-center py-8">Carregando...</p>

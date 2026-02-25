@@ -9,6 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Plus, Pencil, Trash2, Image as ImageIcon } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
 interface Banner {
@@ -20,6 +21,7 @@ interface Banner {
   ativo: boolean;
   ordem: number;
   condominio_id: string;
+  publico: string;
 }
 
 const AdminBanners = () => {
@@ -29,7 +31,7 @@ const AdminBanners = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Banner | null>(null);
-  const [form, setForm] = useState({ titulo: "", subtitulo: "", link: "", ativo: true, ordem: 0 });
+  const [form, setForm] = useState({ titulo: "", subtitulo: "", link: "", ativo: true, ordem: 0, publico: "morador" });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -48,14 +50,14 @@ const AdminBanners = () => {
 
   const openNew = () => {
     setEditing(null);
-    setForm({ titulo: "", subtitulo: "", link: "", ativo: true, ordem: banners.length });
+    setForm({ titulo: "", subtitulo: "", link: "", ativo: true, ordem: banners.length, publico: "morador" });
     setImageFile(null);
     setDialogOpen(true);
   };
 
   const openEdit = (b: Banner) => {
     setEditing(b);
-    setForm({ titulo: b.titulo, subtitulo: b.subtitulo || "", link: b.link || "", ativo: b.ativo, ordem: b.ordem });
+    setForm({ titulo: b.titulo, subtitulo: b.subtitulo || "", link: b.link || "", ativo: b.ativo, ordem: b.ordem, publico: b.publico || "morador" });
     setImageFile(null);
     setDialogOpen(true);
   };
@@ -82,7 +84,7 @@ const AdminBanners = () => {
         }
         const { error } = await supabase.from("banners").update({
           titulo: form.titulo, subtitulo: form.subtitulo || null, link: form.link || null,
-          ativo: form.ativo, ordem: form.ordem, imagem_url,
+          ativo: form.ativo, ordem: form.ordem, imagem_url, publico: form.publico,
         }).eq("id", editing.id);
         if (error) throw error;
         toast.success("Banner atualizado!");
@@ -95,7 +97,7 @@ const AdminBanners = () => {
         const { error } = await supabase.from("banners").insert({
           id: tempId, condominio_id: condominioId, titulo: form.titulo,
           subtitulo: form.subtitulo || null, link: form.link || null,
-          ativo: form.ativo, ordem: form.ordem, imagem_url,
+          ativo: form.ativo, ordem: form.ordem, imagem_url, publico: form.publico,
         });
         if (error) throw error;
         toast.success("Banner criado!");
@@ -151,9 +153,14 @@ const AdminBanners = () => {
                     <div>
                       <p className="text-sm font-medium text-foreground">{b.titulo}</p>
                       {b.subtitulo && <p className="text-xs text-muted-foreground">{b.subtitulo}</p>}
-                      <span className={`text-[10px] font-semibold ${b.ativo ? "text-green-600" : "text-muted-foreground"}`}>
-                        {b.ativo ? "Ativo" : "Inativo"}
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className={`text-[10px] font-semibold ${b.ativo ? "text-green-600" : "text-muted-foreground"}`}>
+                          {b.ativo ? "Ativo" : "Inativo"}
+                        </span>
+                        <span className="text-[10px] font-medium bg-muted px-1.5 py-0.5 rounded">
+                          {b.publico === "prestador" ? "🔧 Prestador" : b.publico === "todos" ? "👥 Todos" : "🏠 Morador"}
+                        </span>
+                      </div>
                     </div>
                     <div className="flex gap-1">
                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => toggleAtivo(b)}>
@@ -197,6 +204,17 @@ const AdminBanners = () => {
                 {editing?.imagem_url && !imageFile && (
                   <img src={editing.imagem_url} alt="Preview" className="mt-2 h-20 rounded-lg object-cover" />
                 )}
+              </div>
+              <div>
+                <Label>Público-alvo</Label>
+                <Select value={form.publico} onValueChange={(v) => setForm({ ...form, publico: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="morador">🏠 Morador</SelectItem>
+                    <SelectItem value="prestador">🔧 Prestador</SelectItem>
+                    <SelectItem value="todos">👥 Todos</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <Label>Ordem</Label>
