@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { useCategorias } from "@/hooks/useCategorias";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,9 +9,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { z } from "zod";
-import { Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft, ScanLine } from "lucide-react";
 import { Link } from "react-router-dom";
 import logoMorador from "@/assets/logo-morador.png";
+import QrScanner from "@/components/QrScanner";
 
 const schema = z.object({
   nome: z.string().trim().min(2, "Mínimo 2 caracteres").max(100),
@@ -32,6 +33,8 @@ const CadastroPrestador = () => {
   const { user, loading } = useAuth();
   const { grouped, loading: categoriasLoading } = useCategorias();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,13 +42,14 @@ const CadastroPrestador = () => {
   const [especialidade, setEspecialidade] = useState("");
   const [descricao, setDescricao] = useState("");
   const [condominioId, setCondominioId] = useState("");
-  const [codigoIndicacao, setCodigoIndicacao] = useState("");
+  const [codigoIndicacao, setCodigoIndicacao] = useState(searchParams.get("ref") || "");
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [condominios, setCondominios] = useState<Condominio[]>([]);
   const [lgpdAceito, setLgpdAceito] = useState(false);
   const [isencaoAceita, setIsencaoAceita] = useState(false);
+  const [showScanner, setShowScanner] = useState(false);
 
   useEffect(() => {
     supabase.from("condominios").select("id, nome").order("nome").then(({ data }) => {
@@ -77,6 +81,26 @@ const CadastroPrestador = () => {
     return true;
   };
 
+  const handleQrScan = (result: string) => {
+    // Extract ref code from URL or use raw value
+    try {
+      const url = new URL(result);
+      const ref = url.searchParams.get("ref");
+      if (ref) {
+        setCodigoIndicacao(ref);
+        toast.success(`Código ${ref} detectado!`);
+      } else {
+        setCodigoIndicacao(result.trim().toUpperCase());
+        toast.success(`Código ${result.trim().toUpperCase()} detectado!`);
+      }
+    } catch {
+      // Not a URL, use as raw code
+      setCodigoIndicacao(result.trim().toUpperCase());
+      toast.success(`Código ${result.trim().toUpperCase()} detectado!`);
+    }
+    setShowScanner(false);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
@@ -94,14 +118,12 @@ const CadastroPrestador = () => {
             telefone: telefone.trim(),
             especialidade: especialidade.trim(),
             descricao: descricao.trim() || null,
-            codigo_indicacao: codigoIndicacao.trim() || null,
+            codigo_indicacao: codigoIndicacao.trim().toUpperCase() || null,
           },
           emailRedirectTo: window.location.origin,
         },
       });
       if (signUpError) throw signUpError;
-
-      // Profile, role and prestador record are created automatically by database trigger
 
       toast.success("Cadastro realizado! Verifique seu email para confirmar.");
       navigate("/auth");
@@ -220,9 +242,46 @@ const CadastroPrestador = () => {
 
         <div className="flex flex-col gap-1">
           <label className="ml-1">Código de indicação (opcional)</label>
-          <Input placeholder="Cole o código de quem te indicou" value={codigoIndicacao} onChange={(e) => setCodigoIndicacao(e.target.value)} />
-          <p className="text-[10px] text-muted-foreground ml-1">Se alguém te indicou, cole o código aqui</p>
+          <div className="flex items-center gap-2">
+            <Input
+              placeholder="Ex: ABC123"
+              value={codigoIndicacao}
+              onChange={(e) => setCodigoIndicacao(e.target.value.toUpperCase())}
+              className="flex-1 uppercase"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              className="h-[52px] w-[52px] shrink-0"
+              onClick={() => setShowScanner(!showScanner)}
+            >
+              <ScanLine size={20} />
+            </Button>
+          </div>
+          <p className="text-[10px] text-muted-foreground ml-1">Cole o código ou escaneie o QR Code de quem te indicou</p>
         </div>
+
+        {showScanner && (
+          <div className="rounded-xl border border-border overflow-hidden">
+            <QrScanner
+              onScan={handleQrScan}
+              onError={(err) => {
+                toast.error(err);
+                setShowScanner(false);
+              }}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="w-full mt-1"
+              onClick={() => setShowScanner(false)}
+            >
+              Fechar câmera
+            </Button>
+          </div>
+        )}
 
         <div className="flex items-start gap-3 mt-1">
           <input
