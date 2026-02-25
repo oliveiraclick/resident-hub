@@ -140,9 +140,18 @@ const PrestadorCondominios = () => {
     setAdding(null);
   };
 
-  const isFirst = (condId: string) => {
-    return meuCondominioIds.length === 0 || 
-      (meuCondominioIds.length === 1 && meuCondominioIds[0] === condId);
+  const totalAtivos = condominios.filter((c) => c.jaInscrito).length;
+
+  const getValor = (condId: string, jaInscrito: boolean) => {
+    if (jaInscrito) {
+      // Se é o único ativo, paga 29,90. Se tem mais, os extras pagam 24,90
+      // O primeiro inscrito paga 29,90, os demais 24,90
+      const inscritos = condominios.filter((c) => c.jaInscrito);
+      const idx = inscritos.findIndex((c) => c.id === condId);
+      return idx === 0 ? 29.90 : 24.90;
+    }
+    // Novo: se já tem pelo menos 1 ativo, o próximo é 24,90
+    return totalAtivos >= 1 ? 24.90 : 29.90;
   };
 
   return (
@@ -188,7 +197,7 @@ const PrestadorCondominios = () => {
                   </div>
 
                   {/* Ação */}
-                  <div className="flex-shrink-0">
+                  <div className="flex-shrink-0 flex flex-col items-end gap-1">
                     {c.jaInscrito ? (
                       <Badge variant="secondary" className="gap-1 bg-primary/10 text-primary border-0">
                         <Check size={12} /> Ativo
@@ -208,13 +217,16 @@ const PrestadorCondominios = () => {
                         Adicionar
                       </Button>
                     )}
+                    <span className="text-[11px] font-semibold text-primary">
+                      R$ {getValor(c.id, c.jaInscrito).toFixed(2).replace(".", ",")}/mês
+                    </span>
                   </div>
                 </div>
 
-                {/* Info de preço */}
+                {/* Info trial para não inscritos */}
                 {!c.jaInscrito && (
-                  <p className="text-[11px] text-muted-foreground mt-2.5 ml-[60px]">
-                    {isFirst(c.id) ? "R$ 29,90/mês" : "+R$ 24,90/mês"} • 60 dias grátis
+                  <p className="text-[11px] text-muted-foreground mt-2 ml-[60px]">
+                    60 dias grátis para testar
                   </p>
                 )}
               </div>
