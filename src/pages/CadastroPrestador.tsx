@@ -195,7 +195,7 @@ const CadastroPrestador = () => {
 
         <div className="flex flex-col gap-1">
           <label className="ml-1">Telefone / WhatsApp</label>
-          <Input type="tel" placeholder="(11) 99999-0000" value={telefone} onChange={(e) => setTelefone(e.target.value)} autoComplete="tel" />
+          <Input type="tel" placeholder="(00) 00000-0000" value={telefone} onChange={(e) => setTelefone(e.target.value)} autoComplete="tel" />
           {errors.telefone && <span className="text-xs text-destructive ml-1">{errors.telefone}</span>}
         </div>
 
