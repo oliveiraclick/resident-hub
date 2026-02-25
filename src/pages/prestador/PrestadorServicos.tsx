@@ -81,6 +81,8 @@ const PrestadorServicos = () => {
 
   const handleSubmit = async () => {
     if (!titulo.trim() || !prestadorId || !condominioId) return;
+    if (!preco || Number(preco) <= 0) { toast.error("Informe o preço real do serviço"); return; }
+    if (!descricao.trim()) { toast.error("Preencha a descrição do serviço"); return; }
     setSubmitting(true);
 
     const payload = {

@@ -58,12 +58,15 @@ const MoradorHome = () => {
       try {
         const { data } = await supabase
           .from("produtos")
-          .select("id, titulo, preco, status, imagem_url")
+          .select("id, titulo, preco, status, imagem_url, descricao")
           .eq("status", "ativo")
           .gt("preco", 0)
+          .not("imagem_url", "is", null)
+          .not("descricao", "is", null)
           .order("created_at", { ascending: false })
           .limit(8);
-        setProdutos(data || []);
+        // Filtro extra: garantir que imagem e descrição não estejam vazios
+        setProdutos((data || []).filter(p => p.imagem_url?.trim() && p.descricao?.trim()));
       } catch (e) {
         console.error("fetchProdutos error", e);
       }
