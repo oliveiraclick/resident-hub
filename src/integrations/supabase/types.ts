@@ -848,6 +848,13 @@ export type Database = {
         Args: { _condominio_id: string; _user_id: string }
         Returns: boolean
       }
+      get_condominio_morador_counts: {
+        Args: never
+        Returns: {
+          condominio_id: string
+          total: number
+        }[]
+      }
       get_desapego_owner_profile: {
         Args: { _user_id: string }
         Returns: {

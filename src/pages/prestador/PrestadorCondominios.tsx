@@ -40,10 +40,8 @@ const PrestadorCondominios = () => {
         .select("id, nome, endereco, logo_url")
         .order("nome");
 
-      // Buscar contagem de moradores por condomínio
-      const { data: rolesData } = await supabase
-        .from("user_roles")
-        .select("condominio_id, role");
+      // Buscar contagem de moradores via RPC segura
+      const { data: countsData } = await supabase.rpc("get_condominio_morador_counts");
 
       // Buscar prestadores do usuário atual
       const { data: meusPrestadores } = await supabase
@@ -65,9 +63,8 @@ const PrestadorCondominios = () => {
       const inscritosCondIds = (meusPrestadores || []).map((p) => p.condominio_id);
 
       const list: CondominioItem[] = (conds || []).map((c) => {
-        const moradores = (rolesData || []).filter(
-          (r) => r.condominio_id === c.id && r.role === "morador"
-        ).length;
+        const countRow = (countsData || []).find((r: any) => r.condominio_id === c.id);
+        const moradores = countRow ? Number(countRow.total) : 0;
         const jaInscrito = inscritosCondIds.includes(c.id);
         const assinatura = assinaturas.find((a) => a.condominio_id === c.id);
         return {
