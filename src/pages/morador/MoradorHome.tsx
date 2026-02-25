@@ -56,7 +56,7 @@ const MoradorHome = () => {
       try {
         const { data } = await supabase
           .from("produtos")
-          .select("id, titulo, preco, status")
+          .select("id, titulo, preco, status, imagem_url")
           .eq("status", "ativo")
           .order("created_at", { ascending: false })
           .limit(8);
@@ -70,7 +70,7 @@ const MoradorHome = () => {
       try {
         const { data } = await supabase
           .from("desapegos")
-          .select("id, titulo, preco, status")
+          .select("id, titulo, preco, status, imagem_url")
           .eq("status", "ativo")
           .order("created_at", { ascending: false })
           .limit(8);
@@ -324,7 +324,7 @@ const MoradorHome = () => {
               >
                 <div className="rounded-[20px] overflow-hidden bg-card border border-border" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
                   <div className="h-[130px] overflow-hidden relative">
-                    <img src={fallbackShopImages[idx % fallbackShopImages.length]} alt={product.titulo} className="w-full h-full object-cover" />
+                    <img src={product.imagem_url || fallbackShopImages[idx % fallbackShopImages.length]} alt={product.titulo} className="w-full h-full object-cover" />
                     <div className="absolute bottom-0 left-0 right-0 h-10" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.3), transparent)" }} />
                   </div>
                   <div className="p-3 pt-3 pb-4">
@@ -363,7 +363,7 @@ const MoradorHome = () => {
               >
                 <div className="rounded-[20px] overflow-hidden bg-card border border-border" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
                   <div className="h-[130px] overflow-hidden relative">
-                    <img src={fallbackDesapegoImages[idx % fallbackDesapegoImages.length]} alt={item.titulo} className="w-full h-full object-cover" />
+                    <img src={item.imagem_url || fallbackDesapegoImages[idx % fallbackDesapegoImages.length]} alt={item.titulo} className="w-full h-full object-cover" />
                     <span className="absolute top-2.5 left-2.5 text-[9px] font-bold text-white bg-warning px-2.5 py-1 rounded-lg uppercase tracking-wider">Desapego</span>
                   </div>
                   <div className="p-3 pt-3 pb-4">
