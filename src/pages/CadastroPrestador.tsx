@@ -39,6 +39,7 @@ const CadastroPrestador = () => {
   const [especialidade, setEspecialidade] = useState("");
   const [descricao, setDescricao] = useState("");
   const [condominioId, setCondominioId] = useState("");
+  const [codigoIndicacao, setCodigoIndicacao] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -93,6 +94,7 @@ const CadastroPrestador = () => {
             telefone: telefone.trim(),
             especialidade: especialidade.trim(),
             descricao: descricao.trim() || null,
+            codigo_indicacao: codigoIndicacao.trim() || null,
           },
           emailRedirectTo: window.location.origin,
         },
@@ -214,6 +216,12 @@ const CadastroPrestador = () => {
           <label className="ml-1">Descrição dos serviços (opcional)</label>
           <Textarea placeholder="Descreva brevemente seus serviços..." value={descricao} onChange={(e) => setDescricao(e.target.value)} className="min-h-[80px]" />
           {errors.descricao && <span className="text-xs text-destructive ml-1">{errors.descricao}</span>}
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="ml-1">Código de indicação (opcional)</label>
+          <Input placeholder="Cole o código de quem te indicou" value={codigoIndicacao} onChange={(e) => setCodigoIndicacao(e.target.value)} />
+          <p className="text-[10px] text-muted-foreground ml-1">Se alguém te indicou, cole o código aqui</p>
         </div>
 
         <div className="flex items-start gap-3 mt-1">
