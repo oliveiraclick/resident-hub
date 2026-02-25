@@ -175,7 +175,7 @@ const PrestadorPerfil = () => {
                     <label className="text-[12px] font-medium text-muted-foreground ml-1 flex items-center gap-1.5">
                       <Phone size={12} /> Telefone / WhatsApp
                     </label>
-                    <Input type="tel" value={telefone} onChange={(e) => setTelefone(e.target.value)} placeholder="(11) 99999-0000" />
+                    <Input type="tel" value={telefone} onChange={(e) => setTelefone(e.target.value)} placeholder="(00) 00000-0000" />
                   </div>
 
                   <div className="flex flex-col gap-1.5">
