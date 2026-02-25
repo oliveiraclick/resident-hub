@@ -2,10 +2,14 @@ import { useEffect, useState } from "react";
 import { formatBRL } from "@/lib/utils";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, MessageCircle, AlertTriangle, User, Store } from "lucide-react";
+import { ArrowLeft, MessageCircle, AlertTriangle, User, Store, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 interface ProdutoDetail {
   id: string;
@@ -29,6 +33,7 @@ const MoradorProdutoDetalhe = () => {
   const navigate = useNavigate();
   const [item, setItem] = useState<ProdutoDetail | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showSafetyTip, setShowSafetyTip] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -196,12 +201,33 @@ const MoradorProdutoDetalhe = () => {
       {/* Fixed WhatsApp button */}
       {isActive && item.profile?.telefone && (
         <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-20 bg-card px-5 py-4" style={{ borderTop: "1px solid hsl(var(--border))" }}>
-          <Button onClick={openWhatsApp} className="w-full h-[52px] rounded-2xl gap-2 text-[15px] font-semibold">
+          <Button onClick={() => setShowSafetyTip(true)} className="w-full h-[52px] rounded-2xl gap-2 text-[15px] font-semibold">
             <MessageCircle size={20} />
             Falar no WhatsApp
           </Button>
         </div>
       )}
+
+      {/* Safety tip dialog */}
+      <AlertDialog open={showSafetyTip} onOpenChange={setShowSafetyTip}>
+        <AlertDialogContent className="max-w-[360px] rounded-2xl">
+          <AlertDialogHeader>
+            <div className="flex items-center gap-2 mb-1">
+              <ShieldCheck size={20} className="text-primary" />
+              <AlertDialogTitle className="text-[16px]">Dica de segurança</AlertDialogTitle>
+            </div>
+            <AlertDialogDescription className="text-[13px] leading-relaxed text-muted-foreground">
+              Recomendamos que você <strong className="text-foreground">combine a entrega pessoalmente</strong> e veja o produto antes de qualquer pagamento. Assim todo mundo fica tranquilo! 😊
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-row gap-2">
+            <AlertDialogCancel className="mt-0 flex-1">Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={openWhatsApp} className="flex-1 bg-[#25D366] hover:bg-[#1da851] text-white">
+              Entendi, continuar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
