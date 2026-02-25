@@ -113,6 +113,9 @@ const PrestadorProdutos = () => {
 
   const handleSubmit = async () => {
     if (!titulo.trim() || !prestadorId || !condominioId) return;
+    if (!preco || Number(preco) <= 0) { toast.error("Informe o preço real do produto"); return; }
+    if (!descricao.trim()) { toast.error("Preencha a descrição do produto"); return; }
+    if (!imageFile && !editingId) { toast.error("Adicione uma foto do produto"); return; }
     setSubmitting(true);
 
     try {

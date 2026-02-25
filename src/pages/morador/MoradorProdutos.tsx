@@ -24,22 +24,25 @@ const MoradorProdutos = () => {
       const [prodRes, servRes] = await Promise.all([
         supabase
           .from("produtos")
-          .select("id, titulo, preco, status, imagem_url")
+          .select("id, titulo, preco, status, imagem_url, descricao")
           .eq("condominio_id", condominioId)
           .eq("status", "ativo")
           .gt("preco", 0)
+          .not("imagem_url", "is", null)
+          .not("descricao", "is", null)
           .order("created_at", { ascending: false }),
         supabase
           .from("servicos")
-          .select("id, titulo, preco, status")
+          .select("id, titulo, preco, status, descricao")
           .eq("condominio_id", condominioId)
           .eq("status", "ativo")
           .gt("preco", 0)
+          .not("descricao", "is", null)
           .order("created_at", { ascending: false }),
       ]);
 
-      const produtos = (prodRes.data || []).map((p) => ({ ...p, _tipo: "Produto" as const }));
-      const servicos = (servRes.data || []).map((s) => ({ ...s, _tipo: "Serviço" as const }));
+      const produtos = (prodRes.data || []).filter(p => p.imagem_url?.trim() && p.descricao?.trim()).map((p) => ({ ...p, _tipo: "Produto" as const }));
+      const servicos = (servRes.data || []).filter(s => s.descricao?.trim()).map((s) => ({ ...s, _tipo: "Serviço" as const }));
 
       // Interleave
       const merged: any[] = [];
