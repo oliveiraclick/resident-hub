@@ -9,7 +9,10 @@ import { QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import logoMorador from "@/assets/logo-morador.png";
 import { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 /* ─── Hook to fetch LP content ─── */
 const useLpContent = () => {
@@ -54,6 +57,42 @@ const TRUST_BADGES = [
 ];
 
 const FEAT_ICONS = [ShieldCheck, MessageCircle, CalendarCheck];
+
+/* ─── Contact Form ─── */
+const ContactForm = () => {
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [mensagem, setMensagem] = useState("");
+  const [sending, setSending] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!nome.trim() || !email.trim() || !mensagem.trim()) {
+      toast.error("Preencha todos os campos.");
+      return;
+    }
+    setSending(true);
+    const { error } = await supabase.from("contato_mensagens").insert({ nome: nome.trim(), email: email.trim(), mensagem: mensagem.trim() });
+    setSending(false);
+    if (error) {
+      toast.error("Erro ao enviar. Tente novamente.");
+    } else {
+      toast.success("Mensagem enviada! Entraremos em contato.");
+      setNome(""); setEmail(""); setMensagem("");
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="text-left space-y-4">
+      <Input placeholder="Seu nome" value={nome} onChange={(e) => setNome(e.target.value)} maxLength={100} required />
+      <Input type="email" placeholder="Seu e-mail" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={150} required />
+      <Textarea placeholder="Sua dúvida ou mensagem..." value={mensagem} onChange={(e) => setMensagem(e.target.value)} maxLength={1000} rows={4} required />
+      <Button type="submit" className="w-full h-12 text-base font-semibold" disabled={sending}>
+        {sending ? "Enviando..." : "Enviar Mensagem"}
+      </Button>
+    </form>
+  );
+};
 
 /* ─── Component ─── */
 const LandingPage = () => {
@@ -538,6 +577,16 @@ const LandingPage = () => {
               {get("cta_final", "cta_prestador")}
             </Button>
           </div>
+        </div>
+      </section>
+
+      {/* ────── FORMULÁRIO DE CONTATO ────── */}
+      <section className="py-16 md:py-24 bg-card">
+        <div className="mx-auto max-w-xl px-4 text-center space-y-6">
+          <h2 className="text-2xl md:text-3xl font-bold">Ficou com alguma dúvida?</h2>
+          <p className="text-muted-foreground text-body">Preencha o formulário abaixo e nossa equipe entrará em contato com você.</p>
+
+          <ContactForm />
         </div>
       </section>
 
