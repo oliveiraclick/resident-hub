@@ -25,7 +25,9 @@ workflows:
           npx cap sync ios
       - name: Set up code signing
         script: |
-          xcode-project use-profiles
+          xcode-project use-profiles \
+            --project ios/App/App.xcodeproj \
+            --profile-name "Morador App Store"
       - name: Build iOS IPA
         script: |
           xcode-project build-ipa \
@@ -37,7 +39,6 @@ workflows:
       app_store_connect:
         auth: integration
         submit_to_testflight: true
-
   # ========================================
   # WORKFLOW ANDROID
   # ========================================
