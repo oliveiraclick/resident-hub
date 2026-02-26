@@ -374,8 +374,10 @@ const LandingPage = () => {
             </span>
             <h3 className="font-bold text-lg text-primary">{get("precos", "prestador_titulo")}</h3>
             <p className="text-muted-foreground text-body">{get("precos", "prestador_desc")}</p>
-            <div className="text-3xl font-bold">
-              {get("precos", "prestador_preco")} <span className="text-sm font-normal text-muted-foreground">{get("precos", "prestador_preco_sub")}</span>
+            <div className="flex items-baseline gap-2">
+              <span className="text-lg text-muted-foreground line-through">R$ 49</span>
+              <span className="text-3xl font-bold">{get("precos", "prestador_preco")}</span>
+              <span className="text-sm font-normal text-muted-foreground">{get("precos", "prestador_preco_sub")}</span>
             </div>
             <ul className="space-y-3">
               {prestadorFeats.map((f) => (
