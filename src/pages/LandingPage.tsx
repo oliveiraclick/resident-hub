@@ -3,7 +3,9 @@ import {
   ShieldCheck, MessageCircle, CalendarCheck, Play,
   CheckCircle, Star, Menu, X, Smartphone,
   Package, CalendarDays, ShoppingBag, Users, Target, BadgeCheck, Repeat, Zap,
+  Download,
 } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import logoMorador from "@/assets/logo-morador.png";
 import { useState, useEffect } from "react";
@@ -466,6 +468,60 @@ const LandingPage = () => {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ────── BAIXE O APP ────── */}
+      <section className="py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 text-center space-y-6">
+          <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5">
+            <Download size={14} className="text-primary" />
+            <span className="text-xs font-semibold uppercase tracking-widest text-primary">Baixe o App</span>
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold">
+            Tenha o <span className="text-primary">Morador.app</span> no seu celular
+          </h2>
+          <p className="text-muted-foreground max-w-lg mx-auto text-body">
+            Escaneie o QR Code abaixo com a câmera do seu celular ou toque para baixar direto na loja.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-8 pt-6">
+            {/* Android */}
+            <a
+              href="https://play.google.com/store/apps/details?id=app.morador.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center gap-3 group"
+            >
+              <div className="rounded-2xl border border-border bg-card p-4 shadow-sm group-hover:shadow-md transition-shadow">
+                <QRCodeSVG
+                  value="https://play.google.com/store/apps/details?id=app.morador.app"
+                  size={160}
+                  fgColor="hsl(var(--foreground))"
+                  bgColor="transparent"
+                />
+              </div>
+              <span className="text-sm font-semibold text-foreground">Android (Google Play)</span>
+            </a>
+
+            {/* iOS */}
+            <a
+              href="https://apps.apple.com/sa/app/o-morador/id6757885941"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center gap-3 group"
+            >
+              <div className="rounded-2xl border border-border bg-card p-4 shadow-sm group-hover:shadow-md transition-shadow">
+                <QRCodeSVG
+                  value="https://apps.apple.com/sa/app/o-morador/id6757885941"
+                  size={160}
+                  fgColor="hsl(var(--foreground))"
+                  bgColor="transparent"
+                />
+              </div>
+              <span className="text-sm font-semibold text-foreground">iOS (App Store)</span>
+            </a>
+          </div>
         </div>
       </section>
 
