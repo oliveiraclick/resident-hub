@@ -502,6 +502,39 @@ export type Database = {
           },
         ]
       }
+      lp_content: {
+        Row: {
+          chave: string
+          created_at: string
+          id: string
+          imagem_url: string | null
+          ordem: number
+          secao: string
+          updated_at: string
+          valor: string
+        }
+        Insert: {
+          chave: string
+          created_at?: string
+          id?: string
+          imagem_url?: string | null
+          ordem?: number
+          secao: string
+          updated_at?: string
+          valor?: string
+        }
+        Update: {
+          chave?: string
+          created_at?: string
+          id?: string
+          imagem_url?: string | null
+          ordem?: number
+          secao?: string
+          updated_at?: string
+          valor?: string
+        }
+        Relationships: []
+      }
       pacotes: {
         Row: {
           condominio_id: string
