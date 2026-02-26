@@ -201,11 +201,11 @@ const LandingPage = () => {
               <span className="text-xs text-white/60">{get("hero", "social_proof")}</span>
             </div>
           </div>
-          <div className="hidden md:flex justify-center">
+          <div className="flex justify-center">
             {heroImg ? (
-              <img src={heroImg} alt="Hero" className="max-h-[480px] rounded-3xl object-contain" />
+              <img src={heroImg} alt="Hero" className="max-h-[320px] md:max-h-[480px] rounded-3xl object-contain" />
             ) : (
-              <div className="relative w-64 h-[480px] rounded-[2.5rem] border-4 border-white/20 bg-gradient-to-b from-primary/20 to-header-mid flex items-center justify-center">
+              <div className="relative w-48 h-[320px] md:w-64 md:h-[480px] rounded-[2.5rem] border-4 border-white/20 bg-gradient-to-b from-primary/20 to-header-mid flex items-center justify-center">
                 <Smartphone size={80} className="text-white/20" />
                 <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-center">
                   <span className="text-xs text-white/40">Morador.app</span>
