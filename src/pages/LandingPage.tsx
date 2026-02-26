@@ -146,7 +146,7 @@ const LandingPage = () => {
               <Button size="lg" onClick={() => navigate("/cadastro/morador")}>
                 {get("hero", "cta_primario")}
               </Button>
-              <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10">
+              <Button size="lg" variant="ghost" className="border border-white/30 !text-white hover:bg-white/10 rounded-button">
                 <Play size={16} className="mr-2" /> {get("hero", "cta_secundario")}
               </Button>
             </div>
