@@ -495,17 +495,17 @@ const LandingPage = () => {
           <div className="space-y-3">
             <h4 className="font-semibold text-sm">Plataforma</h4>
             <ul className="space-y-2">
-              {["Como Funciona", "Segurança", "Prestadores"].map((link) => (
-                <li key={link}><a href="#" className="text-xs text-white/50 hover:text-white transition-colors">{link}</a></li>
-              ))}
+              <li><a href="#como-funciona" className="text-xs text-white/50 hover:text-white transition-colors">Como Funciona</a></li>
+              <li><a href="#benefícios" className="text-xs text-white/50 hover:text-white transition-colors">Segurança</a></li>
+              <li><a href="#preços" className="text-xs text-white/50 hover:text-white transition-colors">Prestadores</a></li>
             </ul>
           </div>
           <div className="space-y-3">
-            <h4 className="font-semibold text-sm">Empresa</h4>
+            <h4 className="font-semibold text-sm">Legal</h4>
             <ul className="space-y-2">
-              {["Sobre nós", "Contato", "Termos de uso"].map((link) => (
-                <li key={link}><a href="#" className="text-xs text-white/50 hover:text-white transition-colors">{link}</a></li>
-              ))}
+              <li><a href="/termos-de-uso" className="text-xs text-white/50 hover:text-white transition-colors">Termos de Uso</a></li>
+              <li><a href="/politica-privacidade" className="text-xs text-white/50 hover:text-white transition-colors">Política de Privacidade</a></li>
+              <li><a href="/condicoes-de-uso" className="text-xs text-white/50 hover:text-white transition-colors">Condições de Uso</a></li>
             </ul>
           </div>
           <div className="space-y-3">
