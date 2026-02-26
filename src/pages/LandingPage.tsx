@@ -335,7 +335,7 @@ const LandingPage = () => {
         </div>
 
         <div className="text-center mt-8">
-          <Button size="lg" onClick={() => navigate("/cadastro/prestador")}>
+          <Button size="lg" className="bg-white text-header-bg hover:bg-white/90 font-bold shadow-lg" onClick={() => navigate("/cadastro/prestador")}>
             {get("para_prestador", "cta")}
           </Button>
         </div>
