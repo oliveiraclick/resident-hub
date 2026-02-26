@@ -98,7 +98,7 @@ const LandingPage = () => {
       {/* ────── NAVBAR ────── */}
       <nav className="sticky top-0 z-50 bg-header-bg text-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <img src={logoMorador} alt="Morador.app" className="h-8" />
+          <img src={logoMorador} alt="Morador.app" className="h-14" />
           <div className="hidden md:flex items-center gap-6">
             {NAV_LINKS.map((l) => (
               <a key={l} href={`#${l.toLowerCase().replace(/ /g, "-")}`} className="text-sm text-white/80 hover:text-white transition-colors">
@@ -443,7 +443,7 @@ const LandingPage = () => {
       <footer className="bg-header-bg text-white py-12">
         <div className="mx-auto max-w-6xl px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
           <div className="col-span-2 md:col-span-1 space-y-3">
-            <img src={logoMorador} alt="Morador.app" className="h-7" />
+            <img src={logoMorador} alt="Morador.app" className="h-12" />
             <p className="text-xs text-white/50 max-w-[200px]">{get("footer", "slogan")}</p>
           </div>
           <div className="space-y-3">
