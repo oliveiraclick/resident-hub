@@ -1,0 +1,1 @@
+ALTER TABLE public.banners ADD COLUMN whatsapp text DEFAULT NULL;

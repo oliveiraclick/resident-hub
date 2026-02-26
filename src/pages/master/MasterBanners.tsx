@@ -17,6 +17,7 @@ interface Banner {
   subtitulo: string | null;
   imagem_url: string | null;
   link: string | null;
+  whatsapp: string | null;
   ativo: boolean;
   ordem: number;
   condominio_id: string;
@@ -34,7 +35,7 @@ const MasterBanners = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Banner | null>(null);
-  const [form, setForm] = useState({ titulo: "", subtitulo: "", link: "", ativo: true, ordem: 0, publico: "prestador", condominio_id: "" });
+  const [form, setForm] = useState({ titulo: "", subtitulo: "", link: "", whatsapp: "", ativo: true, ordem: 0, publico: "prestador", condominio_id: "" });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [filterPublico, setFilterPublico] = useState("todos_filter");
@@ -53,14 +54,14 @@ const MasterBanners = () => {
 
   const openNew = () => {
     setEditing(null);
-    setForm({ titulo: "", subtitulo: "", link: "", ativo: true, ordem: banners.length, publico: "prestador", condominio_id: condominios[0]?.id || "" });
+    setForm({ titulo: "", subtitulo: "", link: "", whatsapp: "", ativo: true, ordem: banners.length, publico: "prestador", condominio_id: condominios[0]?.id || "" });
     setImageFile(null);
     setDialogOpen(true);
   };
 
   const openEdit = (b: Banner) => {
     setEditing(b);
-    setForm({ titulo: b.titulo, subtitulo: b.subtitulo || "", link: b.link || "", ativo: b.ativo, ordem: b.ordem, publico: b.publico, condominio_id: b.condominio_id });
+    setForm({ titulo: b.titulo, subtitulo: b.subtitulo || "", link: b.link || "", whatsapp: b.whatsapp || "", ativo: b.ativo, ordem: b.ordem, publico: b.publico, condominio_id: b.condominio_id });
     setImageFile(null);
     setDialogOpen(true);
   };
@@ -88,7 +89,7 @@ const MasterBanners = () => {
         }
         const { error } = await supabase.from("banners").update({
           titulo: form.titulo, subtitulo: form.subtitulo || null, link: form.link || null,
-          ativo: form.ativo, ordem: form.ordem, imagem_url, publico: form.publico, condominio_id: form.condominio_id,
+          whatsapp: form.whatsapp || null, ativo: form.ativo, ordem: form.ordem, imagem_url, publico: form.publico, condominio_id: form.condominio_id,
         }).eq("id", editing.id);
         if (error) throw error;
         toast.success("Banner atualizado!");
@@ -99,7 +100,7 @@ const MasterBanners = () => {
         const { error } = await supabase.from("banners").insert({
           id: tempId, condominio_id: form.condominio_id, titulo: form.titulo,
           subtitulo: form.subtitulo || null, link: form.link || null,
-          ativo: form.ativo, ordem: form.ordem, imagem_url, publico: form.publico,
+          whatsapp: form.whatsapp || null, ativo: form.ativo, ordem: form.ordem, imagem_url, publico: form.publico,
         });
         if (error) throw error;
         toast.success("Banner criado!");
@@ -241,6 +242,11 @@ const MasterBanners = () => {
               <div>
                 <Label>Link (opcional)</Label>
                 <Input value={form.link} onChange={(e) => setForm({ ...form, link: e.target.value })} placeholder="https://..." />
+              </div>
+              <div>
+                <Label>WhatsApp (opcional)</Label>
+                <Input value={form.whatsapp} onChange={(e) => setForm({ ...form, whatsapp: e.target.value })} placeholder="5511999999999" />
+                <p className="text-[10px] text-muted-foreground mt-1">Número com DDD e código do país. Ao clicar no banner, abre o WhatsApp.</p>
               </div>
               <div>
                 <Label>Imagem</Label>
