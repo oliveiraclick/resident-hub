@@ -534,7 +534,7 @@ const LandingPage = () => {
             <Button size="lg" className="bg-white text-primary hover:bg-white/90 rounded-button" onClick={() => navigate("/cadastro/morador")}>
               {get("cta_final", "cta_morador")}
             </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 rounded-button" onClick={() => navigate("/cadastro/prestador")}>
+            <Button size="lg" className="bg-white/20 text-white border border-white/40 hover:bg-white/30 rounded-button backdrop-blur" onClick={() => navigate("/cadastro/prestador")}>
               {get("cta_final", "cta_prestador")}
             </Button>
           </div>
