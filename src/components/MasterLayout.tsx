@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import AppShell from "@/components/AppShell";
-import { Home, Building2, Users, DollarSign, User, Wrench, Image } from "lucide-react";
+import { Home, Building2, Users, DollarSign, User, Wrench, Image, Layout } from "lucide-react";
 
 interface MasterLayoutProps {
   children: ReactNode;
@@ -18,6 +18,7 @@ const menuItems = [
   { icon: Building2, label: "Condomínios", path: "/master/condominios" },
   { icon: Wrench, label: "Categorias", path: "/master/categorias" },
   { icon: Image, label: "Banners", path: "/master/banners" },
+  { icon: Layout, label: "Landing Page", path: "/master/lp" },
   { icon: DollarSign, label: "Financeiro", path: "/master/financeiro" },
 ];
 
