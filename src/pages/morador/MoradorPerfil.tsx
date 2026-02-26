@@ -6,8 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { LogOut, Save } from "lucide-react";
+import { LogOut, Save, Trash2, AlertTriangle } from "lucide-react";
 import QrDisplay from "@/components/QrDisplay";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const MoradorPerfil = () => {
   const { user, signOut } = useAuth();
@@ -129,8 +133,74 @@ const MoradorPerfil = () => {
           <LogOut size={16} />
           Sair da conta
         </Button>
+
+        {/* Excluir conta */}
+        <DeleteAccountSection userId={user.id} onDeleted={handleLogout} />
       </div>
     </MoradorLayout>
+  );
+};
+
+const DeleteAccountSection = ({ userId, onDeleted }: { userId: string; onDeleted: () => void }) => {
+  const [confirmText, setConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    try {
+      await supabase.from("profiles").delete().eq("user_id", userId);
+      await supabase.from("user_roles").delete().eq("user_id", userId);
+      toast.success("Conta excluída com sucesso.");
+      onDeleted();
+    } catch {
+      toast.error("Erro ao excluir conta.");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  return (
+    <Card className="border-destructive/30">
+      <CardContent className="p-4 space-y-3">
+        <div className="flex items-start gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-destructive/10">
+            <Trash2 size={18} className="text-destructive" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-foreground">Excluir minha conta</p>
+            <p className="text-xs text-muted-foreground">Ação permanente. Todos os seus dados serão removidos.</p>
+          </div>
+        </div>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" size="sm" className="w-full gap-2">
+              <Trash2 size={14} /> Excluir minha conta
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="flex items-center gap-2">
+                <AlertTriangle size={20} className="text-destructive" /> Tem certeza absoluta?
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                Essa ação é irreversível. Digite <strong>EXCLUIR</strong> para confirmar:
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <Input value={confirmText} onChange={(e) => setConfirmText(e.target.value)} placeholder='Digite "EXCLUIR"' />
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setConfirmText("")}>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                disabled={confirmText !== "EXCLUIR" || deleting}
+                onClick={handleDelete}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {deleting ? "Excluindo..." : "Confirmar exclusão"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </CardContent>
+    </Card>
   );
 };
 
