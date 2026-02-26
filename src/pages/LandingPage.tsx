@@ -62,6 +62,7 @@ const FEAT_ICONS = [ShieldCheck, MessageCircle, CalendarCheck];
 const ContactForm = () => {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
+  const [telefone, setTelefone] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [sending, setSending] = useState(false);
 
@@ -72,13 +73,13 @@ const ContactForm = () => {
       return;
     }
     setSending(true);
-    const { error } = await supabase.from("contato_mensagens").insert({ nome: nome.trim(), email: email.trim(), mensagem: mensagem.trim() });
+    const { error } = await supabase.from("contato_mensagens").insert({ nome: nome.trim(), email: email.trim(), telefone: telefone.trim() || null, mensagem: mensagem.trim() });
     setSending(false);
     if (error) {
       toast.error("Erro ao enviar. Tente novamente.");
     } else {
       toast.success("Mensagem enviada! Entraremos em contato.");
-      setNome(""); setEmail(""); setMensagem("");
+      setNome(""); setEmail(""); setTelefone(""); setMensagem("");
     }
   };
 
@@ -86,6 +87,7 @@ const ContactForm = () => {
     <form onSubmit={handleSubmit} className="text-left space-y-4">
       <Input placeholder="Seu nome" value={nome} onChange={(e) => setNome(e.target.value)} maxLength={100} required />
       <Input type="email" placeholder="Seu e-mail" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={150} required />
+      <Input type="tel" placeholder="Seu celular (opcional)" value={telefone} onChange={(e) => setTelefone(e.target.value)} maxLength={20} />
       <Textarea placeholder="Sua dúvida ou mensagem..." value={mensagem} onChange={(e) => setMensagem(e.target.value)} maxLength={1000} rows={4} required />
       <Button type="submit" className="w-full h-12 text-base font-semibold" disabled={sending}>
         {sending ? "Enviando..." : "Enviar Mensagem"}
