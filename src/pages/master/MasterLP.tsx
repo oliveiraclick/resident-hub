@@ -21,13 +21,15 @@ const SECAO_LABELS: Record<string, string> = {
   hero: "🏠 Hero (Topo)",
   beneficios: "⭐ Benefícios",
   como_funciona: "🔧 Como Funciona",
+  para_condominio: "🏢 Para Condomínios",
+  para_prestador: "🔨 Para Prestadores",
   precos: "💰 Preços",
   depoimentos: "💬 Depoimentos",
   cta_final: "🚀 CTA Final",
   footer: "📋 Footer",
 };
 
-const SECAO_ORDER = ["hero", "beneficios", "como_funciona", "precos", "depoimentos", "cta_final", "footer"];
+const SECAO_ORDER = ["hero", "beneficios", "como_funciona", "para_condominio", "para_prestador", "precos", "depoimentos", "cta_final", "footer"];
 
 const MasterLP = () => {
   const [items, setItems] = useState<LpItem[]>([]);

@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import {
   ShieldCheck, MessageCircle, CalendarCheck, Play,
   CheckCircle, Star, Menu, X, Smartphone,
+  Package, CalendarDays, ShoppingBag, Users, Target, BadgeCheck, Repeat, Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logoMorador from "@/assets/logo-morador.png";
@@ -256,7 +257,94 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* ────── PRICING ────── */}
+      {/* ────── PARA CONDOMÍNIOS E MORADORES ────── */}
+      <section className="py-16 md:py-24">
+        <div className="mx-auto max-w-6xl px-4 text-center space-y-4">
+          <span className="text-xs font-semibold uppercase tracking-widest text-primary">Para Condomínios</span>
+          <h2 className="text-2xl md:text-3xl font-bold">{get("para_condominio", "titulo_secao")}</h2>
+          <p className="text-muted-foreground max-w-xl mx-auto text-body">{get("para_condominio", "desc_secao")}</p>
+        </div>
+
+        <div className="mx-auto max-w-6xl px-4 mt-12 grid md:grid-cols-2 gap-6">
+          {[
+            { icon: ShieldCheck, n: 1 },
+            { icon: Package, n: 2 },
+            { icon: CalendarDays, n: 3 },
+            { icon: ShoppingBag, n: 4 },
+          ].map(({ icon: Icon, n }) => (
+            <div key={n} className="rounded-card bg-card border border-border p-6 flex gap-4 hover:shadow-lg transition-shadow">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <Icon size={24} />
+              </div>
+              <div>
+                <h4 className="font-semibold">{get("para_condominio", `ben${n}_titulo`)}</h4>
+                <p className="text-muted-foreground text-body mt-1">{get("para_condominio", `ben${n}_desc`)}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Stats */}
+        <div className="mx-auto max-w-4xl px-4 mt-12 grid grid-cols-3 gap-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="text-center p-4 rounded-card bg-primary/5 border border-primary/10">
+              <div className="text-2xl md:text-3xl font-bold text-primary">{get("para_condominio", `stat${i}`)}</div>
+              <p className="text-xs text-muted-foreground mt-1">{get("para_condominio", `stat${i}_label`)}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ────── PARA PRESTADORES ────── */}
+      <section className="py-16 md:py-24 bg-header-bg text-white relative overflow-hidden">
+        <svg viewBox="0 0 1440 80" className="absolute top-0 left-0 w-full -mt-px rotate-180" preserveAspectRatio="none">
+          <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="hsl(var(--background))" />
+        </svg>
+
+        <div className="mx-auto max-w-6xl px-4 pt-8 text-center space-y-4">
+          <span className="text-xs font-semibold uppercase tracking-widest text-primary-light">Para Prestadores</span>
+          <h2 className="text-2xl md:text-3xl font-bold">{get("para_prestador", "titulo_secao")}</h2>
+          <p className="text-white/70 max-w-xl mx-auto text-body">{get("para_prestador", "desc_secao")}</p>
+        </div>
+
+        <div className="mx-auto max-w-5xl px-4 mt-12 grid md:grid-cols-2 gap-6">
+          {[
+            { icon: Target, n: 1 },
+            { icon: Users, n: 2 },
+            { icon: BadgeCheck, n: 3 },
+            { icon: Repeat, n: 4 },
+          ].map(({ icon: Icon, n }) => (
+            <div key={n} className="rounded-card bg-white/5 backdrop-blur border border-white/10 p-6 flex gap-4 hover:bg-white/10 transition-colors">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/20 text-primary">
+                <Icon size={24} />
+              </div>
+              <div>
+                <h4 className="font-semibold">{get("para_prestador", `van${n}_titulo`)}</h4>
+                <p className="text-white/60 text-body mt-1">{get("para_prestador", `van${n}_desc`)}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Destaque */}
+        <div className="mx-auto max-w-3xl px-4 mt-10">
+          <div className="rounded-card bg-primary/20 border border-primary/30 p-6 text-center flex items-center justify-center gap-3">
+            <Zap size={24} className="text-primary shrink-0" />
+            <p className="text-body font-medium">{get("para_prestador", "destaque")}</p>
+          </div>
+        </div>
+
+        <div className="text-center mt-8">
+          <Button size="lg" onClick={() => navigate("/cadastro/prestador")}>
+            {get("para_prestador", "cta")}
+          </Button>
+        </div>
+
+        <svg viewBox="0 0 1440 80" className="absolute bottom-0 left-0 w-full -mb-px" preserveAspectRatio="none">
+          <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="hsl(var(--background))" />
+        </svg>
+      </section>
+
       <section id="preços" className="py-16 md:py-24">
         <div className="mx-auto max-w-6xl px-4 text-center space-y-4">
           <h2 className="text-2xl md:text-3xl font-bold">{get("precos", "titulo_secao")}</h2>
