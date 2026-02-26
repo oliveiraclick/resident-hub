@@ -129,7 +129,12 @@ const MasterLP = () => {
     );
   }
 
+  const CHAVE_LABELS: Record<string, string> = {
+    imagem_phone: "📱 Imagem do Telefone (Hero)",
+  };
+
   const formatLabel = (chave: string) => {
+    if (CHAVE_LABELS[chave]) return CHAVE_LABELS[chave];
     return chave
       .replace(/_/g, " ")
       .replace(/\b\w/g, (c) => c.toUpperCase());
@@ -139,6 +144,10 @@ const MasterLP = () => {
     return ["subtitulo", "desc", "texto", "slogan", "social_proof", "desc_secao"].some((k) =>
       chave.includes(k)
     );
+  };
+
+  const isImageOnly = (chave: string) => {
+    return ["imagem_phone"].includes(chave);
   };
 
   return (
@@ -183,18 +192,20 @@ const MasterLP = () => {
                         {formatLabel(item.chave)}
                       </label>
 
-                      {isLongText(item.chave) ? (
-                        <Textarea
-                          value={item.valor}
-                          onChange={(e) => handleChange(item.id, "valor", e.target.value)}
-                          rows={3}
-                          className="text-body"
-                        />
-                      ) : (
-                        <Input
-                          value={item.valor}
-                          onChange={(e) => handleChange(item.id, "valor", e.target.value)}
-                        />
+                      {!isImageOnly(item.chave) && (
+                        isLongText(item.chave) ? (
+                          <Textarea
+                            value={item.valor}
+                            onChange={(e) => handleChange(item.id, "valor", e.target.value)}
+                            rows={3}
+                            className="text-body"
+                          />
+                        ) : (
+                          <Input
+                            value={item.valor}
+                            onChange={(e) => handleChange(item.id, "valor", e.target.value)}
+                          />
+                        )
                       )}
 
                       {/* Image section */}

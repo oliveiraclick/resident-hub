@@ -1,0 +1,1 @@
+INSERT INTO lp_content (secao, chave, valor, ordem) VALUES ('hero', 'imagem_phone', 'Imagem do telefone no hero', 8) ON CONFLICT DO NOTHING;

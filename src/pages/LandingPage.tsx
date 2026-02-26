@@ -134,7 +134,7 @@ const LandingPage = () => {
     img: getImg("depoimentos", `dep${i}_nome`),
   }));
 
-  const heroImg = getImg("hero", "titulo");
+  const heroImg = getImg("hero", "imagem_phone");
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
