@@ -87,7 +87,7 @@ const ContactForm = () => {
     <form onSubmit={handleSubmit} className="text-left space-y-4">
       <Input placeholder="Seu nome" value={nome} onChange={(e) => setNome(e.target.value)} maxLength={100} required />
       <Input type="email" placeholder="Seu e-mail" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={150} required />
-      <Input type="tel" placeholder="Seu celular (opcional)" value={telefone} onChange={(e) => setTelefone(e.target.value)} maxLength={20} />
+      <Input type="tel" placeholder="Seu celular" value={telefone} onChange={(e) => setTelefone(e.target.value)} maxLength={20} required />
       <Textarea placeholder="Sua dúvida ou mensagem..." value={mensagem} onChange={(e) => setMensagem(e.target.value)} maxLength={1000} rows={4} required />
       <Button type="submit" className="w-full h-12 text-base font-semibold" disabled={sending}>
         {sending ? "Enviando..." : "Enviar Mensagem"}
