@@ -1,0 +1,1 @@
+UPDATE lp_content SET valor = 'a um clique de distância.', updated_at = now() WHERE id = '852cf01a-793f-46cf-88a6-eed0fd9fd12c';
