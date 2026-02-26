@@ -1,0 +1,1 @@
+ALTER TABLE public.contato_mensagens ADD COLUMN telefone TEXT;
