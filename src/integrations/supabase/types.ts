@@ -156,6 +156,7 @@ export type Database = {
           publico: string
           subtitulo: string | null
           titulo: string
+          whatsapp: string | null
         }
         Insert: {
           ativo?: boolean
@@ -168,6 +169,7 @@ export type Database = {
           publico?: string
           subtitulo?: string | null
           titulo: string
+          whatsapp?: string | null
         }
         Update: {
           ativo?: boolean
@@ -180,6 +182,7 @@ export type Database = {
           publico?: string
           subtitulo?: string | null
           titulo?: string
+          whatsapp?: string | null
         }
         Relationships: [
           {

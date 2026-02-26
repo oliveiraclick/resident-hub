@@ -137,7 +137,7 @@ const PrestadorHome = () => {
         {/* Banner para Prestadores */}
         {banners.length > 0 && (
           <div
-            onClick={() => { const link = banners[bannerIdx]?.link; if (link) window.open(link, "_blank"); }}
+            onClick={() => { const b = banners[bannerIdx]; if (b?.whatsapp) { window.open(`https://wa.me/${b.whatsapp.replace(/\D/g, "")}`, "_blank"); } else if (b?.link) { window.open(b.link, "_blank"); } }}
             className="rounded-[18px] overflow-hidden relative cursor-pointer"
             style={{ height: 140, boxShadow: "0 4px 16px rgba(0,0,0,0.08)" }}
           >

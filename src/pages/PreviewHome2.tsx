@@ -256,7 +256,7 @@ const PreviewHome2 = () => {
 
         {/* Banners */}
         {banners.length > 0 && (
-          <div onClick={() => { const link = banners[bannerIdx]?.link; if (link) window.open(link, "_blank"); }} style={{ borderRadius: 16, overflow: "hidden", position: "relative", height: 170, cursor: "pointer", boxShadow: C.shadow }}>
+          <div onClick={() => { const b = banners[bannerIdx]; if (b?.whatsapp) { window.open(`https://wa.me/${b.whatsapp.replace(/\D/g, "")}`, "_blank"); } else if (b?.link) { window.open(b.link, "_blank"); } }} style={{ borderRadius: 16, overflow: "hidden", position: "relative", height: 170, cursor: "pointer", boxShadow: C.shadow }}>
             {banners[bannerIdx]?.imagem_url ? (
               <img src={banners[bannerIdx].imagem_url} alt={banners[bannerIdx].titulo} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
             ) : (

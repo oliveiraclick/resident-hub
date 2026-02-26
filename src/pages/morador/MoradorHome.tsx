@@ -189,7 +189,7 @@ const MoradorHome = () => {
         {/* ═══ BANNER ═══ */}
         {banners.length > 0 && (
           <div
-            onClick={() => { const link = banners[bannerIdx]?.link; if (link) window.open(link, "_blank"); }}
+            onClick={() => { const b = banners[bannerIdx]; if (b?.whatsapp) { window.open(`https://wa.me/${b.whatsapp.replace(/\D/g, "")}`, "_blank"); } else if (b?.link) { window.open(b.link, "_blank"); } }}
             className="rounded-[22px] overflow-hidden relative cursor-pointer"
             style={{ height: 180, boxShadow: "0 6px 24px rgba(0,0,0,0.1)" }}
           >
