@@ -345,50 +345,94 @@ const LandingPage = () => {
         </svg>
       </section>
 
-      <section id="preços" className="py-16 md:py-24">
-        <div className="mx-auto max-w-6xl px-4 text-center space-y-4">
+      <section id="preços" className="py-16 md:py-24 bg-muted/30">
+        <div className="mx-auto max-w-6xl px-4 text-center space-y-3 mb-14">
+          <span className="text-xs font-semibold uppercase tracking-widest text-primary">Planos</span>
           <h2 className="text-2xl md:text-3xl font-bold">{get("precos", "titulo_secao")}</h2>
-          <p className="text-muted-foreground text-body">{get("precos", "desc_secao")}</p>
+          <p className="text-muted-foreground max-w-md mx-auto text-body">{get("precos", "desc_secao")}</p>
         </div>
-        <div className="mx-auto max-w-3xl px-4 mt-12 grid md:grid-cols-2 gap-6">
-          <div className="rounded-card border border-border bg-card p-8 space-y-6">
-            <h3 className="font-bold text-lg">{get("precos", "morador_titulo")}</h3>
-            <p className="text-muted-foreground text-body">{get("precos", "morador_desc")}</p>
-            <div className="text-3xl font-bold">
-              {get("precos", "morador_preco")} <span className="text-sm font-normal text-muted-foreground">{get("precos", "morador_preco_sub")}</span>
+
+        <div className="mx-auto max-w-4xl px-4 grid md:grid-cols-2 gap-8 items-start">
+          {/* ── Morador Card ── */}
+          <div className="rounded-[2rem] bg-card border border-border p-8 md:p-10 space-y-7 shadow-sm hover:shadow-md transition-shadow">
+            <div className="space-y-1">
+              <h3 className="font-bold text-xl">{get("precos", "morador_titulo")}</h3>
+              <p className="text-muted-foreground text-body">{get("precos", "morador_desc")}</p>
             </div>
-            <ul className="space-y-3">
+
+            <div className="flex items-end gap-1">
+              <span className="text-4xl md:text-5xl font-extrabold tracking-tight">{get("precos", "morador_preco")}</span>
+              <span className="text-base font-medium text-muted-foreground pb-1 ml-1">{get("precos", "morador_preco_sub")}</span>
+            </div>
+
+            <div className="h-px bg-border" />
+
+            <ul className="space-y-4">
               {moradorFeats.map((f) => (
-                <li key={f} className="flex items-center gap-2 text-body">
-                  <CheckCircle size={16} className="text-primary shrink-0" /> {f}
+                <li key={f} className="flex items-center gap-3 text-body">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10">
+                    <CheckCircle size={14} className="text-primary" />
+                  </div>
+                  {f}
                 </li>
               ))}
             </ul>
-            <Button variant="outline" className="w-full" onClick={() => navigate("/cadastro/morador")}>
+
+            <Button variant="outline" className="w-full h-14 text-base font-semibold" onClick={() => navigate("/cadastro/morador")}>
               {get("precos", "morador_cta")}
             </Button>
           </div>
-          <div className="relative rounded-card border-2 border-primary bg-card p-8 space-y-6 shadow-lg">
-            <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary text-primary-foreground text-xs font-bold px-4 py-1">
-              MAIS POPULAR
-            </span>
-            <h3 className="font-bold text-lg text-primary">{get("precos", "prestador_titulo")}</h3>
-            <p className="text-muted-foreground text-body">{get("precos", "prestador_desc")}</p>
-            <div className="flex items-baseline gap-2">
-              <span className="text-lg text-muted-foreground line-through">R$ 49</span>
-              <span className="text-3xl font-bold">{get("precos", "prestador_preco")}</span>
-              <span className="text-sm font-normal text-muted-foreground">{get("precos", "prestador_preco_sub")}</span>
+
+          {/* ── Prestador Card ── */}
+          <div className="relative rounded-[2rem] bg-card border-2 border-primary p-8 md:p-10 space-y-7 shadow-xl ring-1 ring-primary/20 scale-[1.02] md:scale-105">
+            {/* Badge */}
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary text-primary-foreground text-xs font-bold px-5 py-1.5 shadow-lg shadow-primary/30 uppercase tracking-wider">
+                <Star size={12} className="fill-current" /> Mais Popular
+              </span>
             </div>
-            <ul className="space-y-3">
+
+            <div className="space-y-1 pt-2">
+              <h3 className="font-bold text-xl text-primary">{get("precos", "prestador_titulo")}</h3>
+              <p className="text-muted-foreground text-body">{get("precos", "prestador_desc")}</p>
+            </div>
+
+            {/* Price */}
+            <div className="flex items-end gap-2">
+              <div className="flex flex-col items-end mr-1">
+                <span className="text-sm text-muted-foreground line-through decoration-2">R$ 49</span>
+              </div>
+              <span className="text-4xl md:text-5xl font-extrabold tracking-tight text-primary">
+                {get("precos", "prestador_preco").replace("R$ ", "")}
+              </span>
+              <div className="flex flex-col pb-1">
+                <span className="text-xs font-medium text-muted-foreground leading-tight">{get("precos", "prestador_preco_sub")}</span>
+              </div>
+            </div>
+
+            {/* Trial badge */}
+            <div className="rounded-xl bg-primary/5 border border-primary/15 px-4 py-2.5 text-center">
+              <span className="text-sm font-semibold text-primary">🎉 60 dias grátis para experimentar</span>
+            </div>
+
+            <div className="h-px bg-border" />
+
+            <ul className="space-y-4">
               {prestadorFeats.map((f) => (
-                <li key={f} className="flex items-center gap-2 text-body">
-                  <CheckCircle size={16} className="text-primary shrink-0" /> {f}
+                <li key={f} className="flex items-center gap-3 text-body">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10">
+                    <CheckCircle size={14} className="text-primary" />
+                  </div>
+                  <span className="font-medium">{f}</span>
                 </li>
               ))}
             </ul>
-            <Button className="w-full" onClick={() => navigate("/cadastro/prestador")}>
+
+            <Button className="w-full h-14 text-base font-semibold shadow-lg shadow-primary/20" onClick={() => navigate("/cadastro/prestador")}>
               {get("precos", "prestador_cta")}
             </Button>
+
+            <p className="text-center text-xs text-muted-foreground">Cancele quando quiser · Sem fidelidade</p>
           </div>
         </div>
       </section>
