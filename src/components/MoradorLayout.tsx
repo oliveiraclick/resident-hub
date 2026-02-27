@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from "react";
 import AppShell from "@/components/AppShell";
-import { Home, Wrench, ShoppingBag, Package, User } from "lucide-react";
+import { Home, Wrench, ShoppingBag, Repeat, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -16,7 +16,7 @@ const navItems = [
   { icon: Home, label: "Início", path: "/morador" },
   { icon: Wrench, label: "Serviços", path: "/morador/servicos" },
   { icon: ShoppingBag, label: "Shop", path: "/morador/produtos" },
-  { icon: Package, label: "Encomendas", path: "/morador/encomendas" },
+  { icon: Repeat, label: "Desapego", path: "/morador/desapegos" },
   { icon: User, label: "Perfil", path: "/morador/perfil" },
 ];
 
