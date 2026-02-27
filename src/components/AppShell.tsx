@@ -4,6 +4,7 @@ import { ArrowLeft, Bell, QrCode, Search, Wrench, X, Sparkles, Menu } from "luci
 import type { LucideIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import logoMorador from "@/assets/logo-morador.png";
+import logoSymbol from "@/assets/logo-symbol.png";
 import { useAuth } from "@/hooks/useAuth";
 
 export interface NavItem {
@@ -126,7 +127,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
                 {condominioLogo ? (
                   <img src={condominioLogo} alt={condominioName || ""} className="h-[38px] w-[38px] rounded-xl object-cover border-2 border-white/20" />
                 ) : (
-                  <img src={logoMorador} alt="Morador.app" className="h-[38px] w-[38px] object-contain" />
+                  <img src={logoSymbol} alt="Morador.app" className="h-[38px] w-[38px] object-contain" />
                 )}
                 <div>
                   <span className="font-bold text-[16px] block leading-none text-white">
@@ -178,7 +179,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
               {condominioLogo ? (
                 <img src={condominioLogo} alt={condominioName || "Condomínio"} className="h-9 w-9 rounded-lg object-cover border border-white/20" />
               ) : (
-                <img src={logoMorador} alt="Morador.app" className="h-9 w-9 object-contain" />
+                <img src={logoSymbol} alt="Morador.app" className="h-9 w-9 object-contain" />
               )}
             </div>
             <div className="flex items-center gap-2">
