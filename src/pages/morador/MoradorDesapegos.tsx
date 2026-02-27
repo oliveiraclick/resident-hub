@@ -45,18 +45,54 @@ const MoradorDesapegos = () => {
     fetchDesapegos();
   }, [condominioId]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const compressImage = (file: File, maxWidth = 1200, quality = 0.8): Promise<File> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let w = img.width;
+        let h = img.height;
+        if (w > maxWidth) { h = (maxWidth / w) * h; w = maxWidth; }
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d")!;
+        ctx.drawImage(img, 0, 0, w, h);
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              resolve(new File([blob], file.name.replace(/\.\w+$/, ".jpg"), { type: "image/jpeg" }));
+            } else {
+              resolve(file);
+            }
+          },
+          "image/jpeg",
+          quality,
+        );
+      };
+      img.onerror = () => resolve(file);
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
+    // Reset input value so the same file can be selected again if needed
+    e.target.value = "";
+
+    // Compress camera photos (often 5-10 MB on iOS)
+    let processed = file;
+    if (file.size > 1 * 1024 * 1024) {
+      processed = await compressImage(file);
+    }
+
+    if (processed.size > 5 * 1024 * 1024) {
       toast.error("Imagem deve ter no máximo 5MB");
       return;
     }
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
-    // Reset input value so the same file can be selected again if needed
-    e.target.value = "";
+    setImageFile(processed);
+    setImagePreview(URL.createObjectURL(processed));
   };
 
   const uploadImage = async (file: File, desapegoId: string): Promise<string | null> => {
