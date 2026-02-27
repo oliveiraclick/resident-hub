@@ -222,6 +222,7 @@ const Auth = () => {
       </form>
 
       <div className="mt-auto pt-8 pb-6 text-center">
+        <p className="text-xs text-muted-foreground/40 mb-1">v3.0.1</p>
         <p className="text-xs text-muted-foreground/50">app desenvolvido por ia&co. tecnologia</p>
       </div>
     </div>
