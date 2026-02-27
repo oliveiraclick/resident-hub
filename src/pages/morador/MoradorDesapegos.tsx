@@ -219,29 +219,39 @@ const MoradorDesapegos = () => {
             <p className="text-body text-muted-foreground">Nenhum desapego ainda</p>
           </div>
         ) : !showForm ? (
-          desapegos.map((d) => (
-            <Card key={d.id} className="cursor-pointer active:scale-[0.98] transition-transform overflow-hidden" onClick={() => navigate(`/morador/desapegos/${d.id}`)}>
-              {d.imagem_url && (
-                <img src={d.imagem_url} alt={d.titulo} className="w-full h-36 object-cover" />
-              )}
-              <CardContent className="flex flex-col gap-2 p-4">
-                <p className="text-title-md">{d.titulo}</p>
-                {d.descricao && (
-                  <p className="text-body text-muted-foreground">{d.descricao}</p>
-                )}
-                {d.preco ? (
-                  <p className="text-body font-semibold text-primary">
-                    R$ {formatBRL(d.preco)}
-                  </p>
-                ) : (
-                  <p className="text-subtitle text-success font-medium">Gratuito</p>
-                )}
-                <p className="text-label text-muted-foreground">
-                  {new Date(d.created_at).toLocaleDateString("pt-BR")}
-                </p>
-              </CardContent>
-            </Card>
-          ))
+          <div className="grid grid-cols-2 gap-3">
+            {desapegos.map((d) => (
+              <button
+                key={d.id}
+                onClick={() => navigate(`/morador/desapegos/${d.id}`)}
+                className="bg-transparent border-none cursor-pointer p-0 text-left active:scale-95 transition-transform"
+              >
+                <div className="rounded-2xl overflow-hidden bg-card border border-border" style={{ boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
+                  <div className="aspect-square overflow-hidden bg-muted">
+                    {d.imagem_url ? (
+                      <img src={d.imagem_url} alt={d.titulo} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center"><span className="text-[32px]">📦</span></div>
+                    )}
+                  </div>
+                  <div className="p-2.5">
+                    <p className="text-[13px] font-semibold text-foreground truncate">{d.titulo}</p>
+                    {d.descricao && (
+                      <p className="text-[11px] text-muted-foreground truncate mt-0.5">{d.descricao}</p>
+                    )}
+                    {d.preco ? (
+                      <p className="text-[14px] font-bold text-primary mt-1">R$ {formatBRL(d.preco)}</p>
+                    ) : (
+                      <p className="text-[12px] text-success font-medium mt-1">Gratuito</p>
+                    )}
+                    <p className="text-[10px] text-muted-foreground mt-0.5">
+                      {new Date(d.created_at).toLocaleDateString("pt-BR")}
+                    </p>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
         ) : null}
       </div>
     </MoradorLayout>
