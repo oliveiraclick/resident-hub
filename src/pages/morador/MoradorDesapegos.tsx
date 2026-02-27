@@ -29,7 +29,8 @@ const MoradorDesapegos = () => {
 
   const fetchDesapegos = async () => {
     if (!condominioId) return;
-    setLoading(true);
+    // Don't show loading spinner if form is open (prevents visual reset on mobile)
+    if (!showForm) setLoading(true);
     const { data } = await supabase
       .from("desapegos")
       .select("*")
@@ -45,6 +46,7 @@ const MoradorDesapegos = () => {
   }, [condominioId]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
@@ -53,6 +55,8 @@ const MoradorDesapegos = () => {
     }
     setImageFile(file);
     setImagePreview(URL.createObjectURL(file));
+    // Reset input value so the same file can be selected again if needed
+    e.target.value = "";
   };
 
   const uploadImage = async (file: File, desapegoId: string): Promise<string | null> => {
@@ -134,8 +138,8 @@ const MoradorDesapegos = () => {
               {/* Image upload */}
               <div className="flex flex-col gap-1">
                 <label className="text-[12px] font-medium text-muted-foreground ml-1">Foto do item</label>
-                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
-                <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleImageChange} />
+                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageChange} onClick={(e) => e.stopPropagation()} />
+                <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleImageChange} onClick={(e) => e.stopPropagation()} />
                 {imagePreview ? (
                   <div className="relative">
                     <img src={imagePreview} alt="Preview" className="w-full h-40 object-cover rounded-lg" />
@@ -145,10 +149,10 @@ const MoradorDesapegos = () => {
                   </div>
                 ) : (
                   <div className="flex gap-2">
-                    <Button type="button" variant="outline" size="sm" className="flex-1 gap-1.5" onClick={() => fileInputRef.current?.click()}>
+                    <Button type="button" variant="outline" size="sm" className="flex-1 gap-1.5" onClick={(e) => { e.stopPropagation(); e.preventDefault(); fileInputRef.current?.click(); }}>
                       <ImagePlus size={16} /> Galeria
                     </Button>
-                    <Button type="button" variant="outline" size="sm" className="flex-1 gap-1.5" onClick={() => cameraInputRef.current?.click()}>
+                    <Button type="button" variant="outline" size="sm" className="flex-1 gap-1.5" onClick={(e) => { e.stopPropagation(); e.preventDefault(); cameraInputRef.current?.click(); }}>
                       <Camera size={16} /> Câmera
                     </Button>
                   </div>
