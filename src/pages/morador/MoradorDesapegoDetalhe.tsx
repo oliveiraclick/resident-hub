@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { formatBRL } from "@/lib/utils";
 import { useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, MessageCircle, AlertTriangle, User, ShieldCheck } from "lucide-react";
+import { ArrowLeft, MessageCircle, AlertTriangle, User, ShieldCheck, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -34,9 +36,27 @@ interface DesapegoDetail {
 const MoradorDesapegoDetalhe = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [item, setItem] = useState<DesapegoDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [showSafetyTip, setShowSafetyTip] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const isOwner = user && item && user.id === item.morador_id;
+
+  const handleDelete = async () => {
+    if (!item) return;
+    setDeleting(true);
+    const { error } = await supabase.from("desapegos").delete().eq("id", item.id);
+    if (error) {
+      toast.error("Erro ao excluir desapego");
+    } else {
+      toast.success("Desapego excluído");
+      navigate(-1);
+    }
+    setDeleting(false);
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -124,7 +144,12 @@ const MoradorDesapegoDetalhe = () => {
         <button onClick={() => navigate(-1)} className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
           <ArrowLeft size={18} className="text-foreground" />
         </button>
-        <h1 className="text-[15px] font-semibold text-foreground truncate">Desapego</h1>
+        <h1 className="text-[15px] font-semibold text-foreground truncate flex-1">Desapego</h1>
+        {isOwner && (
+          <button onClick={() => setShowDeleteConfirm(true)} className="h-10 w-10 rounded-full bg-destructive/10 flex items-center justify-center">
+            <Trash2 size={18} className="text-destructive" />
+          </button>
+        )}
       </header>
 
       <main className="px-5 pt-5 pb-[100px]">
@@ -222,6 +247,23 @@ const MoradorDesapegoDetalhe = () => {
             <AlertDialogCancel className="mt-0 flex-1">Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={openWhatsApp} className="flex-1 bg-[#25D366] hover:bg-[#1da851] text-white">
               Entendi, continuar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      {/* Delete confirmation dialog */}
+      <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <AlertDialogContent className="max-w-[360px] rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-[16px]">Excluir desapego?</AlertDialogTitle>
+            <AlertDialogDescription className="text-[13px] text-muted-foreground">
+              Tem certeza que deseja excluir este anúncio? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-row gap-2">
+            <AlertDialogCancel className="mt-0 flex-1">Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} disabled={deleting} className="flex-1 bg-destructive hover:bg-destructive/90 text-white">
+              {deleting ? "Excluindo..." : "Excluir"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
