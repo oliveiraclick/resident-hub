@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { formatBRL } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
@@ -154,14 +154,32 @@ const MoradorHome = () => {
     fetchPrestadoresVisiveis();
   }, [user]);
 
-  // Auto-rotate banners
+  // Auto-rotate banners (robust for iOS WebView)
   useEffect(() => {
     if (banners.length <= 1) return;
-    const timer = setInterval(() => {
-      setBannerIdx((prev) => (prev + 1) % banners.length);
-    }, 5000);
-    return () => clearInterval(timer);
+    let last = Date.now();
+    let raf: number;
+    const tick = () => {
+      const now = Date.now();
+      if (now - last >= 5000) {
+        setBannerIdx((prev) => (prev + 1) % banners.length);
+        last = now;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
   }, [banners.length]);
+
+  // Touch swipe for banners
+  const touchStart = useRef(0);
+  const handleTouchStart = (e: React.TouchEvent) => { touchStart.current = e.touches[0].clientX; };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const diff = touchStart.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      setBannerIdx((prev) => diff > 0 ? (prev + 1) % banners.length : (prev - 1 + banners.length) % banners.length);
+    }
+  };
 
   const productList = produtos.length > 0 ? produtos : [
     { id: "mock-1", titulo: "Bolo Caseiro", preco: 25, status: "ativo" },
@@ -185,6 +203,8 @@ const MoradorHome = () => {
         {banners.length > 0 && (
           <div
             onClick={() => { const b = banners[bannerIdx]; if (b?.whatsapp) { window.open(`https://wa.me/${b.whatsapp.replace(/\D/g, "")}`, "_blank"); } else if (b?.link) { window.open(b.link, "_blank"); } }}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
             className="rounded-[22px] overflow-hidden relative cursor-pointer"
             style={{ height: 180, boxShadow: "0 6px 24px rgba(0,0,0,0.1)" }}
           >
