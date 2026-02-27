@@ -211,14 +211,14 @@ const MoradorDesapegos = () => {
           </Card>
         )}
 
-        {loading ? (
+        {!showForm && loading ? (
           <p className="text-body text-muted-foreground text-center py-8">Carregando...</p>
-        ) : desapegos.length === 0 ? (
+        ) : !showForm && desapegos.length === 0 ? (
           <div className="flex flex-col items-center gap-3 py-12">
             <Repeat size={40} className="text-muted-foreground" />
             <p className="text-body text-muted-foreground">Nenhum desapego ainda</p>
           </div>
-        ) : (
+        ) : !showForm ? (
           desapegos.map((d) => (
             <Card key={d.id} className="cursor-pointer active:scale-[0.98] transition-transform overflow-hidden" onClick={() => navigate(`/morador/desapegos/${d.id}`)}>
               {d.imagem_url && (
@@ -242,7 +242,7 @@ const MoradorDesapegos = () => {
               </CardContent>
             </Card>
           ))
-        )}
+        ) : null}
       </div>
     </MoradorLayout>
   );
