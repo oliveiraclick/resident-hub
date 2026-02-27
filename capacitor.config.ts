@@ -5,6 +5,7 @@ const config: CapacitorConfig = {
   appName: 'O Morador',
   webDir: 'dist',
   server: {
+    url: 'https://morador-hub.lovable.app',
     allowNavigation: ['*'],
     cleartext: true
   },
