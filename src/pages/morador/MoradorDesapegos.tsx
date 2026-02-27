@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Repeat, Plus, Camera, ImagePlus, X } from "lucide-react";
+import { Repeat, Plus, Camera, ImagePlus, X, FileText, Users } from "lucide-react";
 
 const MoradorDesapegos = () => {
   const navigate = useNavigate();
@@ -146,10 +146,29 @@ const MoradorDesapegos = () => {
   return (
     <MoradorLayout title="Desapego">
       <div className="flex flex-col gap-4 max-w-md mx-auto">
-        <Button onClick={() => setShowForm(!showForm)} variant={showForm ? "outline" : "default"}>
-          <Plus size={18} />
-          {showForm ? "Cancelar" : "Publicar Desapego"}
-        </Button>
+        {/* Top stats row */}
+        <div className="grid grid-cols-2 gap-3">
+          <Button onClick={() => setShowForm(!showForm)} variant={showForm ? "outline" : "default"} className="h-auto py-3">
+            <Plus size={18} />
+            {showForm ? "Cancelar" : "Publicar"}
+          </Button>
+          <div className="grid grid-rows-2 gap-2">
+            <div className="rounded-xl bg-card border border-border px-3 py-2 flex items-center gap-2">
+              <FileText size={14} className="text-primary flex-shrink-0" />
+              <div className="min-w-0">
+                <p className="text-[10px] text-muted-foreground leading-tight">Minhas</p>
+                <p className="text-[15px] font-bold text-foreground leading-tight">{desapegos.filter(d => d.morador_id === user?.id).length}</p>
+              </div>
+            </div>
+            <div className="rounded-xl bg-card border border-border px-3 py-2 flex items-center gap-2">
+              <Users size={14} className="text-warning flex-shrink-0" />
+              <div className="min-w-0">
+                <p className="text-[10px] text-muted-foreground leading-tight">Total</p>
+                <p className="text-[15px] font-bold text-foreground leading-tight">{desapegos.length}</p>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {showForm && (
           <Card>
