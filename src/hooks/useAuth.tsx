@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useContext, ReactNode } from "react";
+import { useState, useEffect, useRef, createContext, useContext, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
 
@@ -47,10 +47,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
+  const prevUserIdRef = useRef<string | null>(null);
+
   useEffect(() => {
     if (!user) {
       setRoles([]);
       setRolesLoading(false);
+      prevUserIdRef.current = null;
+      return;
+    }
+
+    // Skip re-fetching roles if the user hasn't actually changed
+    // This prevents unmounting pages when the app resumes from background (e.g. file picker)
+    if (prevUserIdRef.current === user.id) {
       return;
     }
 
@@ -65,6 +74,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setRoles(data as UserRole[]);
       }
       setRolesLoading(false);
+      prevUserIdRef.current = user.id;
     };
 
     fetchRoles();
