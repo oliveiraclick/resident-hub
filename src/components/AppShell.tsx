@@ -180,9 +180,6 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
               ) : (
                 <img src={logoMorador} alt="Morador.app" className="h-9 w-9 object-contain" />
               )}
-              <span className="font-semibold text-[15px] text-white tracking-tight">
-                {condominioName || "Morador.app"}
-              </span>
             </div>
             <div className="flex items-center gap-2">
               <button
