@@ -15,13 +15,8 @@ import productBolo from "@/assets/product-bolo.jpg";
 import productSabonete from "@/assets/product-sabonete.jpg";
 import productBrigadeiro from "@/assets/product-brigadeiro.jpg";
 import productVela from "@/assets/product-vela.jpg";
-import desapegoBike from "@/assets/desapego-bike.jpg";
-import desapegoSofa from "@/assets/desapego-sofa.jpg";
-import desapegoLivros from "@/assets/desapego-livros.jpg";
-import desapegoCarrinho from "@/assets/desapego-carrinho.jpg";
 
 const fallbackShopImages = [productBolo, productSabonete, productBrigadeiro, productVela];
-const fallbackDesapegoImages = [desapegoBike, desapegoSofa, desapegoLivros, desapegoCarrinho];
 
 const hs: React.CSSProperties = { scrollbarWidth: "none", msOverflowStyle: "none" };
 
@@ -390,7 +385,11 @@ const MoradorHome = () => {
               >
                 <div className="rounded-[20px] overflow-hidden bg-card border border-border" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
                   <div className="h-[130px] overflow-hidden relative">
-                    <img src={item.imagem_url || fallbackDesapegoImages[idx % fallbackDesapegoImages.length]} alt={item.titulo} className="w-full h-full object-cover" />
+                    {item.imagem_url ? (
+                      <img src={item.imagem_url} alt={item.titulo} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full bg-muted flex items-center justify-center"><span className="text-[32px]">📦</span></div>
+                    )}
                     <span className="absolute top-2.5 left-2.5 text-[9px] font-bold text-white bg-warning px-2.5 py-1 rounded-lg uppercase tracking-wider">Desapego</span>
                   </div>
                   <div className="p-3 pt-3 pb-4">
