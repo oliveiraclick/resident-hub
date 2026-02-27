@@ -15,13 +15,8 @@ import productBolo from "@/assets/product-bolo.jpg";
 import productSabonete from "@/assets/product-sabonete.jpg";
 import productBrigadeiro from "@/assets/product-brigadeiro.jpg";
 import productVela from "@/assets/product-vela.jpg";
-import desapegoBike from "@/assets/desapego-bike.jpg";
-import desapegoSofa from "@/assets/desapego-sofa.jpg";
-import desapegoLivros from "@/assets/desapego-livros.jpg";
-import desapegoCarrinho from "@/assets/desapego-carrinho.jpg";
 
 const fallbackShopImages = [productBolo, productSabonete, productBrigadeiro, productVela];
-const fallbackDesapegoImages = [desapegoBike, desapegoSofa, desapegoLivros, desapegoCarrinho];
 
 const X = {
   accent: "#FF5722",
@@ -388,7 +383,11 @@ const PreviewHome5 = () => {
               <button key={item.id} onClick={() => item.id.startsWith("mock") ? navigate("/morador/desapegos") : navigate(`/morador/desapegos/${item.id}`)} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "left" }}>
                 <div style={{ borderRadius: 20, overflow: "hidden", background: X.card, boxShadow: "0 2px 12px rgba(0,0,0,0.05)", border: `1px solid ${X.border}` }}>
                   <div style={{ height: 130, overflow: "hidden", position: "relative" }}>
-                    <img src={fallbackDesapegoImages[idx % fallbackDesapegoImages.length]} alt={item.titulo} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    {item.imagem_url ? (
+                      <img src={item.imagem_url} alt={item.titulo} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    ) : (
+                      <div style={{ width: "100%", height: "100%", background: "#f3f4f6", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ fontSize: 32 }}>📦</span></div>
+                    )}
                     <span style={{ position: "absolute", top: 10, left: 10, fontSize: 9, fontWeight: 700, color: X.white, background: X.amber, padding: "4px 10px", borderRadius: 8, textTransform: "uppercase", letterSpacing: 0.8 }}>Desapego</span>
                   </div>
                   <div style={{ padding: "12px 14px 16px" }}>

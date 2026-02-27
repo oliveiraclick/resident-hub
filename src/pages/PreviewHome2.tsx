@@ -16,13 +16,8 @@ import productBolo from "@/assets/product-bolo.jpg";
 import productSabonete from "@/assets/product-sabonete.jpg";
 import productBrigadeiro from "@/assets/product-brigadeiro.jpg";
 import productVela from "@/assets/product-vela.jpg";
-import desapegoBike from "@/assets/desapego-bike.jpg";
-import desapegoSofa from "@/assets/desapego-sofa.jpg";
-import desapegoLivros from "@/assets/desapego-livros.jpg";
-import desapegoCarrinho from "@/assets/desapego-carrinho.jpg";
 
 const fallbackShopImages = [productBolo, productSabonete, productBrigadeiro, productVela];
-const fallbackDesapegoImages = [desapegoBike, desapegoSofa, desapegoLivros, desapegoCarrinho];
 
 /* ── iOS Design System tokens ── */
 const C = {
@@ -395,7 +390,11 @@ const PreviewHome2 = () => {
                 <button key={item.id} onClick={() => item.id.startsWith("mock") ? navigate("/morador/desapegos") : navigate(`/morador/desapegos/${item.id}`)} style={{ flexShrink: 0, width: 150, background: "none", border: "none", cursor: "pointer", padding: 0 }}>
                   <div style={{ borderRadius: 16, overflow: "hidden", background: C.white, boxShadow: C.shadow, border: `1px solid ${C.borderGray}` }}>
                     <div style={{ height: 110, overflow: "hidden" }}>
-                      <img src={fallbackDesapegoImages[idx % fallbackDesapegoImages.length]} alt={item.titulo} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      {item.imagem_url ? (
+                        <img src={item.imagem_url} alt={item.titulo} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      ) : (
+                        <div style={{ width: "100%", height: "100%", background: "#f3f4f6", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ fontSize: 32 }}>📦</span></div>
+                      )}
                     </div>
                     <div style={{ padding: "12px 12px 14px" }}>
                       <span style={{ fontSize: 10, fontWeight: 500, color: C.primary, textTransform: "uppercase", letterSpacing: 0.3 }}>Desapego</span>
