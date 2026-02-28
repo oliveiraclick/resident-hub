@@ -31,6 +31,7 @@ const PrestadorServicos = () => {
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
   const [preco, setPreco] = useState("");
+  const [sobConsulta, setSobConsulta] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -67,6 +68,7 @@ const PrestadorServicos = () => {
     setTitulo("");
     setDescricao("");
     setPreco("");
+    setSobConsulta(false);
     setEditingId(null);
     setShowForm(false);
   };
@@ -74,6 +76,8 @@ const PrestadorServicos = () => {
   const openEdit = (s: Servico) => {
     setTitulo(s.titulo);
     setDescricao(s.descricao || "");
+    const isSobConsulta = s.preco == null;
+    setSobConsulta(isSobConsulta);
     setPreco(s.preco != null ? String(s.preco) : "");
     setEditingId(s.id);
     setShowForm(true);
@@ -81,14 +85,14 @@ const PrestadorServicos = () => {
 
   const handleSubmit = async () => {
     if (!titulo.trim() || !prestadorId || !condominioId) return;
-    if (!preco || Number(preco) <= 0) { toast.error("Informe o preço real do serviço"); return; }
+    if (!sobConsulta && (!preco || Number(preco) <= 0)) { toast.error("Informe o preço real do serviço"); return; }
     if (!descricao.trim()) { toast.error("Preencha a descrição do serviço"); return; }
     setSubmitting(true);
 
     const payload = {
       titulo: titulo.trim(),
       descricao: descricao.trim() || null,
-      preco: preco ? parseFloat(preco) : null,
+      preco: sobConsulta ? null : (preco ? parseFloat(preco) : null),
     };
 
     if (editingId) {
@@ -174,15 +178,42 @@ const PrestadorServicos = () => {
                 <Textarea value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder="Detalhes do serviço" rows={3} />
               </div>
 
-              <div className="flex flex-col gap-1">
-                <label className="text-[12px] font-medium text-muted-foreground ml-1">Preço (R$) *</label>
-                <Input type="number" value={preco} onChange={(e) => setPreco(e.target.value)} placeholder="0,00" step="0.01" min="0.01" />
-                <p className="text-[11px] text-warning ml-1 mt-0.5">
-                  ⚠️ Informe o preço real do serviço. Anúncios com valores simbólicos (ex: R$ 1,00) poderão ser removidos.
-                </p>
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-3">
+                  <label className="text-[12px] font-medium text-muted-foreground ml-1">Preço</label>
+                  <div className="flex items-center gap-2 ml-auto">
+                    <button
+                      type="button"
+                      onClick={() => { setSobConsulta(false); }}
+                      className={`text-[12px] font-medium px-3 py-1 rounded-full transition-colors ${!sobConsulta ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+                    >
+                      Preço fixo
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setSobConsulta(true); setPreco(""); }}
+                      className={`text-[12px] font-medium px-3 py-1 rounded-full transition-colors ${sobConsulta ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+                    >
+                      Sob consulta
+                    </button>
+                  </div>
+                </div>
+                {!sobConsulta && (
+                  <>
+                    <Input type="number" value={preco} onChange={(e) => setPreco(e.target.value)} placeholder="0,00" step="0.01" min="0.01" />
+                    <p className="text-[11px] text-warning ml-1 mt-0.5">
+                      ⚠️ Informe o preço real do serviço. Anúncios com valores simbólicos (ex: R$ 1,00) poderão ser removidos.
+                    </p>
+                  </>
+                )}
+                {sobConsulta && (
+                  <p className="text-[12px] text-muted-foreground ml-1">
+                    O cliente entrará em contato para combinar o valor.
+                  </p>
+                )}
               </div>
 
-              <Button onClick={handleSubmit} disabled={submitting || !titulo.trim() || !preco || Number(preco) <= 0}>
+              <Button onClick={handleSubmit} disabled={submitting || !titulo.trim() || (!sobConsulta && (!preco || Number(preco) <= 0))}>
                 {submitting ? "Salvando..." : editingId ? "Salvar alterações" : "Criar serviço"}
               </Button>
             </CardContent>
@@ -212,11 +243,9 @@ const PrestadorServicos = () => {
                   </span>
                 </div>
 
-                {s.preco != null && (
-                  <p className="text-[15px] font-bold text-primary">
-                    R$ {formatBRL(s.preco)}
-                  </p>
-                )}
+                <p className="text-[15px] font-bold text-primary">
+                  {s.preco != null ? `R$ ${formatBRL(s.preco)}` : "Sob consulta"}
+                </p>
 
                 <div className="flex items-center gap-2 mt-1">
                   <Button size="sm" variant="outline" className="gap-1 flex-1" onClick={() => openEdit(s)}>
