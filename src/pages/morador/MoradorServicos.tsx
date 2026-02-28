@@ -276,11 +276,9 @@ const MoradorServicos = () => {
                                 </p>
                               )}
                             </div>
-                            {s.preco != null && (
-                              <span className="text-[13px] font-bold text-primary ml-2 flex-shrink-0">
-                                R$ {formatBRL(s.preco)}
-                              </span>
-                            )}
+                            <span className="text-[13px] font-bold text-primary ml-2 flex-shrink-0">
+                              {s.preco != null ? `R$ ${formatBRL(s.preco)}` : "Sob consulta"}
+                            </span>
                           </div>
                         ))}
                       </div>
