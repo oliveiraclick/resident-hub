@@ -51,58 +51,43 @@ const AdminConfiguracoes = () => {
         </div>
 
         {/* Excluir conta */}
-        <Card className="border-destructive/30">
-          <CardContent className="p-5 space-y-4">
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-destructive/10">
-                <Trash2 size={20} className="text-destructive" />
-              </div>
-              <div>
-                <p className="text-[15px] font-semibold text-foreground">Excluir minha conta</p>
-                <p className="text-[13px] text-muted-foreground mt-0.5">
-                  Essa ação é permanente e não pode ser desfeita. Todos os seus dados serão removidos.
-                </p>
-              </div>
-            </div>
-
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive" className="w-full gap-2">
-                  <Trash2 size={16} />
-                  Excluir minha conta
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle className="flex items-center gap-2">
-                    <AlertTriangle size={20} className="text-destructive" />
-                    Tem certeza absoluta?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Essa ação é irreversível. Todos os seus dados, perfil e acessos serão permanentemente excluídos.
-                    <br /><br />
-                    Digite <strong>EXCLUIR</strong> para confirmar:
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <Input
-                  value={confirmText}
-                  onChange={(e) => setConfirmText(e.target.value)}
-                  placeholder='Digite "EXCLUIR"'
-                />
-                <AlertDialogFooter>
-                  <AlertDialogCancel onClick={() => setConfirmText("")}>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction
-                    disabled={confirmText !== "EXCLUIR" || deleting}
-                    onClick={handleDeleteAccount}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  >
-                    {deleting ? "Excluindo..." : "Confirmar exclusão"}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </CardContent>
-        </Card>
+        <div className="flex justify-center pt-2 pb-4">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button className="text-xs text-muted-foreground underline hover:text-destructive transition-colors">
+                Excluir minha conta
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="flex items-center gap-2">
+                  <AlertTriangle size={20} className="text-destructive" />
+                  Tem certeza absoluta?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Essa ação é irreversível. Todos os seus dados, perfil e acessos serão permanentemente excluídos.
+                  <br /><br />
+                  Digite <strong>EXCLUIR</strong> para confirmar:
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <Input
+                value={confirmText}
+                onChange={(e) => setConfirmText(e.target.value)}
+                placeholder='Digite "EXCLUIR"'
+              />
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setConfirmText("")}>Cancelar</AlertDialogCancel>
+                <AlertDialogAction
+                  disabled={confirmText !== "EXCLUIR" || deleting}
+                  onClick={handleDeleteAccount}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  {deleting ? "Excluindo..." : "Confirmar exclusão"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
     </AdminLayout>
   );
