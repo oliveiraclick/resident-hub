@@ -220,18 +220,18 @@ const MoradorDesapegoDetalhe = () => {
   return (
     <div className="min-h-screen bg-background mx-auto max-w-[480px] overflow-x-hidden">
       {/* Header */}
-      <header className="sticky top-0 z-20 bg-card px-5 py-3 flex items-center gap-3" style={{ borderBottom: "1px solid hsl(var(--border))" }}>
-        <button onClick={() => navigate(-1)} className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
+      <header className="sticky top-0 z-20 bg-card px-5 py-3 flex items-center gap-3" style={{ borderBottom: "1px solid hsl(var(--border))", WebkitTouchCallout: 'none', touchAction: 'manipulation' }}>
+        <button type="button" onClick={() => navigate(-1)} className="h-10 w-10 rounded-full bg-muted flex items-center justify-center cursor-pointer" style={{ WebkitTapHighlightColor: 'transparent' }}>
           <ArrowLeft size={18} className="text-foreground" />
         </button>
         <h1 className="text-[15px] font-semibold text-foreground truncate flex-1">{editing ? "Editar Desapego" : "Desapego"}</h1>
         {isOwner && !editing && (
-          <button onClick={startEditing} className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+          <button type="button" onClick={() => startEditing()} className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center cursor-pointer active:opacity-70 transition-opacity" style={{ WebkitTapHighlightColor: 'transparent' }}>
             <Pencil size={16} className="text-primary" />
           </button>
         )}
         {isOwner && !editing && (
-          <button onClick={() => setShowDeleteConfirm(true)} className="h-10 w-10 rounded-full bg-destructive/10 flex items-center justify-center">
+          <button type="button" onClick={() => setShowDeleteConfirm(true)} className="h-10 w-10 rounded-full bg-destructive/10 flex items-center justify-center cursor-pointer active:opacity-70 transition-opacity" style={{ WebkitTapHighlightColor: 'transparent' }}>
             <Trash2 size={18} className="text-destructive" />
           </button>
         )}
