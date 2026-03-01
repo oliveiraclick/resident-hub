@@ -166,7 +166,7 @@ const LandingPage = () => {
                 {l}
               </a>
             ))}
-            <Button size="sm" variant="outline" className="border-white/30 text-white" onClick={() => navigate("/auth")}>Entrar</Button>
+            <Button size="sm" variant="outline" className="border-white/30 text-white bg-transparent hover:bg-white/10" onClick={() => navigate("/auth")}>Entrar</Button>
             <Button size="sm" onClick={() => navigate("/cadastro/morador")}>Cadastre-se</Button>
           </div>
         )}
