@@ -11,12 +11,12 @@ html, body {
   -webkit-text-size-adjust: 100%;
 }
 
-/* iOS safe areas */
+/* iOS safe areas — only for web (Capacitor handles it natively via contentInset) */
 html {
   background-color: hsl(240 29% 14%);
 }
 
-body {
+body:not(.native-app) {
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
   padding-left: env(safe-area-inset-left);
