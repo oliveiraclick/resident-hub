@@ -156,7 +156,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
             {/* Big greeting */}
             <div className="relative z-[2]">
               <p className="text-[14px] text-primary-light font-medium m-0">Bem-vindo de volta,</p>
-              <h1 className="text-[32px] font-extrabold mt-1 leading-none tracking-tight text-white">{firstName} <span className="text-[28px]">🔥</span></h1>
+              <h1 className="text-[32px] font-extrabold mt-1 leading-none tracking-tight text-white">{firstName}</h1>
             </div>
           </div>
 
