@@ -186,7 +186,7 @@ const MasterUsuarios = () => {
 
   return (
     <MasterLayout title="Usuários">
-      <div className="mb-4 space-y-3">
+      <div className="sticky top-0 z-10 bg-background pb-3 mb-4 space-y-3 -mx-5 px-5 pt-1">
         <div className="relative">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input
