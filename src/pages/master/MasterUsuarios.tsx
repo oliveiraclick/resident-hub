@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Pencil, Trash2, CheckCircle, XCircle, Plus, ShieldCheck, Search, Smartphone } from "lucide-react";
+import { Pencil, Trash2, CheckCircle, XCircle, Plus, ShieldCheck, Search, Smartphone, Wifi } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -31,6 +31,7 @@ interface UserRow {
   prestadorId: string | null;
   devicePlatform: string | null;
   appVersion: string | null;
+  deviceUpdatedAt: string | null;
 }
 
 interface Condominio {
@@ -46,6 +47,7 @@ const MasterUsuarios = () => {
   const [loading, setLoading] = useState(true);
   const [filterRole, setFilterRole] = useState<string>(initialFilter === "bloqueados" ? "all" : initialFilter);
   const [showBloqueados, setShowBloqueados] = useState(initialFilter === "bloqueados");
+  const [showOnline, setShowOnline] = useState(false);
   const [search, setSearch] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<UserRow | null>(null);
   const [editTarget, setEditTarget] = useState<UserRow | null>(null);
@@ -92,6 +94,7 @@ const MasterUsuarios = () => {
           prestadorId: prest?.id || null,
           devicePlatform: profile?.device_platform || null,
           appVersion: profile?.app_version || null,
+          deviceUpdatedAt: profile?.device_updated_at || null,
         };
       })
     );
@@ -159,10 +162,18 @@ const MasterUsuarios = () => {
     else { toast.success(u.aprovado ? "Usuário desaprovado" : "Usuário aprovado"); fetchData(); }
   };
 
+  const isOnline = (u: UserRow) => {
+    if (!u.deviceUpdatedAt) return false;
+    const diff = Date.now() - new Date(u.deviceUpdatedAt).getTime();
+    return diff < 5 * 60 * 1000; // 5 minutes
+  };
+
   const roleFiltered = filterRole === "all" ? users : users.filter((u) => u.role === filterRole);
   const searchFiltered = search ? roleFiltered.filter((u) => u.nome.toLowerCase().includes(search.toLowerCase())) : roleFiltered;
-  const filtered = showBloqueados ? searchFiltered.filter((u) => !u.aprovado) : searchFiltered;
+  const afterBloqueados = showBloqueados ? searchFiltered.filter((u) => !u.aprovado) : searchFiltered;
+  const filtered = showOnline ? afterBloqueados.filter(isOnline) : afterBloqueados;
   const bloqueadosCount = users.filter((u) => !u.aprovado).length;
+  const onlineCount = users.filter(isOnline).length;
 
   const handleAprovarTodos = async () => {
     const bloqueados = users.filter((u) => !u.aprovado);
@@ -197,11 +208,20 @@ const MasterUsuarios = () => {
             <SelectItem value="platform_admin">Platform Admin</SelectItem>
           </SelectContent>
         </Select>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
+          <Button
+            variant={showOnline ? "default" : "outline"}
+            size="sm"
+            onClick={() => { setShowOnline(!showOnline); if (!showOnline) setShowBloqueados(false); }}
+            className="text-xs"
+          >
+            <Wifi size={14} className="mr-1" />
+            Online ({onlineCount})
+          </Button>
           <Button
             variant={showBloqueados ? "default" : "outline"}
             size="sm"
-            onClick={() => setShowBloqueados(!showBloqueados)}
+            onClick={() => { setShowBloqueados(!showBloqueados); if (!showBloqueados) setShowOnline(false); }}
             className="text-xs"
           >
             <XCircle size={14} className="mr-1" />
