@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { APP_VERSION } from "@/lib/appVersion";
+import { APP_VERSION, NATIVE_APP_VERSION } from "@/lib/appVersion";
 
 function getDevicePlatform(): string {
   const ua = navigator.userAgent;
@@ -15,8 +15,10 @@ function getDevicePlatform(): string {
 function getAppVersion(): string {
   const params = new URLSearchParams(window.location.search);
   const isNative = params.get("native") === "1" || /\b(capacitor|wv)\b/i.test(navigator.userAgent);
-  const prefix = isNative ? "App" : "Web";
-  return `${prefix} ${APP_VERSION}`;
+  if (isNative) {
+    return `App ${NATIVE_APP_VERSION} · Base ${APP_VERSION}`;
+  }
+  return `Web · Base ${APP_VERSION}`;
 }
 
 /**
