@@ -1,0 +1,4 @@
+ALTER TABLE public.profiles 
+ADD COLUMN IF NOT EXISTS device_platform TEXT,
+ADD COLUMN IF NOT EXISTS app_version TEXT,
+ADD COLUMN IF NOT EXISTS device_updated_at TIMESTAMPTZ;

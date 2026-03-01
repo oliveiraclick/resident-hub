@@ -726,9 +726,12 @@ export type Database = {
       }
       profiles: {
         Row: {
+          app_version: string | null
           avatar_url: string | null
           condicoes_aceitas_em: string | null
           created_at: string
+          device_platform: string | null
+          device_updated_at: string | null
           id: string
           nome: string
           numero_casa: string | null
@@ -738,9 +741,12 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          app_version?: string | null
           avatar_url?: string | null
           condicoes_aceitas_em?: string | null
           created_at?: string
+          device_platform?: string | null
+          device_updated_at?: string | null
           id?: string
           nome?: string
           numero_casa?: string | null
@@ -750,9 +756,12 @@ export type Database = {
           user_id: string
         }
         Update: {
+          app_version?: string | null
           avatar_url?: string | null
           condicoes_aceitas_em?: string | null
           created_at?: string
+          device_platform?: string | null
+          device_updated_at?: string | null
           id?: string
           nome?: string
           numero_casa?: string | null

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Pencil, Trash2, CheckCircle, XCircle, Plus, ShieldCheck, Search } from "lucide-react";
+import { Pencil, Trash2, CheckCircle, XCircle, Plus, ShieldCheck, Search, Smartphone } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -29,6 +29,8 @@ interface UserRow {
   createdAt: string;
   especialidade: string | null;
   prestadorId: string | null;
+  devicePlatform: string | null;
+  appVersion: string | null;
 }
 
 interface Condominio {
@@ -76,10 +78,11 @@ const MasterUsuarios = () => {
     setUsers(
       roles.map((r: any) => {
         const prest = prestadorMap.get(`${r.user_id}_${r.condominio_id}`);
+        const profile = profileMap.get(r.user_id) as any;
         return {
           roleId: r.id,
           userId: r.user_id,
-          nome: profileMap.get(r.user_id)?.nome || "Sem nome",
+          nome: profile?.nome || "Sem nome",
           role: r.role,
           condominioId: r.condominio_id,
           condominioNome: r.condominio_id ? condMap.get(r.condominio_id) || "—" : "Global",
@@ -87,6 +90,8 @@ const MasterUsuarios = () => {
           createdAt: r.created_at,
           especialidade: prest?.especialidade || null,
           prestadorId: prest?.id || null,
+          devicePlatform: profile?.device_platform || null,
+          appVersion: profile?.app_version || null,
         };
       })
     );
@@ -251,9 +256,19 @@ const MasterUsuarios = () => {
                     </button>
                   </div>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {new Date(u.createdAt).toLocaleDateString("pt-BR")}
-                </p>
+                <div className="flex items-center gap-3 mt-1">
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(u.createdAt).toLocaleDateString("pt-BR")}
+                  </p>
+                  {u.devicePlatform && (
+                    <div className="flex items-center gap-1">
+                      <Smartphone size={10} className="text-muted-foreground" />
+                      <span className="text-[10px] text-muted-foreground">
+                        {u.devicePlatform} · {u.appVersion || "—"}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
           ))}
