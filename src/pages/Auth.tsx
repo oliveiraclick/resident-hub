@@ -114,7 +114,7 @@ const Auth = () => {
           <div className="absolute bottom-10 -left-10 w-28 h-28 rounded-full" style={{ background: "hsla(var(--primary), 0.1)", filter: "blur(30px)" }} />
 
           <img src={logoMorador} alt="Morador.app" className="h-20 w-20 object-contain relative z-[1]" />
-          <h1 className="mt-4 text-title-lg text-white relative z-[1]">🔥 Morador.app</h1>
+          <h1 className="mt-4 text-title-lg text-white relative z-[1]">Morador.app</h1>
           <p className="mt-1 text-subtitle text-white/60 relative z-[1]">Clicou, Achou!</p>
         </div>
         {/* Wave cutout */}

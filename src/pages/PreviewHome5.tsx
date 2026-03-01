@@ -167,7 +167,7 @@ const PreviewHome5 = () => {
           {/* Big greeting */}
           <div style={{ position: "relative", zIndex: 2 }}>
             <p style={{ fontSize: 14, color: X.accentLight, margin: 0, fontWeight: 500 }}>Bem-vindo de volta,</p>
-            <h1 style={{ fontSize: 32, fontWeight: 800, margin: "4px 0 0", lineHeight: 1.1, letterSpacing: -0.5 }}>{firstName} <span style={{ fontSize: 28 }}>🔥</span></h1>
+            <h1 style={{ fontSize: 32, fontWeight: 800, margin: "4px 0 0", lineHeight: 1.1, letterSpacing: -0.5 }}>{firstName}</h1>
           </div>
         </div>
 
