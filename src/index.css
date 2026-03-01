@@ -12,6 +12,10 @@ html, body {
 }
 
 /* iOS safe areas */
+html {
+  background-color: hsl(240 29% 14%);
+}
+
 body {
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
