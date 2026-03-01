@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { APP_VERSION } from "@/lib/appVersion";
 
 function getDevicePlatform(): string {
   const ua = navigator.userAgent;
@@ -12,11 +13,10 @@ function getDevicePlatform(): string {
 }
 
 function getAppVersion(): string {
-  // Check if running inside native Capacitor app
   const params = new URLSearchParams(window.location.search);
   const isNative = params.get("native") === "1" || /\b(capacitor|wv)\b/i.test(navigator.userAgent);
-  if (isNative) return "App Nativo";
-  return "Navegador";
+  const prefix = isNative ? "App" : "Web";
+  return `${prefix} ${APP_VERSION}`;
 }
 
 /**

@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LogOut, Save, User, Phone, Briefcase, FileText, Camera, Trash2, AlertTriangle } from "lucide-react";
 import { useCategorias } from "@/hooks/useCategorias";
+import { APP_VERSION_LABEL } from "@/lib/appVersion";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
@@ -225,6 +226,11 @@ const PrestadorPerfil = () => {
             <LogOut size={18} />
             Sair da conta
           </Button>
+
+          {/* Versão do app */}
+          <p className="text-[10px] text-muted-foreground text-center">
+            Versão {APP_VERSION_LABEL}
+          </p>
 
           {/* Excluir conta */}
           <DeleteAccountSection userId={user.id} onDeleted={handleLogout} />
