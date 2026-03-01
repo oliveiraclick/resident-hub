@@ -44,15 +44,27 @@ const MoradorPerfil = () => {
 
   const handleSave = async () => {
     if (!user) return;
+
+    const trimmedNome = nome.trim();
+    if (trimmedNome.length < 2 || trimmedNome.length > 100) {
+      toast.error("Nome deve ter entre 2 e 100 caracteres");
+      return;
+    }
+    const trimmedTelefone = telefone.trim();
+    if (trimmedTelefone && (trimmedTelefone.length < 8 || trimmedTelefone.length > 20)) {
+      toast.error("Telefone inválido");
+      return;
+    }
+
     setSaving(true);
 
     const { error } = await supabase
       .from("profiles")
       .update({
-        nome: nome.trim(),
-        telefone: telefone.trim() || null,
-        rua: rua.trim() || null,
-        numero_casa: numeroCasa.trim() || null,
+        nome: trimmedNome,
+        telefone: trimmedTelefone || null,
+        rua: rua.trim().slice(0, 200) || null,
+        numero_casa: numeroCasa.trim().slice(0, 20) || null,
       } as any)
       .eq("user_id", user.id);
 

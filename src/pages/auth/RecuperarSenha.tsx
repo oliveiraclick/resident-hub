@@ -19,7 +19,7 @@ const RecuperarSenha = () => {
     }
     setSubmitting(true);
     const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: "https://morador-hub.lovable.app/auth/resetar",
+      redirectTo: `${window.location.origin}/auth/resetar`,
     });
     setSubmitting(false);
     if (error) {
