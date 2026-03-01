@@ -214,24 +214,24 @@ const MoradorDesapegos = () => {
               </div>
 
               {/* Image upload */}
-              <div className="flex flex-col gap-1">
-                <label className="text-[12px] font-medium text-muted-foreground ml-1">Foto do item</label>
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-foreground">Foto do item</label>
                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageChange} onClick={(e) => e.stopPropagation()} />
                 <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleImageChange} onClick={(e) => e.stopPropagation()} />
                 {imagePreview ? (
                   <div className="relative">
-                    <img src={imagePreview} alt="Preview" className="w-full h-40 object-cover rounded-lg" />
+                    <img src={imagePreview} alt="Preview" className="w-full h-40 object-cover rounded-lg border border-border" />
                     <button type="button" onClick={() => { setImageFile(null); setImagePreview(null); }} className="absolute top-1 right-1 bg-background/80 rounded-full p-1">
                       <X size={14} className="text-destructive" />
                     </button>
                   </div>
                 ) : (
-                  <div className="flex gap-2">
-                    <Button type="button" variant="outline" size="sm" className="flex-1 gap-1.5" onClick={(e) => { e.stopPropagation(); e.preventDefault(); fileInputRef.current?.click(); }}>
-                      <ImagePlus size={16} /> Galeria
+                  <div className="flex gap-2 rounded-lg border border-dashed border-border p-3 bg-muted/30">
+                    <Button type="button" variant="outline" className="flex-1 gap-2 h-12" onClick={(e) => { e.stopPropagation(); e.preventDefault(); fileInputRef.current?.click(); }}>
+                      <ImagePlus size={20} /> Galeria
                     </Button>
-                    <Button type="button" variant="outline" size="sm" className="flex-1 gap-1.5" onClick={(e) => { e.stopPropagation(); e.preventDefault(); cameraInputRef.current?.click(); }}>
-                      <Camera size={16} /> Câmera
+                    <Button type="button" variant="outline" className="flex-1 gap-2 h-12" onClick={(e) => { e.stopPropagation(); e.preventDefault(); cameraInputRef.current?.click(); }}>
+                      <Camera size={20} /> Câmera
                     </Button>
                   </div>
                 )}
