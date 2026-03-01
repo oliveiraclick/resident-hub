@@ -5,9 +5,35 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Simple in-memory rate limiting
+const rateLimit = new Map<string, number[]>();
+
+function checkRateLimit(ip: string, maxRequests = 10, windowMs = 60000): boolean {
+  const now = Date.now();
+  const requests = rateLimit.get(ip) || [];
+  const recentRequests = requests.filter((time) => now - time < windowMs);
+
+  if (recentRequests.length >= maxRequests) {
+    return false;
+  }
+
+  recentRequests.push(now);
+  rateLimit.set(ip, recentRequests);
+  return true;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  // Rate limiting
+  const ip = req.headers.get("x-forwarded-for") || req.headers.get("cf-connecting-ip") || "unknown";
+  if (!checkRateLimit(ip)) {
+    return new Response(
+      JSON.stringify({ error: "Muitas tentativas. Tente novamente mais tarde." }),
+      { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   }
 
   const supabase = createClient(
@@ -21,8 +47,8 @@ Deno.serve(async (req) => {
       const url = new URL(req.url);
       const token = url.searchParams.get("token");
 
-      if (!token) {
-        return new Response(JSON.stringify({ error: "Token não fornecido" }), {
+      if (!token || token.length < 10 || token.length > 200) {
+        return new Response(JSON.stringify({ error: "Token inválido" }), {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
@@ -74,8 +100,16 @@ Deno.serve(async (req) => {
       const nome = formData.get("nome") as string;
       const foto = formData.get("foto") as File | null;
 
-      if (!token || !nome) {
-        return new Response(JSON.stringify({ error: "Token e nome são obrigatórios" }), {
+      if (!token || !nome || nome.trim().length < 2 || nome.trim().length > 200) {
+        return new Response(JSON.stringify({ error: "Token e nome são obrigatórios (2-200 caracteres)" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Validate photo size (max 5MB)
+      if (foto && foto.size > 5 * 1024 * 1024) {
+        return new Response(JSON.stringify({ error: "Foto muito grande (máx 5MB)" }), {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
@@ -118,9 +152,6 @@ Deno.serve(async (req) => {
         const ext = foto.name.split(".").pop() || "jpg";
         const path = `visitantes/${convite.id}.${ext}`;
 
-        // Ensure bucket exists (create if not)
-        await supabase.storage.createBucket("visitantes", { public: true }).catch(() => {});
-
         const { error: uploadError } = await supabase.storage
           .from("visitantes")
           .upload(path, foto, { upsert: true, contentType: foto.type });
@@ -138,7 +169,7 @@ Deno.serve(async (req) => {
       const { error: updateError } = await supabase
         .from("convites_visitante")
         .update({
-          nome_registrado: nome,
+          nome_registrado: nome.trim().slice(0, 200),
           foto_url: fotoUrl,
           qr_code: qrCode,
           status: "registrado",
