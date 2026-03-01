@@ -262,15 +262,15 @@ const MoradorHome = () => {
               Ver tudo <ArrowRight size={14} />
             </button>
           </div>
-          <div className="flex gap-2.5 flex-wrap">
-            {allCategorias.slice(0, 4).map((item) => {
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
+            {allCategorias.slice(0, 8).map((item) => {
               const Icon = getIcon(item.icone);
               return (
                 <button
                   key={item.id}
                   onClick={() => navigate(`/morador/servicos?q=${encodeURIComponent(item.nome)}`)}
                   className="flex items-center gap-2.5 bg-card border border-border rounded-[14px] py-3 px-4 cursor-pointer active:scale-95 transition-transform"
-                  style={{ flex: "1 1 calc(50% - 5px)", minWidth: 0, boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}
+                  style={{ minWidth: 0, boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}
                 >
                   <div className="h-10 w-10 rounded-xl bg-primary/[0.07] flex items-center justify-center flex-shrink-0">
                     <Icon size={20} className="text-primary" />
@@ -357,8 +357,8 @@ const MoradorHome = () => {
             </button>
           </div>
           <p className="text-[11px] text-muted-foreground font-medium mb-3">De prestadores do seu condomínio</p>
-          <div className="grid grid-cols-2 gap-3">
-            {productList.slice(0, 4).map((product: any, idx: number) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {productList.slice(0, 8).map((product: any, idx: number) => (
               <button
                 key={product.id}
                 onClick={() => product.id.startsWith("mock") ? navigate("/morador/produtos") : navigate(`/morador/produtos/${product.id}`)}
@@ -396,8 +396,8 @@ const MoradorHome = () => {
             </button>
           </div>
           <p className="text-[11px] text-muted-foreground font-medium mb-3">Entre vizinhos do condomínio</p>
-          <div className="grid grid-cols-2 gap-3">
-            {desapegoList.slice(0, 4).map((item: any, idx: number) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {desapegoList.slice(0, 8).map((item: any, idx: number) => (
               <button
                 key={item.id}
                 onClick={() => item.id.startsWith("mock") ? navigate("/morador/desapegos") : navigate(`/morador/desapegos/${item.id}`)}
