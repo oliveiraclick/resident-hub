@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, createContext, useContext, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import type { User, Session } from "@supabase/supabase-js";
 
 type AppRole = "morador" | "prestador" | "admin" | "platform_admin";
@@ -91,6 +92,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const isPlatformAdmin = roles.some((r) => r.role === "platform_admin");
+
+  // Track device info for support/debugging
+  useDeviceInfo(user?.id);
 
   return (
     <AuthContext.Provider

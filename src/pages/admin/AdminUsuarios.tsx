@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CheckCircle, XCircle, Search } from "lucide-react";
+import { CheckCircle, XCircle, Search, Smartphone } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
@@ -17,6 +17,8 @@ interface UserRow {
   role: string;
   aprovado: boolean;
   createdAt: string;
+  devicePlatform: string | null;
+  appVersion: string | null;
 }
 
 const AdminUsuarios = () => {
@@ -34,24 +36,29 @@ const AdminUsuarios = () => {
 
     const [rolesRes, profilesRes] = await Promise.all([
       supabase.from("user_roles").select("*").eq("condominio_id", condominioId),
-      supabase.from("profiles").select("user_id, nome"),
+      supabase.from("profiles").select("user_id, nome, device_platform, app_version") as any,
     ]);
 
     const rolesData = rolesRes.data || [];
     const profiles = profilesRes.data || [];
-    const profileMap = new Map(profiles.map((p) => [p.user_id, p.nome]));
+    const profileMap = new Map(profiles.map((p: any) => [p.user_id, p]));
 
     setUsers(
       rolesData
         .filter((r: any) => r.role !== "platform_admin")
-        .map((r: any) => ({
-          roleId: r.id,
-          userId: r.user_id,
-          nome: profileMap.get(r.user_id) || "Sem nome",
-          role: r.role,
-          aprovado: r.aprovado ?? true,
-          createdAt: r.created_at,
-        }))
+        .map((r: any) => {
+          const profile = profileMap.get(r.user_id) as any;
+          return {
+            roleId: r.id,
+            userId: r.user_id,
+            nome: profile?.nome || "Sem nome",
+            role: r.role,
+            aprovado: r.aprovado ?? true,
+            createdAt: r.created_at,
+            devicePlatform: profile?.device_platform || null,
+            appVersion: profile?.app_version || null,
+          };
+        })
     );
     setLoading(false);
   };
@@ -164,6 +171,14 @@ const UserCard = ({
         <p className="text-xs text-muted-foreground mt-0.5">
           {new Date(user.createdAt).toLocaleDateString("pt-BR")}
         </p>
+        {user.devicePlatform && (
+          <div className="flex items-center gap-1 mt-0.5">
+            <Smartphone size={10} className="text-muted-foreground" />
+            <span className="text-[10px] text-muted-foreground">
+              {user.devicePlatform} · {user.appVersion || "—"}
+            </span>
+          </div>
+        )}
       </div>
       <Button
         variant={user.aprovado ? "ghost" : "default"}
