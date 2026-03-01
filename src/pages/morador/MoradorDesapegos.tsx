@@ -24,6 +24,7 @@ const MoradorDesapegos = () => {
   const [submitting, setSubmitting] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [perfilIncompleto, setPerfilIncompleto] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
@@ -44,6 +45,21 @@ const MoradorDesapegos = () => {
   useEffect(() => {
     fetchDesapegos();
   }, [condominioId]);
+
+  // Check if profile is complete (rua + numero_casa)
+  useEffect(() => {
+    if (!user) return;
+    const checkProfile = async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("rua, numero_casa")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      const missing = !data?.rua?.trim() || !data?.numero_casa?.trim();
+      setPerfilIncompleto(missing);
+    };
+    checkProfile();
+  }, [user]);
 
   const compressImage = (file: File, maxWidth = 1200, quality = 0.8): Promise<File> => {
     return new Promise((resolve) => {
@@ -148,7 +164,14 @@ const MoradorDesapegos = () => {
       <div className="flex flex-col gap-4 max-w-md mx-auto">
         {/* Top stats row */}
         <div className="grid grid-cols-2 gap-3">
-          <Button onClick={() => setShowForm(!showForm)} variant={showForm ? "outline" : "default"} className="h-auto py-3">
+          <Button onClick={() => {
+            if (!showForm && perfilIncompleto) {
+              toast.error("Complete seu perfil (rua e número) antes de publicar um desapego.");
+              navigate("/morador/perfil");
+              return;
+            }
+            setShowForm(!showForm);
+          }} variant={showForm ? "outline" : "default"} className="h-auto py-3">
             <Plus size={18} />
             {showForm ? "Cancelar" : "Publicar"}
           </Button>
