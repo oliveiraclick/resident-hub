@@ -146,22 +146,28 @@ export type Database = {
       }
       banner_precos: {
         Row: {
+          chave_pix: string | null
           id: string
           limite_por_condominio: number
+          tipo_chave_pix: string | null
           updated_at: string
           valor_criacao_arte: number
           valor_quinzena: number
         }
         Insert: {
+          chave_pix?: string | null
           id?: string
           limite_por_condominio?: number
+          tipo_chave_pix?: string | null
           updated_at?: string
           valor_criacao_arte?: number
           valor_quinzena?: number
         }
         Update: {
+          chave_pix?: string | null
           id?: string
           limite_por_condominio?: number
+          tipo_chave_pix?: string | null
           updated_at?: string
           valor_criacao_arte?: number
           valor_quinzena?: number

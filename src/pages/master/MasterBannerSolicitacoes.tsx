@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Check, X, Clock, Image, Calendar, DollarSign, AlertCircle } from "lucide-react";
+import { Check, X, Clock, Image, Calendar, DollarSign, AlertCircle, CreditCard } from "lucide-react";
 
 interface Solicitacao {
   id: string;
@@ -24,8 +24,8 @@ interface Solicitacao {
 }
 
 const statusMap: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  pendente: { label: "Pendente", variant: "secondary" },
-  aprovado: { label: "Aprovado", variant: "default" },
+  pendente: { label: "Aguardando pgto", variant: "secondary" },
+  aprovado: { label: "Pago / Aprovado", variant: "default" },
   rejeitado: { label: "Rejeitado", variant: "destructive" },
   ativo: { label: "Ativo", variant: "default" },
   expirado: { label: "Expirado", variant: "outline" },
@@ -170,7 +170,7 @@ const MasterBannerSolicitacoes = () => {
                         className="flex-1 gap-1"
                         onClick={() => updateStatus(s.id, "aprovado")}
                       >
-                        <Check size={14} /> Aprovar
+                        <CreditCard size={14} /> Confirmar Pgto
                       </Button>
                       <Button
                         size="sm"

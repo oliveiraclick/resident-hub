@@ -2,24 +2,31 @@ import { useState, useEffect, useRef } from "react";
 import { formatBRL } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import PrestadorLayout from "@/components/PrestadorLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Calendar, DollarSign, Image, ImagePlus, Camera, X, Send, Info, Clock, CheckCircle2, Minus, Plus } from "lucide-react";
+import { Calendar, Image, ImagePlus, Camera, X, Send, Info, Minus, Plus, Copy, CheckCircle2, QrCode } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarUI } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format, addDays } from "date-fns";
-import { ptBR } from "date-fns/locale";
 
 const statusMap: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  pendente: { label: "Pendente", variant: "secondary" },
-  aprovado: { label: "Aprovado", variant: "default" },
+  pendente: { label: "Aguardando pagamento", variant: "secondary" },
+  aprovado: { label: "Pago / Aprovado", variant: "default" },
   rejeitado: { label: "Rejeitado", variant: "destructive" },
   ativo: { label: "Ativo", variant: "default" },
   expirado: { label: "Expirado", variant: "outline" },
+};
+
+const tipoChaveLabel: Record<string, string> = {
+  cpf: "CPF",
+  cnpj: "CNPJ",
+  email: "E-mail",
+  telefone: "Telefone",
+  aleatoria: "Chave aleatória",
 };
 
 const PrestadorBanners = () => {
@@ -31,6 +38,8 @@ const PrestadorBanners = () => {
   const [prestadorId, setPrestadorId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [showPixInfo, setShowPixInfo] = useState<{ valor: number } | null>(null);
+  const [copied, setCopied] = useState(false);
 
   // Form
   const [dataInicio, setDataInicio] = useState<Date | undefined>();
@@ -97,6 +106,15 @@ const PrestadorBanners = () => {
     setImagePreview(URL.createObjectURL(processed));
   };
 
+  const handleCopyPix = () => {
+    if (precos?.chave_pix) {
+      navigator.clipboard.writeText(precos.chave_pix);
+      setCopied(true);
+      toast.success("Chave PIX copiada!");
+      setTimeout(() => setCopied(false), 3000);
+    }
+  };
+
   const handleSubmit = async () => {
     if (!dataInicio || !prestadorId || !condominioId || !user) return;
     if (tipoArte === "propria" && !imageFile) {
@@ -127,7 +145,8 @@ const PrestadorBanners = () => {
       });
       if (error) throw error;
 
-      toast.success("Solicitação enviada!");
+      // Show PIX info
+      setShowPixInfo({ valor: valorTotal });
       setShowForm(false);
       setDataInicio(undefined);
       setCiclos(1);
@@ -156,6 +175,48 @@ const PrestadorBanners = () => {
   return (
     <PrestadorLayout title="Banners" showBack>
       <div className="max-w-md mx-auto flex flex-col gap-4">
+        {/* PIX Payment Info Modal */}
+        {showPixInfo && precos?.chave_pix && (
+          <Card className="border-primary border-2">
+            <CardContent className="p-4 flex flex-col gap-3">
+              <div className="flex items-center gap-2 text-primary">
+                <CheckCircle2 size={20} />
+                <p className="font-semibold text-sm">Solicitação enviada!</p>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Realize o pagamento via PIX para confirmar sua solicitação. Seu banner será ativado automaticamente na data de início após a confirmação do pagamento.
+              </p>
+              <div className="rounded-lg bg-muted p-3 flex flex-col gap-2">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Valor</span>
+                  <span className="font-bold text-primary text-lg">R$ {formatBRL(showPixInfo.valor)}</span>
+                </div>
+                <div className="border-t border-border pt-2 mt-1">
+                  <p className="text-[10px] text-muted-foreground mb-1">
+                    {tipoChaveLabel[precos.tipo_chave_pix] || "Chave PIX"}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <code className="flex-1 text-xs bg-background rounded px-2 py-1.5 border border-border break-all">
+                      {precos.chave_pix}
+                    </code>
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      className="h-8 w-8 flex-shrink-0"
+                      onClick={handleCopyPix}
+                    >
+                      {copied ? <CheckCircle2 size={14} className="text-green-500" /> : <Copy size={14} />}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              <Button variant="outline" size="sm" onClick={() => setShowPixInfo(null)}>
+                Entendi
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Pricing info */}
         <Card>
           <CardContent className="p-4">
@@ -163,7 +224,7 @@ const PrestadorBanners = () => {
               <Info size={20} className="text-primary flex-shrink-0 mt-0.5" />
               <div className="text-sm">
                 <p className="font-semibold mb-1">Anuncie no banner do app!</p>
-                <p className="text-muted-foreground text-xs mb-2">Seu banner aparece para todos os moradores do condomínio por 15 dias.</p>
+                <p className="text-muted-foreground text-xs mb-2">Seu banner aparece para todos os moradores. Pagamento via PIX antes da veiculação.</p>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="rounded-lg bg-muted px-3 py-2">
                     <p className="text-[10px] text-muted-foreground">Quinzena</p>
@@ -181,7 +242,7 @@ const PrestadorBanners = () => {
 
         {/* CTA */}
         <Button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => { setShowForm(!showForm); setShowPixInfo(null); }}
           disabled={!!limitReached}
           variant={showForm ? "outline" : "default"}
         >
@@ -224,27 +285,14 @@ const PrestadorBanners = () => {
               <div>
                 <label className="text-sm font-medium mb-2 block">Quantas quinzenas?</label>
                 <div className="flex items-center gap-3">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    className="h-10 w-10"
-                    disabled={ciclos <= 1}
-                    onClick={() => setCiclos((c) => Math.max(1, c - 1))}
-                  >
+                  <Button type="button" variant="outline" size="icon" className="h-10 w-10" disabled={ciclos <= 1} onClick={() => setCiclos((c) => Math.max(1, c - 1))}>
                     <Minus size={16} />
                   </Button>
                   <div className="flex-1 text-center">
                     <p className="text-2xl font-bold text-foreground">{ciclos}</p>
                     <p className="text-[10px] text-muted-foreground">{ciclos === 1 ? "quinzena" : "quinzenas"} ({ciclos * 15} dias)</p>
                   </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    className="h-10 w-10"
-                    onClick={() => setCiclos((c) => c + 1)}
-                  >
+                  <Button type="button" variant="outline" size="icon" className="h-10 w-10" onClick={() => setCiclos((c) => c + 1)}>
                     <Plus size={16} />
                   </Button>
                 </div>
@@ -254,21 +302,11 @@ const PrestadorBanners = () => {
               <div>
                 <label className="text-sm font-medium mb-2 block">Arte do banner</label>
                 <div className="grid grid-cols-2 gap-2">
-                  <Button
-                    type="button"
-                    variant={tipoArte === "propria" ? "default" : "outline"}
-                    className="h-auto py-3 flex flex-col gap-1"
-                    onClick={() => setTipoArte("propria")}
-                  >
+                  <Button type="button" variant={tipoArte === "propria" ? "default" : "outline"} className="h-auto py-3 flex flex-col gap-1" onClick={() => setTipoArte("propria")}>
                     <ImagePlus size={18} />
                     <span className="text-xs">Enviar minha arte</span>
                   </Button>
-                  <Button
-                    type="button"
-                    variant={tipoArte === "solicitar" ? "default" : "outline"}
-                    className="h-auto py-3 flex flex-col gap-1"
-                    onClick={() => setTipoArte("solicitar")}
-                  >
+                  <Button type="button" variant={tipoArte === "solicitar" ? "default" : "outline"} className="h-auto py-3 flex flex-col gap-1" onClick={() => setTipoArte("solicitar")}>
                     <Image size={18} />
                     <span className="text-xs">Solicitar criação</span>
                     <span className="text-[10px] text-muted-foreground">+R$ {formatBRL(precos?.valor_criacao_arte ?? 0)}</span>
@@ -276,7 +314,7 @@ const PrestadorBanners = () => {
                 </div>
               </div>
 
-              {/* Image upload (only for propria) */}
+              {/* Image upload */}
               {tipoArte === "propria" && (
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-medium">Upload da arte (1080x540px ideal)</label>
@@ -323,7 +361,7 @@ const PrestadorBanners = () => {
 
               <Button onClick={handleSubmit} disabled={submitting || !dataInicio} className="gap-2">
                 <Send size={16} />
-                {submitting ? "Enviando..." : "Enviar Solicitação"}
+                {submitting ? "Enviando..." : "Enviar e Pagar via PIX"}
               </Button>
             </CardContent>
           </Card>

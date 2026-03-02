@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { DollarSign, Save, Image, Hash } from "lucide-react";
+import { DollarSign, Save, Image, Hash, QrCode } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const MasterBannerPrecos = () => {
   const [loading, setLoading] = useState(true);
@@ -15,6 +16,8 @@ const MasterBannerPrecos = () => {
   const [valorQuinzena, setValorQuinzena] = useState("");
   const [valorCriacao, setValorCriacao] = useState("");
   const [limite, setLimite] = useState("");
+  const [chavePix, setChavePix] = useState("");
+  const [tipoChavePix, setTipoChavePix] = useState("cpf");
 
   useEffect(() => {
     const fetch = async () => {
@@ -28,6 +31,8 @@ const MasterBannerPrecos = () => {
         setValorQuinzena(String(data.valor_quinzena));
         setValorCriacao(String(data.valor_criacao_arte));
         setLimite(String(data.limite_por_condominio));
+        setChavePix(data.chave_pix || "");
+        setTipoChavePix(data.tipo_chave_pix || "cpf");
       }
       setLoading(false);
     };
@@ -43,6 +48,8 @@ const MasterBannerPrecos = () => {
         valor_quinzena: parseFloat(valorQuinzena) || 0,
         valor_criacao_arte: parseFloat(valorCriacao) || 0,
         limite_por_condominio: parseInt(limite) || 6,
+        chave_pix: chavePix || null,
+        tipo_chave_pix: tipoChavePix,
         updated_at: new Date().toISOString(),
       })
       .eq("id", precoId);
@@ -117,6 +124,40 @@ const MasterBannerPrecos = () => {
               <p className="text-[11px] text-muted-foreground mt-1">
                 Máximo de banners ativos simultaneamente
               </p>
+            </div>
+
+            <div className="border-t border-border pt-4 mt-2">
+              <p className="text-sm font-semibold flex items-center gap-2 mb-3">
+                <QrCode size={16} className="text-primary" /> Dados PIX para Pagamento
+              </p>
+              <div className="flex flex-col gap-3">
+                <div>
+                  <label className="text-sm font-medium mb-1 block">Tipo da chave</label>
+                  <Select value={tipoChavePix} onValueChange={setTipoChavePix}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="cpf">CPF</SelectItem>
+                      <SelectItem value="cnpj">CNPJ</SelectItem>
+                      <SelectItem value="email">E-mail</SelectItem>
+                      <SelectItem value="telefone">Telefone</SelectItem>
+                      <SelectItem value="aleatoria">Chave aleatória</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1 block">Chave PIX</label>
+                  <Input
+                    placeholder="Digite sua chave PIX"
+                    value={chavePix}
+                    onChange={(e) => setChavePix(e.target.value)}
+                  />
+                  <p className="text-[11px] text-muted-foreground mt-1">
+                    Será exibida para o prestador no momento da solicitação
+                  </p>
+                </div>
+              </div>
             </div>
 
             <Button onClick={handleSave} disabled={saving} className="gap-2">
