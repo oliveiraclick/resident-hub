@@ -29,7 +29,7 @@ import PreviewHome5 from "./pages/PreviewHome5";
 import PoliticaPrivacidade from "./pages/PoliticaPrivacidade";
 import TermosDeUso from "./pages/TermosDeUso";
 import CondicoesDeUso from "./pages/CondicoesDeUso";
-import Apresentacao from "./pages/Apresentacao";
+
 
 const queryClient = new QueryClient();
 
@@ -52,7 +52,7 @@ const App = () => (
             <Route path="/politica-privacidade" element={<PoliticaPrivacidade />} />
             <Route path="/termos-de-uso" element={<TermosDeUso />} />
             <Route path="/condicoes-de-uso" element={<CondicoesDeUso />} />
-            <Route path="/apresentacao" element={<Apresentacao />} />
+            
             <Route
               path="/dashboard"
               element={
