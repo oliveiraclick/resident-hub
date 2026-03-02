@@ -16,6 +16,7 @@ import productBolo from "@/assets/product-bolo.jpg";
 import productSabonete from "@/assets/product-sabonete.jpg";
 import productBrigadeiro from "@/assets/product-brigadeiro.jpg";
 import productVela from "@/assets/product-vela.jpg";
+import desapegoPlaceholder from "@/assets/desapego-placeholder.png";
 
 const fallbackShopImages = [productBolo, productSabonete, productBrigadeiro, productVela];
 
@@ -410,7 +411,7 @@ const MoradorHome = () => {
                     {item.imagem_url ? (
                       <img src={item.imagem_url} alt={item.titulo} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full bg-muted flex items-center justify-center"><span className="text-[32px]">📦</span></div>
+                      <img src={desapegoPlaceholder} alt="Sem foto" className="w-full h-full object-cover" />
                     )}
                     <span className="absolute top-2.5 left-2.5 text-[9px] font-bold text-white bg-warning px-2.5 py-1 rounded-lg uppercase tracking-wider">Desapego</span>
                   </div>

@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Repeat, Plus, Camera, ImagePlus, X, FileText, Users } from "lucide-react";
+import desapegoPlaceholder from "@/assets/desapego-placeholder.png";
 
 const MoradorDesapegos = () => {
   const navigate = useNavigate();
@@ -273,7 +274,7 @@ const MoradorDesapegos = () => {
                     {d.imagem_url ? (
                       <img src={d.imagem_url} alt={d.titulo} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center"><span className="text-[32px]">📦</span></div>
+                      <img src={desapegoPlaceholder} alt="Sem foto" className="w-full h-full object-cover" />
                     )}
                   </div>
                   <div className="p-2.5">
