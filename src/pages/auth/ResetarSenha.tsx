@@ -54,7 +54,19 @@ const ResetarSenha = () => {
     } else {
       toast.success("Senha atualizada com sucesso!");
       await supabase.auth.signOut();
-      navigate("/auth");
+
+      // Try to redirect back to the native app
+      const appScheme = "app.morador.app://auth";
+      const isLikelyMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+      if (isLikelyMobile) {
+        // Try opening the app via deep link
+        window.location.href = appScheme;
+        // Fallback: after a short delay, navigate to /auth in the browser
+        setTimeout(() => navigate("/auth"), 1500);
+      } else {
+        navigate("/auth");
+      }
     }
   };
 
