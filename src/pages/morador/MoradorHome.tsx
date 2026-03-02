@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { useCategorias } from "@/hooks/useCategorias";
 import { getIcon } from "@/lib/iconMap";
+import MissingPhotoModal from "@/components/MissingPhotoModal";
 
 import productBolo from "@/assets/product-bolo.jpg";
 import productSabonete from "@/assets/product-sabonete.jpg";
@@ -197,6 +198,7 @@ const MoradorHome = () => {
 
   return (
     <MoradorLayout title="Início" showSearch>
+      <MissingPhotoModal />
       <div className="flex flex-col gap-7">
 
         {/* ═══ BANNER ═══ */}
