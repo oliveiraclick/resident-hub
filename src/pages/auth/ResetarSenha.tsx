@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, CheckCircle2, Smartphone } from "lucide-react";
 import logoMorador from "@/assets/logo-morador.png";
 
 const ResetarSenha = () => {
@@ -14,6 +14,7 @@ const ResetarSenha = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [ready, setReady] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     // Listen for the PASSWORD_RECOVERY event from the URL token
@@ -52,23 +53,31 @@ const ResetarSenha = () => {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Senha atualizada com sucesso!");
       await supabase.auth.signOut();
-
-      // Try to redirect back to the native app
-      const appScheme = "app.morador.app://auth";
-      const isLikelyMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-      if (isLikelyMobile) {
-        // Try opening the app via deep link
-        window.location.href = appScheme;
-        // Fallback: after a short delay, navigate to /auth in the browser
-        setTimeout(() => navigate("/auth"), 1500);
-      } else {
-        navigate("/auth");
-      }
+      setSuccess(true);
     }
   };
+
+  if (success) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6">
+        <div className="flex flex-col items-center text-center max-w-sm">
+          <div className="h-20 w-20 rounded-full bg-emerald-500/15 flex items-center justify-center mb-6">
+            <CheckCircle2 size={40} className="text-emerald-500" />
+          </div>
+          <h1 className="text-2xl font-bold text-foreground mb-2">Senha atualizada!</h1>
+          <p className="text-muted-foreground mb-8">
+            Sua senha foi alterada com sucesso. Volte ao app e faça login com a nova senha.
+          </p>
+          <div className="flex items-center gap-2 bg-muted rounded-xl px-5 py-3 mb-6">
+            <Smartphone size={18} className="text-primary" />
+            <span className="text-sm font-medium text-foreground">Abra o app O Morador no celular</span>
+          </div>
+          <p className="text-xs text-muted-foreground/60">Você pode fechar esta página.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!ready) {
     return (
