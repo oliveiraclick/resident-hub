@@ -7,6 +7,8 @@ import MasterMetricas from "./MasterMetricas";
 import MasterPerfil from "./MasterPerfil";
 import MasterCategorias from "./MasterCategorias";
 import MasterBanners from "./MasterBanners";
+import MasterBannerPrecos from "./MasterBannerPrecos";
+import MasterBannerSolicitacoes from "./MasterBannerSolicitacoes";
 import MasterLP from "./MasterLP";
 
 const MasterDashboard = () => {
@@ -19,6 +21,8 @@ const MasterDashboard = () => {
       <Route path="/metricas" element={<MasterMetricas />} />
       <Route path="/categorias" element={<MasterCategorias />} />
       <Route path="/banners" element={<MasterBanners />} />
+      <Route path="/banner-precos" element={<MasterBannerPrecos />} />
+      <Route path="/banner-solicitacoes" element={<MasterBannerSolicitacoes />} />
       <Route path="/lp" element={<MasterLP />} />
       <Route path="/perfil" element={<MasterPerfil />} />
     </Routes>
