@@ -10,6 +10,7 @@ import {
   ShoppingBag, Wrench, DollarSign, Star,
   ArrowRight, MapPin, Building2, Gift,
 } from "lucide-react";
+import MissingPhotoModal from "@/components/MissingPhotoModal";
 
 const PrestadorHome = () => {
   const navigate = useNavigate();
@@ -127,6 +128,7 @@ const PrestadorHome = () => {
 
   return (
     <PrestadorLayout>
+      <MissingPhotoModal />
       <div className="flex flex-col gap-5">
         {/* Greeting */}
         <div>
