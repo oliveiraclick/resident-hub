@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { Eye, EyeOff } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
+import { APP_VERSION, NATIVE_APP_VERSION } from "@/lib/appVersion";
 import { Separator } from "@/components/ui/separator";
 
 const loginSchema = z.object({
@@ -257,7 +258,13 @@ const Auth = () => {
       </form>
 
       <div className="mt-auto pt-8 pb-6 text-center">
-        <p className="text-xs text-muted-foreground/40 mb-1">v3.1.2</p>
+        <p className="text-xs text-muted-foreground/40 mb-1">
+          {(() => {
+            const params = new URLSearchParams(window.location.search);
+            const isNative = params.get("native") === "1" || /\b(capacitor|wv)\b/i.test(navigator.userAgent);
+            return isNative ? `App ${NATIVE_APP_VERSION} · Base ${APP_VERSION}` : `Web · Base ${APP_VERSION}`;
+          })()}
+        </p>
         <p className="text-xs text-muted-foreground/50">app desenvolvido por ia&co. tecnologia</p>
       </div>
     </div>
