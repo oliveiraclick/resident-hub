@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, MessageCircle, AlertTriangle, User, ShieldCheck, Trash2, Pencil, Camera, ImagePlus, X } from "lucide-react";
 import { toast } from "sonner";
+import desapegoPlaceholder from "@/assets/desapego-placeholder.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -309,10 +310,7 @@ const MoradorDesapegoDetalhe = () => {
               {item.imagem_url ? (
                 <img src={item.imagem_url} alt={item.titulo} className="w-full h-full object-cover" />
               ) : (
-                <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                  <span className="text-[40px]">📦</span>
-                  <span className="text-[12px]">Sem imagem</span>
-                </div>
+                <img src={desapegoPlaceholder} alt="Sem foto" className="w-full h-full object-cover" />
               )}
             </div>
 
