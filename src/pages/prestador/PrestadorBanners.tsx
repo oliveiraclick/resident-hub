@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Calendar, DollarSign, Image, ImagePlus, Camera, X, Send, Info, Clock, CheckCircle2 } from "lucide-react";
+import { Calendar, DollarSign, Image, ImagePlus, Camera, X, Send, Info, Clock, CheckCircle2, Minus, Plus } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarUI } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
@@ -34,6 +34,7 @@ const PrestadorBanners = () => {
 
   // Form
   const [dataInicio, setDataInicio] = useState<Date | undefined>();
+  const [ciclos, setCiclos] = useState(1);
   const [tipoArte, setTipoArte] = useState<"propria" | "solicitar">("propria");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -57,10 +58,10 @@ const PrestadorBanners = () => {
     fetchAll();
   }, [user, condominioId]);
 
-  const dataFim = dataInicio ? addDays(dataInicio, 14) : undefined;
-  const valorTotal = precos
-    ? (precos.valor_quinzena || 0) + (tipoArte === "solicitar" ? (precos.valor_criacao_arte || 0) : 0)
-    : 0;
+  const dataFim = dataInicio ? addDays(dataInicio, 15 * ciclos - 1) : undefined;
+  const valorQuinzenas = precos ? (precos.valor_quinzena || 0) * ciclos : 0;
+  const valorArte = tipoArte === "solicitar" ? (precos?.valor_criacao_arte || 0) : 0;
+  const valorTotal = valorQuinzenas + valorArte;
 
   const ativosNoCondominio = solicitacoes.filter(
     (s) => s.condominio_id === condominioId && ["pendente", "aprovado", "ativo"].includes(s.status)
@@ -129,6 +130,7 @@ const PrestadorBanners = () => {
       toast.success("Solicitação enviada!");
       setShowForm(false);
       setDataInicio(undefined);
+      setCiclos(1);
       setTipoArte("propria");
       setImageFile(null);
       setImagePreview(null);
@@ -213,9 +215,39 @@ const PrestadorBanners = () => {
                 </Popover>
                 {dataInicio && dataFim && (
                   <p className="text-xs text-muted-foreground mt-1">
-                    Período: {format(dataInicio, "dd/MM")} a {format(dataFim, "dd/MM/yyyy")}
+                    Período: {format(dataInicio, "dd/MM")} a {format(dataFim, "dd/MM/yyyy")} ({ciclos * 15} dias)
                   </p>
                 )}
+              </div>
+
+              {/* Ciclos */}
+              <div>
+                <label className="text-sm font-medium mb-2 block">Quantas quinzenas?</label>
+                <div className="flex items-center gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-10 w-10"
+                    disabled={ciclos <= 1}
+                    onClick={() => setCiclos((c) => Math.max(1, c - 1))}
+                  >
+                    <Minus size={16} />
+                  </Button>
+                  <div className="flex-1 text-center">
+                    <p className="text-2xl font-bold text-foreground">{ciclos}</p>
+                    <p className="text-[10px] text-muted-foreground">{ciclos === 1 ? "quinzena" : "quinzenas"} ({ciclos * 15} dias)</p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-10 w-10"
+                    onClick={() => setCiclos((c) => c + 1)}
+                  >
+                    <Plus size={16} />
+                  </Button>
+                </div>
               </div>
 
               {/* Tipo arte */}
@@ -274,13 +306,13 @@ const PrestadorBanners = () => {
               <div className="rounded-lg bg-muted p-3">
                 <p className="text-xs font-medium mb-1">Resumo</p>
                 <div className="flex justify-between text-xs">
-                  <span>Quinzena</span>
-                  <span>R$ {formatBRL(precos?.valor_quinzena ?? 0)}</span>
+                  <span>{ciclos}x Quinzena (15 dias)</span>
+                  <span>R$ {formatBRL(valorQuinzenas)}</span>
                 </div>
                 {tipoArte === "solicitar" && (
                   <div className="flex justify-between text-xs">
                     <span>Criação de arte</span>
-                    <span>R$ {formatBRL(precos?.valor_criacao_arte ?? 0)}</span>
+                    <span>R$ {formatBRL(valorArte)}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-sm font-bold mt-1 pt-1 border-t border-border">
