@@ -144,6 +144,84 @@ export type Database = {
           },
         ]
       }
+      banner_precos: {
+        Row: {
+          id: string
+          limite_por_condominio: number
+          updated_at: string
+          valor_criacao_arte: number
+          valor_quinzena: number
+        }
+        Insert: {
+          id?: string
+          limite_por_condominio?: number
+          updated_at?: string
+          valor_criacao_arte?: number
+          valor_quinzena?: number
+        }
+        Update: {
+          id?: string
+          limite_por_condominio?: number
+          updated_at?: string
+          valor_criacao_arte?: number
+          valor_quinzena?: number
+        }
+        Relationships: []
+      }
+      banner_solicitacoes: {
+        Row: {
+          condominio_id: string
+          created_at: string
+          data_fim: string
+          data_inicio: string
+          id: string
+          imagem_url: string | null
+          prestador_id: string
+          status: string
+          tipo_arte: string
+          valor_total: number
+        }
+        Insert: {
+          condominio_id: string
+          created_at?: string
+          data_fim: string
+          data_inicio: string
+          id?: string
+          imagem_url?: string | null
+          prestador_id: string
+          status?: string
+          tipo_arte?: string
+          valor_total?: number
+        }
+        Update: {
+          condominio_id?: string
+          created_at?: string
+          data_fim?: string
+          data_inicio?: string
+          id?: string
+          imagem_url?: string | null
+          prestador_id?: string
+          status?: string
+          tipo_arte?: string
+          valor_total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "banner_solicitacoes_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "banner_solicitacoes_prestador_id_fkey"
+            columns: ["prestador_id"]
+            isOneToOne: false
+            referencedRelation: "prestadores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       banners: {
         Row: {
           ativo: boolean
