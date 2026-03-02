@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
   ShoppingBag, Wrench, DollarSign, Star,
-  ArrowRight, MapPin, Building2, Gift,
+  ArrowRight, MapPin, Building2, Gift, Image,
 } from "lucide-react";
 import MissingPhotoModal from "@/components/MissingPhotoModal";
 
@@ -241,6 +241,23 @@ const PrestadorHome = () => {
                 </Card>
               </div>
             </div>
+
+            {/* Banner promo CTA */}
+            <Card
+              className="cursor-pointer active:scale-[0.97] transition-transform border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10 overflow-hidden"
+              onClick={() => navigate("/prestador/banners")}
+            >
+              <CardContent className="flex items-center gap-4 p-4">
+                <div className="h-12 w-12 rounded-2xl bg-primary/20 flex items-center justify-center flex-shrink-0">
+                  <Image size={22} className="text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[14px] font-bold text-foreground">📣 Anuncie no App!</p>
+                  <p className="text-[11px] text-muted-foreground">Seu banner para todos os moradores do condomínio por 15 dias</p>
+                </div>
+                <ArrowRight size={18} className="text-primary flex-shrink-0" />
+              </CardContent>
+            </Card>
 
             {/* Quick actions */}
             <div>
