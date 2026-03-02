@@ -15,6 +15,7 @@ import productBolo from "@/assets/product-bolo.jpg";
 import productSabonete from "@/assets/product-sabonete.jpg";
 import productBrigadeiro from "@/assets/product-brigadeiro.jpg";
 import productVela from "@/assets/product-vela.jpg";
+import desapegoPlaceholder from "@/assets/desapego-placeholder.png";
 
 const fallbackShopImages = [productBolo, productSabonete, productBrigadeiro, productVela];
 
@@ -386,7 +387,7 @@ const PreviewHome5 = () => {
                     {item.imagem_url ? (
                       <img src={item.imagem_url} alt={item.titulo} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                     ) : (
-                      <div style={{ width: "100%", height: "100%", background: "#f3f4f6", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ fontSize: 32 }}>📦</span></div>
+                      <img src={desapegoPlaceholder} alt="Sem foto" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                     )}
                     <span style={{ position: "absolute", top: 10, left: 10, fontSize: 9, fontWeight: 700, color: X.white, background: X.amber, padding: "4px 10px", borderRadius: 8, textTransform: "uppercase", letterSpacing: 0.8 }}>Desapego</span>
                   </div>
