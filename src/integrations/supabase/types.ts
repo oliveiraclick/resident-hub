@@ -503,6 +503,114 @@ export type Database = {
           },
         ]
       }
+      evento_despesas: {
+        Row: {
+          created_at: string
+          descricao: string | null
+          evento_id: string
+          id: string
+          pagador_id: string
+          recibo_url: string | null
+          valor: number
+        }
+        Insert: {
+          created_at?: string
+          descricao?: string | null
+          evento_id: string
+          id?: string
+          pagador_id: string
+          recibo_url?: string | null
+          valor: number
+        }
+        Update: {
+          created_at?: string
+          descricao?: string | null
+          evento_id?: string
+          id?: string
+          pagador_id?: string
+          recibo_url?: string | null
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evento_despesas_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventos_amigos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      evento_participantes: {
+        Row: {
+          created_at: string
+          evento_id: string
+          id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          evento_id: string
+          id?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          evento_id?: string
+          id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evento_participantes_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventos_amigos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      eventos_amigos: {
+        Row: {
+          condominio_id: string
+          created_at: string
+          criador_id: string
+          descricao: string | null
+          id: string
+          status: string
+          titulo: string
+        }
+        Insert: {
+          condominio_id: string
+          created_at?: string
+          criador_id: string
+          descricao?: string | null
+          id?: string
+          status?: string
+          titulo: string
+        }
+        Update: {
+          condominio_id?: string
+          created_at?: string
+          criador_id?: string
+          descricao?: string | null
+          id?: string
+          status?: string
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "eventos_amigos_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       financeiro_lancamentos: {
         Row: {
           condominio_id: string
@@ -1041,8 +1149,25 @@ export type Database = {
           total: number
         }[]
       }
+      get_condominio_moradores: {
+        Args: { _condominio_id: string }
+        Returns: {
+          avatar_url: string
+          nome: string
+          user_id: string
+        }[]
+      }
       get_desapego_owner_profile: {
         Args: { _user_id: string }
+        Returns: {
+          avatar_url: string
+          nome: string
+          telefone: string
+          user_id: string
+        }[]
+      }
+      get_evento_participant_profiles: {
+        Args: { _user_ids: string[] }
         Returns: {
           avatar_url: string
           nome: string
