@@ -659,6 +659,7 @@ export type Database = {
           imagem_url: string | null
           pix_chave: string | null
           pix_tipo: string | null
+          prestador_id: string | null
           status: string
           titulo: string
         }
@@ -671,6 +672,7 @@ export type Database = {
           imagem_url?: string | null
           pix_chave?: string | null
           pix_tipo?: string | null
+          prestador_id?: string | null
           status?: string
           titulo: string
         }
@@ -683,6 +685,7 @@ export type Database = {
           imagem_url?: string | null
           pix_chave?: string | null
           pix_tipo?: string | null
+          prestador_id?: string | null
           status?: string
           titulo?: string
         }
@@ -692,6 +695,13 @@ export type Database = {
             columns: ["condominio_id"]
             isOneToOne: false
             referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eventos_amigos_prestador_id_fkey"
+            columns: ["prestador_id"]
+            isOneToOne: false
+            referencedRelation: "prestadores"
             referencedColumns: ["id"]
           },
         ]

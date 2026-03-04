@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Plus, Users, CalendarDays, PartyPopper, ChevronRight, Sparkles } from "lucide-react";
+import { Plus, Users, CalendarDays, PartyPopper, ChevronRight, Sparkles, Search, User, Phone, X, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose,
@@ -26,6 +26,16 @@ interface Evento {
   total_despesas?: number;
 }
 
+interface PrestadorResult {
+  id: string;
+  especialidade: string;
+  user_id: string;
+  nome: string;
+  telefone: string | null;
+  avatar_url: string | null;
+  servicos: { titulo: string; preco: number | null }[];
+}
+
 const MoradorEntreAmigos = () => {
   const { user, roles } = useAuth();
   const navigate = useNavigate();
@@ -35,6 +45,13 @@ const MoradorEntreAmigos = () => {
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
   const [saving, setSaving] = useState(false);
+
+  // Prestador search
+  const [searchTerm, setSearchTerm] = useState("");
+  const [prestadores, setPrestadores] = useState<PrestadorResult[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [selectedPrestador, setSelectedPrestador] = useState<PrestadorResult | null>(null);
+  const [showSearch, setShowSearch] = useState(false);
 
   const condominioId = roles.find((r) => r.role === "morador")?.condominio_id;
 
@@ -74,6 +91,67 @@ const MoradorEntreAmigos = () => {
     setLoading(false);
   };
 
+  const searchPrestadores = useCallback(async (term: string) => {
+    if (!condominioId || term.trim().length < 2) {
+      setPrestadores([]);
+      return;
+    }
+    setSearchLoading(true);
+
+    // Search prestadores by especialidade in this condominio
+    const { data: presData } = await supabase
+      .from("prestadores")
+      .select("id, especialidade, user_id, descricao")
+      .eq("condominio_id", condominioId)
+      .eq("visivel", true)
+      .ilike("especialidade", `%${term.trim()}%`);
+
+    if (!presData || presData.length === 0) {
+      setPrestadores([]);
+      setSearchLoading(false);
+      return;
+    }
+
+    // Get profiles
+    const userIds = presData.map((p) => p.user_id);
+    const { data: profiles } = await supabase.rpc("get_prestador_profiles", { _user_ids: userIds });
+
+    // Get services for each prestador
+    const prestadorIds = presData.map((p) => p.id);
+    const { data: servicos } = await supabase
+      .from("servicos")
+      .select("prestador_id, titulo, preco")
+      .in("prestador_id", prestadorIds)
+      .eq("status", "ativo");
+
+    const profileMap = new Map((profiles || []).map((p: any) => [p.user_id, p]));
+
+    const results: PrestadorResult[] = presData.map((p) => {
+      const prof = profileMap.get(p.user_id) as any;
+      return {
+        id: p.id,
+        especialidade: p.especialidade,
+        user_id: p.user_id,
+        nome: prof?.nome || "Sem nome",
+        telefone: prof?.telefone || null,
+        avatar_url: prof?.avatar_url || null,
+        servicos: (servicos || [])
+          .filter((s: any) => s.prestador_id === p.id)
+          .map((s: any) => ({ titulo: s.titulo, preco: s.preco })),
+      };
+    });
+
+    setPrestadores(results);
+    setSearchLoading(false);
+  }, [condominioId]);
+
+  // Debounced search
+  useEffect(() => {
+    if (!showSearch) return;
+    const timer = setTimeout(() => searchPrestadores(searchTerm), 400);
+    return () => clearTimeout(timer);
+  }, [searchTerm, showSearch, searchPrestadores]);
+
   const handleCreate = async () => {
     if (!user || !condominioId) return;
     const trimmed = titulo.trim();
@@ -83,25 +161,41 @@ const MoradorEntreAmigos = () => {
     }
 
     setSaving(true);
-    const { error } = await supabase.from("eventos_amigos").insert({
+    const insertData: any = {
       titulo: trimmed,
       descricao: descricao.trim() || null,
       condominio_id: condominioId,
       criador_id: user.id,
-    } as any);
+    };
+    if (selectedPrestador) {
+      insertData.prestador_id = selectedPrestador.id;
+    }
+
+    const { error } = await supabase.from("eventos_amigos").insert(insertData);
 
     if (error) {
       toast.error("Erro ao criar evento");
       console.error(error);
     } else {
       toast.success("Evento criado!");
-      setTitulo("");
-      setDescricao("");
-      setDialogOpen(false);
+      resetDialog();
       fetchEventos();
     }
     setSaving(false);
   };
+
+  const resetDialog = () => {
+    setTitulo("");
+    setDescricao("");
+    setSearchTerm("");
+    setPrestadores([]);
+    setSelectedPrestador(null);
+    setShowSearch(false);
+    setDialogOpen(false);
+  };
+
+  const formatPrice = (preco: number | null) =>
+    preco != null ? `R$ ${preco.toFixed(2).replace(".", ",")}` : "Sob consulta";
 
   if (!user) return null;
 
@@ -130,14 +224,13 @@ const MoradorEntreAmigos = () => {
               </p>
             </div>
           </div>
-          {/* Wave decoration */}
           <svg className="absolute bottom-0 left-0 w-full" viewBox="0 0 400 30" preserveAspectRatio="none">
             <path d="M0,30 L0,15 Q100,0 200,15 Q300,30 400,15 L400,30 Z" fill="hsl(var(--background) / 0.08)" />
           </svg>
         </div>
 
         {/* Create button */}
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <Dialog open={dialogOpen} onOpenChange={(open) => { if (!open) resetDialog(); else setDialogOpen(true); }}>
           <DialogTrigger asChild>
             <Button className="w-full h-14 text-base gap-3 shadow-lg animate-fade-in" style={{ animationDelay: "0.1s" }}>
               <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary-foreground/20">
@@ -146,7 +239,7 @@ const MoradorEntreAmigos = () => {
               Criar novo evento
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-h-[85vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Sparkles size={18} className="text-primary" /> Novo evento
@@ -166,6 +259,136 @@ const MoradorEntreAmigos = () => {
                 maxLength={500}
                 rows={3}
               />
+
+              {/* Prestador Section */}
+              <div className="border border-border rounded-xl p-3 space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-foreground">🍖 Contratar prestador?</p>
+                  {!showSearch && !selectedPrestador && (
+                    <Button size="sm" variant="outline" onClick={() => setShowSearch(true)} className="text-xs h-8">
+                      <Search size={14} className="mr-1" /> Buscar
+                    </Button>
+                  )}
+                </div>
+
+                {/* Selected prestador */}
+                {selectedPrestador && (
+                  <div className="bg-primary/5 rounded-xl p-3 border border-primary/20">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden">
+                          {selectedPrestador.avatar_url ? (
+                            <img src={selectedPrestador.avatar_url} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            <User size={14} className="text-primary" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-foreground">{selectedPrestador.nome}</p>
+                          <p className="text-[11px] text-muted-foreground">{selectedPrestador.especialidade}</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => { setSelectedPrestador(null); setShowSearch(true); }}
+                        className="text-muted-foreground hover:text-destructive transition-colors"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                    {selectedPrestador.servicos.length > 0 && (
+                      <div className="space-y-1">
+                        {selectedPrestador.servicos.map((s, i) => (
+                          <div key={i} className="flex items-center justify-between text-xs px-2 py-1 bg-background rounded-lg">
+                            <span className="text-foreground">{s.titulo}</span>
+                            <span className="font-semibold text-primary">{formatPrice(s.preco)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div className="flex items-center gap-1 mt-2 text-[11px] text-green-600">
+                      <Check size={12} /> Prestador selecionado
+                    </div>
+                  </div>
+                )}
+
+                {/* Search input */}
+                {showSearch && !selectedPrestador && (
+                  <div className="space-y-2">
+                    <div className="relative">
+                      <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        placeholder="Buscar por especialidade (ex: churrasqueiro)"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-9 h-10 text-sm"
+                      />
+                    </div>
+
+                    {searchLoading && (
+                      <div className="flex items-center justify-center py-4">
+                        <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                      </div>
+                    )}
+
+                    {!searchLoading && searchTerm.length >= 2 && prestadores.length === 0 && (
+                      <div className="text-center py-3">
+                        <p className="text-xs text-muted-foreground">Nenhum prestador encontrado</p>
+                        <p className="text-[11px] text-muted-foreground mt-1">Você pode criar o evento sem vincular um prestador</p>
+                      </div>
+                    )}
+
+                    {prestadores.length > 0 && (
+                      <div className="space-y-2 max-h-48 overflow-y-auto">
+                        {prestadores.map((p) => (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => { setSelectedPrestador(p); setShowSearch(false); }}
+                            className="w-full text-left bg-card hover:bg-accent/50 border border-border rounded-xl p-3 transition-colors"
+                          >
+                            <div className="flex items-center gap-2 mb-1.5">
+                              <div className="w-7 h-7 rounded-full bg-primary/15 flex items-center justify-center overflow-hidden shrink-0">
+                                {p.avatar_url ? (
+                                  <img src={p.avatar_url} alt="" className="w-full h-full object-cover" />
+                                ) : (
+                                  <User size={12} className="text-primary" />
+                                )}
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-sm font-semibold text-foreground truncate">{p.nome}</p>
+                                <p className="text-[11px] text-muted-foreground">{p.especialidade}</p>
+                              </div>
+                              {p.telefone && <Phone size={12} className="text-muted-foreground ml-auto shrink-0" />}
+                            </div>
+                            {p.servicos.length > 0 && (
+                              <div className="space-y-0.5 ml-9">
+                                {p.servicos.slice(0, 3).map((s, i) => (
+                                  <div key={i} className="flex justify-between text-[11px]">
+                                    <span className="text-muted-foreground truncate">{s.titulo}</span>
+                                    <span className="font-medium text-primary ml-2 whitespace-nowrap">{formatPrice(s.preco)}</span>
+                                  </div>
+                                ))}
+                                {p.servicos.length > 3 && (
+                                  <p className="text-[10px] text-muted-foreground">+{p.servicos.length - 3} serviços</p>
+                                )}
+                              </div>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full text-xs text-muted-foreground h-8"
+                      onClick={() => { setShowSearch(false); setSearchTerm(""); setPrestadores([]); }}
+                    >
+                      Pular — usar prestador particular
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
             <DialogFooter>
               <DialogClose asChild>
@@ -210,7 +433,6 @@ const MoradorEntreAmigos = () => {
               onClick={() => navigate(`/morador/entre-amigos/${ev.id}`)}
             >
               <CardContent className="p-0">
-                {/* Color accent bar */}
                 <div
                   className="h-1.5 w-full"
                   style={{
