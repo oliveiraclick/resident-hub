@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, createContext, useContext, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 import type { User, Session } from "@supabase/supabase-js";
 
 type AppRole = "morador" | "prestador" | "admin" | "platform_admin";
@@ -95,6 +96,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Track device info for support/debugging
   useDeviceInfo(user?.id);
+
+  // Register for push notifications (native only)
+  usePushNotifications(user?.id);
 
   return (
     <AuthContext.Provider
