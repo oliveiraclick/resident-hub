@@ -65,6 +65,15 @@ interface Pagamento {
   created_at: string;
 }
 
+interface ItemEvento {
+  id: string;
+  evento_id: string;
+  nome: string;
+  valor_estimado: number;
+  responsavel_id: string | null;
+  created_at: string;
+}
+
 interface Morador {
   user_id: string;
   nome: string;
@@ -90,8 +99,15 @@ const MoradorEntreAmigosDetalhe = () => {
   const [participantes, setParticipantes] = useState<Participante[]>([]);
   const [despesas, setDespesas] = useState<Despesa[]>([]);
   const [pagamentos, setPagamentos] = useState<Pagamento[]>([]);
+  const [itens, setItens] = useState<ItemEvento[]>([]);
   const [profileMap, setProfileMap] = useState<Map<string, any>>(new Map());
   const [loading, setLoading] = useState(true);
+
+  // Item dialog
+  const [itemOpen, setItemOpen] = useState(false);
+  const [itemNome, setItemNome] = useState("");
+  const [itemValor, setItemValor] = useState("");
+  const [itemSaving, setItemSaving] = useState(false);
 
   // Expense dialog
   const [expenseOpen, setExpenseOpen] = useState(false);
@@ -145,10 +161,11 @@ const MoradorEntreAmigosDetalhe = () => {
     setPixChave((ev as any).pix_chave || "");
     setPixTipo((ev as any).pix_tipo || "cpf");
 
-    const [partRes, despRes, pagRes] = await Promise.all([
+    const [partRes, despRes, pagRes, itensRes] = await Promise.all([
       supabase.from("evento_participantes").select("*").eq("evento_id", id!),
       supabase.from("evento_despesas").select("*").eq("evento_id", id!).order("created_at", { ascending: false }),
       supabase.from("evento_pagamentos").select("*").eq("evento_id", id!).order("created_at", { ascending: false }),
+      supabase.from("evento_itens").select("*").eq("evento_id", id!).order("created_at", { ascending: true }),
     ]);
 
     const parts = partRes.data || [];
@@ -186,7 +203,30 @@ const MoradorEntreAmigosDetalhe = () => {
     );
 
     setPagamentos(pags as any[]);
+    setItens((itensRes.data || []) as any[]);
     setLoading(false);
+  };
+
+  // ── Item handlers ──────────────────────────────────
+  const handleAddItem = async () => {
+    if (!user) return;
+    const nome = itemNome.trim();
+    if (!nome) { toast.error("Dê um nome ao item"); return; }
+    const valor = parseFloat(itemValor.replace(",", "."));
+    if (isNaN(valor) || valor < 0) { toast.error("Valor inválido"); return; }
+
+    setItemSaving(true);
+    const { error } = await supabase.from("evento_itens").insert({
+      evento_id: id!, nome, valor_estimado: valor, responsavel_id: user.id,
+    } as any);
+    if (error) toast.error("Erro ao adicionar item");
+    else { toast.success("Item adicionado! 🎉"); setItemNome(""); setItemValor(""); setItemOpen(false); fetchAll(); }
+    setItemSaving(false);
+  };
+
+  const handleDeleteItem = async (itemId: string) => {
+    const { error } = await supabase.from("evento_itens").delete().eq("id", itemId);
+    if (error) toast.error("Erro ao excluir"); else { toast.success("Item removido"); fetchAll(); }
   };
 
   // ── Computed saldos ──────────────────────────────────
@@ -217,7 +257,9 @@ const MoradorEntreAmigosDetalhe = () => {
   }, [evento, participantes, despesas, user, profileMap]);
 
   const totalGasto = despesas.reduce((s, d) => s + Number(d.valor), 0);
+  const totalEstimado = itens.reduce((s, i) => s + Number(i.valor_estimado), 0);
   const numPessoas = saldos.length;
+  const estimativaPorPessoa = numPessoas > 0 ? totalEstimado / numPessoas : 0;
 
   const getName = (uid: string) => (uid === user?.id ? "Você" : profileMap.get(uid)?.nome || "Morador");
 
@@ -384,14 +426,126 @@ const MoradorEntreAmigosDetalhe = () => {
           </div>
         </div>
 
-        {/* Tabs — now 4 */}
-        <Tabs defaultValue="acerto" className="w-full animate-fade-in" style={{ animationDelay: "0.1s" }}>
-          <TabsList className="grid w-full grid-cols-4 h-12 rounded-2xl bg-muted p-1">
-            <TabsTrigger value="acerto" className="rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm text-[11px] font-semibold">💸 Acerto</TabsTrigger>
-            <TabsTrigger value="saldos" className="rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm text-[11px] font-semibold">💰 Saldos</TabsTrigger>
-            <TabsTrigger value="despesas" className="rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm text-[11px] font-semibold">🧾 Gastos</TabsTrigger>
-            <TabsTrigger value="pessoas" className="rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm text-[11px] font-semibold">👥 Turma</TabsTrigger>
+        {/* Tabs — now 5 */}
+        <Tabs defaultValue="evento" className="w-full animate-fade-in" style={{ animationDelay: "0.1s" }}>
+          <TabsList className="grid w-full grid-cols-5 h-12 rounded-2xl bg-muted p-1">
+            <TabsTrigger value="evento" className="rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm text-[10px] font-semibold">🎪 Evento</TabsTrigger>
+            <TabsTrigger value="acerto" className="rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm text-[10px] font-semibold">💸 Acerto</TabsTrigger>
+            <TabsTrigger value="saldos" className="rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm text-[10px] font-semibold">💰 Saldos</TabsTrigger>
+            <TabsTrigger value="despesas" className="rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm text-[10px] font-semibold">🧾 Gastos</TabsTrigger>
+            <TabsTrigger value="pessoas" className="rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm text-[10px] font-semibold">👥 Turma</TabsTrigger>
           </TabsList>
+
+          {/* ═══ EVENTO TAB ═══ */}
+          <TabsContent value="evento" className="flex flex-col gap-3 mt-3">
+            {/* Event description banner */}
+            <div className="rounded-2xl overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(var(--header-bg)), hsl(var(--primary) / 0.85))" }}>
+              <div className="p-5 relative">
+                <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-primary-foreground/10 blur-2xl" />
+                <div className="relative z-10">
+                  <div className="flex items-center gap-2 mb-2">
+                    <PartyPopper size={20} className="text-primary-foreground" />
+                    <h3 className="text-primary-foreground font-bold text-base">O que vai rolar? 🎉</h3>
+                  </div>
+                  {evento.descricao ? (
+                    <p className="text-primary-foreground/80 text-sm leading-relaxed">{evento.descricao}</p>
+                  ) : (
+                    <p className="text-primary-foreground/50 text-sm italic">Nenhuma descrição ainda</p>
+                  )}
+                </div>
+              </div>
+              <svg viewBox="0 0 400 20" preserveAspectRatio="none" className="w-full h-3">
+                <path d="M0,20 L0,10 Q100,0 200,10 Q300,20 400,10 L400,20 Z" fill="hsl(var(--background))" />
+              </svg>
+            </div>
+
+            {/* Estimativa por pessoa */}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="rounded-2xl p-3 text-center bg-card shadow-sm border border-border">
+                <p className="text-lg font-bold text-primary">R$ {formatBRL(totalEstimado)}</p>
+                <p className="text-[10px] text-muted-foreground font-medium">Estimativa total 🎯</p>
+              </div>
+              <div className="rounded-2xl p-3 text-center" style={{ background: "linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--primary) / 0.05))" }}>
+                <p className="text-lg font-bold text-primary">R$ {formatBRL(estimativaPorPessoa)}</p>
+                <p className="text-[10px] text-muted-foreground font-medium">Por pessoa (~{numPessoas}) 🧮</p>
+              </div>
+            </div>
+
+            {/* Add item button */}
+            {isParticipant && evento.status === "ativo" && (
+              <Dialog open={itemOpen} onOpenChange={setItemOpen}>
+                <DialogTrigger asChild>
+                  <Button size="sm" className="w-full gap-2"><Plus size={14} /> Adicionar item</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2"><Sparkles size={16} className="text-primary" /> Novo item do evento</DialogTitle>
+                  </DialogHeader>
+                  <div className="flex flex-col gap-3">
+                    <Input placeholder="O que é? (ex: Som, Banda, Tenda, Carne)" value={itemNome} onChange={(e) => setItemNome(e.target.value)} maxLength={100} />
+                    <Input placeholder="Valor estimado (ex: 500,00)" value={itemValor} onChange={(e) => setItemValor(e.target.value)} inputMode="decimal" />
+                  </div>
+                  <DialogFooter>
+                    <DialogClose asChild><Button variant="outline">Cancelar</Button></DialogClose>
+                    <Button onClick={handleAddItem} disabled={itemSaving}>{itemSaving ? "Adicionando..." : "Adicionar 🎪"}</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            )}
+
+            {/* Items list */}
+            {itens.length === 0 ? (
+              <EmptyState icon="🎪" text="Nenhum item planejado ainda. Adicione o som, banda, tenda, carne..." />
+            ) : (
+              <div className="flex flex-col gap-2">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide ml-1">📋 Itens do evento</p>
+                {itens.map((item, idx) => {
+                  const emojiMap: Record<string, string> = { som: "🔊", banda: "🎸", tenda: "⛺", carne: "🥩", bebida: "🍻", cerveja: "🍺", gelo: "🧊", carvão: "🔥", decoração: "🎊", doce: "🍰", bolo: "🎂", música: "🎵", dj: "🎧", churrasqueiro: "👨‍🍳", mesa: "🪑", cadeira: "🪑", luz: "💡", toalha: "🧻" };
+                  const emoji = Object.entries(emojiMap).find(([k]) => item.nome.toLowerCase().includes(k))?.[1] || "🎯";
+
+                  return (
+                    <Card key={item.id} className="border-none shadow-sm overflow-hidden animate-fade-in" style={{ animationDelay: `${0.05 * idx}s` }}>
+                      <CardContent className="p-0">
+                        <div className="h-1 w-full" style={{ background: "linear-gradient(90deg, hsl(var(--primary) / 0.6), hsl(var(--primary-light) / 0.4))" }} />
+                        <div className="p-3 flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-lg" style={{ background: "hsl(var(--primary) / 0.1)" }}>
+                              {emoji}
+                            </div>
+                            <div>
+                              <p className="text-sm font-semibold text-foreground">{item.nome}</p>
+                              <p className="text-[10px] text-muted-foreground">
+                                {item.responsavel_id ? getName(item.responsavel_id) : ""}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <p className="text-sm font-bold text-primary">R$ {formatBRL(item.valor_estimado)}</p>
+                            {isParticipant && (
+                              <button onClick={() => handleDeleteItem(item.id)}>
+                                <Trash2 size={14} className="text-destructive/60 hover:text-destructive" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+
+                {/* Fun estimate footer */}
+                <div className="rounded-2xl p-4 mt-1 text-center" style={{ background: "linear-gradient(135deg, hsl(var(--primary) / 0.08), hsl(var(--primary) / 0.03))" }}>
+                  <p className="text-2xl mb-1">🎉</p>
+                  <p className="text-sm font-semibold text-foreground">
+                    Cada um coloca ~<span className="text-primary">R$ {formatBRL(estimativaPorPessoa)}</span>
+                  </p>
+                  <p className="text-[10px] text-muted-foreground mt-1">
+                    pra {numPessoas} pessoa{numPessoas !== 1 ? "s" : ""} · {itens.length} ite{itens.length !== 1 ? "ns" : "m"} planejado{itens.length !== 1 ? "s" : ""}
+                  </p>
+                </div>
+              </div>
+            )}
+          </TabsContent>
 
           {/* ═══ ACERTO TAB ═══ */}
           <TabsContent value="acerto" className="flex flex-col gap-3 mt-3">

@@ -541,6 +541,41 @@ export type Database = {
           },
         ]
       }
+      evento_itens: {
+        Row: {
+          created_at: string
+          evento_id: string
+          id: string
+          nome: string
+          responsavel_id: string | null
+          valor_estimado: number
+        }
+        Insert: {
+          created_at?: string
+          evento_id: string
+          id?: string
+          nome: string
+          responsavel_id?: string | null
+          valor_estimado?: number
+        }
+        Update: {
+          created_at?: string
+          evento_id?: string
+          id?: string
+          nome?: string
+          responsavel_id?: string | null
+          valor_estimado?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evento_itens_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventos_amigos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       evento_pagamentos: {
         Row: {
           comprovante_url: string | null
