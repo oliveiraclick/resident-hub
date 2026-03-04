@@ -47,6 +47,14 @@ serve(async (req) => {
             role: "system",
             content: `Você é um assistente que mapeia itens de festa/evento para categorias de prestadores de serviço.
 Dado um item digitado pelo usuário e uma lista de especialidades disponíveis, retorne APENAS as especialidades que são relevantes.
+Pense de forma ampla e criativa. Exemplos de mapeamentos esperados:
+- "carne" → Açougue, Churrasqueiro
+- "frutas", "verduras", "legumes" → Sacolão, Hortifruti, Feira
+- "músico", "cantor" → Músico, Cantor, Banda, DJ
+- "som", "caixa de som", "microfone" → Aluguel de Som, DJ, Sonorização
+- "bolo" → Confeitaria, Confeiteiro, Doceira
+- "bebida", "cerveja" → Distribuidora, Bar, Bebidas
+- "decoração" → Decorador, Decoração, Balões
 Responda SOMENTE com um JSON array de strings. Sem explicação. Exemplo: ["Músico","Marmitas"]
 Se nenhuma especialidade for relevante, retorne [].`
           },
