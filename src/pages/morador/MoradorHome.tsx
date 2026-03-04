@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCategorias } from "@/hooks/useCategorias";
 import { getIcon } from "@/lib/iconMap";
 import MissingPhotoModal from "@/components/MissingPhotoModal";
+import EventoConviteFullscreen, { EventoConviteBadge } from "@/components/EventoConviteFullscreen";
 
 import productBolo from "@/assets/product-bolo.jpg";
 import productSabonete from "@/assets/product-sabonete.jpg";
@@ -34,6 +35,7 @@ const MoradorHome = () => {
   const [avisos, setAvisos] = useState<any[]>([]);
   const [prestadoresVisiveis, setPrestadoresVisiveis] = useState<any[]>([]);
   const [bannerIdx, setBannerIdx] = useState(0);
+  const [pendingInvitesCount, setPendingInvitesCount] = useState(0);
 
   useEffect(() => {
     if (!user) return;
@@ -147,6 +149,19 @@ const MoradorHome = () => {
       }
     };
 
+    const fetchPendingInvites = async () => {
+      try {
+        const { count } = await supabase
+          .from("evento_participantes")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id)
+          .eq("status", "pendente");
+        setPendingInvitesCount(count || 0);
+      } catch (e) {
+        console.error("fetchPendingInvites error", e);
+      }
+    };
+
     fetchPending();
     fetchProdutos();
     fetchServicos();
@@ -154,6 +169,7 @@ const MoradorHome = () => {
     fetchBanners();
     fetchAvisos();
     fetchPrestadoresVisiveis();
+    fetchPendingInvites();
   }, [user]);
 
   // Auto-rotate banners (robust for iOS WebView)
@@ -199,6 +215,8 @@ const MoradorHome = () => {
 
   return (
     <MoradorLayout title="Início" showSearch>
+      <EventoConviteFullscreen />
+      <EventoConviteBadge count={pendingInvitesCount} onClick={() => navigate("/morador/entre-amigos")} />
       <MissingPhotoModal />
       <div className="flex flex-col gap-7">
 
