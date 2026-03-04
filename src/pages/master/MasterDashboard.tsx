@@ -10,6 +10,7 @@ import MasterBanners from "./MasterBanners";
 import MasterBannerPrecos from "./MasterBannerPrecos";
 import MasterBannerSolicitacoes from "./MasterBannerSolicitacoes";
 import MasterLP from "./MasterLP";
+import MasterPush from "./MasterPush";
 
 const MasterDashboard = () => {
   return (
@@ -24,6 +25,7 @@ const MasterDashboard = () => {
       <Route path="/banner-precos" element={<MasterBannerPrecos />} />
       <Route path="/banner-solicitacoes" element={<MasterBannerSolicitacoes />} />
       <Route path="/lp" element={<MasterLP />} />
+      <Route path="/push" element={<MasterPush />} />
       <Route path="/perfil" element={<MasterPerfil />} />
     </Routes>
   );
