@@ -426,11 +426,11 @@ const MoradorEntreAmigosDetalhe = () => {
 
   return (
     <MoradorLayout title={evento.titulo} showBack>
-      {/* Page background image */}
+      {/* Page background image — behind everything */}
       {evento.imagem_url && (
-        <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="fixed inset-0 -z-10 pointer-events-none">
           <img src={evento.imagem_url} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0" style={{ background: "hsl(var(--background) / 0.85)" }} />
+          <div className="absolute inset-0 bg-background/85" />
         </div>
       )}
       {/* Upload button floating */}
