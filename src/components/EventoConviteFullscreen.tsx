@@ -29,17 +29,25 @@ const EventoConviteFullscreen = () => {
   }, [user]);
 
   const fetchPendingInvites = async () => {
-    const { data: participacoes } = await supabase
+    const { data: participacoes, error } = await supabase
       .from("evento_participantes")
       .select("id, evento_id")
       .eq("user_id", user!.id)
       .eq("status", "pendente");
 
+    console.log("[ConviteFullscreen] participacoes pendentes:", participacoes?.length, error?.message);
+
     if (!participacoes || participacoes.length === 0) return;
 
-    // Check dismissed
+    // Check dismissed — only keep IDs that still exist
     const dismissed = JSON.parse(localStorage.getItem(DISMISSED_KEY) || "[]") as string[];
-    const fresh = participacoes.filter((p) => !dismissed.includes(p.id));
+    const currentIds = participacoes.map((p) => p.id);
+    // Clean stale dismissed IDs
+    const validDismissed = dismissed.filter((d: string) => currentIds.includes(d));
+    if (validDismissed.length !== dismissed.length) {
+      localStorage.setItem(DISMISSED_KEY, JSON.stringify(validDismissed));
+    }
+    const fresh = participacoes.filter((p) => !validDismissed.includes(p.id));
     if (fresh.length === 0) return;
 
     // Fetch evento details
