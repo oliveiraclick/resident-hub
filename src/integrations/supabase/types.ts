@@ -541,6 +541,47 @@ export type Database = {
           },
         ]
       }
+      evento_pagamentos: {
+        Row: {
+          comprovante_url: string | null
+          created_at: string
+          evento_id: string
+          id: string
+          pagador_id: string
+          recebedor_id: string
+          status: string
+          valor: number
+        }
+        Insert: {
+          comprovante_url?: string | null
+          created_at?: string
+          evento_id: string
+          id?: string
+          pagador_id: string
+          recebedor_id: string
+          status?: string
+          valor: number
+        }
+        Update: {
+          comprovante_url?: string | null
+          created_at?: string
+          evento_id?: string
+          id?: string
+          pagador_id?: string
+          recebedor_id?: string
+          status?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evento_pagamentos_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventos_amigos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       evento_participantes: {
         Row: {
           created_at: string
@@ -580,6 +621,8 @@ export type Database = {
           criador_id: string
           descricao: string | null
           id: string
+          pix_chave: string | null
+          pix_tipo: string | null
           status: string
           titulo: string
         }
@@ -589,6 +632,8 @@ export type Database = {
           criador_id: string
           descricao?: string | null
           id?: string
+          pix_chave?: string | null
+          pix_tipo?: string | null
           status?: string
           titulo: string
         }
@@ -598,6 +643,8 @@ export type Database = {
           criador_id?: string
           descricao?: string | null
           id?: string
+          pix_chave?: string | null
+          pix_tipo?: string | null
           status?: string
           titulo?: string
         }
