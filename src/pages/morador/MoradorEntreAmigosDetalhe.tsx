@@ -426,26 +426,7 @@ const MoradorEntreAmigosDetalhe = () => {
 
   return (
     <MoradorLayout title={evento.titulo} showBack>
-      {/* Page background image — behind everything */}
-      {evento.imagem_url && (
-        <div className="fixed inset-0 -z-10 pointer-events-none">
-          <img src={evento.imagem_url} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-background/85" />
-        </div>
-      )}
-      {/* Upload button floating */}
-      {isCreator && (
-        <label className="fixed top-16 right-4 z-20 flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-semibold cursor-pointer shadow-lg" style={{ background: "hsl(var(--card))", color: "hsl(var(--foreground))", border: "1px solid hsl(var(--border))" }}>
-          {coverUploading ? (
-            <div className="w-3.5 h-3.5 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
-          ) : (
-            <Camera size={13} className="text-primary" />
-          )}
-          {coverUploading ? "Enviando..." : evento.imagem_url ? "Trocar foto" : "Foto do evento 📸"}
-          <input type="file" accept="image/*" capture="environment" className="hidden" disabled={coverUploading} onChange={(e) => e.target.files?.[0] && handleCoverUpload(e.target.files[0])} />
-        </label>
-      )}
-      <div className="flex flex-col gap-4 max-w-md mx-auto pb-6 relative z-10">
+      <div className="flex flex-col gap-4 max-w-md mx-auto pb-6 relative">
         {/* Pending invite */}
         {myParticipation?.status === "pendente" && (
           <div className="rounded-[var(--radius-card)] p-4 animate-fade-in" style={{ background: "linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--primary) / 0.05))", border: "2px solid hsl(var(--primary) / 0.3)" }}>
