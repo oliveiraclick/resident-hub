@@ -1118,7 +1118,7 @@ const MoradorEntreAmigosDetalhe = () => {
                         }}>
                           {d.pago ? "Pago" : "Combinado · Não pago"}
                         </span>
-                        {isParticipant && (
+                        {d.pagador_id === user?.id && (
                           <button
                             onClick={() => handleTogglePago(d.id, d.pago)}
                             className="text-[10px] font-medium underline"
