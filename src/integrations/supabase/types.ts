@@ -621,6 +621,7 @@ export type Database = {
           evento_id: string
           id: string
           pagador_id: string
+          pago: boolean
           recibo_url: string | null
           valor: number
         }
@@ -630,6 +631,7 @@ export type Database = {
           evento_id: string
           id?: string
           pagador_id: string
+          pago?: boolean
           recibo_url?: string | null
           valor: number
         }
@@ -639,6 +641,7 @@ export type Database = {
           evento_id?: string
           id?: string
           pagador_id?: string
+          pago?: boolean
           recibo_url?: string | null
           valor?: number
         }

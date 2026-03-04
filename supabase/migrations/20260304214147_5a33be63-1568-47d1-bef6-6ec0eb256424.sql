@@ -1,0 +1,1 @@
+ALTER TABLE public.evento_despesas ADD COLUMN pago boolean NOT NULL DEFAULT true;
