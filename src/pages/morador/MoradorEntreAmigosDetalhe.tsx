@@ -35,6 +35,7 @@ interface Evento {
   condominio_id: string;
   pix_chave: string | null;
   pix_tipo: string | null;
+  imagem_url: string | null;
 }
 
 interface Participante {
@@ -108,6 +109,9 @@ const MoradorEntreAmigosDetalhe = () => {
   const [itemNome, setItemNome] = useState("");
   const [itemValor, setItemValor] = useState("");
   const [itemSaving, setItemSaving] = useState(false);
+
+  // Cover image
+  const [coverUploading, setCoverUploading] = useState(false);
 
   // Expense dialog
   const [expenseOpen, setExpenseOpen] = useState(false);
@@ -227,6 +231,33 @@ const MoradorEntreAmigosDetalhe = () => {
   const handleDeleteItem = async (itemId: string) => {
     const { error } = await supabase.from("evento_itens").delete().eq("id", itemId);
     if (error) toast.error("Erro ao excluir"); else { toast.success("Item removido"); fetchAll(); }
+  };
+
+  const handleCoverUpload = async (file: File) => {
+    if (!user || !id) return;
+    setCoverUploading(true);
+    // Compress image client-side
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const img = new window.Image();
+    img.src = URL.createObjectURL(file);
+    await new Promise((r) => (img.onload = r));
+    const maxW = 1200;
+    const scale = Math.min(1, maxW / img.width);
+    canvas.width = img.width * scale;
+    canvas.height = img.height * scale;
+    ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
+    const blob = await new Promise<Blob>((r) => canvas.toBlob((b) => r(b!), "image/jpeg", 0.8));
+
+    const path = `eventos/${id}/cover_${Date.now()}.jpg`;
+    const { error: upErr } = await supabase.storage.from("recibos").upload(path, blob, { contentType: "image/jpeg" });
+    if (upErr) { toast.error("Erro ao enviar imagem"); setCoverUploading(false); return; }
+    const url = supabase.storage.from("recibos").getPublicUrl(path).data.publicUrl;
+
+    const { error } = await supabase.from("eventos_amigos").update({ imagem_url: url } as any).eq("id", id);
+    if (error) toast.error("Erro ao salvar");
+    else { toast.success("Foto do evento salva! 📸"); fetchAll(); }
+    setCoverUploading(false);
   };
 
   // ── Computed saldos ──────────────────────────────────
@@ -438,25 +469,58 @@ const MoradorEntreAmigosDetalhe = () => {
 
           {/* ═══ EVENTO TAB ═══ */}
           <TabsContent value="evento" className="flex flex-col gap-3 mt-3">
-            {/* Event description banner */}
-            <div className="rounded-2xl overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(var(--header-bg)), hsl(var(--primary) / 0.85))" }}>
-              <div className="p-5 relative">
-                <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-primary-foreground/10 blur-2xl" />
-                <div className="relative z-10">
-                  <div className="flex items-center gap-2 mb-2">
-                    <PartyPopper size={20} className="text-primary-foreground" />
-                    <h3 className="text-primary-foreground font-bold text-base">O que vai rolar? 🎉</h3>
+            {/* Cover image */}
+            <div className="rounded-2xl overflow-hidden relative" style={{ minHeight: evento.imagem_url ? 200 : undefined, background: evento.imagem_url ? undefined : "linear-gradient(135deg, hsl(var(--header-bg)), hsl(var(--primary) / 0.85))" }}>
+              {evento.imagem_url ? (
+                <div className="relative">
+                  <img src={evento.imagem_url} alt={evento.titulo} className="w-full h-52 object-cover" />
+                  <div className="absolute inset-0" style={{ background: "linear-gradient(to top, hsl(var(--header-bg) / 0.9) 0%, transparent 50%)" }} />
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <PartyPopper size={18} className="text-primary-foreground" />
+                      <h3 className="text-primary-foreground font-bold text-base drop-shadow-lg">O que vai rolar? 🎉</h3>
+                    </div>
+                    {evento.descricao && <p className="text-primary-foreground/80 text-sm leading-relaxed drop-shadow">{evento.descricao}</p>}
                   </div>
-                  {evento.descricao ? (
-                    <p className="text-primary-foreground/80 text-sm leading-relaxed">{evento.descricao}</p>
-                  ) : (
-                    <p className="text-primary-foreground/50 text-sm italic">Nenhuma descrição ainda</p>
+                  {isCreator && (
+                    <label className="absolute top-2 right-2 flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[10px] font-semibold cursor-pointer backdrop-blur-md" style={{ background: "hsl(var(--background) / 0.7)", color: "hsl(var(--foreground))" }}>
+                      <Camera size={12} /> Trocar foto
+                      <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => e.target.files?.[0] && handleCoverUpload(e.target.files[0])} />
+                    </label>
                   )}
                 </div>
-              </div>
-              <svg viewBox="0 0 400 20" preserveAspectRatio="none" className="w-full h-3">
-                <path d="M0,20 L0,10 Q100,0 200,10 Q300,20 400,10 L400,20 Z" fill="hsl(var(--background))" />
-              </svg>
+              ) : (
+                <div className="p-5 relative">
+                  <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-primary-foreground/10 blur-2xl" />
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-2 mb-2">
+                      <PartyPopper size={20} className="text-primary-foreground" />
+                      <h3 className="text-primary-foreground font-bold text-base">O que vai rolar? 🎉</h3>
+                    </div>
+                    {evento.descricao ? (
+                      <p className="text-primary-foreground/80 text-sm leading-relaxed">{evento.descricao}</p>
+                    ) : (
+                      <p className="text-primary-foreground/50 text-sm italic">Nenhuma descrição ainda</p>
+                    )}
+                    {isCreator && (
+                      <label className="mt-3 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold cursor-pointer transition-all" style={{ background: "hsl(var(--primary-foreground) / 0.15)", color: "hsl(var(--primary-foreground))" }}>
+                        {coverUploading ? (
+                          <div className="w-4 h-4 rounded-full border-2 border-primary-foreground/30 border-t-primary-foreground animate-spin" />
+                        ) : (
+                          <Camera size={16} />
+                        )}
+                        {coverUploading ? "Enviando..." : "Adicionar foto do evento 📸"}
+                        <input type="file" accept="image/*" capture="environment" className="hidden" disabled={coverUploading} onChange={(e) => e.target.files?.[0] && handleCoverUpload(e.target.files[0])} />
+                      </label>
+                    )}
+                  </div>
+                </div>
+              )}
+              {!evento.imagem_url && (
+                <svg viewBox="0 0 400 20" preserveAspectRatio="none" className="w-full h-3">
+                  <path d="M0,20 L0,10 Q100,0 200,10 Q300,20 400,10 L400,20 Z" fill="hsl(var(--background))" />
+                </svg>
+              )}
             </div>
 
             {/* Estimativa por pessoa */}
