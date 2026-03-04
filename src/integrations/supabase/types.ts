@@ -1409,6 +1409,15 @@ export type Database = {
         Returns: boolean
       }
       is_platform_admin: { Args: { p_user_id: string }; Returns: boolean }
+      search_prestadores_by_especialidade: {
+        Args: { _condominio_id: string; _term: string }
+        Returns: {
+          especialidade: string
+          id: string
+          user_id: string
+        }[]
+      }
+      unaccent: { Args: { "": string }; Returns: string }
     }
     Enums: {
       app_role:
