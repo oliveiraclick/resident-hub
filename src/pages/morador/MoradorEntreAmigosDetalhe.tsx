@@ -55,6 +55,7 @@ interface Despesa {
   descricao: string | null;
   recibo_url: string | null;
   created_at: string;
+  pago: boolean;
   pagador_nome?: string;
 }
 
@@ -130,6 +131,7 @@ const MoradorEntreAmigosDetalhe = () => {
   const [expRecibo, setExpRecibo] = useState<File | null>(null);
   const [expSaving, setExpSaving] = useState(false);
   const [expItemId, setExpItemId] = useState<string>("");
+  const [expPago, setExpPago] = useState(true);
 
   // Invite dialog
   const [inviteOpen, setInviteOpen] = useState(false);
@@ -415,7 +417,7 @@ const MoradorEntreAmigosDetalhe = () => {
     }
 
     const { error } = await supabase.from("evento_despesas").insert({
-      evento_id: id!, pagador_id: user.id, valor, descricao: expDescricao.trim(), recibo_url: reciboUrl,
+      evento_id: id!, pagador_id: user.id, valor, descricao: expDescricao.trim(), recibo_url: reciboUrl, pago: expPago,
     } as any);
     if (error) toast.error("Erro ao registrar despesa");
     else {
@@ -423,7 +425,7 @@ const MoradorEntreAmigosDetalhe = () => {
       if (expItemId) {
         await supabase.from("evento_itens").update({ valor_estimado: valor } as any).eq("id", expItemId);
       }
-      toast.success("Despesa registrada!"); setExpValor(""); setExpDescricao(""); setExpRecibo(null); setExpItemId(""); setExpenseOpen(false); fetchAll();
+      toast.success("Despesa registrada!"); setExpValor(""); setExpDescricao(""); setExpRecibo(null); setExpItemId(""); setExpPago(true); setExpenseOpen(false); fetchAll();
     }
     setExpSaving(false);
   };
@@ -431,6 +433,12 @@ const MoradorEntreAmigosDetalhe = () => {
   const handleDeleteExpense = async (expId: string) => {
     const { error } = await supabase.from("evento_despesas").delete().eq("id", expId);
     if (error) toast.error("Erro ao excluir"); else { toast.success("Despesa excluída"); fetchAll(); }
+  };
+
+  const handleTogglePago = async (expId: string, currentPago: boolean) => {
+    const { error } = await supabase.from("evento_despesas").update({ pago: !currentPago } as any).eq("id", expId);
+    if (error) toast.error("Erro ao atualizar");
+    else { toast.success(!currentPago ? "Marcado como pago ✅" : "Marcado como pendente ⏳"); fetchAll(); }
   };
 
   const handleCloseEvent = async () => {
@@ -1058,6 +1066,18 @@ const MoradorEntreAmigosDetalhe = () => {
                       <label className="text-sm text-muted-foreground flex items-center gap-1"><Camera size={14} /> Foto do recibo (opcional)</label>
                       <Input type="file" accept="image/*" capture="environment" onChange={(e) => setExpRecibo(e.target.files?.[0] || null)} />
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => setExpPago(!expPago)}
+                      className="flex items-center gap-2 p-2 rounded-xl text-sm transition-colors"
+                      style={{
+                        background: expPago ? "hsl(var(--success, 142 71% 45%) / 0.1)" : "hsl(var(--warning, 38 92% 50%) / 0.1)",
+                        color: expPago ? "hsl(var(--success, 142 71% 45%))" : "hsl(var(--warning, 38 92% 50%))",
+                      }}
+                    >
+                      {expPago ? <CheckCircle2 size={16} /> : <Clock size={16} />}
+                      <span className="font-medium">{expPago ? "Já pago ✅" : "Combinado, ainda não pago ⏳"}</span>
+                    </button>
                   </div>
                   <DialogFooter>
                     <DialogClose asChild><Button variant="outline">Cancelar</Button></DialogClose>
@@ -1070,20 +1090,43 @@ const MoradorEntreAmigosDetalhe = () => {
               <EmptyState icon="🧾" text="Nenhuma despesa registrada ainda" />
             ) : (
               despesas.map((d, idx) => (
-                <Card key={d.id} className="border-none shadow-sm animate-fade-in" style={{ animationDelay: `${0.05 * idx}s` }}>
-                  <CardContent className="p-3">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start gap-3 flex-1">
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm" style={{ background: "hsl(var(--primary) / 0.1)" }}>🛒</div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-foreground truncate">{d.descricao}</p>
-                          <p className="text-[10px] text-muted-foreground">{d.pagador_id === user?.id ? "Você" : d.pagador_nome} • {new Date(d.created_at).toLocaleDateString("pt-BR")}</p>
+                <Card key={d.id} className="border-none shadow-sm overflow-hidden animate-fade-in" style={{ animationDelay: `${0.05 * idx}s` }}>
+                  <CardContent className="p-0">
+                    <div className="h-1 w-full" style={{ background: d.pago ? "hsl(var(--success, 142 71% 45%))" : "hsl(var(--warning, 38 92% 50%))" }} />
+                    <div className="p-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start gap-3 flex-1">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm" style={{ background: d.pago ? "hsl(var(--success, 142 71% 45%) / 0.1)" : "hsl(var(--warning, 38 92% 50%) / 0.1)" }}>
+                            {d.pago ? "✅" : "⏳"}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-foreground truncate">{d.descricao}</p>
+                            <p className="text-[10px] text-muted-foreground">{d.pagador_id === user?.id ? "Você" : d.pagador_nome} • {new Date(d.created_at).toLocaleDateString("pt-BR")}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <p className="text-sm font-bold" style={{ color: d.pago ? "hsl(var(--success, 142 71% 45%))" : "hsl(var(--warning, 38 92% 50%))" }}>R$ {formatBRL(d.valor)}</p>
+                          {d.recibo_url && <a href={d.recibo_url} target="_blank" rel="noopener noreferrer"><Image size={16} className="text-muted-foreground" /></a>}
+                          {d.pagador_id === user?.id && <button onClick={() => handleDeleteExpense(d.id)}><Trash2 size={14} className="text-destructive" /></button>}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <p className="text-sm font-bold text-primary">R$ {formatBRL(d.valor)}</p>
-                        {d.recibo_url && <a href={d.recibo_url} target="_blank" rel="noopener noreferrer"><Image size={16} className="text-muted-foreground" /></a>}
-                        {d.pagador_id === user?.id && <button onClick={() => handleDeleteExpense(d.id)}><Trash2 size={14} className="text-destructive" /></button>}
+                      {/* Paid/unpaid toggle */}
+                      <div className="mt-2 flex items-center justify-between">
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{
+                          background: d.pago ? "hsl(var(--success, 142 71% 45%) / 0.12)" : "hsl(var(--warning, 38 92% 50%) / 0.12)",
+                          color: d.pago ? "hsl(var(--success, 142 71% 45%))" : "hsl(var(--warning, 38 92% 50%))",
+                        }}>
+                          {d.pago ? "Pago" : "Combinado · Não pago"}
+                        </span>
+                        {isParticipant && (
+                          <button
+                            onClick={() => handleTogglePago(d.id, d.pago)}
+                            className="text-[10px] font-medium underline"
+                            style={{ color: d.pago ? "hsl(var(--warning, 38 92% 50%))" : "hsl(var(--success, 142 71% 45%))" }}
+                          >
+                            {d.pago ? "Marcar como pendente" : "Marcar como pago"}
+                          </button>
+                        )}
                       </div>
                     </div>
                   </CardContent>
