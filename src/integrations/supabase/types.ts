@@ -1198,6 +1198,10 @@ export type Database = {
         Args: { _condominio_id: string; _user_id: string }
         Returns: boolean
       }
+      is_evento_member: {
+        Args: { _evento_id: string; _user_id: string }
+        Returns: boolean
+      }
       is_platform_admin: { Args: { p_user_id: string }; Returns: boolean }
     }
     Enums: {
