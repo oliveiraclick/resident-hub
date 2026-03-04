@@ -266,6 +266,7 @@ const PrestadorHome = () => {
                 {[
                   { label: "Gerenciar Serviços", icon: Wrench, path: "/prestador/servicos" },
                   { label: "Gerenciar Produtos", icon: ShoppingBag, path: "/prestador/produtos" },
+                  { label: "📋 Cotações", icon: Star, path: "/prestador/cotacoes" },
                   { label: "Financeiro", icon: DollarSign, path: "/prestador/financeiro" },
                   { label: "Condomínios", icon: Building2, path: "/prestador/condominios" },
                   { label: "Indicações", icon: Gift, path: "/prestador/indicacoes" },

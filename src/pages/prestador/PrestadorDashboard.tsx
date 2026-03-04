@@ -7,6 +7,7 @@ import PrestadorFinanceiro from "./PrestadorFinanceiro";
 import PrestadorCondominios from "./PrestadorCondominios";
 import PrestadorIndicacoes from "./PrestadorIndicacoes";
 import PrestadorBanners from "./PrestadorBanners";
+import PrestadorCotacoes from "./PrestadorCotacoes";
 
 const PrestadorDashboard = () => {
   return (
@@ -19,6 +20,7 @@ const PrestadorDashboard = () => {
       <Route path="condominios" element={<PrestadorCondominios />} />
       <Route path="indicacoes" element={<PrestadorIndicacoes />} />
       <Route path="banners" element={<PrestadorBanners />} />
+      <Route path="cotacoes" element={<PrestadorCotacoes />} />
     </Routes>
   );
 };
