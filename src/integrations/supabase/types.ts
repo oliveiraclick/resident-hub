@@ -503,6 +503,117 @@ export type Database = {
           },
         ]
       }
+      evento_cotacao_respostas: {
+        Row: {
+          cotacao_id: string
+          created_at: string
+          disponivel: boolean
+          id: string
+          mensagem: string | null
+          prestador_id: string
+          status: string
+          valor: number
+        }
+        Insert: {
+          cotacao_id: string
+          created_at?: string
+          disponivel?: boolean
+          id?: string
+          mensagem?: string | null
+          prestador_id: string
+          status?: string
+          valor: number
+        }
+        Update: {
+          cotacao_id?: string
+          created_at?: string
+          disponivel?: boolean
+          id?: string
+          mensagem?: string | null
+          prestador_id?: string
+          status?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evento_cotacao_respostas_cotacao_id_fkey"
+            columns: ["cotacao_id"]
+            isOneToOne: false
+            referencedRelation: "evento_cotacoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evento_cotacao_respostas_prestador_id_fkey"
+            columns: ["prestador_id"]
+            isOneToOne: false
+            referencedRelation: "prestadores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      evento_cotacoes: {
+        Row: {
+          categoria: string
+          condominio_id: string
+          created_at: string
+          criador_id: string
+          data_evento: string
+          evento_id: string
+          horario_fim: string
+          horario_inicio: string
+          id: string
+          observacoes: string | null
+          qtd_pessoas: number
+          status: string
+          tipo_servico: string
+        }
+        Insert: {
+          categoria: string
+          condominio_id: string
+          created_at?: string
+          criador_id: string
+          data_evento: string
+          evento_id: string
+          horario_fim: string
+          horario_inicio: string
+          id?: string
+          observacoes?: string | null
+          qtd_pessoas?: number
+          status?: string
+          tipo_servico?: string
+        }
+        Update: {
+          categoria?: string
+          condominio_id?: string
+          created_at?: string
+          criador_id?: string
+          data_evento?: string
+          evento_id?: string
+          horario_fim?: string
+          horario_inicio?: string
+          id?: string
+          observacoes?: string | null
+          qtd_pessoas?: number
+          status?: string
+          tipo_servico?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evento_cotacoes_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evento_cotacoes_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventos_amigos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       evento_despesas: {
         Row: {
           created_at: string

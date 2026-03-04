@@ -10,8 +10,10 @@ import { toast } from "sonner";
 import { formatBRL } from "@/lib/utils";
 import {
   Plus, UserPlus, Trash2, Camera, Receipt, Users, CheckCircle2, XCircle, Clock,
-  Image, PartyPopper, Sparkles, TrendingUp, TrendingDown, Minus, Copy, Send, Ban,
+  Image, PartyPopper, Sparkles, TrendingUp, TrendingDown, Minus, Copy, Send, Ban, Search,
 } from "lucide-react";
+import CotacaoDialog from "@/components/CotacaoDialog";
+import CotacaoRespostasView from "@/components/CotacaoRespostasView";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose,
 } from "@/components/ui/dialog";
@@ -137,6 +139,10 @@ const MoradorEntreAmigosDetalhe = () => {
   const [payFile, setPayFile] = useState<File | null>(null);
   const [paySaving, setPaySaving] = useState(false);
   const [payTarget, setPayTarget] = useState<{ userId: string; valor: number } | null>(null);
+
+  // Cotação dialog
+  const [cotacaoOpen, setCotacaoOpen] = useState(false);
+  const [cotacaoCategoria, setCotacaoCategoria] = useState("");
 
   const condominioId = roles.find((r) => r.role === "morador")?.condominio_id;
   const isCreator = evento?.criador_id === user?.id;
@@ -575,6 +581,52 @@ const MoradorEntreAmigosDetalhe = () => {
                   </p>
                 </div>
               </div>
+            )}
+
+            {/* ═══ COTAÇÃO SECTION ═══ */}
+            {isParticipant && evento.status === "ativo" && (
+              <div className="space-y-3 mt-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide ml-1">📢 Cotações</p>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Categoria (ex: Churrasqueiro)"
+                      value={cotacaoCategoria}
+                      onChange={(e) => setCotacaoCategoria(e.target.value)}
+                      className="h-8 text-xs w-40"
+                      maxLength={50}
+                    />
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-8 text-xs gap-1"
+                      disabled={cotacaoCategoria.trim().length < 2}
+                      onClick={() => setCotacaoOpen(true)}
+                    >
+                      <Search size={12} /> Cotar
+                    </Button>
+                  </div>
+                </div>
+                <CotacaoRespostasView
+                  eventoId={id!}
+                  userId={user!.id}
+                  isCreator={isCreator}
+                  onPrestadorSelected={() => fetchAll()}
+                />
+              </div>
+            )}
+
+            {/* Cotação dialog */}
+            {evento && user && condominioId && (
+              <CotacaoDialog
+                open={cotacaoOpen}
+                onOpenChange={setCotacaoOpen}
+                eventoId={id!}
+                condominioId={condominioId}
+                userId={user.id}
+                categoria={cotacaoCategoria}
+                onSuccess={() => { setCotacaoCategoria(""); }}
+              />
             )}
           </TabsContent>
 
