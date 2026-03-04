@@ -236,7 +236,6 @@ const MoradorEntreAmigosDetalhe = () => {
       .from("prestadores")
       .select("id, especialidade, user_id")
       .eq("condominio_id", condominioId)
-      .eq("visivel", true)
       .ilike("especialidade", `%${term.trim()}%`)
       .limit(5);
 
