@@ -225,30 +225,47 @@ const MoradorEntreAmigosDetalhe = () => {
     setLoading(false);
   };
 
-  // ── Item provider search ────────────────────────────
+  // ── Item provider search (AI-powered semantic matching) ──
   const searchItemPrestadores = async (term: string) => {
     if (!condominioId || term.trim().length < 2) {
       setItemPrestadores([]);
       return;
     }
     setItemSearching(true);
-    const { data: presData } = await supabase.rpc("search_prestadores_by_especialidade" as any, {
-      _condominio_id: condominioId,
-      _term: term.trim(),
-    });
+    try {
+      // First try AI semantic match via edge function
+      const { data: fnData, error: fnError } = await supabase.functions.invoke("match-categorias", {
+        body: { termo: term.trim(), condominio_id: condominioId },
+      });
 
-    if (presData && presData.length > 0) {
-      const uids = presData.map((p: any) => p.user_id);
-      const { data: profiles } = await supabase.rpc("get_prestador_profiles", { _user_ids: uids });
-      const pMap = new Map((profiles || []).map((p: any) => [p.user_id, p]));
-      setItemPrestadores(presData.map((p: any) => ({
-        id: p.id,
-        especialidade: p.especialidade,
-        user_id: p.user_id,
-        nome: pMap.get(p.user_id)?.nome || "Prestador",
-        avatar_url: pMap.get(p.user_id)?.avatar_url || null,
-      })));
-    } else {
+      if (!fnError && fnData?.prestadores?.length > 0) {
+        setItemPrestadores(fnData.prestadores);
+        setItemSearching(false);
+        return;
+      }
+
+      // Fallback: direct text search (unaccent)
+      const { data: presData } = await supabase.rpc("search_prestadores_by_especialidade" as any, {
+        _condominio_id: condominioId,
+        _term: term.trim(),
+      });
+
+      if (presData && (presData as any[]).length > 0) {
+        const uids = (presData as any[]).map((p: any) => p.user_id);
+        const { data: profiles } = await supabase.rpc("get_prestador_profiles", { _user_ids: uids });
+        const pMap = new Map((profiles || []).map((p: any) => [p.user_id, p]));
+        setItemPrestadores((presData as any[]).map((p: any) => ({
+          id: p.id,
+          especialidade: p.especialidade,
+          user_id: p.user_id,
+          nome: pMap.get(p.user_id)?.nome || "Prestador",
+          avatar_url: pMap.get(p.user_id)?.avatar_url || null,
+        })));
+      } else {
+        setItemPrestadores([]);
+      }
+    } catch (err) {
+      console.error("Search error:", err);
       setItemPrestadores([]);
     }
     setItemSearching(false);
@@ -257,7 +274,7 @@ const MoradorEntreAmigosDetalhe = () => {
   const handleItemNomeChange = (val: string) => {
     setItemNome(val);
     if (itemSearchTimer.current) clearTimeout(itemSearchTimer.current);
-    itemSearchTimer.current = setTimeout(() => searchItemPrestadores(val), 400);
+    itemSearchTimer.current = setTimeout(() => searchItemPrestadores(val), 600);
   };
 
   // ── Item handlers ──────────────────────────────────
