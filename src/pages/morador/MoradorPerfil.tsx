@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { LogOut, Save, Trash2, AlertTriangle } from "lucide-react";
+import { LogOut, Save, Trash2, AlertTriangle, Users } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import QrDisplay from "@/components/QrDisplay";
 import { APP_VERSION_LABEL } from "@/lib/appVersion";
 import {
@@ -16,6 +17,7 @@ import {
 
 const MoradorPerfil = () => {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
@@ -140,6 +142,16 @@ const MoradorPerfil = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Entre Amigos */}
+        <Button
+          variant="outline"
+          onClick={() => navigate("/morador/entre-amigos")}
+          className="w-full"
+        >
+          <Users size={16} />
+          Entre Amigos
+        </Button>
 
         {/* Logout */}
         <Button variant="outline" onClick={handleLogout} className="text-destructive border-destructive hover:bg-destructive/5">
