@@ -232,12 +232,10 @@ const MoradorEntreAmigosDetalhe = () => {
       return;
     }
     setItemSearching(true);
-    const { data: presData } = await supabase
-      .from("prestadores")
-      .select("id, especialidade, user_id")
-      .eq("condominio_id", condominioId)
-      .ilike("especialidade", `%${term.trim()}%`)
-      .limit(5);
+    const { data: presData } = await supabase.rpc("search_prestadores_by_especialidade" as any, {
+      _condominio_id: condominioId,
+      _term: term.trim(),
+    });
 
     if (presData && presData.length > 0) {
       const uids = presData.map((p: any) => p.user_id);
