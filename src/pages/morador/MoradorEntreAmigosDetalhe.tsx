@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
   Plus, UserPlus, Trash2, Camera, Receipt, Users, CheckCircle2, XCircle, Clock,
-  ArrowUpRight, ArrowDownLeft, Image,
+  ArrowUpRight, ArrowDownLeft, Image, PartyPopper, Sparkles, TrendingUp, TrendingDown, Minus,
 } from "lucide-react";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose,
@@ -71,14 +71,12 @@ const MoradorEntreAmigosDetalhe = () => {
   const [despesas, setDespesas] = useState<Despesa[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Add expense dialog
   const [expenseOpen, setExpenseOpen] = useState(false);
   const [expValor, setExpValor] = useState("");
   const [expDescricao, setExpDescricao] = useState("");
   const [expRecibo, setExpRecibo] = useState<File | null>(null);
   const [expSaving, setExpSaving] = useState(false);
 
-  // Invite dialog
   const [inviteOpen, setInviteOpen] = useState(false);
   const [moradores, setMoradores] = useState<Morador[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -109,7 +107,6 @@ const MoradorEntreAmigosDetalhe = () => {
     }
     setEvento(ev as any);
 
-    // Fetch participants and expenses in parallel
     const [partRes, despRes] = await Promise.all([
       supabase.from("evento_participantes").select("*").eq("evento_id", id!),
       supabase.from("evento_despesas").select("*").eq("evento_id", id!).order("created_at", { ascending: false }),
@@ -118,7 +115,6 @@ const MoradorEntreAmigosDetalhe = () => {
     const parts = partRes.data || [];
     const desps = despRes.data || [];
 
-    // Get all user_ids for profile lookup
     const allUserIds = [
       ev.criador_id,
       ...parts.map((p: any) => p.user_id),
@@ -149,7 +145,6 @@ const MoradorEntreAmigosDetalhe = () => {
     setLoading(false);
   };
 
-  // Calculate balances
   const saldos = useMemo(() => {
     if (!evento) return [];
     const aceitos = participantes.filter((p) => p.status === "aceito");
@@ -178,7 +173,6 @@ const MoradorEntreAmigosDetalhe = () => {
   const totalGasto = despesas.reduce((s, d) => s + Number(d.valor), 0);
   const numPessoas = saldos.length;
 
-  // Invite moradores
   const openInvite = async () => {
     if (!condominioId) return;
     setInviteOpen(true);
@@ -204,7 +198,6 @@ const MoradorEntreAmigosDetalhe = () => {
     setInviting(null);
   };
 
-  // Accept/decline invite
   const handleRespond = async (status: "aceito" | "recusado") => {
     if (!myParticipation) return;
     const { error } = await supabase
@@ -218,7 +211,6 @@ const MoradorEntreAmigosDetalhe = () => {
     }
   };
 
-  // Add expense
   const handleAddExpense = async () => {
     if (!user) return;
     const valor = parseFloat(expValor.replace(",", "."));
@@ -292,7 +284,10 @@ const MoradorEntreAmigosDetalhe = () => {
   if (loading) {
     return (
       <MoradorLayout title="Entre Amigos" showBack>
-        <p className="text-sm text-muted-foreground text-center py-8">Carregando...</p>
+        <div className="flex flex-col items-center gap-3 py-16">
+          <div className="w-10 h-10 rounded-full border-4 border-primary/30 border-t-primary animate-spin" />
+          <p className="text-sm text-muted-foreground">Carregando evento...</p>
+        </div>
       </MoradorLayout>
     );
   }
@@ -311,114 +306,161 @@ const MoradorEntreAmigosDetalhe = () => {
       <div className="flex flex-col gap-4 max-w-md mx-auto pb-6">
         {/* Pending invite banner */}
         {myParticipation?.status === "pendente" && (
-          <Card className="border-primary">
-            <CardContent className="p-4 flex flex-col gap-3">
-              <p className="text-sm font-semibold text-foreground">Você foi convidado!</p>
-              <div className="flex gap-2">
-                <Button size="sm" onClick={() => handleRespond("aceito")} className="flex-1">
-                  <CheckCircle2 size={14} /> Aceitar
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => handleRespond("recusado")} className="flex-1">
-                  <XCircle size={14} /> Recusar
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <div
+            className="rounded-[var(--radius-card)] p-4 animate-fade-in"
+            style={{
+              background: "linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--primary) / 0.05))",
+              border: "2px solid hsl(var(--primary) / 0.3)",
+            }}
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <PartyPopper size={18} className="text-primary" />
+              <p className="text-sm font-bold text-foreground">Você foi convidado! 🎉</p>
+            </div>
+            <div className="flex gap-2">
+              <Button size="sm" onClick={() => handleRespond("aceito")} className="flex-1">
+                <CheckCircle2 size={14} /> Aceitar
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => handleRespond("recusado")} className="flex-1">
+                <XCircle size={14} /> Recusar
+              </Button>
+            </div>
+          </div>
         )}
 
-        {/* Summary */}
-        <div className="grid grid-cols-3 gap-2">
-          <Card>
-            <CardContent className="p-3 text-center">
-              <p className="text-lg font-bold text-primary">
-                R$ {totalGasto.toFixed(2).replace(".", ",")}
-              </p>
-              <p className="text-[10px] text-muted-foreground">Total gasto</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-3 text-center">
-              <p className="text-lg font-bold text-foreground">{numPessoas}</p>
-              <p className="text-[10px] text-muted-foreground">Pessoas</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-3 text-center">
-              <p className="text-lg font-bold text-foreground">
-                R$ {numPessoas > 0 ? (totalGasto / numPessoas).toFixed(2).replace(".", ",") : "0,00"}
-              </p>
-              <p className="text-[10px] text-muted-foreground">Por pessoa</p>
-            </CardContent>
-          </Card>
+        {/* Summary cards */}
+        <div className="grid grid-cols-3 gap-2 animate-fade-in">
+          <div
+            className="rounded-2xl p-3 text-center"
+            style={{
+              background: "linear-gradient(135deg, hsl(var(--header-bg)), hsl(var(--primary) / 0.8))",
+            }}
+          >
+            <p className="text-lg font-bold text-primary-foreground">
+              R$ {totalGasto.toFixed(2).replace(".", ",")}
+            </p>
+            <p className="text-[10px] text-primary-foreground/60 font-medium">Total gasto</p>
+          </div>
+          <div className="rounded-2xl p-3 text-center bg-card shadow-sm border border-border">
+            <p className="text-lg font-bold text-foreground flex items-center justify-center gap-1">
+              <Users size={16} className="text-primary" /> {numPessoas}
+            </p>
+            <p className="text-[10px] text-muted-foreground font-medium">Pessoas</p>
+          </div>
+          <div className="rounded-2xl p-3 text-center bg-card shadow-sm border border-border">
+            <p className="text-lg font-bold text-primary">
+              R$ {numPessoas > 0 ? (totalGasto / numPessoas).toFixed(2).replace(".", ",") : "0,00"}
+            </p>
+            <p className="text-[10px] text-muted-foreground font-medium">Por pessoa</p>
+          </div>
         </div>
 
-        <Tabs defaultValue="saldos" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="saldos">Saldos</TabsTrigger>
-            <TabsTrigger value="despesas">Despesas</TabsTrigger>
-            <TabsTrigger value="pessoas">Pessoas</TabsTrigger>
+        <Tabs defaultValue="saldos" className="w-full animate-fade-in" style={{ animationDelay: "0.1s" }}>
+          <TabsList className="grid w-full grid-cols-3 h-12 rounded-2xl bg-muted p-1">
+            <TabsTrigger value="saldos" className="rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm text-xs font-semibold">
+              💰 Saldos
+            </TabsTrigger>
+            <TabsTrigger value="despesas" className="rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm text-xs font-semibold">
+              🧾 Despesas
+            </TabsTrigger>
+            <TabsTrigger value="pessoas" className="rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm text-xs font-semibold">
+              👥 Pessoas
+            </TabsTrigger>
           </TabsList>
 
           {/* Saldos tab */}
-          <TabsContent value="saldos" className="flex flex-col gap-2 mt-2">
+          <TabsContent value="saldos" className="flex flex-col gap-2 mt-3">
             {saldos.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-4">Nenhum participante ainda</p>
+              <EmptyState icon="💰" text="Convide pessoas para ver os saldos" />
             ) : (
-              saldos.map((s) => (
-                <Card key={s.user_id}>
-                  <CardContent className="p-3 flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-foreground">{s.nome}</p>
-                      <p className="text-[10px] text-muted-foreground">
-                        Pagou R$ {s.pagou.toFixed(2).replace(".", ",")}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <div className="flex items-center gap-1">
-                        {s.saldo > 0.01 ? (
-                          <ArrowDownLeft size={14} className="text-green-600" />
-                        ) : s.saldo < -0.01 ? (
-                          <ArrowUpRight size={14} className="text-red-500" />
-                        ) : null}
+              saldos.map((s, idx) => {
+                const isPositive = s.saldo > 0.01;
+                const isNegative = s.saldo < -0.01;
+                return (
+                  <Card
+                    key={s.user_id}
+                    className="border-none shadow-sm overflow-hidden animate-fade-in"
+                    style={{ animationDelay: `${0.05 * idx}s` }}
+                  >
+                    <CardContent className="p-0">
+                      <div
+                        className="h-1 w-full"
+                        style={{
+                          background: isPositive
+                            ? "hsl(var(--success))"
+                            : isNegative
+                            ? "hsl(var(--destructive))"
+                            : "hsl(var(--muted))",
+                        }}
+                      />
+                      <div className="p-3 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="flex h-9 w-9 items-center justify-center rounded-xl text-sm font-bold"
+                            style={{
+                              background: isPositive
+                                ? "hsl(var(--success) / 0.1)"
+                                : isNegative
+                                ? "hsl(var(--destructive) / 0.1)"
+                                : "hsl(var(--muted))",
+                              color: isPositive
+                                ? "hsl(var(--success))"
+                                : isNegative
+                                ? "hsl(var(--destructive))"
+                                : "hsl(var(--muted-foreground))",
+                            }}
+                          >
+                            {isPositive ? <TrendingUp size={16} /> : isNegative ? <TrendingDown size={16} /> : <Minus size={16} />}
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-foreground">{s.nome}</p>
+                            <p className="text-[10px] text-muted-foreground">
+                              Pagou R$ {s.pagou.toFixed(2).replace(".", ",")}
+                            </p>
+                          </div>
+                        </div>
                         <p
-                          className={`text-sm font-bold ${
-                            s.saldo > 0.01
-                              ? "text-green-600"
-                              : s.saldo < -0.01
-                              ? "text-red-500"
-                              : "text-muted-foreground"
-                          }`}
+                          className="text-sm font-bold"
+                          style={{
+                            color: isPositive
+                              ? "hsl(var(--success))"
+                              : isNegative
+                              ? "hsl(var(--destructive))"
+                              : "hsl(var(--muted-foreground))",
+                          }}
                         >
-                          {s.saldo > 0.01
-                            ? `Recebe R$ ${s.saldo.toFixed(2).replace(".", ",")}`
-                            : s.saldo < -0.01
-                            ? `Deve R$ ${Math.abs(s.saldo).toFixed(2).replace(".", ",")}`
-                            : "Zerado"}
+                          {isPositive
+                            ? `+R$ ${s.saldo.toFixed(2).replace(".", ",")}`
+                            : isNegative
+                            ? `-R$ ${Math.abs(s.saldo).toFixed(2).replace(".", ",")}`
+                            : "Zerado ✅"}
                         </p>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
+                    </CardContent>
+                  </Card>
+                );
+              })
             )}
           </TabsContent>
 
           {/* Despesas tab */}
-          <TabsContent value="despesas" className="flex flex-col gap-2 mt-2">
+          <TabsContent value="despesas" className="flex flex-col gap-2 mt-3">
             {isParticipant && evento.status === "ativo" && (
               <Dialog open={expenseOpen} onOpenChange={setExpenseOpen}>
                 <DialogTrigger asChild>
-                  <Button size="sm" className="w-full">
-                    <Plus size={14} /> Adicionar despesa
+                  <Button size="sm" className="w-full gap-2">
+                    <Receipt size={14} /> Registrar despesa
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Nova despesa</DialogTitle>
+                    <DialogTitle className="flex items-center gap-2">
+                      <Sparkles size={16} className="text-primary" /> Nova despesa
+                    </DialogTitle>
                   </DialogHeader>
                   <div className="flex flex-col gap-3">
                     <Input
-                      placeholder="Descrição (ex: Carne)"
+                      placeholder="O que comprou? (ex: Carne, Bebidas)"
                       value={expDescricao}
                       onChange={(e) => setExpDescricao(e.target.value)}
                       maxLength={200}
@@ -446,7 +488,7 @@ const MoradorEntreAmigosDetalhe = () => {
                       <Button variant="outline">Cancelar</Button>
                     </DialogClose>
                     <Button onClick={handleAddExpense} disabled={expSaving}>
-                      {expSaving ? "Salvando..." : "Registrar"}
+                      {expSaving ? "Salvando..." : "Registrar 💸"}
                     </Button>
                   </DialogFooter>
                 </DialogContent>
@@ -454,30 +496,41 @@ const MoradorEntreAmigosDetalhe = () => {
             )}
 
             {despesas.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-4">Nenhuma despesa registrada</p>
+              <EmptyState icon="🧾" text="Nenhuma despesa registrada ainda" />
             ) : (
-              despesas.map((d) => (
-                <Card key={d.id}>
+              despesas.map((d, idx) => (
+                <Card
+                  key={d.id}
+                  className="border-none shadow-sm animate-fade-in"
+                  style={{ animationDelay: `${0.05 * idx}s` }}
+                >
                   <CardContent className="p-3">
                     <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-foreground">{d.descricao}</p>
-                        <p className="text-[10px] text-muted-foreground">
-                          {d.pagador_nome} •{" "}
-                          {new Date(d.created_at).toLocaleDateString("pt-BR")}
-                        </p>
+                      <div className="flex items-start gap-3 flex-1">
+                        <div
+                          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm"
+                          style={{ background: "hsl(var(--primary) / 0.1)" }}
+                        >
+                          🛒
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-foreground truncate">{d.descricao}</p>
+                          <p className="text-[10px] text-muted-foreground">
+                            {d.pagador_id === user?.id ? "Você" : d.pagador_nome} • {new Date(d.created_at).toLocaleDateString("pt-BR")}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 shrink-0">
                         <p className="text-sm font-bold text-primary">
                           R$ {Number(d.valor).toFixed(2).replace(".", ",")}
                         </p>
                         {d.recibo_url && (
-                          <a href={d.recibo_url} target="_blank" rel="noopener noreferrer">
+                          <a href={d.recibo_url} target="_blank" rel="noopener noreferrer" className="hover:opacity-70 transition-opacity">
                             <Image size={16} className="text-muted-foreground" />
                           </a>
                         )}
                         {d.pagador_id === user?.id && (
-                          <button onClick={() => handleDeleteExpense(d.id)}>
+                          <button onClick={() => handleDeleteExpense(d.id)} className="hover:opacity-70 transition-opacity">
                             <Trash2 size={14} className="text-destructive" />
                           </button>
                         )}
@@ -490,17 +543,19 @@ const MoradorEntreAmigosDetalhe = () => {
           </TabsContent>
 
           {/* Pessoas tab */}
-          <TabsContent value="pessoas" className="flex flex-col gap-2 mt-2">
+          <TabsContent value="pessoas" className="flex flex-col gap-2 mt-3">
             {isCreator && evento.status === "ativo" && (
               <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
                 <DialogTrigger asChild>
-                  <Button size="sm" className="w-full" onClick={openInvite}>
-                    <UserPlus size={14} /> Convidar morador
+                  <Button size="sm" className="w-full gap-2" onClick={openInvite}>
+                    <UserPlus size={14} /> Convidar vizinhos
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Convidar moradores</DialogTitle>
+                    <DialogTitle className="flex items-center gap-2">
+                      <UserPlus size={16} className="text-primary" /> Convidar moradores
+                    </DialogTitle>
                   </DialogHeader>
                   <Input
                     placeholder="Buscar por nome..."
@@ -514,16 +569,18 @@ const MoradorEntreAmigosDetalhe = () => {
                       </p>
                     ) : (
                       filteredMoradores.map((m) => (
-                        <div key={m.user_id} className="flex items-center justify-between p-2 rounded-lg border">
-                          <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                        <div key={m.user_id} className="flex items-center justify-between p-2.5 rounded-xl border border-border">
+                          <div className="flex items-center gap-2.5">
+                            <div
+                              className="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold text-primary"
+                              style={{ background: "hsl(var(--primary) / 0.1)" }}
+                            >
                               {m.nome?.charAt(0)?.toUpperCase() || "?"}
                             </div>
-                            <p className="text-sm">{m.nome}</p>
+                            <p className="text-sm font-medium">{m.nome}</p>
                           </div>
                           <Button
                             size="sm"
-                            variant="outline"
                             disabled={inviting === m.user_id}
                             onClick={() => handleInvite(m.user_id)}
                           >
@@ -538,46 +595,54 @@ const MoradorEntreAmigosDetalhe = () => {
             )}
 
             {/* Creator */}
-            <Card>
-              <CardContent className="p-3 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                  👑
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-foreground">
-                    {evento.criador_id === user?.id ? "Você" : "Criador"}
-                  </p>
-                  <p className="text-[10px] text-muted-foreground">Organizador</p>
+            <Card className="border-none shadow-sm overflow-hidden">
+              <CardContent className="p-0">
+                <div
+                  className="h-1 w-full"
+                  style={{ background: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary-light)))" }}
+                />
+                <div className="p-3 flex items-center gap-3">
+                  <div
+                    className="w-9 h-9 rounded-xl flex items-center justify-center text-lg"
+                    style={{ background: "hsl(var(--primary) / 0.1)" }}
+                  >
+                    👑
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">
+                      {evento.criador_id === user?.id ? "Você" : "Criador"}
+                    </p>
+                    <p className="text-[10px] text-primary font-medium">Organizador</p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Participants */}
-            {participantes.map((p) => {
-              const statusIcon =
-                p.status === "aceito" ? (
-                  <CheckCircle2 size={14} className="text-green-600" />
-                ) : p.status === "recusado" ? (
-                  <XCircle size={14} className="text-red-500" />
-                ) : (
-                  <Clock size={14} className="text-amber-500" />
-                );
-              const statusLabel =
-                p.status === "aceito" ? "Aceito" : p.status === "recusado" ? "Recusou" : "Pendente";
+            {participantes.map((p, idx) => {
+              const statusConfig = {
+                aceito: { icon: <CheckCircle2 size={14} />, label: "Aceito", color: "hsl(var(--success))" },
+                recusado: { icon: <XCircle size={14} />, label: "Recusou", color: "hsl(var(--destructive))" },
+                pendente: { icon: <Clock size={14} />, label: "Pendente", color: "hsl(var(--warning))" },
+              }[p.status] || { icon: <Clock size={14} />, label: p.status, color: "hsl(var(--muted-foreground))" };
 
               return (
-                <Card key={p.id}>
+                <Card
+                  key={p.id}
+                  className="border-none shadow-sm animate-fade-in"
+                  style={{ animationDelay: `${0.05 * (idx + 1)}s` }}
+                >
                   <CardContent className="p-3 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-foreground">
+                      <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center text-xs font-bold text-foreground">
                         {p.nome?.charAt(0)?.toUpperCase() || "?"}
                       </div>
                       <p className="text-sm font-medium text-foreground">
                         {p.user_id === user?.id ? "Você" : p.nome}
                       </p>
                     </div>
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                      {statusIcon} {statusLabel}
+                    <div className="flex items-center gap-1.5 text-xs font-medium" style={{ color: statusConfig.color }}>
+                      {statusConfig.icon} {statusConfig.label}
                     </div>
                   </CardContent>
                 </Card>
@@ -590,7 +655,7 @@ const MoradorEntreAmigosDetalhe = () => {
         {isCreator && evento.status === "ativo" && (
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="outline" className="text-destructive border-destructive">
+              <Button variant="outline" className="text-destructive border-destructive mt-2">
                 Encerrar evento
               </Button>
             </AlertDialogTrigger>
@@ -598,8 +663,7 @@ const MoradorEntreAmigosDetalhe = () => {
               <AlertDialogHeader>
                 <AlertDialogTitle>Encerrar evento?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Após encerrar, ninguém poderá adicionar novas despesas. Os saldos finais serão
-                  calculados automaticamente.
+                  Após encerrar, ninguém poderá adicionar novas despesas. Os saldos finais ficam registrados.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -613,5 +677,17 @@ const MoradorEntreAmigosDetalhe = () => {
     </MoradorLayout>
   );
 };
+
+const EmptyState = ({ icon, text }: { icon: string; text: string }) => (
+  <div className="flex flex-col items-center gap-3 py-8">
+    <div
+      className="flex h-14 w-14 items-center justify-center rounded-2xl text-2xl"
+      style={{ background: "hsl(var(--primary) / 0.08)" }}
+    >
+      {icon}
+    </div>
+    <p className="text-sm text-muted-foreground">{text}</p>
+  </div>
+);
 
 export default MoradorEntreAmigosDetalhe;
