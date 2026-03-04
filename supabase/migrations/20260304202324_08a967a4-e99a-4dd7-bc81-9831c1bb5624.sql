@@ -1,0 +1,1 @@
+ALTER TABLE public.eventos_amigos ADD COLUMN prestador_id uuid REFERENCES public.prestadores(id) ON DELETE SET NULL DEFAULT NULL;
