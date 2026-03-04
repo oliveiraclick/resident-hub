@@ -656,6 +656,7 @@ export type Database = {
           criador_id: string
           descricao: string | null
           id: string
+          imagem_url: string | null
           pix_chave: string | null
           pix_tipo: string | null
           status: string
@@ -667,6 +668,7 @@ export type Database = {
           criador_id: string
           descricao?: string | null
           id?: string
+          imagem_url?: string | null
           pix_chave?: string | null
           pix_tipo?: string | null
           status?: string
@@ -678,6 +680,7 @@ export type Database = {
           criador_id?: string
           descricao?: string | null
           id?: string
+          imagem_url?: string | null
           pix_chave?: string | null
           pix_tipo?: string | null
           status?: string
