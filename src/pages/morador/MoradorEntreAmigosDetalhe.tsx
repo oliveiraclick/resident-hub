@@ -129,6 +129,7 @@ const MoradorEntreAmigosDetalhe = () => {
   const [expDescricao, setExpDescricao] = useState("");
   const [expRecibo, setExpRecibo] = useState<File | null>(null);
   const [expSaving, setExpSaving] = useState(false);
+  const [expItemId, setExpItemId] = useState<string>("");
 
   // Invite dialog
   const [inviteOpen, setInviteOpen] = useState(false);
@@ -358,6 +359,20 @@ const MoradorEntreAmigosDetalhe = () => {
   const numPessoas = saldos.length;
   const estimativaPorPessoa = numPessoas > 0 ? totalEstimado / numPessoas : 0;
 
+  // Map items that have a matching despesa (by description containing item name)
+  const itemDespesaMap = useMemo(() => {
+    const map = new Map<string, Despesa>();
+    for (const item of itens) {
+      const normalName = item.nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      const match = despesas.find((d) => {
+        const normalDesc = (d.descricao || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        return normalDesc.includes(normalName) || normalName.includes(normalDesc);
+      });
+      if (match) map.set(item.id, match);
+    }
+    return map;
+  }, [itens, despesas]);
+
   const getName = (uid: string) => (uid === user?.id ? "Você" : profileMap.get(uid)?.nome || "Morador");
 
   // ── Actions ──────────────────────────────────────────
@@ -403,7 +418,13 @@ const MoradorEntreAmigosDetalhe = () => {
       evento_id: id!, pagador_id: user.id, valor, descricao: expDescricao.trim(), recibo_url: reciboUrl,
     } as any);
     if (error) toast.error("Erro ao registrar despesa");
-    else { toast.success("Despesa registrada!"); setExpValor(""); setExpDescricao(""); setExpRecibo(null); setExpenseOpen(false); fetchAll(); }
+    else {
+      // Update linked item's valor_estimado to real value
+      if (expItemId) {
+        await supabase.from("evento_itens").update({ valor_estimado: valor } as any).eq("id", expItemId);
+      }
+      toast.success("Despesa registrada!"); setExpValor(""); setExpDescricao(""); setExpRecibo(null); setExpItemId(""); setExpenseOpen(false); fetchAll();
+    }
     setExpSaving(false);
   };
 
@@ -650,21 +671,26 @@ const MoradorEntreAmigosDetalhe = () => {
                   return (
                     <Card key={item.id} className="border-none shadow-sm overflow-hidden animate-fade-in" style={{ animationDelay: `${0.05 * idx}s` }}>
                       <CardContent className="p-0">
-                        <div className="h-1 w-full" style={{ background: "linear-gradient(90deg, hsl(var(--primary) / 0.6), hsl(var(--primary-light) / 0.4))" }} />
+                        <div className="h-1 w-full" style={{ background: itemDespesaMap.has(item.id) ? "hsl(var(--success, 142 71% 45%))" : "linear-gradient(90deg, hsl(var(--primary) / 0.6), hsl(var(--primary-light) / 0.4))" }} />
                         <div className="p-3 flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-lg" style={{ background: "hsl(var(--primary) / 0.1)" }}>
-                              {emoji}
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-lg" style={{ background: itemDespesaMap.has(item.id) ? "hsl(var(--success, 142 71% 45%) / 0.12)" : "hsl(var(--primary) / 0.1)" }}>
+                              {itemDespesaMap.has(item.id) ? <CheckCircle2 size={18} style={{ color: "hsl(var(--success, 142 71% 45%))" }} /> : emoji}
                             </div>
                             <div>
                               <p className="text-sm font-semibold text-foreground">{item.nome}</p>
                               <p className="text-[10px] text-muted-foreground">
-                                {item.responsavel_id ? getName(item.responsavel_id) : ""}
+                                {itemDespesaMap.has(item.id) ? "✅ Valor real confirmado" : (item.responsavel_id ? getName(item.responsavel_id) : "")}
                               </p>
                             </div>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
-                            <p className="text-sm font-bold text-primary">R$ {formatBRL(item.valor_estimado)}</p>
+                            <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{
+                              background: itemDespesaMap.has(item.id) ? "hsl(var(--success, 142 71% 45%) / 0.12)" : "hsl(var(--primary) / 0.1)",
+                              color: itemDespesaMap.has(item.id) ? "hsl(var(--success, 142 71% 45%))" : "hsl(var(--primary))",
+                            }}>
+                              R$ {formatBRL(item.valor_estimado)}
+                            </span>
                             {isParticipant && (
                               <button onClick={() => handleDeleteItem(item.id)}>
                                 <Trash2 size={14} className="text-destructive/60 hover:text-destructive" />
@@ -1004,6 +1030,28 @@ const MoradorEntreAmigosDetalhe = () => {
                 <DialogContent>
                   <DialogHeader><DialogTitle className="flex items-center gap-2"><Sparkles size={16} className="text-primary" /> Nova despesa</DialogTitle></DialogHeader>
                   <div className="flex flex-col gap-3">
+                    {/* Link to item */}
+                    {itens.length > 0 && (
+                      <Select value={expItemId} onValueChange={(val) => {
+                        setExpItemId(val === "none" ? "" : val);
+                        if (val !== "none") {
+                          const item = itens.find(i => i.id === val);
+                          if (item) setExpDescricao(item.nome);
+                        }
+                      }}>
+                        <SelectTrigger className="text-sm">
+                          <SelectValue placeholder="Vincular a um item (opcional)" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">Nenhum item</SelectItem>
+                          {itens.map((item) => (
+                            <SelectItem key={item.id} value={item.id}>
+                              {item.nome} — R$ {formatBRL(item.valor_estimado)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
                     <Input placeholder="O que comprou? (ex: Carne, Bebidas)" value={expDescricao} onChange={(e) => setExpDescricao(e.target.value)} maxLength={200} />
                     <Input placeholder="Valor (ex: 150,00)" value={expValor} onChange={(e) => setExpValor(e.target.value)} inputMode="decimal" />
                     <div className="flex flex-col gap-1">
