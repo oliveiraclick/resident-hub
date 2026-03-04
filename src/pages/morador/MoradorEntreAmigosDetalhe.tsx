@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import MoradorLayout from "@/components/MoradorLayout";
@@ -112,6 +112,14 @@ const MoradorEntreAmigosDetalhe = () => {
   const [itemValor, setItemValor] = useState("");
   const [itemSaving, setItemSaving] = useState(false);
 
+  // Provider search inside item dialog
+  const [itemPrestadores, setItemPrestadores] = useState<Array<{
+    id: string; especialidade: string; user_id: string;
+    nome: string; avatar_url: string | null;
+  }>>([]);
+  const [itemSearching, setItemSearching] = useState(false);
+  const itemSearchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // Cover image
   const [coverUploading, setCoverUploading] = useState(false);
 
@@ -217,6 +225,44 @@ const MoradorEntreAmigosDetalhe = () => {
     setLoading(false);
   };
 
+  // ── Item provider search ────────────────────────────
+  const searchItemPrestadores = async (term: string) => {
+    if (!condominioId || term.trim().length < 2) {
+      setItemPrestadores([]);
+      return;
+    }
+    setItemSearching(true);
+    const { data: presData } = await supabase
+      .from("prestadores")
+      .select("id, especialidade, user_id")
+      .eq("condominio_id", condominioId)
+      .eq("visivel", true)
+      .ilike("especialidade", `%${term.trim()}%`)
+      .limit(5);
+
+    if (presData && presData.length > 0) {
+      const uids = presData.map((p: any) => p.user_id);
+      const { data: profiles } = await supabase.rpc("get_prestador_profiles", { _user_ids: uids });
+      const pMap = new Map((profiles || []).map((p: any) => [p.user_id, p]));
+      setItemPrestadores(presData.map((p: any) => ({
+        id: p.id,
+        especialidade: p.especialidade,
+        user_id: p.user_id,
+        nome: pMap.get(p.user_id)?.nome || "Prestador",
+        avatar_url: pMap.get(p.user_id)?.avatar_url || null,
+      })));
+    } else {
+      setItemPrestadores([]);
+    }
+    setItemSearching(false);
+  };
+
+  const handleItemNomeChange = (val: string) => {
+    setItemNome(val);
+    if (itemSearchTimer.current) clearTimeout(itemSearchTimer.current);
+    itemSearchTimer.current = setTimeout(() => searchItemPrestadores(val), 400);
+  };
+
   // ── Item handlers ──────────────────────────────────
   const handleAddItem = async () => {
     if (!user) return;
@@ -230,7 +276,7 @@ const MoradorEntreAmigosDetalhe = () => {
       evento_id: id!, nome, valor_estimado: valor, responsavel_id: user.id,
     } as any);
     if (error) toast.error("Erro ao adicionar item");
-    else { toast.success("Item adicionado! 🎉"); setItemNome(""); setItemValor(""); setItemOpen(false); fetchAll(); }
+    else { toast.success("Item adicionado! 🎉"); setItemNome(""); setItemValor(""); setItemPrestadores([]); setItemOpen(false); fetchAll(); }
     setItemSaving(false);
   };
 
@@ -519,7 +565,54 @@ const MoradorEntreAmigosDetalhe = () => {
                     <DialogTitle className="flex items-center gap-2"><Sparkles size={16} className="text-primary" /> Novo item do evento</DialogTitle>
                   </DialogHeader>
                   <div className="flex flex-col gap-3">
-                    <Input placeholder="O que é? (ex: Som, Banda, Tenda, Carne)" value={itemNome} onChange={(e) => setItemNome(e.target.value)} maxLength={100} />
+                    <Input placeholder="O que é? (ex: Som, Banda, Tenda, Carne)" value={itemNome} onChange={(e) => handleItemNomeChange(e.target.value)} maxLength={100} />
+
+                    {/* Provider search results */}
+                    {itemSearching && (
+                      <p className="text-xs text-muted-foreground animate-pulse">🔍 Buscando prestadores...</p>
+                    )}
+                    {itemPrestadores.length > 0 && (
+                      <div className="rounded-xl border border-primary/20 overflow-hidden" style={{ background: "hsl(var(--primary) / 0.03)" }}>
+                        <p className="text-[10px] font-semibold text-primary px-3 pt-2 uppercase tracking-wide">
+                          🎯 Prestadores disponíveis no condomínio
+                        </p>
+                        <div className="flex flex-col divide-y divide-border">
+                          {itemPrestadores.map((pres) => (
+                            <div key={pres.id} className="flex items-center justify-between px-3 py-2">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden" style={{ background: "hsl(var(--primary) / 0.15)" }}>
+                                  {pres.avatar_url ? (
+                                    <img src={pres.avatar_url} alt="" className="w-full h-full object-cover" />
+                                  ) : (
+                                    <span className="text-primary">{pres.nome.charAt(0)}</span>
+                                  )}
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="text-xs font-semibold text-foreground truncate">{pres.nome}</p>
+                                  <p className="text-[10px] text-muted-foreground truncate">{pres.especialidade}</p>
+                                </div>
+                              </div>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-7 text-[10px] gap-1 shrink-0 border-primary/30 text-primary hover:bg-primary/10"
+                                onClick={() => {
+                                  setCotacaoCategoria(pres.especialidade);
+                                  setItemOpen(false);
+                                  setCotacaoOpen(true);
+                                }}
+                              >
+                                <Search size={10} /> Cotar
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {itemNome.trim().length >= 2 && !itemSearching && itemPrestadores.length === 0 && (
+                      <p className="text-[10px] text-muted-foreground italic">Nenhum prestador cadastrado para "{itemNome}"</p>
+                    )}
+
                     <Input placeholder="Valor estimado (ex: 500,00)" value={itemValor} onChange={(e) => setItemValor(e.target.value)} inputMode="decimal" />
                   </div>
                   <DialogFooter>
