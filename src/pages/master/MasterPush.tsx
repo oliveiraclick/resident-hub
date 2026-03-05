@@ -7,11 +7,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Bell, Send, Loader2 } from "lucide-react";
+import { Bell, Send, Loader2, Smartphone } from "lucide-react";
 
 const MasterPush = () => {
   const [condominios, setCondominios] = useState<{ id: string; nome: string }[]>([]);
   const [selectedCondominio, setSelectedCondominio] = useState("todos");
+  const [selectedPlatform, setSelectedPlatform] = useState("todos");
   const [titulo, setTitulo] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [sending, setSending] = useState(false);
@@ -59,6 +60,7 @@ const MasterPush = () => {
           user_ids: userIds,
           title: titulo.trim(),
           body: mensagem.trim(),
+          platform: selectedPlatform,
         },
       });
 
@@ -100,6 +102,20 @@ const MasterPush = () => {
                     {c.nome}
                   </SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <label className="text-sm text-muted-foreground mb-1 block">Plataforma</label>
+            <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todos">Todas as plataformas</SelectItem>
+                <SelectItem value="android">Android</SelectItem>
+                <SelectItem value="ios">iOS</SelectItem>
               </SelectContent>
             </Select>
           </div>

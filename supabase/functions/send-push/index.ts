@@ -85,7 +85,7 @@ serve(async (req) => {
     const serviceAccount = JSON.parse(serviceAccountRaw);
     const projectId = serviceAccount.project_id;
 
-    const { user_ids, title, body, data } = await req.json();
+    const { user_ids, title, body, data, platform } = await req.json();
 
     if (!user_ids || !title || !body) {
       return new Response(
@@ -99,10 +99,16 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    const { data: tokens, error: tokensError } = await supabaseAdmin
+    let tokenQuery = supabaseAdmin
       .from("device_tokens")
       .select("token")
       .in("user_id", user_ids);
+
+    if (platform && platform !== "todos") {
+      tokenQuery = tokenQuery.eq("platform", platform.toLowerCase());
+    }
+
+    const { data: tokens, error: tokensError } = await tokenQuery;
 
     if (tokensError) {
       console.error("Error fetching tokens:", tokensError);
