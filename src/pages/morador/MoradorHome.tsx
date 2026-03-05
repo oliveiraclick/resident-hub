@@ -206,7 +206,14 @@ const MoradorHome = () => {
     { id: "mock-4", titulo: "Vela Aromática", preco: 18, status: "ativo" },
   ];
 
-  const desapegoList = desapegos.length > 0 ? desapegos : [
+  const desapegoList = desapegos.length > 0
+    ? [...desapegos].sort((a, b) => {
+        const aImg = !!a.imagem_url;
+        const bImg = !!b.imagem_url;
+        if (aImg === bImg) return 0;
+        return aImg ? -1 : 1;
+      })
+    : [
     { id: "mock-1", titulo: "Bicicleta Aro 29", preco: 450, status: "ativo" },
     { id: "mock-2", titulo: "Sofá 3 Lugares", preco: 800, status: "ativo" },
     { id: "mock-3", titulo: "Livros Diversos", preco: 5, status: "ativo" },
@@ -418,14 +425,14 @@ const MoradorHome = () => {
           </div>
           <p className="text-[11px] text-muted-foreground font-medium mb-3">Entre vizinhos do condomínio</p>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {desapegoList.slice(0, 8).map((item: any, idx: number) => (
+            {desapegoList.slice(0, 6).map((item: any, idx: number) => (
               <button
                 key={item.id}
                 onClick={() => item.id.startsWith("mock") ? navigate("/morador/desapegos") : navigate(`/morador/desapegos/${item.id}`)}
                 className="bg-transparent border-none cursor-pointer p-0 text-left active:scale-95 transition-transform"
               >
                 <div className="rounded-[20px] overflow-hidden bg-card border border-border" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
-                  <div className="h-[130px] overflow-hidden relative">
+                  <div className="aspect-[4/5] overflow-hidden relative">
                     {item.imagem_url ? (
                       <img src={item.imagem_url} alt={item.titulo} className="w-full h-full object-cover" />
                     ) : (
@@ -433,14 +440,14 @@ const MoradorHome = () => {
                     )}
                     <span className="absolute top-2.5 left-2.5 text-[9px] font-bold text-white bg-warning px-2.5 py-1 rounded-lg uppercase tracking-wider">Desapego</span>
                   </div>
-                  <div className="p-3 pt-3 pb-4">
-                    <p className="text-[14px] font-semibold text-foreground m-0 truncate leading-snug">{item.titulo}</p>
-                    {item.preco != null && (
-                      <p className="text-[18px] font-extrabold text-primary mt-1.5 m-0 tracking-tight">
-                        R$ {formatBRL(item.preco)}
-                      </p>
-                    )}
-                  </div>
+                </div>
+                <div className="px-1 pt-1.5 pb-2">
+                  <p className="text-[14px] font-semibold text-foreground m-0 truncate leading-snug">{item.titulo}</p>
+                  {item.preco != null && (
+                    <p className="text-[18px] font-extrabold text-primary mt-1 m-0 tracking-tight">
+                      R$ {formatBRL(item.preco)}
+                    </p>
+                  )}
                 </div>
               </button>
             ))}
