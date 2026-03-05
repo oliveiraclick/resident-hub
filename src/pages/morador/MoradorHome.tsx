@@ -252,14 +252,14 @@ const MoradorHome = () => {
 
         {/* ═══ NEWS TICKER ═══ */}
         {avisos.length > 0 && (
-          <div className="rounded-2xl overflow-hidden relative" style={{ background: "hsl(var(--header-bg))", padding: "12px 16px" }}>
-            <div className="absolute right-0 top-0 bottom-0 w-[60px] z-[2]" style={{ background: `linear-gradient(to right, transparent, hsl(var(--header-bg)))` }} />
+          <div className="rounded-2xl overflow-hidden relative" style={{ background: "hsl(var(--primary))", padding: "12px 16px" }}>
+            <div className="absolute right-0 top-0 bottom-0 w-[60px] z-[2]" style={{ background: `linear-gradient(to right, transparent, hsl(var(--primary)))` }} />
             <div className="flex items-center gap-2.5">
-              <span className="text-[9px] font-extrabold text-primary uppercase tracking-widest flex-shrink-0 bg-primary/15 px-2.5 py-1 rounded-lg flex items-center gap-1">
+              <span className="text-[9px] font-extrabold uppercase tracking-widest flex-shrink-0 px-2.5 py-1 rounded-lg flex items-center gap-1" style={{ color: "hsl(var(--header-bg))", background: "hsla(var(--header-bg) / 0.2)" }}>
                 <Sparkles size={10} /> News
               </span>
               <div className="overflow-hidden flex-1">
-                <p className="whitespace-nowrap animate-[ticker_18s_linear_infinite] text-[12px] font-normal text-white/70 m-0 flex items-center gap-1">
+                <p className="whitespace-nowrap animate-[ticker_18s_linear_infinite] text-[12px] font-normal text-white m-0 flex items-center gap-1">
                   {avisos.map((a: any, i: number) => (
                     <span key={a.id} className="inline-flex items-center gap-1">
                       {i > 0 && <span className="inline-block w-1 h-1 rounded-full bg-primary/60 mx-3 flex-shrink-0" />}
