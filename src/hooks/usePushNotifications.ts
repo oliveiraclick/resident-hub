@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Capacitor } from "@capacitor/core";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
@@ -11,8 +12,11 @@ export function usePushNotifications(userId: string | undefined) {
     if (!userId) return;
 
     const isNative =
+      Capacitor.isNativePlatform() ||
       new URLSearchParams(window.location.search).get("native") === "1" ||
       /\b(capacitor|wv)\b/i.test(navigator.userAgent);
+
+    console.log("[Push] isNative:", isNative, "userId:", userId, "platform:", Capacitor.getPlatform());
 
     if (!isNative) return;
 
