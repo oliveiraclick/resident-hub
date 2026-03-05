@@ -255,7 +255,7 @@ const MoradorHome = () => {
           <div className="rounded-2xl overflow-hidden relative" style={{ background: "hsl(var(--primary))", padding: "12px 16px" }}>
             <div className="absolute right-0 top-0 bottom-0 w-[60px] z-[2]" style={{ background: `linear-gradient(to right, transparent, hsl(var(--primary)))` }} />
             <div className="flex items-center gap-2.5">
-              <span className="text-[9px] font-extrabold uppercase tracking-widest flex-shrink-0 px-2.5 py-1 rounded-lg flex items-center gap-1" style={{ color: "hsl(var(--header-bg))", background: "hsla(var(--header-bg) / 0.2)" }}>
+              <span className="text-[9px] font-extrabold uppercase tracking-widest flex-shrink-0 px-2.5 py-1 rounded-lg flex items-center gap-1 text-white" style={{ background: "hsl(var(--header-bg))" }}>
                 <Sparkles size={10} /> News
               </span>
               <div className="overflow-hidden flex-1">
