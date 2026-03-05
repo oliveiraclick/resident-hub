@@ -212,7 +212,7 @@ export const EventoConviteBadge = ({
   return (
     <button
       onClick={onClick}
-      className="fixed bottom-24 right-4 z-50 flex items-center gap-2 px-4 py-3 rounded-2xl border-none cursor-pointer shadow-xl animate-bounce"
+      className="fixed bottom-28 right-4 z-40 flex items-center gap-2 px-4 py-3 rounded-2xl border-none cursor-pointer shadow-xl animate-bounce"
       style={{
         background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-hover)))",
         animationDuration: "2s",
