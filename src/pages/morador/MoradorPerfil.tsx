@@ -143,23 +143,26 @@ const MoradorPerfil = () => {
           </CardContent>
         </Card>
 
-        {/* Entre Amigos */}
-        <Button
-          variant="outline"
-          onClick={() => navigate("/morador/entre-amigos")}
-          className="w-full"
-        >
-          <Users size={16} />
-          Entre Amigos
-        </Button>
+        <div className="grid grid-cols-2 gap-3">
+          {/* Entre Amigos */}
+          <Button
+            onClick={() => navigate("/morador/entre-amigos")}
+            className="w-full text-white border-none"
+            style={{ background: "linear-gradient(135deg, hsl(var(--header-bg)), hsl(var(--primary)))" }}
+          >
+            <Users size={16} />
+            Entre Amigos
+          </Button>
 
-        <div className="border-t border-border my-2" />
-
-        {/* Logout */}
-        <Button variant="ghost" onClick={handleLogout} className="w-full text-muted-foreground hover:text-destructive hover:bg-destructive/5 text-sm">
-          <LogOut size={16} />
-          Sair da conta
-        </Button>
+          {/* Logout */}
+          <Button
+            onClick={handleLogout}
+            className="w-full bg-primary text-white hover:bg-primary/90 border-none"
+          >
+            <LogOut size={16} />
+            Sair
+          </Button>
+        </div>
 
         {/* Versão do app */}
         <p className="text-[10px] text-muted-foreground text-center">
