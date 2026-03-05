@@ -23,6 +23,10 @@ body:not(.native-app) {
   padding-right: env(safe-area-inset-right);
 }
 
+body.native-app {
+  background-color: hsl(240 29% 14%);
+}
+
 @layer base {
   :root {
     --background: 216 25% 97%;
