@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import UpdateBanner from "@/components/UpdateBanner";
+import ForceUpdateScreen from "@/components/ForceUpdateScreen";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -40,6 +41,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <UpdateBanner />
+        <ForceUpdateScreen />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
