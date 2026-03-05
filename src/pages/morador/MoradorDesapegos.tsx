@@ -286,27 +286,27 @@ const MoradorDesapegos = () => {
                       className="bg-transparent border-none cursor-pointer p-0 text-left active:scale-95 transition-transform"
                     >
                       <div className="rounded-2xl overflow-hidden bg-card border border-border" style={{ boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
-                        <div className="aspect-square overflow-hidden bg-muted">
+                        <div className="aspect-[4/5] overflow-hidden bg-muted">
                           {d.imagem_url ? (
                             <img src={d.imagem_url} alt={d.titulo} className="w-full h-full object-cover" />
                           ) : (
                             <img src={desapegoPlaceholder} alt="Sem foto" className="w-full h-full object-cover" />
                           )}
                         </div>
-                        <div className="p-2.5">
-                          <p className="text-[13px] font-semibold text-foreground truncate">{d.titulo}</p>
-                          {d.descricao && (
-                            <p className="text-[11px] text-muted-foreground truncate mt-0.5">{d.descricao}</p>
-                          )}
-                          {d.preco ? (
-                            <p className="text-[14px] font-bold text-primary mt-1">R$ {formatBRL(d.preco)}</p>
-                          ) : (
-                            <p className="text-[12px] text-success font-medium mt-1">Gratuito</p>
-                          )}
-                          <p className="text-[10px] text-muted-foreground mt-0.5">
-                            {new Date(d.created_at).toLocaleDateString("pt-BR")}
-                          </p>
-                        </div>
+                      </div>
+                      <div className="px-1 pt-1.5">
+                        <p className="text-[13px] font-semibold text-foreground truncate">{d.titulo}</p>
+                        {d.descricao && (
+                          <p className="text-[11px] text-muted-foreground truncate mt-0.5">{d.descricao}</p>
+                        )}
+                        {d.preco ? (
+                          <p className="text-[14px] font-bold text-primary mt-1">R$ {formatBRL(d.preco)}</p>
+                        ) : (
+                          <p className="text-[12px] text-success font-medium mt-1">Gratuito</p>
+                        )}
+                        <p className="text-[10px] text-muted-foreground mt-0.5">
+                          {new Date(d.created_at).toLocaleDateString("pt-BR")}
+                        </p>
                       </div>
                     </button>
                   ))}
