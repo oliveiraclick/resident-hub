@@ -153,8 +153,10 @@ const MoradorPerfil = () => {
           Entre Amigos
         </Button>
 
+        <div className="border-t border-border my-2" />
+
         {/* Logout */}
-        <Button variant="outline" onClick={handleLogout} className="text-destructive border-destructive hover:bg-destructive/5">
+        <Button variant="ghost" onClick={handleLogout} className="w-full text-muted-foreground hover:text-destructive hover:bg-destructive/5 text-sm">
           <LogOut size={16} />
           Sair da conta
         </Button>
