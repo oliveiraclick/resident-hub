@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { formatBRL } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Repeat, Plus, Camera, ImagePlus, X, FileText, Users } from "lucide-react";
+import { Repeat, Plus, Camera, ImagePlus, X, FileText, Users, ChevronLeft, ChevronRight } from "lucide-react";
 import desapegoPlaceholder from "@/assets/desapego-placeholder.png";
 
 const MoradorDesapegos = () => {
@@ -26,8 +26,10 @@ const MoradorDesapegos = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [perfilIncompleto, setPerfilIncompleto] = useState(false);
+  const [page, setPage] = useState(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+  const ITEMS_PER_PAGE = 6; // 3 rows x 2 columns
 
   const fetchDesapegos = async () => {
     if (!condominioId) return;
@@ -262,39 +264,78 @@ const MoradorDesapegos = () => {
             <p className="text-body text-muted-foreground">Nenhum desapego ainda</p>
           </div>
         ) : !showForm ? (
-          <div className="grid grid-cols-2 gap-3">
-            {desapegos.map((d) => (
-              <button
-                key={d.id}
-                onClick={() => navigate(`/morador/desapegos/${d.id}`)}
-                className="bg-transparent border-none cursor-pointer p-0 text-left active:scale-95 transition-transform"
-              >
-                <div className="rounded-2xl overflow-hidden bg-card border border-border" style={{ boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
-                  <div className="aspect-square overflow-hidden bg-muted">
-                    {d.imagem_url ? (
-                      <img src={d.imagem_url} alt={d.titulo} className="w-full h-full object-cover" />
-                    ) : (
-                      <img src={desapegoPlaceholder} alt="Sem foto" className="w-full h-full object-cover" />
-                    )}
-                  </div>
-                  <div className="p-2.5">
-                    <p className="text-[13px] font-semibold text-foreground truncate">{d.titulo}</p>
-                    {d.descricao && (
-                      <p className="text-[11px] text-muted-foreground truncate mt-0.5">{d.descricao}</p>
-                    )}
-                    {d.preco ? (
-                      <p className="text-[14px] font-bold text-primary mt-1">R$ {formatBRL(d.preco)}</p>
-                    ) : (
-                      <p className="text-[12px] text-success font-medium mt-1">Gratuito</p>
-                    )}
-                    <p className="text-[10px] text-muted-foreground mt-0.5">
-                      {new Date(d.created_at).toLocaleDateString("pt-BR")}
-                    </p>
-                  </div>
+          (() => {
+            // Sort: items with real images first, placeholder items after
+            const sorted = [...desapegos].sort((a, b) => {
+              const aHasImg = !!a.imagem_url;
+              const bHasImg = !!b.imagem_url;
+              if (aHasImg === bHasImg) return 0;
+              return aHasImg ? -1 : 1;
+            });
+            const totalPages = Math.ceil(sorted.length / ITEMS_PER_PAGE);
+            const start = (page - 1) * ITEMS_PER_PAGE;
+            const pageItems = sorted.slice(start, start + ITEMS_PER_PAGE);
+
+            return (
+              <>
+                <div className="grid grid-cols-2 gap-3">
+                  {pageItems.map((d) => (
+                    <button
+                      key={d.id}
+                      onClick={() => navigate(`/morador/desapegos/${d.id}`)}
+                      className="bg-transparent border-none cursor-pointer p-0 text-left active:scale-95 transition-transform"
+                    >
+                      <div className="rounded-2xl overflow-hidden bg-card border border-border" style={{ boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
+                        <div className="aspect-square overflow-hidden bg-muted">
+                          {d.imagem_url ? (
+                            <img src={d.imagem_url} alt={d.titulo} className="w-full h-full object-cover" />
+                          ) : (
+                            <img src={desapegoPlaceholder} alt="Sem foto" className="w-full h-full object-cover" />
+                          )}
+                        </div>
+                        <div className="p-2.5">
+                          <p className="text-[13px] font-semibold text-foreground truncate">{d.titulo}</p>
+                          {d.descricao && (
+                            <p className="text-[11px] text-muted-foreground truncate mt-0.5">{d.descricao}</p>
+                          )}
+                          {d.preco ? (
+                            <p className="text-[14px] font-bold text-primary mt-1">R$ {formatBRL(d.preco)}</p>
+                          ) : (
+                            <p className="text-[12px] text-success font-medium mt-1">Gratuito</p>
+                          )}
+                          <p className="text-[10px] text-muted-foreground mt-0.5">
+                            {new Date(d.created_at).toLocaleDateString("pt-BR")}
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
                 </div>
-              </button>
-            ))}
-          </div>
+
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-3 mt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={page <= 1}
+                      onClick={() => setPage(p => p - 1)}
+                    >
+                      <ChevronLeft size={16} />
+                    </Button>
+                    <span className="text-sm text-muted-foreground">{page} / {totalPages}</span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={page >= totalPages}
+                      onClick={() => setPage(p => p + 1)}
+                    >
+                      <ChevronRight size={16} />
+                    </Button>
+                  </div>
+                )}
+              </>
+            );
+          })()
         ) : null}
       </div>
     </MoradorLayout>
