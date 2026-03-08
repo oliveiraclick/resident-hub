@@ -14,6 +14,9 @@ import MoradorReservas from "./MoradorReservas";
 import MoradorConvites from "./MoradorConvites";
 import MoradorEntreAmigos from "./MoradorEntreAmigos";
 import MoradorEntreAmigosDetalhe from "./MoradorEntreAmigosDetalhe";
+import MoradorLojas from "./MoradorLojas";
+import MoradorLoja from "./MoradorLoja";
+import MoradorMeusPedidos from "./MoradorMeusPedidos";
 
 const MoradorDashboard = () => {
   return (
@@ -33,6 +36,9 @@ const MoradorDashboard = () => {
       <Route path="convites" element={<MoradorConvites />} />
       <Route path="entre-amigos" element={<MoradorEntreAmigos />} />
       <Route path="entre-amigos/:id" element={<MoradorEntreAmigosDetalhe />} />
+      <Route path="lojas" element={<MoradorLojas />} />
+      <Route path="lojas/:lojaId" element={<MoradorLoja />} />
+      <Route path="meus-pedidos" element={<MoradorMeusPedidos />} />
     </Routes>
   );
 };

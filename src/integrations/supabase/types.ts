@@ -922,6 +922,63 @@ export type Database = {
         }
         Relationships: []
       }
+      lojas: {
+        Row: {
+          ativa: boolean
+          banner_url: string | null
+          condominio_id: string
+          created_at: string
+          descricao: string | null
+          horario_funcionamento: string | null
+          id: string
+          nome: string
+          prestador_id: string
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          ativa?: boolean
+          banner_url?: string | null
+          condominio_id: string
+          created_at?: string
+          descricao?: string | null
+          horario_funcionamento?: string | null
+          id?: string
+          nome: string
+          prestador_id: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          ativa?: boolean
+          banner_url?: string | null
+          condominio_id?: string
+          created_at?: string
+          descricao?: string | null
+          horario_funcionamento?: string | null
+          id?: string
+          nome?: string
+          prestador_id?: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lojas_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lojas_prestador_id_fkey"
+            columns: ["prestador_id"]
+            isOneToOne: true
+            referencedRelation: "prestadores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lotes: {
         Row: {
           condominio_id: string
@@ -1053,6 +1110,99 @@ export type Database = {
             columns: ["unidade_id"]
             isOneToOne: false
             referencedRelation: "unidades"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pedido_itens: {
+        Row: {
+          created_at: string
+          id: string
+          pedido_id: string
+          preco_unitario: number
+          produto_id: string
+          quantidade: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          pedido_id: string
+          preco_unitario: number
+          produto_id: string
+          quantidade?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          pedido_id?: string
+          preco_unitario?: number
+          produto_id?: string
+          quantidade?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pedido_itens_pedido_id_fkey"
+            columns: ["pedido_id"]
+            isOneToOne: false
+            referencedRelation: "pedidos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pedido_itens_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pedidos: {
+        Row: {
+          condominio_id: string
+          created_at: string
+          id: string
+          loja_id: string
+          morador_id: string
+          observacoes: string | null
+          status: string
+          updated_at: string
+          valor_total: number
+        }
+        Insert: {
+          condominio_id: string
+          created_at?: string
+          id?: string
+          loja_id: string
+          morador_id: string
+          observacoes?: string | null
+          status?: string
+          updated_at?: string
+          valor_total?: number
+        }
+        Update: {
+          condominio_id?: string
+          created_at?: string
+          id?: string
+          loja_id?: string
+          morador_id?: string
+          observacoes?: string | null
+          status?: string
+          updated_at?: string
+          valor_total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pedidos_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pedidos_loja_id_fkey"
+            columns: ["loja_id"]
+            isOneToOne: false
+            referencedRelation: "lojas"
             referencedColumns: ["id"]
           },
         ]

@@ -8,6 +8,8 @@ import PrestadorCondominios from "./PrestadorCondominios";
 import PrestadorIndicacoes from "./PrestadorIndicacoes";
 import PrestadorBanners from "./PrestadorBanners";
 import PrestadorCotacoes from "./PrestadorCotacoes";
+import PrestadorLoja from "./PrestadorLoja";
+import PrestadorPedidos from "./PrestadorPedidos";
 
 const PrestadorDashboard = () => {
   return (
@@ -21,6 +23,8 @@ const PrestadorDashboard = () => {
       <Route path="indicacoes" element={<PrestadorIndicacoes />} />
       <Route path="banners" element={<PrestadorBanners />} />
       <Route path="cotacoes" element={<PrestadorCotacoes />} />
+      <Route path="loja" element={<PrestadorLoja />} />
+      <Route path="pedidos" element={<PrestadorPedidos />} />
     </Routes>
   );
 };
