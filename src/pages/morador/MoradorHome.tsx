@@ -36,6 +36,7 @@ const MoradorHome = () => {
   const [prestadoresVisiveis, setPrestadoresVisiveis] = useState<any[]>([]);
   const [bannerIdx, setBannerIdx] = useState(0);
   const [pendingInvitesCount, setPendingInvitesCount] = useState(0);
+  const [activeConvitesCount, setActiveConvitesCount] = useState(0);
 
   useEffect(() => {
     if (!user) return;
