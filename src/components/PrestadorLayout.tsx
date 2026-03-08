@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import AppShell from "@/components/AppShell";
-import { Home, Wrench, ShoppingBag, DollarSign, User, Image, Store, ClipboardList } from "lucide-react";
+import { Home, Wrench, ShoppingBag, DollarSign, User, Image, Store, ClipboardList, UtensilsCrossed } from "lucide-react";
 
 interface PrestadorLayoutProps {
   children: ReactNode;
