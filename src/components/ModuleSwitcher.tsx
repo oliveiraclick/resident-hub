@@ -15,7 +15,8 @@ const ModuleSwitcher = () => {
   const hasMorador = uniqueRoleNames.includes("morador");
   const hasPrestador = uniqueRoleNames.includes("prestador");
 
-  if (!hasMorador || !hasPrestador) return null;
+  // Show if user has at least one of morador/prestador
+  if (!hasMorador && !hasPrestador) return null;
 
   const isInMorador = location.pathname.startsWith("/morador");
   const isInPrestador = location.pathname.startsWith("/prestador");
