@@ -38,8 +38,8 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   // Role-based route restrictions — collect ALL user roles
   const roleRouteMap: Record<string, string[]> = {
     admin: ["/admin", "/dashboard"],
-    morador: ["/morador", "/dashboard"],
-    prestador: ["/prestador", "/dashboard"],
+    morador: ["/morador", "/prestador", "/dashboard"],
+    prestador: ["/prestador", "/morador", "/dashboard"],
     porteiro: ["/porteiro", "/dashboard"],
   };
 
