@@ -21,8 +21,10 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const MoradorPerfil = () => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, roles } = useAuth();
   const navigate = useNavigate();
+  const [showAtivarModal, setShowAtivarModal] = useState(false);
+  const hasPrestadorRole = roles.some((r) => r.role === "prestador");
 
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
