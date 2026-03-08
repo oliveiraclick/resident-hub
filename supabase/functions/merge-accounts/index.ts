@@ -72,15 +72,9 @@ Deno.serve(async (req) => {
       throw new Error("Failed to add role: " + roleErr.message);
     }
 
-    // 3. Migrate related tables
-    // Update servicos
-    await adminClient.from("servicos")
-      .update({ prestador_id: adminClient })  // We need prestador_id, not user_id
-    // Actually servicos references prestador_id, which was already migrated via prestadores table
-    // Same for produtos, lojas - they reference prestador_id FK
-
-    // 4. Migrate financeiro_lancamentos that reference prestador_id
-    // These also use prestador_id FK so already handled
+    // 3. Tables like servicos, produtos, lojas reference prestador_id FK
+    // Since we updated prestadores.user_id, the FK chain is already correct
+    // No need to update individual records
 
     // 5. Delete old user's roles and profile
     await adminClient.from("user_roles").delete().eq("user_id", prestador_user_id);

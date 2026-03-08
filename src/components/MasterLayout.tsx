@@ -23,6 +23,7 @@ const menuItems = [
   { icon: Layout, label: "Landing Page", path: "/master/lp" },
   { icon: DollarSign, label: "Financeiro", path: "/master/financeiro" },
   { icon: Bell, label: "Push", path: "/master/push" },
+  { icon: Merge, label: "Unificar Contas", path: "/master/merge-contas" },
 ];
 
 const MasterLayout = ({ children }: MasterLayoutProps) => {
