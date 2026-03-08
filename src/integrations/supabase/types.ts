@@ -278,6 +278,130 @@ export type Database = {
           },
         ]
       }
+      cardapio_categorias: {
+        Row: {
+          created_at: string
+          id: string
+          loja_id: string
+          nome: string
+          ordem: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          loja_id: string
+          nome: string
+          ordem?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          loja_id?: string
+          nome?: string
+          ordem?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cardapio_categorias_loja_id_fkey"
+            columns: ["loja_id"]
+            isOneToOne: false
+            referencedRelation: "lojas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cardapio_horarios: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          dia_semana: number
+          horario_fim: string
+          horario_inicio: string
+          id: string
+          loja_id: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          dia_semana: number
+          horario_fim: string
+          horario_inicio: string
+          id?: string
+          loja_id: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          dia_semana?: number
+          horario_fim?: string
+          horario_inicio?: string
+          id?: string
+          loja_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cardapio_horarios_loja_id_fkey"
+            columns: ["loja_id"]
+            isOneToOne: false
+            referencedRelation: "lojas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cardapio_itens: {
+        Row: {
+          categoria_id: string | null
+          created_at: string
+          descricao: string | null
+          disponivel: boolean
+          id: string
+          imagem_url: string | null
+          loja_id: string
+          nome: string
+          ordem: number
+          preco: number | null
+        }
+        Insert: {
+          categoria_id?: string | null
+          created_at?: string
+          descricao?: string | null
+          disponivel?: boolean
+          id?: string
+          imagem_url?: string | null
+          loja_id: string
+          nome: string
+          ordem?: number
+          preco?: number | null
+        }
+        Update: {
+          categoria_id?: string | null
+          created_at?: string
+          descricao?: string | null
+          disponivel?: boolean
+          id?: string
+          imagem_url?: string | null
+          loja_id?: string
+          nome?: string
+          ordem?: number
+          preco?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cardapio_itens_categoria_id_fkey"
+            columns: ["categoria_id"]
+            isOneToOne: false
+            referencedRelation: "cardapio_categorias"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cardapio_itens_loja_id_fkey"
+            columns: ["loja_id"]
+            isOneToOne: false
+            referencedRelation: "lojas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categorias_servico: {
         Row: {
           ativo: boolean
@@ -926,6 +1050,7 @@ export type Database = {
         Row: {
           ativa: boolean
           banner_url: string | null
+          cardapio_ativo: boolean
           condominio_id: string
           created_at: string
           descricao: string | null
@@ -939,6 +1064,7 @@ export type Database = {
         Insert: {
           ativa?: boolean
           banner_url?: string | null
+          cardapio_ativo?: boolean
           condominio_id: string
           created_at?: string
           descricao?: string | null
@@ -952,6 +1078,7 @@ export type Database = {
         Update: {
           ativa?: boolean
           banner_url?: string | null
+          cardapio_ativo?: boolean
           condominio_id?: string
           created_at?: string
           descricao?: string | null
