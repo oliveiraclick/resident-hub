@@ -202,6 +202,12 @@ const MoradorPerfil = () => {
         {/* Excluir conta */}
         <DeleteAccountSection userId={user.id} onDeleted={handleLogout} />
       </div>
+
+      <AtivarPrestadorModal
+        open={showAtivarModal}
+        onOpenChange={setShowAtivarModal}
+        onSuccess={() => window.location.reload()}
+      />
     </MoradorLayout>
   );
 };
