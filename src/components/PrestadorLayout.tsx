@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import AppShell from "@/components/AppShell";
-import { Home, Wrench, ShoppingBag, DollarSign, User, Image } from "lucide-react";
+import { Home, Wrench, ShoppingBag, DollarSign, User, Image, Store, ClipboardList } from "lucide-react";
 
 interface PrestadorLayoutProps {
   children: ReactNode;
@@ -17,6 +17,8 @@ const navItems = [
 ];
 
 const menuItems = [
+  { icon: Store, label: "Minha Loja", path: "/prestador/loja" },
+  { icon: ClipboardList, label: "Pedidos", path: "/prestador/pedidos" },
   { icon: Image, label: "Banners", path: "/prestador/banners" },
 ];
 
