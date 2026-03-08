@@ -35,7 +35,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return <Navigate to="/dashboard" replace />;
   }
 
-  // Role-based route restrictions
+  // Role-based route restrictions — collect ALL user roles
   const roleRouteMap: Record<string, string[]> = {
     admin: ["/admin", "/dashboard"],
     morador: ["/morador", "/dashboard"],
@@ -43,12 +43,15 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     porteiro: ["/porteiro", "/dashboard"],
   };
 
-  if (firstRole && !isPlatformAdmin) {
-    const allowedPrefixes = roleRouteMap[firstRole] || ["/dashboard"];
-    const isAllowed = allowedPrefixes.some((prefix) => path.startsWith(prefix));
+  if (roles.length > 0 && !isPlatformAdmin) {
+    // Build allowed prefixes from ALL roles
+    const allAllowedPrefixes = roles.flatMap(
+      (r) => roleRouteMap[r.role] || ["/dashboard"]
+    );
+    const isAllowed = allAllowedPrefixes.some((prefix) => path.startsWith(prefix));
 
     if (!isAllowed) {
-      // Redirect to the correct module
+      // Redirect to the first role's module
       const redirectMap: Record<string, string> = {
         admin: "/admin",
         morador: "/morador",
