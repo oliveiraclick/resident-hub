@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import ModuleSwitcher from "@/components/ModuleSwitcher";
 import UpdateBanner from "@/components/UpdateBanner";
 import ForceUpdateScreen from "@/components/ForceUpdateScreen";
 import Index from "./pages/Index";
@@ -43,6 +44,7 @@ const App = () => (
         <UpdateBanner />
         <ForceUpdateScreen />
         <BrowserRouter>
+          <ModuleSwitcher />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Navigate to="/auth" replace />} />

@@ -6,18 +6,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { LogOut, Save, Trash2, AlertTriangle, Users } from "lucide-react";
+import { LogOut, Save, Trash2, AlertTriangle, Users, Sparkles, Store } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import QrDisplay from "@/components/QrDisplay";
 import { APP_VERSION_LABEL } from "@/lib/appVersion";
+import AtivarPrestadorModal from "@/components/AtivarPrestadorModal";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
 const MoradorPerfil = () => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, roles } = useAuth();
   const navigate = useNavigate();
+  const [showAtivarModal, setShowAtivarModal] = useState(false);
+  const hasPrestadorRole = roles.some((r) => r.role === "prestador");
 
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
@@ -143,6 +146,33 @@ const MoradorPerfil = () => {
           </CardContent>
         </Card>
 
+        {/* Perfil de vendedor */}
+        {!hasPrestadorRole ? (
+          <Card className="border-dashed border-primary/30 bg-primary/5">
+            <CardContent className="flex items-center gap-3 p-4">
+              <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <Sparkles size={20} className="text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground">Quer vender algo?</p>
+                <p className="text-xs text-muted-foreground">Ative seu perfil de vendedor e crie sua loja</p>
+              </div>
+              <Button size="sm" onClick={() => setShowAtivarModal(true)} className="flex-shrink-0">
+                Ativar
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <Button
+            onClick={() => navigate("/prestador")}
+            className="w-full text-white border-none"
+            style={{ background: "linear-gradient(135deg, hsl(var(--header-bg)), hsl(var(--primary)))" }}
+          >
+            <Store size={16} />
+            Acessar módulo Prestador
+          </Button>
+        )}
+
         <div className="grid grid-cols-2 gap-3">
           {/* Entre Amigos */}
           <Button
@@ -172,6 +202,12 @@ const MoradorPerfil = () => {
         {/* Excluir conta */}
         <DeleteAccountSection userId={user.id} onDeleted={handleLogout} />
       </div>
+
+      <AtivarPrestadorModal
+        open={showAtivarModal}
+        onOpenChange={setShowAtivarModal}
+        onSuccess={() => window.location.reload()}
+      />
     </MoradorLayout>
   );
 };
