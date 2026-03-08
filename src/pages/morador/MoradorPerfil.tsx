@@ -6,10 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { LogOut, Save, Trash2, AlertTriangle, Users } from "lucide-react";
+import { LogOut, Save, Trash2, AlertTriangle, Users, Sparkles, Store } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import QrDisplay from "@/components/QrDisplay";
 import { APP_VERSION_LABEL } from "@/lib/appVersion";
+import AtivarPrestadorModal from "@/components/AtivarPrestadorModal";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
