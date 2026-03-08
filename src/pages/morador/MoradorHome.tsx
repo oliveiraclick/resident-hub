@@ -163,6 +163,21 @@ const MoradorHome = () => {
       }
     };
 
+    const fetchActiveConvites = async () => {
+      try {
+        const today = new Date().toISOString().split("T")[0];
+        const { count } = await supabase
+          .from("convites_visitante")
+          .select("id", { count: "exact", head: true })
+          .eq("morador_id", user.id)
+          .in("status", ["pendente", "registrado"])
+          .gte("data_visita", today);
+        setActiveConvitesCount(count || 0);
+      } catch (e) {
+        console.error("fetchActiveConvites error", e);
+      }
+    };
+
     fetchPending();
     fetchProdutos();
     fetchServicos();
@@ -171,6 +186,7 @@ const MoradorHome = () => {
     fetchAvisos();
     fetchPrestadoresVisiveis();
     fetchPendingInvites();
+    fetchActiveConvites();
   }, [user]);
 
   // Auto-rotate banners (robust for iOS WebView)
