@@ -18,6 +18,7 @@ const navItems = [
 
 const menuItems = [
   { icon: Store, label: "Minha Loja", path: "/prestador/loja" },
+  { icon: UtensilsCrossed, label: "Cardápio", path: "/prestador/cardapio" },
   { icon: ClipboardList, label: "Pedidos", path: "/prestador/pedidos" },
   { icon: Image, label: "Banners", path: "/prestador/banners" },
 ];
