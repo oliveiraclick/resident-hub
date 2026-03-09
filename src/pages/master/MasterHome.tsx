@@ -143,47 +143,45 @@ const MasterHome = () => {
         </Card>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <Card className="rounded-[var(--radius-card)]">
+      <Card className="rounded-[var(--radius-card)]">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">Últimos Condomínios</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {stats?.ultimosCondominios.length === 0 ? (
+            <p className="text-muted-foreground text-sm">Nenhum condomínio cadastrado.</p>
+          ) : (
+            <div className="space-y-2">
+              {stats?.ultimosCondominios.map((c) => (
+                <div key={c.id} className="flex justify-between items-center border-b border-border pb-2 last:border-0">
+                  <span className="text-sm font-medium">{c.nome}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(c.created_at).toLocaleDateString("pt-BR")}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {stats?.categoriaCounts && stats.categoriaCounts.length > 0 && (
+        <Card className="rounded-[var(--radius-card)] mt-4">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Últimos Condomínios</CardTitle>
+            <CardTitle className="text-base">Prestadores por Categoria</CardTitle>
           </CardHeader>
           <CardContent>
-            {stats?.ultimosCondominios.length === 0 ? (
-              <p className="text-muted-foreground text-sm">Nenhum condomínio cadastrado.</p>
-            ) : (
-              <div className="space-y-2">
-                {stats?.ultimosCondominios.map((c) => (
-                  <div key={c.id} className="flex justify-between items-center border-b border-border pb-2 last:border-0">
-                    <span className="text-sm font-medium">{c.nome}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(c.created_at).toLocaleDateString("pt-BR")}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+              {stats.categoriaCounts.map((cat) => (
+                <div key={cat.especialidade} className="flex justify-between items-center border-b border-border pb-2">
+                  <span className="text-sm font-medium">{cat.especialidade}</span>
+                  <span className="text-xs font-semibold text-primary">{cat.total}</span>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
-
-        {stats?.categoriaCounts && stats.categoriaCounts.length > 0 && (
-          <Card className="rounded-[var(--radius-card)]">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Prestadores por Categoria</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {stats.categoriaCounts.map((cat) => (
-                  <div key={cat.especialidade} className="flex justify-between items-center border-b border-border pb-2 last:border-0">
-                    <span className="text-sm font-medium">{cat.especialidade}</span>
-                    <span className="text-xs font-semibold text-primary">{cat.total}</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-      </div>
+      )}
     </MasterLayout>
   );
 };
