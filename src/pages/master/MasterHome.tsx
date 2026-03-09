@@ -171,7 +171,7 @@ const MasterHome = () => {
             <CardTitle className="text-base">Prestadores por Categoria</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+            <div className="grid grid-cols-[1fr_1px_1fr] gap-x-4 gap-y-2">
               {stats.categoriaCounts.map((cat) => (
                 <div key={cat.especialidade} className="flex justify-between items-center border-b border-border pb-2">
                   <span className="text-sm font-medium">{cat.especialidade}</span>
