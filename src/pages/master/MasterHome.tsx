@@ -164,6 +164,24 @@ const MasterHome = () => {
           )}
         </CardContent>
       </Card>
+
+      {stats?.categoriaCounts && stats.categoriaCounts.length > 0 && (
+        <Card className="rounded-[var(--radius-card)] mt-4">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Prestadores por Categoria</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {stats.categoriaCounts.map((cat) => (
+                <div key={cat.especialidade} className="flex justify-between items-center border-b border-border pb-2 last:border-0">
+                  <span className="text-sm font-medium">{cat.especialidade}</span>
+                  <span className="text-xs font-semibold text-primary">{cat.total}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </MasterLayout>
   );
 };
