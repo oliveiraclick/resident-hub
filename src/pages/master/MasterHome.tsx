@@ -30,7 +30,7 @@ const MasterHome = () => {
 
   useEffect(() => {
     const fetchStats = async () => {
-      const [condominiosRes, rolesRes, pacotesRes, lancamentosRes, bloqueadosRes, moradoresRes, prestadoresRes] = await Promise.all([
+      const [condominiosRes, rolesRes, pacotesRes, lancamentosRes, bloqueadosRes, moradoresRes, prestadoresRes, prestadoresAllRes] = await Promise.all([
         supabase.from("condominios").select("id, nome, created_at").order("created_at", { ascending: false }),
         supabase.from("user_roles").select("id"),
         supabase.from("pacotes").select("id").in("status", ["RECEBIDO", "TRIADO"]),
@@ -38,10 +38,21 @@ const MasterHome = () => {
         supabase.from("user_roles").select("id").eq("aprovado", false),
         supabase.from("user_roles").select("id").eq("role", "morador"),
         supabase.from("user_roles").select("id").eq("role", "prestador"),
+        supabase.from("prestadores").select("especialidade"),
       ]);
 
       const condominios = condominiosRes.data || [];
       const mrr = (lancamentosRes.data || []).reduce((sum, l) => sum + Number(l.valor), 0);
+
+      // Count by especialidade
+      const countMap: Record<string, number> = {};
+      (prestadoresAllRes.data || []).forEach((p) => {
+        const esp = p.especialidade || "Outros";
+        countMap[esp] = (countMap[esp] || 0) + 1;
+      });
+      const categoriaCounts = Object.entries(countMap)
+        .map(([especialidade, total]) => ({ especialidade, total }))
+        .sort((a, b) => b.total - a.total);
 
       setStats({
         mrr,
