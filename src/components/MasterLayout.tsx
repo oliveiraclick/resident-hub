@@ -28,6 +28,8 @@ const menuItems = [
 ];
 
 const MasterLayout = ({ children }: MasterLayoutProps) => {
+  useBannerSolicitacaoAlert();
+
   return (
     <AppShell moduleName="Master" navItems={navItems} menuItems={menuItems}>
       {children}
