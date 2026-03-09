@@ -1203,6 +1203,43 @@ const MoradorEntreAmigosDetalhe = () => {
           </AlertDialog>
         )}
 
+        {/* Delete event */}
+        {isCreator && (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" className="text-destructive mt-1 text-xs">
+                <Trash2 size={14} className="mr-1" /> Excluir evento
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Excluir evento permanentemente?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Todos os itens, despesas, participantes e pagamentos serão removidos. Essa ação não pode ser desfeita.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  onClick={async () => {
+                    try {
+                      const { error } = await supabase.from("eventos_amigos").delete().eq("id", id!);
+                      if (error) throw error;
+                      toast.success("Evento excluído");
+                      navigate("/morador/entre-amigos");
+                    } catch (e: any) {
+                      toast.error("Erro ao excluir: " + e.message);
+                    }
+                  }}
+                >
+                  Excluir
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
+
         {/* Payment dialog */}
         <Dialog open={payOpen} onOpenChange={setPayOpen}>
           <DialogContent>
