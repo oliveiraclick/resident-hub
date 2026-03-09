@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import AppShell from "@/components/AppShell";
 import { Home, Building2, Users, DollarSign, User, Wrench, Image, Layout, Tag, FileCheck, Bell, Merge } from "lucide-react";
+import { useBannerSolicitacaoAlert } from "@/hooks/useBannerSolicitacaoAlert";
 
 interface MasterLayoutProps {
   children: ReactNode;
@@ -27,6 +28,8 @@ const menuItems = [
 ];
 
 const MasterLayout = ({ children }: MasterLayoutProps) => {
+  useBannerSolicitacaoAlert();
+
   return (
     <AppShell moduleName="Master" navItems={navItems} menuItems={menuItems}>
       {children}
