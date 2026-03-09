@@ -63,6 +63,7 @@ const MasterHome = () => {
         totalMoradores: (moradoresRes.data || []).length,
         totalPrestadores: (prestadoresRes.data || []).length,
         ultimosCondominios: condominios.slice(0, 5),
+        categoriaCounts,
       });
       setLoading(false);
     };
