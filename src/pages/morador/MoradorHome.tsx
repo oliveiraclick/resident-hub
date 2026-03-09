@@ -152,12 +152,14 @@ const MoradorHome = () => {
 
     const fetchPendingInvites = async () => {
       try {
-        const { count } = await supabase
+        // Busca participações pendentes e filtra apenas eventos ativos
+        const { data } = await supabase
           .from("evento_participantes")
-          .select("id", { count: "exact", head: true })
+          .select("id, evento_id, eventos_amigos!inner(status)")
           .eq("user_id", user.id)
-          .eq("status", "pendente");
-        setPendingInvitesCount(count || 0);
+          .eq("status", "pendente")
+          .eq("eventos_amigos.status", "ativo");
+        setPendingInvitesCount(data?.length || 0);
       } catch (e) {
         console.error("fetchPendingInvites error", e);
       }
