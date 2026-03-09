@@ -6,6 +6,11 @@ import MasterLayout from "@/components/MasterLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2, Users, Package, DollarSign, ShieldOff, Home, Wrench } from "lucide-react";
 
+interface CategoriaCount {
+  especialidade: string;
+  total: number;
+}
+
 interface Stats {
   mrr: number;
   totalCondominios: number;
@@ -15,6 +20,7 @@ interface Stats {
   totalMoradores: number;
   totalPrestadores: number;
   ultimosCondominios: Array<{ id: string; nome: string; created_at: string }>;
+  categoriaCounts: CategoriaCount[];
 }
 
 const MasterHome = () => {
