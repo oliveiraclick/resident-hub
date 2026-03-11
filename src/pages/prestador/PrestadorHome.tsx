@@ -285,6 +285,14 @@ const PrestadorHome = () => {
             </div>
           </>
         )}
+
+        {/* Atalho discreto para o manual */}
+        <button
+          onClick={() => navigate("/prestador/manual")}
+          className="w-full text-center text-[11px] text-muted-foreground/60 hover:text-muted-foreground transition-colors py-2 mt-2"
+        >
+          Precisa de ajuda? Toque aqui
+        </button>
       </div>
     </PrestadorLayout>
   );
