@@ -11,6 +11,7 @@ import PrestadorCotacoes from "./PrestadorCotacoes";
 import PrestadorLoja from "./PrestadorLoja";
 import PrestadorPedidos from "./PrestadorPedidos";
 import PrestadorCardapio from "./PrestadorCardapio";
+import PrestadorManual from "./PrestadorManual";
 
 const PrestadorDashboard = () => {
   return (
@@ -27,6 +28,7 @@ const PrestadorDashboard = () => {
       <Route path="loja" element={<PrestadorLoja />} />
       <Route path="pedidos" element={<PrestadorPedidos />} />
       <Route path="cardapio" element={<PrestadorCardapio />} />
+      <Route path="manual" element={<PrestadorManual />} />
     </Routes>
   );
 };
