@@ -497,6 +497,16 @@ const MoradorHome = () => {
           </div>
         </div>
       </div>
+
+      {/* Atalho discreto para o manual */}
+      <div className="px-4 pb-6 pt-2">
+        <button
+          onClick={() => navigate("/morador/manual")}
+          className="w-full text-center text-[11px] text-muted-foreground/60 hover:text-muted-foreground transition-colors py-2"
+        >
+          Precisa de ajuda? Toque aqui
+        </button>
+      </div>
     </MoradorLayout>
   );
 };
