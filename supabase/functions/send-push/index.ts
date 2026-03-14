@@ -166,7 +166,7 @@ serve(async (req) => {
     const failed = results.filter((r) => r.status === "rejected").length;
 
     return new Response(
-      JSON.stringify({ sent, total: tokens.length }),
+      JSON.stringify({ sent, failed, total: tokens.length }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
