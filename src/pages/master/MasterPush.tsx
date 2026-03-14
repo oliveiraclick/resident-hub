@@ -67,7 +67,7 @@ const MasterPush = () => {
       if (error) throw error;
 
       toast.success(
-        `Notificação enviada! ${data?.sent || 0} de ${data?.total || 0} dispositivos receberam.`
+        `Notificação enviada! ${data?.sent || 0} de ${data?.total || 0} dispositivos receberam.${data?.failed ? ` (${data.failed} falharam)` : ""}`
       );
       setTitulo("");
       setMensagem("");

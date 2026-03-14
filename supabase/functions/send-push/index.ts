@@ -130,8 +130,8 @@ serve(async (req) => {
 
     // Send via FCM V1 API
     const results = await Promise.allSettled(
-      tokens.map((t) =>
-        fetch(
+      tokens.map(async (t) => {
+        const resp = await fetch(
           `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
           {
             method: "POST",
@@ -147,14 +147,26 @@ serve(async (req) => {
               },
             }),
           }
-        )
-      )
+        );
+        if (!resp.ok) {
+          const errBody = await resp.text();
+          console.error(`[send-push] FCM error for token ${t.token.substring(0, 10)}...:`, errBody);
+          // Remove invalid tokens (NOT_FOUND or UNREGISTERED)
+          if (errBody.includes("NOT_FOUND") || errBody.includes("UNREGISTERED")) {
+            await supabaseAdmin.from("device_tokens").delete().eq("token", t.token);
+            console.log(`[send-push] Removed stale token: ${t.token.substring(0, 10)}...`);
+          }
+          throw new Error(`FCM responded ${resp.status}`);
+        }
+        return resp.json();
+      })
     );
 
     const sent = results.filter((r) => r.status === "fulfilled").length;
+    const failed = results.filter((r) => r.status === "rejected").length;
 
     return new Response(
-      JSON.stringify({ sent, total: tokens.length }),
+      JSON.stringify({ sent, failed, total: tokens.length }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
