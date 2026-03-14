@@ -16,16 +16,20 @@ export function usePushNotifications(userId: string | undefined) {
 
     const isCapNative = Capacitor.isNativePlatform();
     const hasNativeParam = new URLSearchParams(window.location.search).get("native") === "1";
-    const hasWvUA = /\b(capacitor|wv)\b/i.test(navigator.userAgent);
-    const isNative = isCapNative || hasNativeParam || hasWvUA;
+    const ua = navigator.userAgent;
+    const hasWvUA = /\b(capacitor|wv)\b/i.test(ua);
+    // iOS WebView detection: check for standalone mode or missing Safari identifier
+    const isIOSWebView = /iPhone|iPad|iPod/.test(ua) && !(/Safari/.test(ua)) || (navigator as any).standalone === true;
+    const isNative = isCapNative || hasNativeParam || hasWvUA || isIOSWebView;
 
     console.log("[Push] Detection:", {
       isCapNative,
       hasNativeParam,
       hasWvUA,
+      isIOSWebView,
       isNative,
       platform: Capacitor.getPlatform(),
-      userAgent: navigator.userAgent.substring(0, 120),
+      userAgent: ua.substring(0, 150),
     });
 
     if (!isNative) {
@@ -40,6 +44,10 @@ export function usePushNotifications(userId: string | undefined) {
         console.log("[Push] Importing PushNotifications plugin...");
         const { PushNotifications } = await import("@capacitor/push-notifications");
         console.log("[Push] Plugin imported successfully");
+
+        // Check current permission status first
+        const permStatus = await PushNotifications.checkPermissions();
+        console.log("[Push] Current permission status:", permStatus.receive);
 
         // Request permission
         console.log("[Push] Requesting permissions...");
