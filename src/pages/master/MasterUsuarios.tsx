@@ -29,6 +29,7 @@ interface UserRow {
   aprovado: boolean;
   createdAt: string;
   especialidade: string | null;
+  subEspecialidade: string | null;
   prestadorId: string | null;
   devicePlatform: string | null;
   appVersion: string | null;
