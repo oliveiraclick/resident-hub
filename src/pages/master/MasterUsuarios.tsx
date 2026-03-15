@@ -355,17 +355,29 @@ const MasterUsuarios = () => {
             </div>
             {/* Especialidade - only for prestadores */}
             {editRole === "prestador" && (
-              <div>
-                <label className="text-sm text-muted-foreground mb-1 block">Especialidade</label>
-                <Select value={editEspecialidade} onValueChange={setEditEspecialidade}>
-                  <SelectTrigger className="h-[52px]"><SelectValue placeholder="Selecione a especialidade" /></SelectTrigger>
-                  <SelectContent>
-                    {categorias.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.nome}>{cat.nome}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <>
+                <div>
+                  <label className="text-sm text-muted-foreground mb-1 block">Especialidade</label>
+                  <Select value={editEspecialidade} onValueChange={(v) => { setEditEspecialidade(v); setEditSubEspecialidade(""); }}>
+                    <SelectTrigger className="h-[52px]"><SelectValue placeholder="Selecione a especialidade" /></SelectTrigger>
+                    <SelectContent>
+                      {categorias.map((cat) => (
+                        <SelectItem key={cat.id} value={cat.nome}>{cat.nome}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {editEspecialidade && (
+                  <div>
+                    <label className="text-sm text-muted-foreground mb-1 block">Sub-especialidade</label>
+                    <SubEspecialidadeField
+                      categoriaNome={editEspecialidade}
+                      value={editSubEspecialidade}
+                      onChange={setEditSubEspecialidade}
+                    />
+                  </div>
+                )}
+              </>
             )}
             <div className="flex items-center gap-2">
               <input type="checkbox" checked={editAprovado} onChange={(e) => setEditAprovado(e.target.checked)}
