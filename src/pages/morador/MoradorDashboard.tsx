@@ -42,6 +42,7 @@ const MoradorDashboard = () => {
       <Route path="lojas/:lojaId" element={<MoradorLoja />} />
       <Route path="meus-pedidos" element={<MoradorMeusPedidos />} />
       <Route path="manual" element={<MoradorManual />} />
+      <Route path="noticias" element={<MoradorNoticias />} />
     </Routes>
   );
 };
