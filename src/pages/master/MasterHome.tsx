@@ -174,7 +174,11 @@ const MasterHome = () => {
             <div className="grid grid-cols-2 gap-x-6 gap-y-2 relative">
               <div className="absolute left-1/2 top-0 bottom-0 w-px bg-border" />
               {stats.categoriaCounts.map((cat) => (
-                <div key={cat.especialidade} className="flex justify-between items-center border-b border-border pb-2">
+                <div
+                  key={cat.especialidade}
+                  className="flex justify-between items-center border-b border-border pb-2 cursor-pointer hover:bg-muted/50 rounded px-1 -mx-1 transition-colors"
+                  onClick={() => navigate(`/master/usuarios?filter=prestador&categoria=${encodeURIComponent(cat.especialidade)}`)}
+                >
                   <span className="text-sm font-medium">{cat.especialidade}</span>
                   <span className="text-xs font-semibold text-primary">{cat.total}</span>
                 </div>
