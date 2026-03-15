@@ -5,19 +5,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const CATEGORIAS = [
-  { nome: "Futebol", emoji: "⚽" },
-  { nome: "Fórmula 1", emoji: "🏎️" },
-  { nome: "Games", emoji: "🎮" },
-  { nome: "Tecnologia", emoji: "💻" },
-  { nome: "Moda", emoji: "👗" },
-  { nome: "Estética & Beleza", emoji: "💅" },
-  { nome: "Saúde & Bem-estar", emoji: "🧘" },
-  { nome: "Culinária", emoji: "🍳" },
-  { nome: "Filmes & Séries", emoji: "🎬" },
-  { nome: "Finanças", emoji: "💰" },
-];
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -31,8 +18,23 @@ Deno.serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Fetch active categories from database
+    const { data: categorias, error: catError } = await supabase
+      .from("noticias_categorias")
+      .select("nome, emoji")
+      .eq("ativo", true)
+      .order("ordem", { ascending: true });
+
+    if (catError || !categorias || categorias.length === 0) {
+      console.error("No active categories found:", catError);
+      return new Response(JSON.stringify({ success: false, error: "No active categories" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // Pick 3 random categories to generate
-    const shuffled = [...CATEGORIAS].sort(() => Math.random() - 0.5);
+    const shuffled = [...categorias].sort(() => Math.random() - 0.5);
     const selected = shuffled.slice(0, 3);
 
     const today = new Date().toLocaleDateString("pt-BR", {
