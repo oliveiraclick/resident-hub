@@ -118,6 +118,7 @@ const MasterUsuarios = () => {
     setEditCondominio(u.condominioId || "none");
     setEditAprovado(u.aprovado);
     setEditEspecialidade(u.especialidade || "");
+    setEditSubEspecialidade(u.subEspecialidade || "");
   };
 
   const handleSaveEdit = async () => {
