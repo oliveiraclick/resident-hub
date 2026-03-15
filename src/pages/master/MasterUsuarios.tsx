@@ -58,6 +58,7 @@ const MasterUsuarios = () => {
   const [editCondominio, setEditCondominio] = useState("");
   const [editAprovado, setEditAprovado] = useState(false);
   const [editEspecialidade, setEditEspecialidade] = useState("");
+  const [editSubEspecialidade, setEditSubEspecialidade] = useState("");
   const [saving, setSaving] = useState(false);
   const [filterCategoria, setFilterCategoria] = useState(initialCategoria);
   const { categorias } = useCategorias();
