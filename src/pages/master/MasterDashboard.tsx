@@ -30,6 +30,7 @@ const MasterDashboard = () => {
       <Route path="/push" element={<MasterPush />} />
       <Route path="/merge-contas" element={<MasterMergeContas />} />
       <Route path="/perfil" element={<MasterPerfil />} />
+      <Route path="/noticias-categorias" element={<MasterNoticiasCategorias />} />
     </Routes>
   );
 };
