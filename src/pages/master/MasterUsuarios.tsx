@@ -17,6 +17,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
 import { useCategorias } from "@/hooks/useCategorias";
+import SubEspecialidadeField from "@/components/SubEspecialidadeField";
 
 interface UserRow {
   roleId: string;
