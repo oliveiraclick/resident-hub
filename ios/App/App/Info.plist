@@ -56,6 +56,12 @@
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Precisamos salvar fotos capturadas na sua galeria</string>
 
+	<!-- Push Notifications -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+
 	<!-- Permissões de rede -->
 	<key>NSAppTransportSecurity</key>
 	<dict>
