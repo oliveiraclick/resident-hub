@@ -49,6 +49,7 @@ const PrestadorPerfil = () => {
       if (prestadorRes.data) {
         setPrestadorId(prestadorRes.data.id);
         setEspecialidade(prestadorRes.data.especialidade || "");
+        setSubEspecialidade((prestadorRes.data as any).sub_especialidade || "");
         setDescricao(prestadorRes.data.descricao || "");
       }
       setLoading(false);
