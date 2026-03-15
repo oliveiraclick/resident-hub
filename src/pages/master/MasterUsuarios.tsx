@@ -72,7 +72,7 @@ const MasterUsuarios = () => {
       supabase.from("user_roles").select("*"),
       supabase.from("profiles").select("*"),
       supabase.from("condominios").select("id, nome"),
-      supabase.from("prestadores").select("id, user_id, condominio_id, especialidade"),
+      supabase.from("prestadores").select("id, user_id, condominio_id, especialidade, sub_especialidade"),
     ]);
     const roles = rolesRes.data || [];
     const profiles = profilesRes.data || [];
