@@ -56,7 +56,11 @@ const MasterUsuarios = () => {
   const [editAprovado, setEditAprovado] = useState(false);
   const [editEspecialidade, setEditEspecialidade] = useState("");
   const [saving, setSaving] = useState(false);
+  const [filterCategoria, setFilterCategoria] = useState("all");
   const { categorias } = useCategorias();
+
+  // Build unique especialidades from prestadores
+  const especialidadesUnicas = [...new Set(users.filter(u => u.role === "prestador" && u.especialidade).map(u => u.especialidade!))].sort();
 
   const fetchData = async () => {
     setLoading(true);
