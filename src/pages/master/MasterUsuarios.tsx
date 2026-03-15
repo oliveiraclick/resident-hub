@@ -141,7 +141,8 @@ const MasterUsuarios = () => {
         // Update existing prestador
         await supabase.from("prestadores").update({
           especialidade: editEspecialidade.trim(),
-        }).eq("id", editTarget.prestadorId);
+          sub_especialidade: editSubEspecialidade.trim() || null,
+        } as any).eq("id", editTarget.prestadorId);
       } else if (condId) {
         // Create prestador record when changing role to prestador
         await supabase.from("prestadores").insert({
