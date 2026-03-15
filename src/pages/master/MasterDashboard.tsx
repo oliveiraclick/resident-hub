@@ -12,6 +12,7 @@ import MasterBannerSolicitacoes from "./MasterBannerSolicitacoes";
 import MasterLP from "./MasterLP";
 import MasterPush from "./MasterPush";
 import MasterMergeContas from "./MasterMergeContas";
+import MasterNoticiasCategorias from "./MasterNoticiasCategorias";
 
 const MasterDashboard = () => {
   return (
