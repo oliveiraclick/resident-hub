@@ -1177,6 +1177,57 @@ export type Database = {
         }
         Relationships: []
       }
+      morador_interesses: {
+        Row: {
+          categoria: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          categoria: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          categoria?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      noticias: {
+        Row: {
+          categoria: string
+          conteudo: string
+          created_at: string
+          id: string
+          imagem_emoji: string
+          resumo: string
+          titulo: string
+        }
+        Insert: {
+          categoria: string
+          conteudo: string
+          created_at?: string
+          id?: string
+          imagem_emoji?: string
+          resumo: string
+          titulo: string
+        }
+        Update: {
+          categoria?: string
+          conteudo?: string
+          created_at?: string
+          id?: string
+          imagem_emoji?: string
+          resumo?: string
+          titulo?: string
+        }
+        Relationships: []
+      }
       pacotes: {
         Row: {
           condominio_id: string

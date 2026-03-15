@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import MoradorHome from "./MoradorHome";
+import MoradorNoticias from "./MoradorNoticias";
 import MoradorServicos from "./MoradorServicos";
 import MoradorServicosCategorias from "./MoradorServicosCategorias";
 import MoradorDesapegos from "./MoradorDesapegos";
@@ -41,6 +42,7 @@ const MoradorDashboard = () => {
       <Route path="lojas/:lojaId" element={<MoradorLoja />} />
       <Route path="meus-pedidos" element={<MoradorMeusPedidos />} />
       <Route path="manual" element={<MoradorManual />} />
+      <Route path="noticias" element={<MoradorNoticias />} />
     </Routes>
   );
 };

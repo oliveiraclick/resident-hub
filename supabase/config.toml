@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.send-push]
 verify_jwt = false
+
+[functions.gerar-noticias]
+verify_jwt = false
