@@ -172,7 +172,7 @@ const MasterHome = () => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-x-6 gap-y-2 relative">
-              <div className="absolute left-1/2 top-0 bottom-0 w-px bg-border" />
+              <div className="absolute left-1/2 top-0 bottom-0 w-px bg-border pointer-events-none" />
               {stats.categoriaCounts.map((cat) => (
                 <div
                   key={cat.especialidade}
