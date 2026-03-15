@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LogOut, Save, User, Phone, Briefcase, FileText, Camera, Trash2, AlertTriangle } from "lucide-react";
 import { useCategorias } from "@/hooks/useCategorias";
+import SubEspecialidadeField from "@/components/SubEspecialidadeField";
 import { APP_VERSION_LABEL } from "@/lib/appVersion";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
