@@ -216,8 +216,8 @@ const PrestadorPerfil = () => {
                         onChange={setSubEspecialidade}
                       />
                     </div>
-                  )
-                  </div>
+                  )}
+
 
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[12px] font-medium text-muted-foreground ml-1 flex items-center gap-1.5">
