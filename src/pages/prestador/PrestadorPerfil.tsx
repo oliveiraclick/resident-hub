@@ -85,8 +85,9 @@ const PrestadorPerfil = () => {
       prestadorId
         ? supabase.from("prestadores").update({
             especialidade: especialidade.trim(),
+            sub_especialidade: subEspecialidade.trim() || null,
             descricao: descricao.trim() || null,
-          }).eq("id", prestadorId)
+          } as any).eq("id", prestadorId)
         : Promise.resolve({ error: null }),
     ]);
 
