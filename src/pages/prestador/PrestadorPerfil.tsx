@@ -38,7 +38,7 @@ const PrestadorPerfil = () => {
     const fetchData = async () => {
       const [profileRes, prestadorRes] = await Promise.all([
         supabase.from("profiles").select("nome, telefone, avatar_url").eq("user_id", user.id).maybeSingle(),
-        supabase.from("prestadores").select("id, especialidade, descricao").eq("user_id", user.id).eq("condominio_id", condominioId).limit(1).maybeSingle(),
+        supabase.from("prestadores").select("id, especialidade, sub_especialidade, descricao").eq("user_id", user.id).eq("condominio_id", condominioId).limit(1).maybeSingle(),
       ]);
 
       if (profileRes.data) {
