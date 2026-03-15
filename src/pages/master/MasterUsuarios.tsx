@@ -284,7 +284,7 @@ const MasterUsuarios = () => {
                     </div>
                     <p className="text-xs text-muted-foreground">{u.condominioNome}</p>
                     {u.especialidade && (
-                      <p className="text-xs text-muted-foreground">🔧 {u.especialidade}</p>
+                      <p className="text-xs text-muted-foreground">🔧 {u.especialidade}{u.subEspecialidade ? ` · ${u.subEspecialidade}` : ""}</p>
                     )}
                   </div>
                   <div className="flex items-center gap-1">
