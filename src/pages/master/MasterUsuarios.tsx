@@ -42,6 +42,7 @@ interface Condominio {
 const MasterUsuarios = () => {
   const [searchParams] = useSearchParams();
   const initialFilter = searchParams.get("filter") || "all";
+  const initialCategoria = searchParams.get("categoria") || "all";
   const [users, setUsers] = useState<UserRow[]>([]);
   const [condominios, setCondominios] = useState<Condominio[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,7 +57,7 @@ const MasterUsuarios = () => {
   const [editAprovado, setEditAprovado] = useState(false);
   const [editEspecialidade, setEditEspecialidade] = useState("");
   const [saving, setSaving] = useState(false);
-  const [filterCategoria, setFilterCategoria] = useState("all");
+  const [filterCategoria, setFilterCategoria] = useState(initialCategoria);
   const { categorias } = useCategorias();
 
   // Build unique especialidades from prestadores
