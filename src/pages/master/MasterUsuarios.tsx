@@ -56,7 +56,11 @@ const MasterUsuarios = () => {
   const [editAprovado, setEditAprovado] = useState(false);
   const [editEspecialidade, setEditEspecialidade] = useState("");
   const [saving, setSaving] = useState(false);
+  const [filterCategoria, setFilterCategoria] = useState("all");
   const { categorias } = useCategorias();
+
+  // Build unique especialidades from prestadores
+  const especialidadesUnicas = [...new Set(users.filter(u => u.role === "prestador" && u.especialidade).map(u => u.especialidade!))].sort();
 
   const fetchData = async () => {
     setLoading(true);
@@ -169,7 +173,10 @@ const MasterUsuarios = () => {
   };
 
   const roleFiltered = filterRole === "all" ? users : users.filter((u) => u.role === filterRole);
-  const searchFiltered = search ? roleFiltered.filter((u) => u.nome.toLowerCase().includes(search.toLowerCase())) : roleFiltered;
+  const catFiltered = filterCategoria !== "all" && filterRole === "prestador"
+    ? roleFiltered.filter((u) => u.especialidade === filterCategoria)
+    : roleFiltered;
+  const searchFiltered = search ? catFiltered.filter((u) => u.nome.toLowerCase().includes(search.toLowerCase())) : catFiltered;
   const afterBloqueados = showBloqueados ? searchFiltered.filter((u) => !u.aprovado) : searchFiltered;
   const filtered = showOnline ? afterBloqueados.filter(isOnline) : afterBloqueados;
   const bloqueadosCount = users.filter((u) => !u.aprovado).length;
@@ -196,7 +203,7 @@ const MasterUsuarios = () => {
             className="pl-9"
           />
         </div>
-        <Select value={filterRole} onValueChange={(v) => { setFilterRole(v); setShowBloqueados(false); }}>
+        <Select value={filterRole} onValueChange={(v) => { setFilterRole(v); setShowBloqueados(false); setFilterCategoria("all"); }}>
           <SelectTrigger className="w-full h-[52px]">
             <SelectValue placeholder="Filtrar por role" />
           </SelectTrigger>
@@ -208,6 +215,19 @@ const MasterUsuarios = () => {
             <SelectItem value="platform_admin">Platform Admin</SelectItem>
           </SelectContent>
         </Select>
+        {filterRole === "prestador" && (
+          <Select value={filterCategoria} onValueChange={setFilterCategoria}>
+            <SelectTrigger className="w-full h-[52px]">
+              <SelectValue placeholder="Filtrar por categoria" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas as categorias</SelectItem>
+              {especialidadesUnicas.map((esp) => (
+                <SelectItem key={esp} value={esp}>{esp} ({users.filter(u => u.especialidade === esp).length})</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
         <div className="flex gap-2 flex-wrap">
           <Button
             variant={showOnline ? "default" : "outline"}
