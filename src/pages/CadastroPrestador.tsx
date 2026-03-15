@@ -41,7 +41,7 @@ const CadastroPrestador = () => {
   const [password, setPassword] = useState("");
   const [telefone, setTelefone] = useState("");
   const [especialidade, setEspecialidade] = useState("");
-  const [descricao, setDescricao] = useState("");
+  const [subEspecialidade, setSubEspecialidade] = useState("");
   const [condominioId, setCondominioId] = useState("");
   const [codigoIndicacao, setCodigoIndicacao] = useState(searchParams.get("ref") || "");
   const [showPassword, setShowPassword] = useState(false);
