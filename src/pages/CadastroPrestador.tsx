@@ -118,6 +118,7 @@ const CadastroPrestador = () => {
             condominio_id: condominioId,
             telefone: telefone.trim(),
             especialidade: especialidade.trim(),
+            sub_especialidade: subEspecialidade.trim() || null,
             descricao: descricao.trim() || null,
             codigo_indicacao: codigoIndicacao.trim().toUpperCase() || null,
           },
