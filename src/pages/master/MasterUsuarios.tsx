@@ -17,6 +17,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
 import { useCategorias } from "@/hooks/useCategorias";
+import SubEspecialidadeField from "@/components/SubEspecialidadeField";
 
 interface UserRow {
   roleId: string;
@@ -28,6 +29,7 @@ interface UserRow {
   aprovado: boolean;
   createdAt: string;
   especialidade: string | null;
+  subEspecialidade: string | null;
   prestadorId: string | null;
   devicePlatform: string | null;
   appVersion: string | null;
@@ -56,6 +58,7 @@ const MasterUsuarios = () => {
   const [editCondominio, setEditCondominio] = useState("");
   const [editAprovado, setEditAprovado] = useState(false);
   const [editEspecialidade, setEditEspecialidade] = useState("");
+  const [editSubEspecialidade, setEditSubEspecialidade] = useState("");
   const [saving, setSaving] = useState(false);
   const [filterCategoria, setFilterCategoria] = useState(initialCategoria);
   const { categorias } = useCategorias();
@@ -69,7 +72,7 @@ const MasterUsuarios = () => {
       supabase.from("user_roles").select("*"),
       supabase.from("profiles").select("*"),
       supabase.from("condominios").select("id, nome"),
-      supabase.from("prestadores").select("id, user_id, condominio_id, especialidade"),
+      supabase.from("prestadores").select("id, user_id, condominio_id, especialidade, sub_especialidade"),
     ]);
     const roles = rolesRes.data || [];
     const profiles = profilesRes.data || [];
@@ -96,6 +99,7 @@ const MasterUsuarios = () => {
           aprovado: r.aprovado ?? true,
           createdAt: r.created_at,
           especialidade: prest?.especialidade || null,
+          subEspecialidade: prest?.sub_especialidade || null,
           prestadorId: prest?.id || null,
           devicePlatform: profile?.device_platform || null,
           appVersion: profile?.app_version || null,
@@ -114,6 +118,7 @@ const MasterUsuarios = () => {
     setEditCondominio(u.condominioId || "none");
     setEditAprovado(u.aprovado);
     setEditEspecialidade(u.especialidade || "");
+    setEditSubEspecialidade(u.subEspecialidade || "");
   };
 
   const handleSaveEdit = async () => {
@@ -136,7 +141,8 @@ const MasterUsuarios = () => {
         // Update existing prestador
         await supabase.from("prestadores").update({
           especialidade: editEspecialidade.trim(),
-        }).eq("id", editTarget.prestadorId);
+          sub_especialidade: editSubEspecialidade.trim() || null,
+        } as any).eq("id", editTarget.prestadorId);
       } else if (condId) {
         // Create prestador record when changing role to prestador
         await supabase.from("prestadores").insert({
@@ -278,7 +284,7 @@ const MasterUsuarios = () => {
                     </div>
                     <p className="text-xs text-muted-foreground">{u.condominioNome}</p>
                     {u.especialidade && (
-                      <p className="text-xs text-muted-foreground">🔧 {u.especialidade}</p>
+                      <p className="text-xs text-muted-foreground">🔧 {u.especialidade}{u.subEspecialidade ? ` · ${u.subEspecialidade}` : ""}</p>
                     )}
                   </div>
                   <div className="flex items-center gap-1">
@@ -349,17 +355,29 @@ const MasterUsuarios = () => {
             </div>
             {/* Especialidade - only for prestadores */}
             {editRole === "prestador" && (
-              <div>
-                <label className="text-sm text-muted-foreground mb-1 block">Especialidade</label>
-                <Select value={editEspecialidade} onValueChange={setEditEspecialidade}>
-                  <SelectTrigger className="h-[52px]"><SelectValue placeholder="Selecione a especialidade" /></SelectTrigger>
-                  <SelectContent>
-                    {categorias.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.nome}>{cat.nome}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <>
+                <div>
+                  <label className="text-sm text-muted-foreground mb-1 block">Especialidade</label>
+                  <Select value={editEspecialidade} onValueChange={(v) => { setEditEspecialidade(v); setEditSubEspecialidade(""); }}>
+                    <SelectTrigger className="h-[52px]"><SelectValue placeholder="Selecione a especialidade" /></SelectTrigger>
+                    <SelectContent>
+                      {categorias.map((cat) => (
+                        <SelectItem key={cat.id} value={cat.nome}>{cat.nome}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {editEspecialidade && (
+                  <div>
+                    <label className="text-sm text-muted-foreground mb-1 block">Sub-especialidade</label>
+                    <SubEspecialidadeField
+                      categoriaNome={editEspecialidade}
+                      value={editSubEspecialidade}
+                      onChange={setEditSubEspecialidade}
+                    />
+                  </div>
+                )}
+              </>
             )}
             <div className="flex items-center gap-2">
               <input type="checkbox" checked={editAprovado} onChange={(e) => setEditAprovado(e.target.checked)}

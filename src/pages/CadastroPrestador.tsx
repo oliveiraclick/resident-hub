@@ -13,6 +13,7 @@ import { Eye, EyeOff, ArrowLeft, ScanLine } from "lucide-react";
 import { Link } from "react-router-dom";
 import logoMorador from "@/assets/logo-morador.png";
 import QrScanner from "@/components/QrScanner";
+import SubEspecialidadeField from "@/components/SubEspecialidadeField";
 
 const schema = z.object({
   nome: z.string().trim().min(2, "Mínimo 2 caracteres").max(100),
@@ -40,6 +41,7 @@ const CadastroPrestador = () => {
   const [password, setPassword] = useState("");
   const [telefone, setTelefone] = useState("");
   const [especialidade, setEspecialidade] = useState("");
+  const [subEspecialidade, setSubEspecialidade] = useState("");
   const [descricao, setDescricao] = useState("");
   const [condominioId, setCondominioId] = useState("");
   const [codigoIndicacao, setCodigoIndicacao] = useState(searchParams.get("ref") || "");
@@ -117,6 +119,7 @@ const CadastroPrestador = () => {
             condominio_id: condominioId,
             telefone: telefone.trim(),
             especialidade: especialidade.trim(),
+            sub_especialidade: subEspecialidade.trim() || null,
             descricao: descricao.trim() || null,
             codigo_indicacao: codigoIndicacao.trim().toUpperCase() || null,
           },
@@ -216,7 +219,7 @@ const CadastroPrestador = () => {
 
         <div className="flex flex-col gap-1">
           <label className="ml-1">Especialidade</label>
-          <Select value={especialidade} onValueChange={setEspecialidade}>
+          <Select value={especialidade} onValueChange={(v) => { setEspecialidade(v); setSubEspecialidade(""); }}>
             <SelectTrigger className="h-[52px]">
               <SelectValue placeholder="Selecione sua especialidade" />
             </SelectTrigger>
@@ -233,6 +236,17 @@ const CadastroPrestador = () => {
           </Select>
           {errors.especialidade && <span className="text-xs text-destructive ml-1">{errors.especialidade}</span>}
         </div>
+
+        {especialidade && (
+          <div className="flex flex-col gap-1">
+            <label className="ml-1">Sub-especialidade</label>
+            <SubEspecialidadeField
+              categoriaNome={especialidade}
+              value={subEspecialidade}
+              onChange={setSubEspecialidade}
+            />
+          </div>
+        )}
 
         <div className="flex flex-col gap-1">
           <label className="ml-1">Descrição dos serviços (opcional)</label>

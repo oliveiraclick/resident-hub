@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LogOut, Save, User, Phone, Briefcase, FileText, Camera, Trash2, AlertTriangle } from "lucide-react";
 import { useCategorias } from "@/hooks/useCategorias";
+import SubEspecialidadeField from "@/components/SubEspecialidadeField";
 import { APP_VERSION_LABEL } from "@/lib/appVersion";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -23,6 +24,7 @@ const PrestadorPerfil = () => {
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
   const [especialidade, setEspecialidade] = useState("");
+  const [subEspecialidade, setSubEspecialidade] = useState("");
   const [descricao, setDescricao] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -36,7 +38,7 @@ const PrestadorPerfil = () => {
     const fetchData = async () => {
       const [profileRes, prestadorRes] = await Promise.all([
         supabase.from("profiles").select("nome, telefone, avatar_url").eq("user_id", user.id).maybeSingle(),
-        supabase.from("prestadores").select("id, especialidade, descricao").eq("user_id", user.id).eq("condominio_id", condominioId).limit(1).maybeSingle(),
+        supabase.from("prestadores").select("id, especialidade, sub_especialidade, descricao").eq("user_id", user.id).eq("condominio_id", condominioId).limit(1).maybeSingle(),
       ]);
 
       if (profileRes.data) {
@@ -47,6 +49,7 @@ const PrestadorPerfil = () => {
       if (prestadorRes.data) {
         setPrestadorId(prestadorRes.data.id);
         setEspecialidade(prestadorRes.data.especialidade || "");
+        setSubEspecialidade((prestadorRes.data as any).sub_especialidade || "");
         setDescricao(prestadorRes.data.descricao || "");
       }
       setLoading(false);
@@ -82,8 +85,9 @@ const PrestadorPerfil = () => {
       prestadorId
         ? supabase.from("prestadores").update({
             especialidade: especialidade.trim(),
+            sub_especialidade: subEspecialidade.trim() || null,
             descricao: descricao.trim() || null,
-          }).eq("id", prestadorId)
+          } as any).eq("id", prestadorId)
         : Promise.resolve({ error: null }),
     ]);
 
@@ -187,7 +191,7 @@ const PrestadorPerfil = () => {
                     <label className="text-[12px] font-medium text-muted-foreground ml-1 flex items-center gap-1.5">
                       <Briefcase size={12} /> Especialidade
                     </label>
-                    <Select value={especialidade} onValueChange={setEspecialidade}>
+                    <Select value={especialidade} onValueChange={(v) => { setEspecialidade(v); setSubEspecialidade(""); }}>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione sua especialidade" />
                       </SelectTrigger>
@@ -200,6 +204,20 @@ const PrestadorPerfil = () => {
                       </SelectContent>
                     </Select>
                   </div>
+
+                  {especialidade && (
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[12px] font-medium text-muted-foreground ml-1 flex items-center gap-1.5">
+                        <Briefcase size={12} /> Sub-especialidade
+                      </label>
+                      <SubEspecialidadeField
+                        categoriaNome={especialidade}
+                        value={subEspecialidade}
+                        onChange={setSubEspecialidade}
+                      />
+                    </div>
+                  )}
+
 
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[12px] font-medium text-muted-foreground ml-1 flex items-center gap-1.5">

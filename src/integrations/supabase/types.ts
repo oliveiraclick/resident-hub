@@ -1342,6 +1342,7 @@ export type Database = {
           descricao: string | null
           especialidade: string
           id: string
+          sub_especialidade: string | null
           user_id: string
           visivel: boolean
           visivel_ate: string | null
@@ -1353,6 +1354,7 @@ export type Database = {
           descricao?: string | null
           especialidade: string
           id?: string
+          sub_especialidade?: string | null
           user_id: string
           visivel?: boolean
           visivel_ate?: string | null
@@ -1364,6 +1366,7 @@ export type Database = {
           descricao?: string | null
           especialidade?: string
           id?: string
+          sub_especialidade?: string | null
           user_id?: string
           visivel?: boolean
           visivel_ate?: string | null
@@ -1575,6 +1578,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      sub_especialidades: {
+        Row: {
+          categoria_nome: string
+          created_at: string
+          id: string
+          nome: string
+        }
+        Insert: {
+          categoria_nome: string
+          created_at?: string
+          id?: string
+          nome: string
+        }
+        Update: {
+          categoria_nome?: string
+          created_at?: string
+          id?: string
+          nome?: string
+        }
+        Relationships: []
       }
       unidades: {
         Row: {
