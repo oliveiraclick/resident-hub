@@ -1,16 +1,12 @@
 import { Smartphone, Download, ArrowUpCircle, ShieldAlert } from "lucide-react";
 import { NATIVE_APP_VERSION } from "@/lib/appVersion";
+import { isNativeApp } from "@/lib/nativeDetect";
 
 /**
  * Versão mínima exigida para o app nativo.
  * Quando você publicar uma nova versão obrigatória, atualize aqui.
  */
 const MIN_NATIVE_VERSION = "3.2.0";
-
-function isNativeApp(): boolean {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("native") === "1" || /\b(capacitor|wv)\b/i.test(navigator.userAgent);
-}
 
 function isVersionOutdated(current: string, minimum: string): boolean {
   const cur = current.split(".").map(Number);
