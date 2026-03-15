@@ -203,7 +203,7 @@ const MasterUsuarios = () => {
             className="pl-9"
           />
         </div>
-        <Select value={filterRole} onValueChange={(v) => { setFilterRole(v); setShowBloqueados(false); }}>
+        <Select value={filterRole} onValueChange={(v) => { setFilterRole(v); setShowBloqueados(false); setFilterCategoria("all"); }}>
           <SelectTrigger className="w-full h-[52px]">
             <SelectValue placeholder="Filtrar por role" />
           </SelectTrigger>
@@ -215,6 +215,19 @@ const MasterUsuarios = () => {
             <SelectItem value="platform_admin">Platform Admin</SelectItem>
           </SelectContent>
         </Select>
+        {filterRole === "prestador" && (
+          <Select value={filterCategoria} onValueChange={setFilterCategoria}>
+            <SelectTrigger className="w-full h-[52px]">
+              <SelectValue placeholder="Filtrar por categoria" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas as categorias</SelectItem>
+              {especialidadesUnicas.map((esp) => (
+                <SelectItem key={esp} value={esp}>{esp} ({users.filter(u => u.especialidade === esp).length})</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
         <div className="flex gap-2 flex-wrap">
           <Button
             variant={showOnline ? "default" : "outline"}
