@@ -12,7 +12,8 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", exact: "8.1.0"),
-        .package(url: "https://github.com/nicklama/capacitor-push-notifications-swift-pm.git", exact: "8.0.1")
+        .package(url: "https://github.com/nicklama/capacitor-push-notifications-swift-pm.git", exact: "8.0.1"),
+        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", from: "11.0.0")
     ],
     targets: [
         .target(
@@ -20,7 +21,8 @@ let package = Package(
             dependencies: [
                 .product(name: "Capacitor", package: "capacitor-swift-pm"),
                 .product(name: "Cordova", package: "capacitor-swift-pm"),
-                .product(name: "CapacitorPushNotifications", package: "capacitor-push-notifications-swift-pm")
+                .product(name: "CapacitorPushNotifications", package: "capacitor-push-notifications-swift-pm"),
+                .product(name: "FirebaseMessaging", package: "firebase-ios-sdk")
             ]
         )
     ]
