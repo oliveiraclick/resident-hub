@@ -173,7 +173,10 @@ const MasterUsuarios = () => {
   };
 
   const roleFiltered = filterRole === "all" ? users : users.filter((u) => u.role === filterRole);
-  const searchFiltered = search ? roleFiltered.filter((u) => u.nome.toLowerCase().includes(search.toLowerCase())) : roleFiltered;
+  const catFiltered = filterCategoria !== "all" && filterRole === "prestador"
+    ? roleFiltered.filter((u) => u.especialidade === filterCategoria)
+    : roleFiltered;
+  const searchFiltered = search ? catFiltered.filter((u) => u.nome.toLowerCase().includes(search.toLowerCase())) : catFiltered;
   const afterBloqueados = showBloqueados ? searchFiltered.filter((u) => !u.aprovado) : searchFiltered;
   const filtered = showOnline ? afterBloqueados.filter(isOnline) : afterBloqueados;
   const bloqueadosCount = users.filter((u) => !u.aprovado).length;
