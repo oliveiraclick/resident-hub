@@ -1228,6 +1228,33 @@ export type Database = {
         }
         Relationships: []
       }
+      noticias_categorias: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          emoji: string
+          id: string
+          nome: string
+          ordem: number
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          emoji?: string
+          id?: string
+          nome: string
+          ordem?: number
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          emoji?: string
+          id?: string
+          nome?: string
+          ordem?: number
+        }
+        Relationships: []
+      }
       pacotes: {
         Row: {
           condominio_id: string

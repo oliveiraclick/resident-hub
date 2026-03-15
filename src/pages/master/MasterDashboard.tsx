@@ -12,6 +12,7 @@ import MasterBannerSolicitacoes from "./MasterBannerSolicitacoes";
 import MasterLP from "./MasterLP";
 import MasterPush from "./MasterPush";
 import MasterMergeContas from "./MasterMergeContas";
+import MasterNoticiasCategorias from "./MasterNoticiasCategorias";
 
 const MasterDashboard = () => {
   return (
@@ -29,6 +30,7 @@ const MasterDashboard = () => {
       <Route path="/push" element={<MasterPush />} />
       <Route path="/merge-contas" element={<MasterMergeContas />} />
       <Route path="/perfil" element={<MasterPerfil />} />
+      <Route path="/noticias-categorias" element={<MasterNoticiasCategorias />} />
     </Routes>
   );
 };

@@ -6,21 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RefreshCw, Newspaper, ChevronDown, ChevronUp, Bookmark, BookmarkCheck } from "lucide-react";
-import { toast } from "sonner";
+import { Newspaper, ChevronDown, ChevronUp, Bookmark, BookmarkCheck } from "lucide-react";
 
-const TODAS_CATEGORIAS = [
-  { nome: "Futebol", emoji: "⚽" },
-  { nome: "Fórmula 1", emoji: "🏎️" },
-  { nome: "Games", emoji: "🎮" },
-  { nome: "Tecnologia", emoji: "💻" },
-  { nome: "Moda", emoji: "👗" },
-  { nome: "Estética & Beleza", emoji: "💅" },
-  { nome: "Saúde & Bem-estar", emoji: "🧘" },
-  { nome: "Culinária", emoji: "🍳" },
-  { nome: "Filmes & Séries", emoji: "🎬" },
-  { nome: "Finanças", emoji: "💰" },
-];
+interface NoticiaCategoria {
+  id: string;
+  nome: string;
+  emoji: string;
+}
 
 interface Noticia {
   id: string;
@@ -35,6 +27,7 @@ interface Noticia {
 const MoradorNoticias = () => {
   const { user } = useAuth();
   const [noticias, setNoticias] = useState<Noticia[]>([]);
+  const [categorias, setCategorias] = useState<NoticiaCategoria[]>([]);
   const [interesses, setInteresses] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -48,12 +41,17 @@ const MoradorNoticias = () => {
 
   const fetchData = async () => {
     setLoading(true);
-    const [noticiasRes, interessesRes] = await Promise.all([
+    const [noticiasRes, categoriasRes, interessesRes] = await Promise.all([
       supabase
         .from("noticias")
         .select("*")
         .order("created_at", { ascending: false })
         .limit(50),
+      supabase
+        .from("noticias_categorias")
+        .select("id, nome, emoji")
+        .eq("ativo", true)
+        .order("ordem", { ascending: true }),
       supabase
         .from("morador_interesses")
         .select("categoria")
@@ -61,6 +59,7 @@ const MoradorNoticias = () => {
     ]);
 
     if (noticiasRes.data) setNoticias(noticiasRes.data as Noticia[]);
+    if (categoriasRes.data) setCategorias(categoriasRes.data as NoticiaCategoria[]);
     if (interessesRes.data) setInteresses(interessesRes.data.map((i: any) => i.categoria));
     setLoading(false);
   };
@@ -93,7 +92,6 @@ const MoradorNoticias = () => {
     return `${days}d atrás`;
   };
 
-  // Filter: show interested categories first, then filter by selected
   const filtered = noticias.filter((n) => {
     if (filtroCategoria) return n.categoria === filtroCategoria;
     if (interesses.length > 0) return interesses.includes(n.categoria);
@@ -121,18 +119,18 @@ const MoradorNoticias = () => {
           </Button>
         </div>
 
-        {/* Interesses Selector */}
+        {/* Interesses Selector — agora dinâmico do banco */}
         {showInteresses && (
           <Card className="p-4 bg-muted/50">
             <p className="text-sm text-muted-foreground mb-3">
               Selecione seus interesses para personalizar o feed:
             </p>
             <div className="flex flex-wrap gap-2">
-              {TODAS_CATEGORIAS.map((cat) => {
+              {categorias.map((cat) => {
                 const selected = interesses.includes(cat.nome);
                 return (
                   <button
-                    key={cat.nome}
+                    key={cat.id}
                     onClick={() => toggleInteresse(cat.nome)}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
                       selected
@@ -170,7 +168,7 @@ const MoradorNoticias = () => {
             {interesses.length > 0 ? "Meus Interesses" : "Todos"}
           </button>
           {categoriasAtivas.map((cat) => {
-            const info = TODAS_CATEGORIAS.find((c) => c.nome === cat);
+            const info = categorias.find((c) => c.nome === cat);
             return (
               <button
                 key={cat}
@@ -181,7 +179,7 @@ const MoradorNoticias = () => {
                     : "bg-muted text-muted-foreground"
                 }`}
               >
-                {info?.emoji} {cat}
+                {info?.emoji || "📰"} {cat}
               </button>
             );
           })}
@@ -220,7 +218,6 @@ const MoradorNoticias = () => {
                 key={noticia.id}
                 className="overflow-hidden transition-all hover:shadow-md"
               >
-                {/* Category + Time header */}
                 <div className="flex items-center justify-between px-4 pt-3 pb-1">
                   <Badge variant="secondary" className="text-xs font-normal gap-1">
                     <span>{noticia.imagem_emoji}</span>
@@ -231,7 +228,6 @@ const MoradorNoticias = () => {
                   </span>
                 </div>
 
-                {/* Content */}
                 <div
                   className="px-4 pb-3 cursor-pointer"
                   onClick={() => setExpandedId(isExpanded ? null : noticia.id)}
@@ -254,13 +250,9 @@ const MoradorNoticias = () => {
                   <div className="flex items-center justify-end mt-2">
                     <span className="text-[11px] text-primary flex items-center gap-0.5">
                       {isExpanded ? (
-                        <>
-                          Menos <ChevronUp className="h-3 w-3" />
-                        </>
+                        <>Menos <ChevronUp className="h-3 w-3" /></>
                       ) : (
-                        <>
-                          Ler mais <ChevronDown className="h-3 w-3" />
-                        </>
+                        <>Ler mais <ChevronDown className="h-3 w-3" /></>
                       )}
                     </span>
                   </div>
