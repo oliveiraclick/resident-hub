@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import MasterLayout from "@/components/MasterLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2, Users, Package, DollarSign, ShieldOff, Home, Wrench } from "lucide-react";
+import { Building2, Users, Package, DollarSign, ShieldOff, Home, Wrench, Newspaper } from "lucide-react";
 
 interface CategoriaCount {
   especialidade: string;
