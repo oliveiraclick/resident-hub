@@ -218,7 +218,7 @@ const CadastroPrestador = () => {
 
         <div className="flex flex-col gap-1">
           <label className="ml-1">Especialidade</label>
-          <Select value={especialidade} onValueChange={setEspecialidade}>
+          <Select value={especialidade} onValueChange={(v) => { setEspecialidade(v); setSubEspecialidade(""); }}>
             <SelectTrigger className="h-[52px]">
               <SelectValue placeholder="Selecione sua especialidade" />
             </SelectTrigger>
@@ -235,6 +235,17 @@ const CadastroPrestador = () => {
           </Select>
           {errors.especialidade && <span className="text-xs text-destructive ml-1">{errors.especialidade}</span>}
         </div>
+
+        {especialidade && (
+          <div className="flex flex-col gap-1">
+            <label className="ml-1">Sub-especialidade</label>
+            <SubEspecialidadeField
+              categoriaNome={especialidade}
+              value={subEspecialidade}
+              onChange={setSubEspecialidade}
+            />
+          </div>
+        )}
 
         <div className="flex flex-col gap-1">
           <label className="ml-1">Descrição dos serviços (opcional)</label>
