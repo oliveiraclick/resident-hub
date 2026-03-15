@@ -1,10 +1,10 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
+import { isNativeApp } from "@/lib/nativeDetect";
 
 // Mark body as native when running inside Capacitor WebView
-const params = new URLSearchParams(window.location.search);
-if (params.get("native") === "1" || /\b(capacitor|wv)\b/i.test(navigator.userAgent)) {
+if (isNativeApp) {
   document.body.classList.add("native-app");
 }
 

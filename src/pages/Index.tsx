@@ -1,18 +1,10 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { Capacitor } from "@capacitor/core";
+import { isNativeApp } from "@/lib/nativeDetect";
 import LandingPage from "./LandingPage";
-
-/** Detect native app via ?native=1 query param set in capacitor.config.ts */
-const detectNativeApp = (): boolean => {
-  if (Capacitor.isNativePlatform()) return true;
-  const params = new URLSearchParams(window.location.search);
-  return params.get("native") === "1";
-};
 
 const Index = () => {
   const { user, loading } = useAuth();
-  const isNativeApp = detectNativeApp();
 
   if (loading) {
     return (

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Capacitor } from "@capacitor/core";
 import { supabase } from "@/integrations/supabase/client";
+import { isNativeApp } from "@/lib/nativeDetect";
 
 /**
  * Registers the device for push notifications using Capacitor.
@@ -14,25 +15,9 @@ export function usePushNotifications(userId: string | undefined) {
       return;
     }
 
-    const isCapNative = Capacitor.isNativePlatform();
-    const hasNativeParam = new URLSearchParams(window.location.search).get("native") === "1";
-    const ua = navigator.userAgent;
-    const hasWvUA = /\b(capacitor|wv)\b/i.test(ua);
-    // iOS WebView detection: check for standalone mode or missing Safari identifier
-    const isIOSWebView = /iPhone|iPad|iPod/.test(ua) && !(/Safari/.test(ua)) || (navigator as any).standalone === true;
-    const isNative = isCapNative || hasNativeParam || hasWvUA || isIOSWebView;
+    console.log("[Push] isNativeApp:", isNativeApp);
 
-    console.log("[Push] Detection:", {
-      isCapNative,
-      hasNativeParam,
-      hasWvUA,
-      isIOSWebView,
-      isNative,
-      platform: Capacitor.getPlatform(),
-      userAgent: ua.substring(0, 150),
-    });
-
-    if (!isNative) {
+    if (!isNativeApp) {
       console.log("[Push] Not native environment, skipping");
       return;
     }
