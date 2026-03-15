@@ -191,7 +191,7 @@ const PrestadorPerfil = () => {
                     <label className="text-[12px] font-medium text-muted-foreground ml-1 flex items-center gap-1.5">
                       <Briefcase size={12} /> Especialidade
                     </label>
-                    <Select value={especialidade} onValueChange={setEspecialidade}>
+                    <Select value={especialidade} onValueChange={(v) => { setEspecialidade(v); setSubEspecialidade(""); }}>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione sua especialidade" />
                       </SelectTrigger>
@@ -203,6 +203,20 @@ const PrestadorPerfil = () => {
                         ))}
                       </SelectContent>
                     </Select>
+                  </div>
+
+                  {especialidade && (
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[12px] font-medium text-muted-foreground ml-1 flex items-center gap-1.5">
+                        <Briefcase size={12} /> Sub-especialidade
+                      </label>
+                      <SubEspecialidadeField
+                        categoriaNome={especialidade}
+                        value={subEspecialidade}
+                        onChange={setSubEspecialidade}
+                      />
+                    </div>
+                  )
                   </div>
 
                   <div className="flex flex-col gap-1.5">
