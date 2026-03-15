@@ -99,6 +99,7 @@ const MasterUsuarios = () => {
           aprovado: r.aprovado ?? true,
           createdAt: r.created_at,
           especialidade: prest?.especialidade || null,
+          subEspecialidade: prest?.sub_especialidade || null,
           prestadorId: prest?.id || null,
           devicePlatform: profile?.device_platform || null,
           appVersion: profile?.app_version || null,
