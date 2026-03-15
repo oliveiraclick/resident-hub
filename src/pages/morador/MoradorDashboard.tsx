@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import MoradorHome from "./MoradorHome";
+import MoradorNoticias from "./MoradorNoticias";
 import MoradorServicos from "./MoradorServicos";
 import MoradorServicosCategorias from "./MoradorServicosCategorias";
 import MoradorDesapegos from "./MoradorDesapegos";
