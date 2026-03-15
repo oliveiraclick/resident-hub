@@ -24,6 +24,7 @@ const PrestadorPerfil = () => {
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
   const [especialidade, setEspecialidade] = useState("");
+  const [subEspecialidade, setSubEspecialidade] = useState("");
   const [descricao, setDescricao] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
