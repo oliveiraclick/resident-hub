@@ -10,15 +10,20 @@ import { isNativeApp } from "@/lib/nativeDetect";
  */
 export function usePushNotifications(userId: string | undefined) {
   useEffect(() => {
-    if (!userId) {
-      console.log("[Push] No userId, skipping");
-      return;
-    }
-
-    console.log("[Push] isNativeApp:", isNativeApp);
+    if (!userId) return;
 
     if (!isNativeApp) {
       console.log("[Push] Not native environment, skipping");
+      return;
+    }
+
+    // Also check Capacitor bridge availability
+    const isNativePlatform = Capacitor.isNativePlatform();
+    console.log("[Push] isNativeApp:", isNativeApp, "Capacitor.isNativePlatform:", isNativePlatform);
+
+    if (!isNativePlatform) {
+      console.log("[Push] Capacitor bridge not available, skipping");
+      savePushDebug(userId, "bridge_unavailable", "Capacitor.isNativePlatform() = false");
       return;
     }
 
@@ -41,6 +46,7 @@ export function usePushNotifications(userId: string | undefined) {
 
         if (permResult.receive !== "granted") {
           console.warn("[Push] Permission NOT granted:", permResult.receive);
+          savePushDebug(userId, "permission_denied", permResult.receive);
           return;
         }
 
@@ -48,6 +54,7 @@ export function usePushNotifications(userId: string | undefined) {
         console.log("[Push] Calling register()...");
         await PushNotifications.register();
         console.log("[Push] register() completed, waiting for token...");
+        savePushDebug(userId, "register_called", "waiting for token event");
 
         // Listen for the registration token
         const tokenListener = await PushNotifications.addListener(
@@ -71,8 +78,10 @@ export function usePushNotifications(userId: string | undefined) {
 
             if (error) {
               console.error("[Push] ❌ Failed to save token:", error.message, error.details);
+              savePushDebug(userId, "save_error", error.message);
             } else {
               console.log("[Push] ✅ Token saved successfully");
+              savePushDebug(userId, "token_saved", `${platform}:${token.value.substring(0, 15)}...`);
             }
           }
         );
@@ -81,6 +90,7 @@ export function usePushNotifications(userId: string | undefined) {
           "registrationError",
           (err) => {
             console.error("[Push] ❌ Registration error:", JSON.stringify(err));
+            savePushDebug(userId, "registration_error", JSON.stringify(err).substring(0, 200));
           }
         );
 
@@ -107,7 +117,9 @@ export function usePushNotifications(userId: string | undefined) {
           actionListener.remove();
         };
       } catch (e) {
-        console.error("[Push] ❌ Init failed:", e instanceof Error ? e.message : e);
+        const msg = e instanceof Error ? e.message : String(e);
+        console.error("[Push] ❌ Init failed:", msg);
+        savePushDebug(userId, "init_error", msg.substring(0, 200));
       }
     };
 
@@ -115,4 +127,18 @@ export function usePushNotifications(userId: string | undefined) {
 
     return () => cleanup?.();
   }, [userId]);
+}
+
+/** Save push debug info to profile so we can query remotely */
+async function savePushDebug(userId: string, status: string, detail: string) {
+  try {
+    const platform = Capacitor.getPlatform();
+    const debugInfo = `[${new Date().toISOString()}] ${platform} | ${status}: ${detail}`;
+    await supabase
+      .from("profiles")
+      .update({ app_version: debugInfo })
+      .eq("user_id", userId);
+  } catch (_) {
+    // silent
+  }
 }
