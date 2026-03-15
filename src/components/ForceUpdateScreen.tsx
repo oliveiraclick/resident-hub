@@ -29,7 +29,7 @@ function getStoreUrl(): string {
 }
 
 const ForceUpdateScreen = () => {
-  if (!isNativeApp()) return null;
+  if (!isNativeApp) return null;
   if (!isVersionOutdated(NATIVE_APP_VERSION, MIN_NATIVE_VERSION)) return null;
 
   const storeUrl = getStoreUrl();

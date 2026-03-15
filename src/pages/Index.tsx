@@ -5,7 +5,6 @@ import LandingPage from "./LandingPage";
 
 const Index = () => {
   const { user, loading } = useAuth();
-  const isNativeApp = detectNativeApp();
 
   if (loading) {
     return (
