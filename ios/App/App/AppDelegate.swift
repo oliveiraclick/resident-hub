@@ -17,8 +17,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
         
-        // Register for remote notifications (required for APNs token)
-        application.registerForRemoteNotifications()
+        // IMPORTANT: registration is triggered from JS (PushNotifications.register)
+        // to guarantee listeners are already attached before iOS returns the token.
         return true
     }
 
