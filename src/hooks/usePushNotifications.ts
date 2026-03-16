@@ -35,10 +35,21 @@ export function usePushNotifications(userId: string | undefined) {
         const { PushNotifications } = await import("@capacitor/push-notifications");
         console.log("[Push] Plugin imported successfully");
 
+        let hasRegistrationResult = false;
+        let registerTimeout: ReturnType<typeof setTimeout> | undefined;
+        const clearRegisterTimeout = () => {
+          if (registerTimeout) {
+            clearTimeout(registerTimeout);
+            registerTimeout = undefined;
+          }
+        };
+
         // Register listeners BEFORE calling register() to avoid missing fast iOS token events
         const tokenListener = await PushNotifications.addListener(
           "registration",
           async (token) => {
+            hasRegistrationResult = true;
+            clearRegisterTimeout();
             console.log("[Push] ✅ Token received:", token.value.substring(0, 20) + "...");
             const platform = Capacitor.getPlatform() === "ios" ? "ios" : "android";
 
@@ -68,6 +79,8 @@ export function usePushNotifications(userId: string | undefined) {
         const errorListener = await PushNotifications.addListener(
           "registrationError",
           (err) => {
+            hasRegistrationResult = true;
+            clearRegisterTimeout();
             console.error("[Push] ❌ Registration error:", JSON.stringify(err));
             savePushDebug(userId, "registration_error", JSON.stringify(err).substring(0, 200));
           }
@@ -106,6 +119,7 @@ export function usePushNotifications(userId: string | undefined) {
           console.warn("[Push] Permission NOT granted:", permission);
           savePushDebug(userId, "permission_denied", permission);
           cleanup = () => {
+            clearRegisterTimeout();
             tokenListener.remove();
             errorListener.remove();
             receivedListener.remove();
@@ -120,7 +134,14 @@ export function usePushNotifications(userId: string | undefined) {
         console.log("[Push] register() completed, waiting for token...");
         savePushDebug(userId, "register_called", "waiting for token event");
 
+        registerTimeout = setTimeout(() => {
+          if (!hasRegistrationResult) {
+            savePushDebug(userId, "no_token_after_register", "No registration callback after 12s");
+          }
+        }, 12000);
+
         cleanup = () => {
+          clearRegisterTimeout();
           tokenListener.remove();
           errorListener.remove();
           receivedListener.remove();
