@@ -1,44 +1,51 @@
 import UIKit
 import Capacitor
 import UserNotifications
+#if canImport(FirebaseCore)
 import FirebaseCore
+#endif
+#if canImport(FirebaseMessaging)
 import FirebaseMessaging
+#endif
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Initialize Firebase
+        #if canImport(FirebaseCore)
         FirebaseApp.configure()
-        
-        // Set delegates
+        #else
+        print("[Push-iOS] FirebaseCore not available in this build; continuing without FCM init.")
+        #endif
+
         UNUserNotificationCenter.current().delegate = self
+
+        #if canImport(FirebaseMessaging)
         Messaging.messaging().delegate = self
-        
+        #else
+        print("[Push-iOS] FirebaseMessaging not available in this build.")
+        #endif
+
         // IMPORTANT: registration is triggered from JS (PushNotifications.register)
         // to guarantee listeners are already attached before iOS returns the token.
         return true
     }
 
-    // Forward APNs token to Firebase AND Capacitor
+    // Forward APNs token to Firebase (when available) AND Capacitor
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        #if canImport(FirebaseMessaging)
         // Firebase needs the raw APNs token to map it to an FCM token
         Messaging.messaging().apnsToken = deviceToken
+        #endif
+
         // Forward to Capacitor as well
         NotificationCenter.default.post(name: .capacitorDidRegisterForRemoteNotifications, object: deviceToken)
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications, object: error)
-    }
-
-    // Firebase Messaging delegate - called when FCM token is generated/refreshed
-    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        print("[Push-iOS] FCM token received: \(fcmToken?.prefix(20) ?? "nil")...")
-        // The Capacitor PushNotifications plugin will pick up the FCM token
-        // automatically when Firebase is configured
     }
 
     // Show notifications even when app is in foreground
@@ -62,3 +69,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
     }
 }
+
+#if canImport(FirebaseMessaging)
+extension AppDelegate: MessagingDelegate {
+    // Firebase Messaging delegate - called when FCM token is generated/refreshed
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        print("[Push-iOS] FCM token received: \(fcmToken?.prefix(20) ?? "nil")...")
+        // The Capacitor PushNotifications plugin will pick up the FCM token
+        // automatically when Firebase is configured
+    }
+}
+#endif
