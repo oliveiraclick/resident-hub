@@ -23,6 +23,9 @@ workflows:
       - name: Sync Capacitor iOS
         script: |
           npx cap sync ios
+      - name: Resolve iOS Swift Packages
+        script: |
+          xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App
       - name: Decode GoogleService-Info.plist
         script: |
           echo $GOOGLE_SERVICE_INFO_PLIST | base64 --decode > ios/App/App/GoogleService-Info.plist
