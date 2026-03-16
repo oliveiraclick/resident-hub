@@ -25,13 +25,21 @@ const PoliticaPrivacidade = () => {
         </section>
 
         <section>
-          <h2 className="font-semibold mb-1">3. Compartilhamento</h2>
-          <p>Não vendemos ou compartilhamos seus dados com terceiros. Informações como nome e telefone podem ser visíveis para outros moradores do mesmo condomínio apenas nos contextos necessários (ex: anúncios de desapego).</p>
+          <h2 className="font-semibold mb-1">3. Compartilhamento com provedores de infraestrutura</h2>
+          <p>Não vendemos seus dados pessoais. Informações como nome e telefone podem ser visíveis para outros moradores do mesmo condomínio apenas nos contextos necessários (ex: anúncios de desapego).</p>
+          <p className="mt-2">Para a execução dos serviços da plataforma, seus dados podem ser compartilhados com os seguintes provedores de infraestrutura tecnológica, que atuam como <strong>operadores de dados</strong> nos termos da LGPD (Art. 5º, VII):</p>
+          <ul className="list-disc pl-5 mt-2 space-y-1 text-muted-foreground">
+            <li><strong>Supabase Inc.</strong> — banco de dados e autenticação. Servidores nos EUA, com criptografia em trânsito (TLS) e em repouso (AES-256). Compatível com SOC 2 Type II.</li>
+            <li><strong>Apple (APNs) e Google (FCM)</strong> — envio de notificações push. Recebem apenas tokens de dispositivo, sem dados pessoais identificáveis.</li>
+            <li><strong>Kiwify</strong> — processamento de pagamentos de assinaturas de prestadores, quando aplicável.</li>
+            <li><strong>Lovable / Netlify</strong> — hospedagem do frontend da aplicação. Não armazena dados pessoais persistentes.</li>
+          </ul>
+          <p className="mt-2">O compartilhamento é estritamente necessário para a prestação do serviço, conforme Art. 7º, V da LGPD.</p>
         </section>
 
         <section>
           <h2 className="font-semibold mb-1">4. Armazenamento</h2>
-          <p>Os dados são armazenados de forma segura em servidores protegidos com criptografia. Mantemos seus dados enquanto sua conta estiver ativa.</p>
+          <p>Os dados são armazenados de forma segura em servidores protegidos com criptografia em trânsito (TLS) e em repouso (AES-256). Mantemos seus dados enquanto sua conta estiver ativa.</p>
         </section>
 
         <section>
