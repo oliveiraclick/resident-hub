@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { Eye, EyeOff, ArrowLeft, ScanLine } from "lucide-react";
 import { Link } from "react-router-dom";
-import logoMorador from "@/assets/logo-morador.png";
+import logoSymbol from "@/assets/logo-symbol.png";
 import QrScanner from "@/components/QrScanner";
 import SubEspecialidadeField from "@/components/SubEspecialidadeField";
 

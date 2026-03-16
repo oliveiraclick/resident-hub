@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import QrDisplay from "@/components/QrDisplay";
 import { Camera, CheckCircle2, XCircle, UserCheck } from "lucide-react";
 import { toast } from "sonner";
-import logoMorador from "@/assets/logo-morador.png";
+import logoSymbol from "@/assets/logo-symbol.png";
 
 type ConviteData = {
   id: string;

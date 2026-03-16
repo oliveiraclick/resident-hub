@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import QrScanner from "@/components/QrScanner";
 import { Button } from "@/components/ui/button";
 import { LogOut, ScanLine, CheckCircle2, XCircle, RotateCcw } from "lucide-react";
-import logoMorador from "@/assets/logo-morador.png";
+import logoSymbol from "@/assets/logo-symbol.png";
 import { toast } from "sonner";
 
 type ValidationResult = {
