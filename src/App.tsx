@@ -44,7 +44,6 @@ const App = () => (
         <UpdateBanner />
         <ForceUpdateScreen />
         <BrowserRouter>
-          <ModuleSwitcher />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Navigate to="/auth" replace />} />
