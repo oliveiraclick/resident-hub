@@ -35,28 +35,7 @@ export function usePushNotifications(userId: string | undefined) {
         const { PushNotifications } = await import("@capacitor/push-notifications");
         console.log("[Push] Plugin imported successfully");
 
-        // Check current permission status first
-        const permStatus = await PushNotifications.checkPermissions();
-        console.log("[Push] Current permission status:", permStatus.receive);
-
-        // Request permission
-        console.log("[Push] Requesting permissions...");
-        const permResult = await PushNotifications.requestPermissions();
-        console.log("[Push] Permission result:", permResult.receive);
-
-        if (permResult.receive !== "granted") {
-          console.warn("[Push] Permission NOT granted:", permResult.receive);
-          savePushDebug(userId, "permission_denied", permResult.receive);
-          return;
-        }
-
-        // Register with APNs / FCM
-        console.log("[Push] Calling register()...");
-        await PushNotifications.register();
-        console.log("[Push] register() completed, waiting for token...");
-        savePushDebug(userId, "register_called", "waiting for token event");
-
-        // Listen for the registration token
+        // Register listeners BEFORE calling register() to avoid missing fast iOS token events
         const tokenListener = await PushNotifications.addListener(
           "registration",
           async (token) => {
@@ -109,6 +88,37 @@ export function usePushNotifications(userId: string | undefined) {
             console.log("[Push] Notification tapped:", action.notification?.title);
           }
         );
+
+        // Check current permission status first
+        const permStatus = await PushNotifications.checkPermissions();
+        console.log("[Push] Current permission status:", permStatus.receive);
+
+        // Request permission only when needed
+        let permission = permStatus.receive;
+        if (permission === "prompt") {
+          console.log("[Push] Requesting permissions...");
+          const permResult = await PushNotifications.requestPermissions();
+          permission = permResult.receive;
+          console.log("[Push] Permission result:", permission);
+        }
+
+        if (permission !== "granted") {
+          console.warn("[Push] Permission NOT granted:", permission);
+          savePushDebug(userId, "permission_denied", permission);
+          cleanup = () => {
+            tokenListener.remove();
+            errorListener.remove();
+            receivedListener.remove();
+            actionListener.remove();
+          };
+          return;
+        }
+
+        // Register with APNs / FCM
+        console.log("[Push] Calling register()...");
+        await PushNotifications.register();
+        console.log("[Push] register() completed, waiting for token...");
+        savePushDebug(userId, "register_called", "waiting for token event");
 
         cleanup = () => {
           tokenListener.remove();
