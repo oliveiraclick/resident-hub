@@ -141,7 +141,7 @@ const LandingPage = () => {
       {/* ────── NAVBAR ────── */}
       <nav className="sticky top-0 z-50 bg-header-bg text-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <img src={logoMorador} alt="Morador.app" className="h-14" />
+          <img src={logoSymbol} alt="Morador.app" className="h-14" />
           <div className="hidden md:flex items-center gap-6">
             {NAV_LINKS.map((l) => (
               <a key={l} href={`#${l.toLowerCase().replace(/ /g, "-")}`} className="text-sm text-white/80 hover:text-white transition-colors">
