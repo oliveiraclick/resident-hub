@@ -11,7 +11,7 @@ const PoliticaPrivacidade = () => {
       </button>
 
       <h1 className="text-xl font-bold text-foreground mb-4">Política de Privacidade</h1>
-      <p className="text-xs text-muted-foreground mb-6">Última atualização: fevereiro de 2026</p>
+      <p className="text-xs text-muted-foreground mb-6">Última atualização: março de 2026</p>
 
       <div className="space-y-4 text-sm text-foreground leading-relaxed">
         <section>
