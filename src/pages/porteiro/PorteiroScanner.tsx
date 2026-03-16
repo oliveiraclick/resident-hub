@@ -110,7 +110,7 @@ const PorteiroScanner = () => {
         }}
       >
         <div className="flex items-center gap-2.5">
-          <img src={logoMorador} alt="Morador.app" className="h-9 w-9 object-contain" />
+          <img src={logoSymbol} alt="Morador.app" className="h-10 w-10 object-contain" />
           <div>
             <span className="font-bold text-[16px] text-white block leading-none">Portaria</span>
             <span className="text-[10px] text-white/50 font-medium uppercase tracking-wider">Scanner de visitantes</span>

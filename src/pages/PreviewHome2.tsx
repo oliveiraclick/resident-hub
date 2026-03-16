@@ -144,7 +144,7 @@ const PreviewHome2 = () => {
             {condominioLogo ? (
               <img src={condominioLogo} alt={condominioName || "Condomínio"} style={{ height: 36, width: 36, borderRadius: 10, objectFit: "cover" }} />
             ) : (
-              <img src={logoMorador} alt="Morador.app" style={{ height: 36, width: 36, objectFit: "contain" }} />
+              <img src={logoSymbol} alt="Morador.app" style={{ height: 36, width: 36, objectFit: "contain" }} />
             )}
             <span style={{ fontWeight: 600, fontSize: 15, letterSpacing: -0.3 }}>
               {condominioName || "Morador.app"}

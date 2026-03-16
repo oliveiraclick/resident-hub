@@ -155,7 +155,7 @@ const VisitanteRegistro = () => {
             background: "linear-gradient(145deg, hsl(var(--header-bg)) 0%, hsl(var(--header-mid)) 40%, hsl(var(--primary)) 100%)",
           }}
         >
-          <img src={logoMorador} alt="Morador.app" className="h-14 w-14 object-contain relative z-10" />
+          <img src={logoSymbol} alt="Morador.app" className="h-20 w-20 object-contain relative z-10" />
           <h1 className="mt-3 text-white text-[20px] font-bold relative z-10">
             {done ? "Cadastro Confirmado" : "Registro de Visitante"}
           </h1>
