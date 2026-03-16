@@ -112,6 +112,7 @@ const App = () => (
             <Route path="/preview-home5" element={<PreviewHome5 />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <ModuleSwitcher />
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
