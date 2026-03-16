@@ -114,7 +114,7 @@ const Auth = () => {
           <div className="absolute top-5 -right-8 w-44 h-44 rounded-full" style={{ background: "hsla(var(--primary), 0.15)", filter: "blur(40px)" }} />
           <div className="absolute bottom-10 -left-10 w-28 h-28 rounded-full" style={{ background: "hsla(var(--primary), 0.1)", filter: "blur(30px)" }} />
 
-          <img src={logoSymbol} alt="Morador.app" className="h-24 w-24 object-contain relative z-[1]" />
+          <img src={logoSymbol} alt="Morador.app" className="h-36 w-36 object-contain relative z-[1]" />
           <h1 className="mt-4 text-title-lg text-white relative z-[1]">Morador.app</h1>
           <p className="mt-1 text-subtitle text-white/60 relative z-[1]">Clicou, Achou!</p>
         </div>
