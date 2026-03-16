@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { z } from "zod";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
-import logoMorador from "@/assets/logo-morador.png";
+import logoSymbol from "@/assets/logo-symbol.png";
 import { Link } from "react-router-dom";
 
 const schema = z.object({
@@ -114,7 +114,7 @@ const CadastroMorador = () => {
             <ArrowLeft size={18} />
             <span className="text-sm">Voltar</span>
           </Link>
-          <img src={logoMorador} alt="Morador.app" className="h-16 w-16 object-contain relative z-10" />
+          <img src={logoSymbol} alt="Morador.app" className="h-20 w-20 object-contain relative z-10" />
           <h1 className="mt-3 text-white text-[20px] font-bold relative z-10">Cadastro Morador</h1>
           <p className="mt-1 text-white/60 text-[13px] relative z-10">Crie sua conta de morador</p>
         </div>

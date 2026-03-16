@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, Bell, QrCode, Search, Wrench, X, Sparkles, Menu } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import logoMorador from "@/assets/logo-morador.png";
+
 import logoSymbol from "@/assets/logo-symbol.png";
 import { useAuth } from "@/hooks/useAuth";
 

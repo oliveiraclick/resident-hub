@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { Eye, EyeOff, ArrowLeft, ScanLine } from "lucide-react";
 import { Link } from "react-router-dom";
-import logoMorador from "@/assets/logo-morador.png";
+import logoSymbol from "@/assets/logo-symbol.png";
 import QrScanner from "@/components/QrScanner";
 import SubEspecialidadeField from "@/components/SubEspecialidadeField";
 
@@ -157,7 +157,7 @@ const CadastroPrestador = () => {
             <ArrowLeft size={18} />
             <span className="text-sm">Voltar</span>
           </Link>
-          <img src={logoMorador} alt="Morador.app" className="h-16 w-16 object-contain relative z-10" />
+          <img src={logoSymbol} alt="Morador.app" className="h-20 w-20 object-contain relative z-10" />
           <h1 className="mt-3 text-white text-[20px] font-bold relative z-10">Cadastro Prestador</h1>
           <p className="mt-1 text-white/60 text-[13px] relative z-10">Ofereça seus serviços no condomínio</p>
         </div>

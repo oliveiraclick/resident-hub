@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useCategorias } from "@/hooks/useCategorias";
 import { getIcon } from "@/lib/iconMap";
-import logoMorador from "@/assets/logo-morador.png";
+import logoSymbol from "@/assets/logo-symbol.png";
 
 import productBolo from "@/assets/product-bolo.jpg";
 import productSabonete from "@/assets/product-sabonete.jpg";
@@ -146,7 +146,7 @@ const PreviewHome5 = () => {
               {condominioLogo ? (
                 <img src={condominioLogo} alt={condominioName || ""} style={{ height: 38, width: 38, borderRadius: 12, objectFit: "cover", border: "2px solid rgba(255,255,255,0.2)" }} />
               ) : (
-                <img src={logoMorador} alt="Morador.app" style={{ height: 38, width: 38, objectFit: "contain" }} />
+                <img src={logoSymbol} alt="Morador.app" style={{ height: 38, width: 38, objectFit: "contain" }} />
               )}
               <div>
                 <span style={{ fontWeight: 700, fontSize: 16, display: "block", lineHeight: 1.1 }}>
