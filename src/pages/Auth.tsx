@@ -1,5 +1,5 @@
 import { useState } from "react";
-import logoMorador from "@/assets/logo-morador.png";
+import logoSymbol from "@/assets/logo-symbol.png";
 import { Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
