@@ -3,7 +3,7 @@ import { formatBRL } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import {
-  Package, ShoppingBag, Repeat, MapPin, ArrowRight, Sparkles, Wrench, UserCheck, Newspaper,
+  Package, ShoppingBag, Repeat, MapPin, ArrowRight, Sparkles, Wrench, UserCheck,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
@@ -298,25 +298,6 @@ const MoradorHome = () => {
           </div>
         )}
 
-        {/* ═══ NOTÍCIAS ═══ */}
-        <button
-          onClick={() => navigate("/morador/noticias")}
-          className="w-full text-left border-none cursor-pointer rounded-[20px] flex items-center gap-4 relative overflow-hidden active:scale-[0.98] transition-transform"
-          style={{
-            background: "linear-gradient(135deg, hsl(250 60% 50%), hsl(280 60% 45%))",
-            padding: "16px 20px",
-            boxShadow: "0 6px 20px hsla(260, 60%, 50%, 0.25)",
-          }}
-        >
-          <div className="absolute -top-5 -right-5 w-20 h-20 rounded-full bg-white/[0.08]" />
-          <div className="h-[48px] w-[48px] rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0" style={{ backdropFilter: "blur(8px)" }}>
-            <Newspaper size={24} className="text-white" />
-          </div>
-          <div className="flex-1 relative z-[1]">
-            <p className="text-[15px] font-bold text-white m-0">📰 Notícias & Tendências</p>
-            <p className="text-[11px] text-white/75 mt-0.5 m-0">Futebol, F1, Moda, Games e mais →</p>
-          </div>
-        </button>
 
         {/* ═══ SERVIÇOS ═══ */}
         <div>
