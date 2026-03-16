@@ -127,7 +127,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
                 {condominioLogo ? (
                   <img src={condominioLogo} alt={condominioName || ""} className="h-[38px] w-[38px] rounded-xl object-cover border-2 border-white/20" />
                 ) : (
-                  <img src={logoSymbol} alt="Morador.app" className="h-[38px] w-[38px] object-contain" />
+                  <img src={logoSymbol} alt="Morador.app" className="h-[48px] w-[48px] object-contain" />
                 )}
                 <div>
                   <span className="font-bold text-[16px] block leading-none text-white">
@@ -179,7 +179,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
               {condominioLogo ? (
                 <img src={condominioLogo} alt={condominioName || "Condomínio"} className="h-9 w-9 rounded-lg object-cover border border-white/20" />
               ) : (
-                <img src={logoSymbol} alt="Morador.app" className="h-9 w-9 object-contain" />
+                <img src={logoSymbol} alt="Morador.app" className="h-12 w-12 object-contain" />
               )}
             </div>
             <div className="flex items-center gap-2">
