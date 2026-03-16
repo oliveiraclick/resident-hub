@@ -179,7 +179,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
               {condominioLogo ? (
                 <img src={condominioLogo} alt={condominioName || "Condomínio"} className="h-9 w-9 rounded-lg object-cover border border-white/20" />
               ) : (
-                <img src={logoSymbol} alt="Morador.app" className="h-9 w-9 object-contain" />
+                <img src={logoSymbol} alt="Morador.app" className="h-12 w-12 object-contain" />
               )}
             </div>
             <div className="flex items-center gap-2">
