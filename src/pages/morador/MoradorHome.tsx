@@ -310,24 +310,7 @@ const MoradorHome = () => {
               Ver tudo <ArrowRight size={14} />
             </button>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
-            {allCategorias.slice(0, 8).map((item) => {
-              const Icon = getIcon(item.icone);
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => navigate(`/morador/servicos?q=${encodeURIComponent(item.nome)}`)}
-                  className="flex items-center gap-2.5 bg-card border border-border rounded-[14px] py-3 px-4 cursor-pointer active:scale-95 transition-transform"
-                  style={{ minWidth: 0, boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}
-                >
-                  <div className="h-10 w-10 rounded-xl bg-primary/[0.07] flex items-center justify-center flex-shrink-0">
-                    <Icon size={20} className="text-primary" />
-                  </div>
-                  <span className="text-[13px] font-medium text-foreground text-left leading-tight truncate">{item.nome}</span>
-                </button>
-              );
-            })}
-          </div>
+          <RotatingServicos categorias={allCategorias} navigate={navigate} />
         </div>
 
         {/* ═══ PRESTADORES NO CONDOMÍNIO ═══ */}
