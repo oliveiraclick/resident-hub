@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { formatBRL } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
@@ -22,6 +22,58 @@ import desapegoPlaceholder from "@/assets/desapego-placeholder.png";
 const fallbackShopImages = [productBolo, productSabonete, productBrigadeiro, productVela];
 
 const hs: React.CSSProperties = { scrollbarWidth: "none", msOverflowStyle: "none" };
+
+const ROTATE_INTERVAL = 5000;
+const ITEMS_PER_PAGE = 4;
+
+const RotatingServicos = ({ categorias, navigate }: { categorias: any[]; navigate: (path: string) => void }) => {
+  const [page, setPage] = useState(0);
+  const totalPages = Math.ceil(categorias.length / ITEMS_PER_PAGE);
+
+  useEffect(() => {
+    if (totalPages <= 1) return;
+    const timer = setInterval(() => {
+      setPage((p) => (p + 1) % totalPages);
+    }, ROTATE_INTERVAL);
+    return () => clearInterval(timer);
+  }, [totalPages]);
+
+  const visible = categorias.slice(page * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE + ITEMS_PER_PAGE);
+
+  return (
+    <div>
+      <div className="grid grid-cols-2 gap-2.5">
+        {visible.map((item) => {
+          const Icon = getIcon(item.icone);
+          return (
+            <button
+              key={item.id}
+              onClick={() => navigate(`/morador/servicos?q=${encodeURIComponent(item.nome)}`)}
+              className="flex items-center gap-2.5 bg-card border border-border rounded-[14px] py-3 px-4 cursor-pointer active:scale-95 transition-transform"
+              style={{ minWidth: 0, boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}
+            >
+              <div className="h-10 w-10 rounded-xl bg-primary/[0.07] flex items-center justify-center flex-shrink-0">
+                <Icon size={20} className="text-primary" />
+              </div>
+              <span className="text-[13px] font-medium text-foreground text-left leading-tight truncate">{item.nome}</span>
+            </button>
+          );
+        })}
+      </div>
+      {totalPages > 1 && (
+        <div className="flex justify-center gap-1.5 mt-3">
+          {Array.from({ length: totalPages }).map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setPage(i)}
+              className={`h-1.5 rounded-full transition-all duration-300 border-none cursor-pointer ${i === page ? "w-4 bg-primary" : "w-1.5 bg-muted-foreground/30"}`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const MoradorHome = () => {
   const navigate = useNavigate();
@@ -310,24 +362,7 @@ const MoradorHome = () => {
               Ver tudo <ArrowRight size={14} />
             </button>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
-            {allCategorias.slice(0, 8).map((item) => {
-              const Icon = getIcon(item.icone);
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => navigate(`/morador/servicos?q=${encodeURIComponent(item.nome)}`)}
-                  className="flex items-center gap-2.5 bg-card border border-border rounded-[14px] py-3 px-4 cursor-pointer active:scale-95 transition-transform"
-                  style={{ minWidth: 0, boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}
-                >
-                  <div className="h-10 w-10 rounded-xl bg-primary/[0.07] flex items-center justify-center flex-shrink-0">
-                    <Icon size={20} className="text-primary" />
-                  </div>
-                  <span className="text-[13px] font-medium text-foreground text-left leading-tight truncate">{item.nome}</span>
-                </button>
-              );
-            })}
-          </div>
+          <RotatingServicos categorias={allCategorias} navigate={navigate} />
         </div>
 
         {/* ═══ PRESTADORES NO CONDOMÍNIO ═══ */}
