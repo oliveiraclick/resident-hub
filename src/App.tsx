@@ -31,7 +31,7 @@ import PreviewHome5 from "./pages/PreviewHome5";
 import PoliticaPrivacidade from "./pages/PoliticaPrivacidade";
 import TermosDeUso from "./pages/TermosDeUso";
 import CondicoesDeUso from "./pages/CondicoesDeUso";
-
+import LojaPublica from "./pages/LojaPublica";
 
 const queryClient = new QueryClient();
 
