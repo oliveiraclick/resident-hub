@@ -174,38 +174,12 @@ const LandingPage = () => {
         </div>
 
         {/* Navbar */}
-        <nav className="relative z-10 flex items-center justify-between px-6 py-4 max-w-7xl mx-auto w-full">
+        <nav className="relative z-10 flex items-center justify-center px-6 py-4 max-w-7xl mx-auto w-full">
           <div className="flex items-center gap-2">
             <img src={logoSymbol} alt="Morador.app" className="h-10" />
-            <span className="text-white font-bold text-lg hidden sm:inline">Morador.app</span>
+            <span className="text-white font-bold text-lg">Morador.app</span>
           </div>
-          <div className="hidden md:flex items-center gap-4">
-            <button
-              onClick={() => navigate("/auth")}
-              className="text-white/80 hover:text-white text-sm transition-colors"
-            >
-              Entrar
-            </button>
-            <Button
-              size="sm"
-              onClick={() => navigate("/cadastro/morador")}
-              className="rounded-lg"
-            >
-              Criar conta
-            </Button>
-          </div>
-          <button className="md:hidden text-white" onClick={() => setMenuOpen(!menuOpen)}>
-            {menuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
         </nav>
-
-        {/* Mobile menu */}
-        {menuOpen && (
-          <div className="relative z-10 md:hidden bg-black/80 backdrop-blur-md px-6 pb-4 flex flex-col gap-3">
-            <Button variant="ghost" className="text-white justify-start" onClick={() => { navigate("/auth"); setMenuOpen(false); }}>Entrar</Button>
-            <Button size="sm" onClick={() => { navigate("/cadastro/morador"); setMenuOpen(false); }}>Criar conta</Button>
-          </div>
-        )}
 
         {/* Hero Content */}
         <div className="relative z-10 flex-1 flex items-center">
