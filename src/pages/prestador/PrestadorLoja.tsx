@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Store, ImagePlus, Camera, X, Save } from "lucide-react";
+import { Store, ImagePlus, Camera, X, Save, Copy, ExternalLink } from "lucide-react";
 
 const PrestadorLoja = () => {
   const { user, roles } = useAuth();
@@ -23,6 +23,7 @@ const PrestadorLoja = () => {
   const [descricao, setDescricao] = useState("");
   const [horario, setHorario] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  const [slug, setSlug] = useState("");
   const [ativa, setAtiva] = useState(true);
   const [bannerPreview, setBannerPreview] = useState<string | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
@@ -56,6 +57,7 @@ const PrestadorLoja = () => {
         setDescricao(data.descricao || "");
         setHorario(data.horario_funcionamento || "");
         setWhatsapp(data.whatsapp || "");
+        setSlug(data.slug || "");
         setAtiva(data.ativa);
         setBannerPreview(data.banner_url);
       }
@@ -89,11 +91,17 @@ const PrestadorLoja = () => {
         banner_url = urlData.publicUrl;
       }
 
+      const sanitizedSlug = slug.trim().toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-");
+
       const payload = {
         nome: nome.trim(),
         descricao: descricao.trim() || null,
         horario_funcionamento: horario.trim() || null,
         whatsapp: whatsapp.trim() || null,
+        slug: sanitizedSlug || null,
         ativa,
         banner_url,
       };
@@ -103,13 +111,21 @@ const PrestadorLoja = () => {
         if (error) throw error;
         toast.success("Loja atualizada!");
       } else {
+        // Auto-generate slug if empty
+        if (!payload.slug) {
+          payload.slug = nome.trim().toLowerCase()
+            .replace(/[áàãâ]/g, "a").replace(/[éèê]/g, "e").replace(/[íìî]/g, "i")
+            .replace(/[óòõô]/g, "o").replace(/[úùû]/g, "u").replace(/[ç]/g, "c")
+            .replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-");
+        }
         const { data, error } = await supabase.from("lojas").insert({
           ...payload,
           prestador_id: prestadorId,
           condominio_id: condominioId,
-        }).select("id").single();
+        }).select("id, slug").single();
         if (error) throw error;
         setLojaId(data.id);
+        if (data.slug) setSlug(data.slug);
         toast.success("Loja criada!");
       }
       setBannerFile(null);
@@ -174,7 +190,45 @@ const PrestadorLoja = () => {
 
               <div className="flex flex-col gap-1">
                 <label className="text-[12px] font-medium text-muted-foreground ml-1">WhatsApp (contato)</label>
-                <Input value={whatsapp} onChange={e => setWhatsapp(e.target.value)} placeholder="(11) 99999-9999" />
+                <Input value={whatsapp} onChange={e => setWhatsapp(e.target.value)} placeholder="(00) 00000-0000" />
+              </div>
+
+              {/* Slug / Link público */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[12px] font-medium text-muted-foreground ml-1">Link público da loja</label>
+                <div className="flex gap-2">
+                  <div className="flex items-center bg-muted rounded-l-lg px-2 text-[12px] text-muted-foreground border border-r-0 border-border">
+                    morador.app/
+                  </div>
+                  <Input
+                    value={slug}
+                    onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+                    placeholder="minha-loja"
+                    className="rounded-l-none"
+                  />
+                </div>
+                {slug && lojaId && (
+                  <div className="flex items-center gap-2 mt-1">
+                    <a
+                      href={`/${slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] text-primary hover:underline flex items-center gap-1"
+                    >
+                      <ExternalLink size={12} /> Ver vitrine pública
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(`${window.location.origin}/${slug}`);
+                        toast.success("Link copiado!");
+                      }}
+                      className="text-[11px] text-muted-foreground hover:text-foreground flex items-center gap-1"
+                    >
+                      <Copy size={12} /> Copiar link
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center justify-between">

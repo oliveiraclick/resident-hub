@@ -1058,6 +1058,7 @@ export type Database = {
           id: string
           nome: string
           prestador_id: string
+          slug: string | null
           updated_at: string
           whatsapp: string | null
         }
@@ -1072,6 +1073,7 @@ export type Database = {
           id?: string
           nome: string
           prestador_id: string
+          slug?: string | null
           updated_at?: string
           whatsapp?: string | null
         }
@@ -1086,6 +1088,7 @@ export type Database = {
           id?: string
           nome?: string
           prestador_id?: string
+          slug?: string | null
           updated_at?: string
           whatsapp?: string | null
         }

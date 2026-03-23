@@ -31,7 +31,7 @@ import PreviewHome5 from "./pages/PreviewHome5";
 import PoliticaPrivacidade from "./pages/PoliticaPrivacidade";
 import TermosDeUso from "./pages/TermosDeUso";
 import CondicoesDeUso from "./pages/CondicoesDeUso";
-
+import LojaPublica from "./pages/LojaPublica";
 
 const queryClient = new QueryClient();
 
@@ -110,6 +110,7 @@ const App = () => (
             <Route path="/preview-home3" element={<PreviewHome3 />} />
             <Route path="/preview-home4" element={<PreviewHome4 />} />
             <Route path="/preview-home5" element={<PreviewHome5 />} />
+            <Route path="/:slug" element={<LojaPublica />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <ModuleSwitcher />
