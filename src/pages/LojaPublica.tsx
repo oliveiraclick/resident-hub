@@ -447,7 +447,7 @@ const LojaPublica = () => {
                           </div>
                           {loja.whatsapp && (
                             <button
-                              className="bg-foreground text-primary-foreground h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0 hover:bg-foreground/90 transition-colors"
+                              className="bg-primary text-primary-foreground h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0 hover:bg-primary-hover transition-colors shadow-md shadow-primary/25"
                               onClick={() => sendWhatsApp(item.nome)}
                             >
                               <Phone size={14} />
