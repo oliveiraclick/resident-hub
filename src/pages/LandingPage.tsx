@@ -244,18 +244,7 @@ const LandingPage = () => {
                 </Button>
               </div>
 
-              {/* Stats inline */}
-              <div className="flex items-center gap-6 pt-6">
-                {STATS.map((s, i) => (
-                  <div key={s.label} className="flex items-center gap-6">
-                    {i > 0 && <div className="h-8 w-px bg-white/20" />}
-                    <div>
-                      <p className="text-white text-2xl font-bold">{s.value}</p>
-                      <p className="text-white/50 text-xs">{s.label}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              {/* Stats inline - hidden for now */}
             </div>
           </div>
         </div>
