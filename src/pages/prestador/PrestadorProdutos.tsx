@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ShoppingBag, Plus, Pencil, Trash2, X, Camera, ImagePlus } from "lucide-react";
+import { ShoppingBag, Plus, Pencil, Trash2, X, Camera, ImagePlus, Lock, Crown } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 interface Produto {
   id: string;
