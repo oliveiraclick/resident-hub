@@ -401,7 +401,7 @@ const LojaPublica = () => {
                     )}
                     {loja.whatsapp && (
                       <button
-                        className="w-full mt-2 flex items-center justify-center gap-1.5 bg-foreground hover:bg-foreground/90 text-primary-foreground text-[11px] font-bold h-9 rounded-lg transition-colors active:scale-[0.97]"
+                        className="w-full mt-2 flex items-center justify-center gap-1.5 bg-primary hover:bg-primary-hover text-primary-foreground text-[11px] font-bold h-9 rounded-lg transition-colors active:scale-[0.97] shadow-md shadow-primary/25"
                         onClick={(e) => { e.stopPropagation(); sendWhatsApp(p.titulo); }}
                       >
                         <Phone size={12} /> Comprar
