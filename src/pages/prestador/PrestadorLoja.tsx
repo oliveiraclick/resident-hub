@@ -23,6 +23,7 @@ const PrestadorLoja = () => {
   const [descricao, setDescricao] = useState("");
   const [horario, setHorario] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  const [slug, setSlug] = useState("");
   const [ativa, setAtiva] = useState(true);
   const [bannerPreview, setBannerPreview] = useState<string | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
