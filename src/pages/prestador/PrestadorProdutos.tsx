@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ShoppingBag, Plus, Pencil, Trash2, X, Camera, ImagePlus } from "lucide-react";
+import { ShoppingBag, Plus, Pencil, Trash2, X, Camera, ImagePlus, Lock, Crown } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 interface Produto {
   id: string;
@@ -182,18 +183,74 @@ const PrestadorProdutos = () => {
     }
   };
 
+  const FREE_LIMIT = 20;
+  const totalProdutos = produtos.length;
+  const limitReached = totalProdutos >= FREE_LIMIT;
+  const usagePercent = Math.min((totalProdutos / FREE_LIMIT) * 100, 100);
+
   return (
     <PrestadorLayout>
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h2 className="text-[16px] font-semibold text-foreground">Meus Produtos</h2>
           {!showForm && (
-            <Button size="sm" onClick={() => setShowForm(true)} className="gap-1.5">
-              <Plus size={16} />
-              Novo
+            <Button
+              size="sm"
+              onClick={() => {
+                if (limitReached) {
+                  toast.error("Você atingiu o limite de 20 produtos gratuitos. Faça upgrade para cadastrar mais!");
+                  return;
+                }
+                setShowForm(true);
+              }}
+              className="gap-1.5"
+              variant={limitReached ? "outline" : "default"}
+            >
+              {limitReached ? <Lock size={16} /> : <Plus size={16} />}
+              {limitReached ? "Limite atingido" : "Novo"}
             </Button>
           )}
         </div>
+
+        {/* Usage meter */}
+        {!loading && prestadorId && (
+          <div className="rounded-xl border border-border bg-card p-3 space-y-2">
+            <div className="flex items-center justify-between text-[12px]">
+              <span className="text-muted-foreground">Produtos cadastrados</span>
+              <span className={`font-semibold ${limitReached ? "text-destructive" : "text-foreground"}`}>
+                {totalProdutos}/{FREE_LIMIT} grátis
+              </span>
+            </div>
+            <Progress value={usagePercent} className="h-2" />
+          </div>
+        )}
+
+        {/* Upgrade banner */}
+        {limitReached && (
+          <div className="rounded-xl border-2 border-primary/30 bg-primary/5 p-4 space-y-2">
+            <div className="flex items-center gap-2">
+              <Crown size={20} className="text-primary" />
+              <p className="text-[14px] font-semibold text-foreground">Desbloqueie mais produtos</p>
+            </div>
+            <p className="text-[12px] text-muted-foreground">
+              Você atingiu o limite de {FREE_LIMIT} produtos gratuitos. Assine o plano <strong>Vitrine Pro</strong> por apenas{" "}
+              <span className="text-primary font-bold">R$ 19,90/mês</span> e cadastre produtos ilimitados!
+            </p>
+            <Button
+              size="sm"
+              className="w-full gap-1.5 mt-1"
+              onClick={() => {
+                const msg = encodeURIComponent(
+                  `Olá! Quero fazer upgrade para o plano Vitrine Pro (produtos ilimitados). Meu email: ${user?.email || "—"}`
+                );
+                window.open(`https://wa.me/5511999999999?text=${msg}`, "_blank");
+              }}
+            >
+              <Crown size={16} />
+              Assinar Vitrine Pro — R$ 19,90/mês
+            </Button>
+          </div>
+        )}
 
         {/* Form */}
         {showForm && (
