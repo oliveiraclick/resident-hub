@@ -401,7 +401,7 @@ const LojaPublica = () => {
                     )}
                     {loja.whatsapp && (
                       <button
-                        className="w-full mt-2 flex items-center justify-center gap-1.5 bg-foreground hover:bg-foreground/90 text-primary-foreground text-[11px] font-bold h-9 rounded-lg transition-colors active:scale-[0.97]"
+                        className="w-full mt-2 flex items-center justify-center gap-1.5 bg-primary hover:bg-primary-hover text-primary-foreground text-[11px] font-bold h-9 rounded-lg transition-colors active:scale-[0.97] shadow-md shadow-primary/25"
                         onClick={(e) => { e.stopPropagation(); sendWhatsApp(p.titulo); }}
                       >
                         <Phone size={12} /> Comprar
@@ -447,7 +447,7 @@ const LojaPublica = () => {
                           </div>
                           {loja.whatsapp && (
                             <button
-                              className="bg-foreground text-primary-foreground h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0 hover:bg-foreground/90 transition-colors"
+                              className="bg-primary text-primary-foreground h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0 hover:bg-primary-hover transition-colors shadow-md shadow-primary/25"
                               onClick={() => sendWhatsApp(item.nome)}
                             >
                               <Phone size={14} />
@@ -579,7 +579,7 @@ const LojaPublica = () => {
                 {loja.whatsapp && (
                   <Button
                     onClick={() => sendWhatsApp(selectedProduto.titulo)}
-                    className="flex-1 gap-2.5 bg-[#25D366] hover:bg-[#1fba59] active:scale-[0.98] text-white h-13 rounded-xl font-bold text-sm shadow-lg shadow-[#25D366]/25 transition-all"
+                    className="flex-1 gap-2.5 bg-primary hover:bg-primary-hover active:scale-[0.98] text-primary-foreground h-13 rounded-xl font-bold text-sm shadow-lg shadow-primary/25 transition-all"
                   >
                     <Phone size={16} /> Comprar via WhatsApp
                   </Button>
