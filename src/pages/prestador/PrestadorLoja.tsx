@@ -220,8 +220,12 @@ const PrestadorLoja = () => {
                     <button
                       type="button"
                       onClick={() => {
-                        navigator.clipboard.writeText(`${window.location.origin}/${slug}`);
-                        toast.success("Link copiado!");
+                        const baseUrl = window.location.hostname === "localhost"
+                          ? window.location.origin
+                          : "https://morador-hub.lovable.app";
+                        const fullLink = `${baseUrl}/${slug}`;
+                        navigator.clipboard.writeText(fullLink);
+                        toast.success("Link copiado: " + fullLink);
                       }}
                       className="text-[11px] text-muted-foreground hover:text-foreground flex items-center gap-1"
                     >
