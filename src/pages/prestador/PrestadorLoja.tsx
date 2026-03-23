@@ -182,7 +182,45 @@ const PrestadorLoja = () => {
 
               <div className="flex flex-col gap-1">
                 <label className="text-[12px] font-medium text-muted-foreground ml-1">WhatsApp (contato)</label>
-                <Input value={whatsapp} onChange={e => setWhatsapp(e.target.value)} placeholder="(11) 99999-9999" />
+                <Input value={whatsapp} onChange={e => setWhatsapp(e.target.value)} placeholder="(00) 00000-0000" />
+              </div>
+
+              {/* Slug / Link público */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[12px] font-medium text-muted-foreground ml-1">Link público da loja</label>
+                <div className="flex gap-2">
+                  <div className="flex items-center bg-muted rounded-l-lg px-2 text-[12px] text-muted-foreground border border-r-0 border-border">
+                    morador.app/
+                  </div>
+                  <Input
+                    value={slug}
+                    onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+                    placeholder="minha-loja"
+                    className="rounded-l-none"
+                  />
+                </div>
+                {slug && lojaId && (
+                  <div className="flex items-center gap-2 mt-1">
+                    <a
+                      href={`/${slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] text-primary hover:underline flex items-center gap-1"
+                    >
+                      <ExternalLink size={12} /> Ver vitrine pública
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(`${window.location.origin}/${slug}`);
+                        toast.success("Link copiado!");
+                      }}
+                      className="text-[11px] text-muted-foreground hover:text-foreground flex items-center gap-1"
+                    >
+                      <Copy size={12} /> Copiar link
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center justify-between">
