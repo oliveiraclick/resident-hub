@@ -110,6 +110,7 @@ const App = () => (
             <Route path="/preview-home3" element={<PreviewHome3 />} />
             <Route path="/preview-home4" element={<PreviewHome4 />} />
             <Route path="/preview-home5" element={<PreviewHome5 />} />
+            <Route path="/:slug" element={<LojaPublica />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <ModuleSwitcher />
