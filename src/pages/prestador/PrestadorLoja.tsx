@@ -57,6 +57,7 @@ const PrestadorLoja = () => {
         setDescricao(data.descricao || "");
         setHorario(data.horario_funcionamento || "");
         setWhatsapp(data.whatsapp || "");
+        setSlug(data.slug || "");
         setAtiva(data.ativa);
         setBannerPreview(data.banner_url);
       }
