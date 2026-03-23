@@ -91,11 +91,17 @@ const PrestadorLoja = () => {
         banner_url = urlData.publicUrl;
       }
 
+      const sanitizedSlug = slug.trim().toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-");
+
       const payload = {
         nome: nome.trim(),
         descricao: descricao.trim() || null,
         horario_funcionamento: horario.trim() || null,
         whatsapp: whatsapp.trim() || null,
+        slug: sanitizedSlug || null,
         ativa,
         banner_url,
       };
