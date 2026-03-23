@@ -144,7 +144,7 @@ const LojaPublica = () => {
   const hasProdutos = produtos.length > 0;
   const hasCardapio = loja.cardapio_ativo && cardapioItens.length > 0;
   const showTabs = hasProdutos && hasCardapio;
-  const isDemo = slug === "delicias-da-casa";
+  const isDemo = slug === "moto-acessorios";
 
   return (
     <div className="min-h-screen bg-background">
