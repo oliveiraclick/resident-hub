@@ -111,13 +111,21 @@ const PrestadorLoja = () => {
         if (error) throw error;
         toast.success("Loja atualizada!");
       } else {
+        // Auto-generate slug if empty
+        if (!payload.slug) {
+          payload.slug = nome.trim().toLowerCase()
+            .replace(/[áàãâ]/g, "a").replace(/[éèê]/g, "e").replace(/[íìî]/g, "i")
+            .replace(/[óòõô]/g, "o").replace(/[úùû]/g, "u").replace(/[ç]/g, "c")
+            .replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-");
+        }
         const { data, error } = await supabase.from("lojas").insert({
           ...payload,
           prestador_id: prestadorId,
           condominio_id: condominioId,
-        }).select("id").single();
+        }).select("id, slug").single();
         if (error) throw error;
         setLojaId(data.id);
+        if (data.slug) setSlug(data.slug);
         toast.success("Loja criada!");
       }
       setBannerFile(null);
