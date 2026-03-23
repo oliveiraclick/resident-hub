@@ -144,9 +144,16 @@ const LojaPublica = () => {
   const hasProdutos = produtos.length > 0;
   const hasCardapio = loja.cardapio_ativo && cardapioItens.length > 0;
   const showTabs = hasProdutos && hasCardapio;
+  const isDemo = slug === "delicias-da-casa";
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Demo banner */}
+      {isDemo && (
+        <div className="bg-primary text-primary-foreground text-center text-xs font-semibold py-1.5 tracking-wide uppercase">
+          ✨ Loja Modelo — Exemplo demonstrativo
+        </div>
+      )}
       {/* Header */}
       <header className="sticky top-0 z-20 bg-card border-b border-border px-4 py-3 flex items-center gap-3">
         <img src={logoSymbol} alt="Morador.app" className="h-8" />
