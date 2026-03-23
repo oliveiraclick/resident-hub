@@ -579,7 +579,7 @@ const LojaPublica = () => {
                 {loja.whatsapp && (
                   <Button
                     onClick={() => sendWhatsApp(selectedProduto.titulo)}
-                    className="flex-1 gap-2.5 bg-[#25D366] hover:bg-[#1fba59] active:scale-[0.98] text-white h-13 rounded-xl font-bold text-sm shadow-lg shadow-[#25D366]/25 transition-all"
+                    className="flex-1 gap-2.5 bg-primary hover:bg-primary-hover active:scale-[0.98] text-primary-foreground h-13 rounded-xl font-bold text-sm shadow-lg shadow-primary/25 transition-all"
                   >
                     <Phone size={16} /> Comprar via WhatsApp
                   </Button>
