@@ -14,6 +14,7 @@ import MasterPush from "./MasterPush";
 import MasterMergeContas from "./MasterMergeContas";
 import MasterNoticiasCategorias from "./MasterNoticiasCategorias";
 import MasterLogs from "./MasterLogs";
+import MasterSimulacao from "./MasterSimulacao";
 
 const MasterDashboard = () => {
   return (
