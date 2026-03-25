@@ -179,7 +179,7 @@ const MasterUsuarios = () => {
     return diff < 5 * 60 * 1000; // 5 minutes
   };
 
-  const PAGE_SIZE = 50;
+  const PAGE_SIZE = 30;
   const [page, setPage] = useState(1);
 
   const roleFiltered = filterRole === "all" ? users : users.filter((u) => u.role === filterRole);
