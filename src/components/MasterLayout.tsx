@@ -27,6 +27,7 @@ const menuItems = [
   { icon: Merge, label: "Unificar Contas", path: "/master/merge-contas" },
   { icon: ScrollText, label: "Logs Auth", path: "/master/logs" },
   { icon: FlaskConical, label: "Simulação", path: "/master/simulacao" },
+  { icon: BarChart3, label: "Observabilidade", path: "/master/observabilidade" },
 ];
 
 const MasterLayout = ({ children }: MasterLayoutProps) => {

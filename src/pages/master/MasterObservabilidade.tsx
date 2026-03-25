@@ -61,10 +61,10 @@ const MasterObservabilidade = () => {
       supabase.from("error_logs" as any).select("*").order("created_at", { ascending: false }).limit(200),
       supabase.from("function_logs" as any).select("*").order("created_at", { ascending: false }).limit(200),
     ]);
-    setActivities((a.data as ActivityLog[]) || []);
-    setPageViews((p.data as PageView[]) || []);
-    setErrors((e.data as ErrorLog[]) || []);
-    setFunctions((f.data as FunctionLog[]) || []);
+    setActivities((a.data as unknown as ActivityLog[]) || []);
+    setPageViews((p.data as unknown as PageView[]) || []);
+    setErrors((e.data as unknown as ErrorLog[]) || []);
+    setFunctions((f.data as unknown as FunctionLog[]) || []);
     setLoading(false);
   };
 

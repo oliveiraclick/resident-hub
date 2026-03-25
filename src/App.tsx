@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import ModuleSwitcher from "@/components/ModuleSwitcher";
 import UpdateBanner from "@/components/UpdateBanner";
 import ForceUpdateScreen from "@/components/ForceUpdateScreen";
+import AppTrackers from "@/components/AppTrackers";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
