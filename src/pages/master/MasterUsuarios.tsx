@@ -179,15 +179,26 @@ const MasterUsuarios = () => {
     return diff < 5 * 60 * 1000; // 5 minutes
   };
 
+  const PAGE_SIZE = 50;
+  const [page, setPage] = useState(1);
+
   const roleFiltered = filterRole === "all" ? users : users.filter((u) => u.role === filterRole);
   const catFiltered = filterCategoria !== "all" && filterRole === "prestador"
     ? roleFiltered.filter((u) => u.especialidade === filterCategoria)
     : roleFiltered;
   const searchFiltered = search ? catFiltered.filter((u) => u.nome.toLowerCase().includes(search.toLowerCase())) : catFiltered;
   const afterBloqueados = showBloqueados ? searchFiltered.filter((u) => !u.aprovado) : searchFiltered;
-  const filtered = showOnline ? afterBloqueados.filter(isOnline) : afterBloqueados;
+  const afterOnline = showOnline ? afterBloqueados.filter(isOnline) : afterBloqueados;
+  // Sort by most recent first
+  const filtered = [...afterOnline].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   const bloqueadosCount = users.filter((u) => !u.aprovado).length;
   const onlineCount = users.filter(isOnline).length;
+
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const paginatedUsers = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  // Reset page when filters change
+  useEffect(() => { setPage(1); }, [filterRole, filterCategoria, search, showBloqueados, showOnline]);
 
   const handleAprovarTodos = async () => {
     const bloqueados = users.filter((u) => !u.aprovado);
