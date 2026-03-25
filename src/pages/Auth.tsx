@@ -95,6 +95,17 @@ const Auth = () => {
         ? "Este email já está cadastrado"
         : err.message || "Erro inesperado";
       toast.error(msg);
+
+      // Log auth error to database
+      try {
+        await supabase.from("auth_logs" as any).insert({
+          email: email.trim(),
+          evento: isLogin ? "login_error" : "signup_error",
+          erro: msg,
+          detalhes: err.message || null,
+          user_agent: navigator.userAgent,
+        });
+      } catch (_) { /* silent */ }
     } finally {
       setSubmitting(false);
     }
