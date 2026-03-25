@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import AppShell from "@/components/AppShell";
-import { Home, Building2, Users, DollarSign, User, Wrench, Image, Layout, Tag, FileCheck, Bell, Merge, ScrollText, FlaskConical } from "lucide-react";
+import { Home, Building2, Users, DollarSign, User, Wrench, Image, Layout, Tag, FileCheck, Bell, Merge, ScrollText, FlaskConical, BarChart3 } from "lucide-react";
 import { useBannerSolicitacaoAlert } from "@/hooks/useBannerSolicitacaoAlert";
 
 interface MasterLayoutProps {
