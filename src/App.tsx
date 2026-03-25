@@ -113,6 +113,7 @@ const App = () => (
             <Route path="/:slug" element={<LojaPublica />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <AppTrackers />
           <ModuleSwitcher />
         </BrowserRouter>
       </TooltipProvider>
