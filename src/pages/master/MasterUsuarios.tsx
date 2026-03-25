@@ -280,7 +280,8 @@ const MasterUsuarios = () => {
         <p className="text-muted-foreground text-sm">Nenhum usuário encontrado.</p>
       ) : (
         <div className="space-y-3">
-          {filtered.map((u) => (
+          <p className="text-xs text-muted-foreground">{filtered.length} usuário(s) · Página {page} de {totalPages || 1}</p>
+          {paginatedUsers.map((u) => (
             <Card key={u.roleId} className="rounded-[var(--radius-card)]">
               <CardContent className="p-4">
                 <div className="flex justify-between items-start">
@@ -330,6 +331,33 @@ const MasterUsuarios = () => {
               </CardContent>
             </Card>
           ))}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-3 py-4">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-9 w-9"
+                disabled={page <= 1}
+                onClick={() => setPage((p) => p - 1)}
+              >
+                <ChevronLeft size={16} />
+              </Button>
+              <span className="text-sm text-muted-foreground min-w-[80px] text-center">
+                {page} / {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-9 w-9"
+                disabled={page >= totalPages}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                <ChevronRight size={16} />
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
