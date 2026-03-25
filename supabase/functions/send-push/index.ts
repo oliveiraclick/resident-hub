@@ -191,9 +191,9 @@ serve(async (req) => {
         if (!resp.ok) {
           const errBody = await resp.text();
           console.error(`[send-push] FCM error for token ${t.token.substring(0, 10)}...:`, errBody);
-          if (errBody.includes("NOT_FOUND") || errBody.includes("UNREGISTERED")) {
+          if (errBody.includes("NOT_FOUND") || errBody.includes("UNREGISTERED") || errBody.includes("INVALID_ARGUMENT")) {
             await supabaseAdmin.from("device_tokens").delete().eq("token", t.token);
-            console.log(`[send-push] Removed stale token: ${t.token.substring(0, 10)}...`);
+            console.log(`[send-push] Removed invalid/stale token: ${t.token.substring(0, 10)}...`);
           }
           throw new Error(`FCM responded ${resp.status}`);
         }
