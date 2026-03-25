@@ -436,6 +436,91 @@ const MasterSimulacao = () => {
           </CardContent>
         </Card>
 
+        {/* ═══ RECOMMENDATIONS ═══ */}
+        <Card className="border-accent/30">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <AlertTriangle size={18} className="text-accent" />
+              O que fazer em cada nível?
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">Ações preventivas para evitar degradação do sistema</p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* OK */}
+            <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-2">
+              <p className="text-sm font-bold flex items-center gap-2">
+                <CheckCircle size={16} className="text-primary" />
+                🟢 OK (Conexões DB &lt; 60%)
+              </p>
+              <ul className="text-xs text-muted-foreground space-y-1 ml-6 list-disc">
+                <li>Sistema operando normalmente, sem ações necessárias</li>
+                <li>Monitore mensalmente o crescimento de usuários</li>
+                <li>Mantenha backups automáticos ativos</li>
+                <li>Revise índices do banco periodicamente</li>
+              </ul>
+            </div>
+
+            {/* ALERTA */}
+            <div className="rounded-xl border border-orange-500/20 bg-orange-500/5 p-4 space-y-2">
+              <p className="text-sm font-bold flex items-center gap-2">
+                <AlertTriangle size={16} className="text-orange-500" />
+                🟠 ALERTA (Conexões DB 60-80%)
+              </p>
+              <ul className="text-xs text-muted-foreground space-y-1 ml-6 list-disc">
+                <li><strong>Otimizar queries:</strong> Adicione índices nas colunas mais consultadas (condominio_id, user_id, status)</li>
+                <li><strong>Connection pooling:</strong> Ative o PgBouncer no Lovable Cloud (Settings → Cloud)</li>
+                <li><strong>Cache:</strong> Implemente cache local com React Query (staleTime maior para dados que mudam pouco)</li>
+                <li><strong>Reduzir chamadas:</strong> Agrupe requisições e evite polling frequente</li>
+                <li><strong>Lazy loading:</strong> Carregue dados sob demanda ao invés de tudo no início</li>
+              </ul>
+            </div>
+
+            {/* CRÍTICO */}
+            <div className="rounded-xl border border-yellow-500/20 bg-yellow-500/5 p-4 space-y-2">
+              <p className="text-sm font-bold flex items-center gap-2">
+                <AlertTriangle size={16} className="text-yellow-500" />
+                🟡 CRÍTICO (Conexões DB 80-100%)
+              </p>
+              <ul className="text-xs text-muted-foreground space-y-1 ml-6 list-disc">
+                <li><strong className="text-destructive">Upgrade URGENTE do plano:</strong> Aumente para plano pago no Lovable Cloud (mais conexões DB)</li>
+                <li><strong>Aumentar max_connections:</strong> Passe de 60 para 200+ conexões (disponível em planos pagos)</li>
+                <li><strong>Read replicas:</strong> Configure réplicas de leitura para distribuir carga de SELECT</li>
+                <li><strong>Edge Functions:</strong> Mova lógica pesada para funções backend ao invés de queries diretas</li>
+                <li><strong>Paginação obrigatória:</strong> Nunca busque mais de 50 registros por vez</li>
+                <li><strong>Denormalização:</strong> Crie tabelas resumo para dashboards (evita JOINs pesados)</li>
+              </ul>
+            </div>
+
+            {/* COLAPSO */}
+            <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-4 space-y-2">
+              <p className="text-sm font-bold flex items-center gap-2">
+                <Skull size={16} className="text-destructive" />
+                🔴 COLAPSO (Conexões DB &gt; 100%)
+              </p>
+              <ul className="text-xs text-muted-foreground space-y-1 ml-6 list-disc">
+                <li><strong className="text-destructive">Plano Enterprise ou migração:</strong> O plano atual não suporta essa carga</li>
+                <li><strong>Arquitetura de microserviços:</strong> Separe módulos críticos (encomendas, convites) em serviços independentes</li>
+                <li><strong>CDN para assets:</strong> Sirva imagens e arquivos estáticos via CDN dedicada</li>
+                <li><strong>Queue system:</strong> Use filas para operações não-críticas (notificações, logs)</li>
+                <li><strong>Rate limiting:</strong> Limite requisições por usuário para evitar abuso</li>
+                <li><strong>Horizontal scaling:</strong> Distribua carga entre múltiplas instâncias do banco</li>
+                <li><strong>Monitoramento 24/7:</strong> Configure alertas automáticos de uso de CPU, memória e conexões</li>
+              </ul>
+            </div>
+
+            {/* Current status summary */}
+            <div className="rounded-xl border border-border bg-muted/50 p-4">
+              <p className="text-sm font-semibold mb-2">📊 Situação atual com {params.users.toLocaleString()} usuários:</p>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <p>Uso de conexões: <strong className={results.dbConnectionUsage.peakPct >= 80 ? "text-destructive" : results.dbConnectionUsage.peakPct >= 60 ? "text-orange-500" : "text-primary"}>{results.dbConnectionUsage.peakPct}%</strong></p>
+                <p>Status: <strong>{results.dbConnectionUsage.peakPct >= 100 ? "🔴 COLAPSO" : results.dbConnectionUsage.peakPct >= 80 ? "🟡 CRÍTICO" : results.dbConnectionUsage.peakPct >= 60 ? "🟠 ALERTA" : "🟢 OK"}</strong></p>
+                {collapsePoint && <p className="col-span-2">⚡ Colapso estimado: <strong className="text-destructive">{collapsePoint.users.toLocaleString()} usuários</strong></p>}
+                {criticalPoint && <p className="col-span-2">⚠️ Zona crítica: <strong className="text-yellow-500">{criticalPoint.users.toLocaleString()} usuários</strong></p>}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* ═══ 24H STRESS TEST ═══ */}
         <Card>
           <CardHeader className="pb-2">
