@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Pencil, Trash2, CheckCircle, XCircle, Plus, ShieldCheck, Search, Smartphone, Wifi } from "lucide-react";
+import { Pencil, Trash2, CheckCircle, XCircle, Plus, ShieldCheck, Search, Smartphone, Wifi, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -179,15 +179,26 @@ const MasterUsuarios = () => {
     return diff < 5 * 60 * 1000; // 5 minutes
   };
 
+  const PAGE_SIZE = 50;
+  const [page, setPage] = useState(1);
+
   const roleFiltered = filterRole === "all" ? users : users.filter((u) => u.role === filterRole);
   const catFiltered = filterCategoria !== "all" && filterRole === "prestador"
     ? roleFiltered.filter((u) => u.especialidade === filterCategoria)
     : roleFiltered;
   const searchFiltered = search ? catFiltered.filter((u) => u.nome.toLowerCase().includes(search.toLowerCase())) : catFiltered;
   const afterBloqueados = showBloqueados ? searchFiltered.filter((u) => !u.aprovado) : searchFiltered;
-  const filtered = showOnline ? afterBloqueados.filter(isOnline) : afterBloqueados;
+  const afterOnline = showOnline ? afterBloqueados.filter(isOnline) : afterBloqueados;
+  // Sort by most recent first
+  const filtered = [...afterOnline].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   const bloqueadosCount = users.filter((u) => !u.aprovado).length;
   const onlineCount = users.filter(isOnline).length;
+
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const paginatedUsers = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  // Reset page when filters change
+  useEffect(() => { setPage(1); }, [filterRole, filterCategoria, search, showBloqueados, showOnline]);
 
   const handleAprovarTodos = async () => {
     const bloqueados = users.filter((u) => !u.aprovado);
@@ -269,7 +280,8 @@ const MasterUsuarios = () => {
         <p className="text-muted-foreground text-sm">Nenhum usuário encontrado.</p>
       ) : (
         <div className="space-y-3">
-          {filtered.map((u) => (
+          <p className="text-xs text-muted-foreground">{filtered.length} usuário(s) · Página {page} de {totalPages || 1}</p>
+          {paginatedUsers.map((u) => (
             <Card key={u.roleId} className="rounded-[var(--radius-card)]">
               <CardContent className="p-4">
                 <div className="flex justify-between items-start">
@@ -319,6 +331,33 @@ const MasterUsuarios = () => {
               </CardContent>
             </Card>
           ))}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-3 py-4">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-9 w-9"
+                disabled={page <= 1}
+                onClick={() => setPage((p) => p - 1)}
+              >
+                <ChevronLeft size={16} />
+              </Button>
+              <span className="text-sm text-muted-foreground min-w-[80px] text-center">
+                {page} / {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-9 w-9"
+                disabled={page >= totalPages}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                <ChevronRight size={16} />
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
