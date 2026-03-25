@@ -7,6 +7,22 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+async function logFunction(fnName: string, status: string, durationMs: number, error?: string, details?: any) {
+  try {
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+    await supabase.from("function_logs").insert({
+      function_name: fnName,
+      status,
+      duration_ms: durationMs,
+      error: error || null,
+      details: details || {},
+    });
+  } catch (_) { /* silent */ }
+}
+
 /** Build a short-lived OAuth2 access token from the service account JSON */
 async function getAccessToken(serviceAccount: any): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
@@ -26,7 +42,6 @@ async function getAccessToken(serviceAccount: any): Promise<string> {
 
   const unsignedToken = `${encode(header)}.${encode(payload)}`;
 
-  // Import the private key
   const pemContents = serviceAccount.private_key
     .replace(/-----BEGIN PRIVATE KEY-----/, "")
     .replace(/-----END PRIVATE KEY-----/, "")
@@ -54,7 +69,6 @@ async function getAccessToken(serviceAccount: any): Promise<string> {
 
   const jwt = `${unsignedToken}.${sig}`;
 
-  // Exchange JWT for access token
   const resp = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -73,8 +87,9 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const startTime = Date.now();
+
   try {
-    // Validate JWT
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(
@@ -137,6 +152,7 @@ serve(async (req) => {
 
     if (tokensError) {
       console.error("Error fetching tokens:", tokensError);
+      await logFunction("send-push", "error", Date.now() - startTime, "Failed to fetch tokens");
       return new Response(
         JSON.stringify({ error: "Failed to fetch device tokens" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -144,16 +160,15 @@ serve(async (req) => {
     }
 
     if (!tokens || tokens.length === 0) {
+      await logFunction("send-push", "success", Date.now() - startTime, undefined, { sent: 0 });
       return new Response(
         JSON.stringify({ sent: 0, message: "No device tokens found" }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Get OAuth2 access token
     const accessToken = await getAccessToken(serviceAccount);
 
-    // Send via FCM V1 API
     const results = await Promise.allSettled(
       tokens.map(async (t) => {
         const resp = await fetch(
@@ -176,7 +191,6 @@ serve(async (req) => {
         if (!resp.ok) {
           const errBody = await resp.text();
           console.error(`[send-push] FCM error for token ${t.token.substring(0, 10)}...:`, errBody);
-          // Remove invalid tokens (NOT_FOUND or UNREGISTERED)
           if (errBody.includes("NOT_FOUND") || errBody.includes("UNREGISTERED")) {
             await supabaseAdmin.from("device_tokens").delete().eq("token", t.token);
             console.log(`[send-push] Removed stale token: ${t.token.substring(0, 10)}...`);
@@ -190,12 +204,15 @@ serve(async (req) => {
     const sent = results.filter((r) => r.status === "fulfilled").length;
     const failed = results.filter((r) => r.status === "rejected").length;
 
+    await logFunction("send-push", "success", Date.now() - startTime, undefined, { sent, failed, total: tokens.length });
+
     return new Response(
       JSON.stringify({ sent, failed, total: tokens.length }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
     console.error("send-push error:", e);
+    await logFunction("send-push", "error", Date.now() - startTime, e.message);
     return new Response(
       JSON.stringify({ error: e.message }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }

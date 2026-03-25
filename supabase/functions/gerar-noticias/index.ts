@@ -5,10 +5,28 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+async function logFunction(fnName: string, status: string, durationMs: number, error?: string, details?: any) {
+  try {
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+    await supabase.from("function_logs").insert({
+      function_name: fnName,
+      status,
+      duration_ms: durationMs,
+      error: error || null,
+      details: details || {},
+    });
+  } catch (_) { /* silent */ }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+  const startTime = Date.now();
 
   try {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -18,7 +36,6 @@ Deno.serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Fetch active categories from database
     const { data: categorias, error: catError } = await supabase
       .from("noticias_categorias")
       .select("nome, emoji")
@@ -27,19 +44,21 @@ Deno.serve(async (req) => {
 
     if (catError || !categorias || categorias.length === 0) {
       console.error("No active categories found:", catError);
+      await logFunction("gerar-noticias", "error", Date.now() - startTime, "No active categories");
       return new Response(JSON.stringify({ success: false, error: "No active categories" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Pick 3 random categories to generate
     const shuffled = [...categorias].sort(() => Math.random() - 0.5);
     const selected = shuffled.slice(0, 3);
 
     const today = new Date().toLocaleDateString("pt-BR", {
       day: "numeric", month: "long", year: "numeric"
     });
+
+    let generated = 0;
 
     for (const cat of selected) {
       const prompt = `Você é um jornalista brasileiro. Gere uma notícia curta e atual sobre "${cat.nome}" para a data de hoje (${today}).
@@ -76,7 +95,6 @@ Regras:
         const aiData = await aiResponse.json();
         const raw = aiData.choices?.[0]?.message?.content || "";
         
-        // Clean markdown wrappers if present
         let jsonStr = raw.trim();
         if (jsonStr.startsWith("```")) {
           jsonStr = jsonStr.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
@@ -92,6 +110,7 @@ Regras:
           imagem_emoji: cat.emoji,
         });
 
+        generated++;
         console.log(`Notícia gerada: ${cat.nome} - ${parsed.titulo}`);
       } catch (innerErr) {
         console.error(`Error generating news for ${cat.nome}:`, innerErr);
@@ -109,11 +128,14 @@ Regras:
       await supabase.from("noticias").delete().in("id", idsToDelete);
     }
 
+    await logFunction("gerar-noticias", "success", Date.now() - startTime, undefined, { generated, categories: selected.map(c => c.nome) });
+
     return new Response(JSON.stringify({ success: true, generated: selected.map(c => c.nome) }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error("gerar-noticias error:", e);
+    await logFunction("gerar-noticias", "error", Date.now() - startTime, e instanceof Error ? e.message : "Unknown error");
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

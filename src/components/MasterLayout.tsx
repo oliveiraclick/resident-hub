@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import AppShell from "@/components/AppShell";
-import { Home, Building2, Users, DollarSign, User, Wrench, Image, Layout, Tag, FileCheck, Bell, Merge, ScrollText, FlaskConical } from "lucide-react";
+import { Home, Building2, Users, DollarSign, User, Wrench, Image, Layout, Tag, FileCheck, Bell, Merge, ScrollText, FlaskConical, BarChart3 } from "lucide-react";
 import { useBannerSolicitacaoAlert } from "@/hooks/useBannerSolicitacaoAlert";
 
 interface MasterLayoutProps {
@@ -27,6 +27,7 @@ const menuItems = [
   { icon: Merge, label: "Unificar Contas", path: "/master/merge-contas" },
   { icon: ScrollText, label: "Logs Auth", path: "/master/logs" },
   { icon: FlaskConical, label: "Simulação", path: "/master/simulacao" },
+  { icon: BarChart3, label: "Observabilidade", path: "/master/observabilidade" },
 ];
 
 const MasterLayout = ({ children }: MasterLayoutProps) => {
