@@ -25,6 +25,7 @@ const menuItems = [
   { icon: DollarSign, label: "Financeiro", path: "/master/financeiro" },
   { icon: Bell, label: "Push", path: "/master/push" },
   { icon: Merge, label: "Unificar Contas", path: "/master/merge-contas" },
+  { icon: ScrollText, label: "Logs Auth", path: "/master/logs" },
 ];
 
 const MasterLayout = ({ children }: MasterLayoutProps) => {
