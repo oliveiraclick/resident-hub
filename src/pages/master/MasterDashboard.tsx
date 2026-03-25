@@ -13,6 +13,7 @@ import MasterLP from "./MasterLP";
 import MasterPush from "./MasterPush";
 import MasterMergeContas from "./MasterMergeContas";
 import MasterNoticiasCategorias from "./MasterNoticiasCategorias";
+import MasterLogs from "./MasterLogs";
 
 const MasterDashboard = () => {
   return (
