@@ -163,7 +163,10 @@ const Auth = () => {
             onClick={async () => {
               setSubmitting(true);
               const { error } = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin });
-              if (error) toast.error("Erro ao entrar com Apple");
+              if (error) {
+                toast.error("Erro ao entrar com Apple");
+                try { await supabase.from("auth_logs" as any).insert({ evento: "oauth_error", erro: "Apple: " + (error.message || "unknown"), user_agent: navigator.userAgent }); } catch(_) {}
+              }
               setSubmitting(false);
             }}
             className="h-10 w-10 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors"
