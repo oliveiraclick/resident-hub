@@ -71,6 +71,45 @@ export type Database = {
           },
         ]
       }
+      auth_logs: {
+        Row: {
+          created_at: string
+          detalhes: string | null
+          email: string | null
+          erro: string | null
+          evento: string
+          id: string
+          ip: string | null
+          nome: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          detalhes?: string | null
+          email?: string | null
+          erro?: string | null
+          evento?: string
+          id?: string
+          ip?: string | null
+          nome?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          detalhes?: string | null
+          email?: string | null
+          erro?: string | null
+          evento?: string
+          id?: string
+          ip?: string | null
+          nome?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       avaliacoes: {
         Row: {
           avaliado_id: string
