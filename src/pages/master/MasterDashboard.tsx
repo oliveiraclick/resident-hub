@@ -14,6 +14,7 @@ import MasterPush from "./MasterPush";
 import MasterMergeContas from "./MasterMergeContas";
 import MasterNoticiasCategorias from "./MasterNoticiasCategorias";
 import MasterLogs from "./MasterLogs";
+import MasterSimulacao from "./MasterSimulacao";
 
 const MasterDashboard = () => {
   return (
@@ -33,6 +34,7 @@ const MasterDashboard = () => {
       <Route path="/perfil" element={<MasterPerfil />} />
       <Route path="/noticias-categorias" element={<MasterNoticiasCategorias />} />
       <Route path="/logs" element={<MasterLogs />} />
+      <Route path="/simulacao" element={<MasterSimulacao />} />
     </Routes>
   );
 };
