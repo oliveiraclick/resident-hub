@@ -34,6 +34,7 @@ const MasterDashboard = () => {
       <Route path="/perfil" element={<MasterPerfil />} />
       <Route path="/noticias-categorias" element={<MasterNoticiasCategorias />} />
       <Route path="/logs" element={<MasterLogs />} />
+      <Route path="/simulacao" element={<MasterSimulacao />} />
     </Routes>
   );
 };

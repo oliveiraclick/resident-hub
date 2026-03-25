@@ -26,6 +26,7 @@ const menuItems = [
   { icon: Bell, label: "Push", path: "/master/push" },
   { icon: Merge, label: "Unificar Contas", path: "/master/merge-contas" },
   { icon: ScrollText, label: "Logs Auth", path: "/master/logs" },
+  { icon: FlaskConical, label: "Simulação", path: "/master/simulacao" },
 ];
 
 const MasterLayout = ({ children }: MasterLayoutProps) => {
