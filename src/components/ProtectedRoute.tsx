@@ -1,4 +1,6 @@
 import { Navigate, useLocation } from "react-router-dom";
+
+const DEBUG_NAV = true;
 import { useAuth } from "@/hooks/useAuth";
 import TermsAcceptanceModal from "@/components/TermsAcceptanceModal";
 
@@ -27,11 +29,13 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
   // platform_admin must go to /master
   if (isPlatformAdmin && !path.startsWith("/master")) {
+    if (DEBUG_NAV) console.log("[ProtectedRoute] REDIRECT platform_admin to /master from:", path);
     return <Navigate to="/master" replace />;
   }
 
   // non platform_admin cannot access /master
   if (!isPlatformAdmin && path.startsWith("/master")) {
+    if (DEBUG_NAV) console.log("[ProtectedRoute] REDIRECT non-admin away from /master, path:", path);
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -51,7 +55,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     const isAllowed = allAllowedPrefixes.some((prefix) => path.startsWith(prefix));
 
     if (!isAllowed) {
-      // Redirect to the first role's module
+      if (DEBUG_NAV) console.log("[ProtectedRoute] REDIRECT role mismatch, path:", path, "roles:", roles.map(r => r.role), "allowed:", allAllowedPrefixes);
       const redirectMap: Record<string, string> = {
         admin: "/admin",
         morador: "/morador",
