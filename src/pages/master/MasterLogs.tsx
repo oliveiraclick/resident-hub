@@ -17,6 +17,11 @@ interface AuthLog {
   created_at: string;
 }
 
+interface SimilarEmail {
+  email: string;
+  nome: string;
+}
+
 const PAGE_SIZE = 30;
 
 const MasterLogs = () => {
@@ -24,6 +29,7 @@ const MasterLogs = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [similarEmails, setSimilarEmails] = useState<Record<string, SimilarEmail[]>>({});
 
   const fetchLogs = async () => {
     setLoading(true);
@@ -32,8 +38,27 @@ const MasterLogs = () => {
       .select("id, email, nome, evento, erro, detalhes, created_at")
       .order("created_at", { ascending: false })
       .limit(500);
-    setLogs((data as AuthLog[]) || []);
+    const logsData = (data as AuthLog[]) || [];
+    setLogs(logsData);
     setLoading(false);
+
+    // Fetch similar emails for login errors
+    const errorEmails = [...new Set(
+      logsData
+        .filter((l) => l.evento === "login_error" && l.email)
+        .map((l) => l.email!)
+    )];
+
+    const results: Record<string, SimilarEmail[]> = {};
+    await Promise.all(
+      errorEmails.map(async (email) => {
+        const { data: similar } = await supabase.rpc("find_similar_emails", { _target_email: email });
+        if (similar && similar.length > 0) {
+          results[email] = similar as SimilarEmail[];
+        }
+      })
+    );
+    setSimilarEmails(results);
   };
 
   useEffect(() => { fetchLogs(); }, []);
