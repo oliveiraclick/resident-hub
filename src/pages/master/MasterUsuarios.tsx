@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+import { useSearchParams, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import MasterLayout from "@/components/MasterLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -46,8 +46,13 @@ const normalizeCategoria = (value: string | null | undefined) =>
 
 const MasterUsuarios = () => {
   const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const mountedRef = useRef(true);
   const initialFilter = searchParams.get("filter") || "all";
   const initialCategoria = searchParams.get("categoria") || "all";
+
+  console.log("[MasterUsuarios] MOUNT/RENDER path:", location.pathname + location.search, "initialFilter:", initialFilter, "initialCategoria:", initialCategoria);
+
   const [users, setUsers] = useState<UserRow[]>([]);
   const [condominios, setCondominios] = useState<Condominio[]>([]);
   const [loading, setLoading] = useState(true);
@@ -71,6 +76,7 @@ const MasterUsuarios = () => {
 
   const fetchData = async () => {
     setLoading(true);
+    console.log("[MasterUsuarios] fetchData START");
     const [rolesRes, profilesRes, condRes, prestadoresRes] = await Promise.all([
       supabase.from("user_roles").select("*"),
       supabase.from("profiles").select("*"),
@@ -82,6 +88,12 @@ const MasterUsuarios = () => {
     const conds = condRes.data || [];
     const prestadores = prestadoresRes.data || [];
     setCondominios(conds);
+
+    console.log("[MasterUsuarios] fetchData DONE, roles:", roles.length, "profiles:", profiles.length, "prestadores:", prestadores.length);
+    if (!mountedRef.current) {
+      console.log("[MasterUsuarios] Component unmounted during fetch, skipping state update");
+      return;
+    }
 
     const condMap = new Map(conds.map((c) => [c.id, c.nome]));
     const profileMap = new Map(profiles.map((p) => [p.user_id, p]));
@@ -113,7 +125,15 @@ const MasterUsuarios = () => {
     setLoading(false);
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => {
+    mountedRef.current = true;
+    console.log("[MasterUsuarios] useEffect mount, calling fetchData");
+    fetchData();
+    return () => {
+      mountedRef.current = false;
+      console.log("[MasterUsuarios] useEffect UNMOUNT");
+    };
+  }, []);
 
   const openEdit = (u: UserRow) => {
     setEditTarget(u);
