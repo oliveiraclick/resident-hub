@@ -41,6 +41,9 @@ interface Condominio {
   nome: string;
 }
 
+const normalizeCategoria = (value: string | null | undefined) =>
+  (value || "").trim().toLocaleLowerCase();
+
 const MasterUsuarios = () => {
   const [searchParams] = useSearchParams();
   const initialFilter = searchParams.get("filter") || "all";
@@ -98,7 +101,7 @@ const MasterUsuarios = () => {
           condominioNome: r.condominio_id ? condMap.get(r.condominio_id) || "—" : "Global",
           aprovado: r.aprovado ?? true,
           createdAt: r.created_at,
-          especialidade: prest?.especialidade || null,
+          especialidade: prest?.especialidade?.trim() || null,
           subEspecialidade: prest?.sub_especialidade || null,
           prestadorId: prest?.id || null,
           devicePlatform: profile?.device_platform || null,
@@ -184,7 +187,7 @@ const MasterUsuarios = () => {
 
   const roleFiltered = filterRole === "all" ? users : users.filter((u) => u.role === filterRole);
   const catFiltered = filterCategoria !== "all" && filterRole === "prestador"
-    ? roleFiltered.filter((u) => u.especialidade === filterCategoria)
+    ? roleFiltered.filter((u) => normalizeCategoria(u.especialidade) === normalizeCategoria(filterCategoria))
     : roleFiltered;
   const searchFiltered = search ? catFiltered.filter((u) => u.nome.toLowerCase().includes(search.toLowerCase())) : catFiltered;
   const afterBloqueados = showBloqueados ? searchFiltered.filter((u) => !u.aprovado) : searchFiltered;
