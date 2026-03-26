@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { formatBRL } from "@/lib/utils";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import MasterLayout from "@/components/MasterLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -191,15 +191,14 @@ const MasterHome = () => {
             <div className="grid grid-cols-2 gap-x-6 gap-y-2 relative">
               <div className="absolute left-1/2 top-0 bottom-0 w-px bg-border pointer-events-none" />
                {stats.categoriaCounts.map((cat) => (
-                 <button
-                   type="button"
+                 <Link
+                   to={`/master/usuarios?filter=prestador&categoria=${encodeURIComponent(cat.especialidade)}`}
                   key={cat.especialidade}
-                   className="w-full text-left flex justify-between items-center border-b border-border pb-2 cursor-pointer hover:bg-muted/50 rounded px-1 -mx-1 transition-colors"
-                  onClick={() => navigate(`/master/usuarios?filter=prestador&categoria=${encodeURIComponent(cat.especialidade)}`)}
+                   className="flex justify-between items-center border-b border-border pb-2 cursor-pointer hover:bg-muted/50 rounded px-1 -mx-1 transition-colors no-underline"
                 >
                   <span className="text-sm font-medium">{cat.especialidade}</span>
                   <span className="text-xs font-semibold text-primary">{cat.total}</span>
-                 </button>
+                 </Link>
               ))}
             </div>
           </CardContent>
