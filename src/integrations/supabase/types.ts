@@ -1913,6 +1913,13 @@ export type Database = {
         Args: { _condominio_id: string; _user_id: string }
         Returns: boolean
       }
+      find_similar_emails: {
+        Args: { _target_email: string }
+        Returns: {
+          email: string
+          nome: string
+        }[]
+      }
       get_condominio_morador_counts: {
         Args: never
         Returns: {
