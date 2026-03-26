@@ -17,6 +17,11 @@ interface AuthLog {
   created_at: string;
 }
 
+interface SimilarEmail {
+  email: string;
+  nome: string;
+}
+
 const PAGE_SIZE = 30;
 
 const MasterLogs = () => {
@@ -24,6 +29,7 @@ const MasterLogs = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [similarEmails, setSimilarEmails] = useState<Record<string, SimilarEmail[]>>({});
 
   const fetchLogs = async () => {
     setLoading(true);
@@ -32,8 +38,27 @@ const MasterLogs = () => {
       .select("id, email, nome, evento, erro, detalhes, created_at")
       .order("created_at", { ascending: false })
       .limit(500);
-    setLogs((data as AuthLog[]) || []);
+    const logsData = (data as AuthLog[]) || [];
+    setLogs(logsData);
     setLoading(false);
+
+    // Fetch similar emails for login errors
+    const errorEmails = [...new Set(
+      logsData
+        .filter((l) => l.evento === "login_error" && l.email)
+        .map((l) => l.email!)
+    )];
+
+    const results: Record<string, SimilarEmail[]> = {};
+    await Promise.all(
+      errorEmails.map(async (email) => {
+        const { data: similar } = await supabase.rpc("find_similar_emails", { _target_email: email });
+        if (similar && similar.length > 0) {
+          results[email] = similar as SimilarEmail[];
+        }
+      })
+    );
+    setSimilarEmails(results);
   };
 
   useEffect(() => { fetchLogs(); }, []);
@@ -114,6 +139,17 @@ const MasterLogs = () => {
                     {log.email && <p className="text-xs text-muted-foreground">{log.email}</p>}
                     {log.erro && (
                       <p className="text-xs text-destructive mt-1 break-all">❌ {log.erro}</p>
+                    )}
+                    {log.evento === "login_error" && log.email && similarEmails[log.email] && (
+                      <div className="mt-2 p-2 rounded-md bg-primary/5 border border-primary/20">
+                        <p className="text-xs font-medium text-primary">💡 Email similar encontrado:</p>
+                        {similarEmails[log.email].map((s) => (
+                          <p key={s.email} className="text-xs text-foreground mt-0.5">
+                            O email cadastrado é <strong>{s.email}</strong>
+                            {s.nome ? ` (${s.nome})` : ""} mas tentou logar com <strong>{log.email}</strong>
+                          </p>
+                        ))}
+                      </div>
                     )}
                     {log.detalhes && (
                       <p className="text-[11px] text-muted-foreground mt-1 break-all">{log.detalhes}</p>
