@@ -37,17 +37,24 @@ const MasterHome = () => {
         supabase.from("financeiro_lancamentos").select("valor"),
         supabase.from("user_roles").select("id").eq("aprovado", false),
         supabase.from("user_roles").select("id").eq("role", "morador"),
-        supabase.from("user_roles").select("id").eq("role", "prestador"),
-        supabase.from("prestadores").select("especialidade"),
+        supabase.from("user_roles").select("id, user_id, condominio_id").eq("role", "prestador"),
+        supabase.from("prestadores").select("especialidade, user_id, condominio_id"),
       ]);
 
       const condominios = condominiosRes.data || [];
       const mrr = (lancamentosRes.data || []).reduce((sum, l) => sum + Number(l.valor), 0);
 
-      // Count by especialidade
+      // Count by especialidade (same base used by users screen: role + prestador pair)
+      const prestadorRoleKeys = new Set(
+        (prestadoresRes.data || []).map((r: any) => `${r.user_id}_${r.condominio_id}`)
+      );
+
       const countMap: Record<string, number> = {};
-      (prestadoresAllRes.data || []).forEach((p) => {
-        const esp = p.especialidade || "Outros";
+      (prestadoresAllRes.data || []).forEach((p: any) => {
+        const key = `${p.user_id}_${p.condominio_id}`;
+        if (!prestadorRoleKeys.has(key)) return;
+
+        const esp = (p.especialidade || "").trim() || "Outros";
         countMap[esp] = (countMap[esp] || 0) + 1;
       });
       const categoriaCounts = Object.entries(countMap)
@@ -183,15 +190,16 @@ const MasterHome = () => {
           <CardContent>
             <div className="grid grid-cols-2 gap-x-6 gap-y-2 relative">
               <div className="absolute left-1/2 top-0 bottom-0 w-px bg-border pointer-events-none" />
-              {stats.categoriaCounts.map((cat) => (
-                <div
+               {stats.categoriaCounts.map((cat) => (
+                 <button
+                   type="button"
                   key={cat.especialidade}
-                  className="flex justify-between items-center border-b border-border pb-2 cursor-pointer hover:bg-muted/50 rounded px-1 -mx-1 transition-colors"
+                   className="w-full text-left flex justify-between items-center border-b border-border pb-2 cursor-pointer hover:bg-muted/50 rounded px-1 -mx-1 transition-colors"
                   onClick={() => navigate(`/master/usuarios?filter=prestador&categoria=${encodeURIComponent(cat.especialidade)}`)}
                 >
                   <span className="text-sm font-medium">{cat.especialidade}</span>
                   <span className="text-xs font-semibold text-primary">{cat.total}</span>
-                </div>
+                 </button>
               ))}
             </div>
           </CardContent>
