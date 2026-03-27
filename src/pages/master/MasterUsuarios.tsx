@@ -81,7 +81,7 @@ const MasterUsuarios = () => {
       supabase.from("user_roles").select("*"),
       supabase.from("profiles").select("*"),
       supabase.from("condominios").select("id, nome"),
-      supabase.from("prestadores").select("id, user_id, condominio_id, especialidade, sub_especialidade"),
+      supabase.from("prestadores").select("id, user_id, condominio_id, especialidade, sub_especialidade, created_at"),
     ]);
     const roles = rolesRes.data || [];
     const profiles = profilesRes.data || [];
@@ -97,8 +97,15 @@ const MasterUsuarios = () => {
 
     const condMap = new Map(conds.map((c) => [c.id, c.nome]));
     const profileMap = new Map(profiles.map((p) => [p.user_id, p]));
-    // Map by user_id+condominio_id for prestador lookup
-    const prestadorMap = new Map(prestadores.map((p: any) => [`${p.user_id}_${p.condominio_id}`, p]));
+    // Map by user_id+condominio_id for prestador lookup (latest row wins)
+    const prestadorMap = new Map<string, any>();
+    prestadores.forEach((p: any) => {
+      const key = `${p.user_id}_${p.condominio_id}`;
+      const current = prestadorMap.get(key);
+      if (!current || new Date(p.created_at).getTime() > new Date(current.created_at).getTime()) {
+        prestadorMap.set(key, p);
+      }
+    });
 
     setUsers(
       roles.map((r: any) => {

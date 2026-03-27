@@ -38,23 +38,28 @@ const MasterHome = () => {
         supabase.from("user_roles").select("id").eq("aprovado", false),
         supabase.from("user_roles").select("id").eq("role", "morador"),
         supabase.from("user_roles").select("id, user_id, condominio_id").eq("role", "prestador"),
-        supabase.from("prestadores").select("especialidade, user_id, condominio_id"),
+        supabase.from("prestadores").select("especialidade, user_id, condominio_id, created_at"),
       ]);
 
       const condominios = condominiosRes.data || [];
       const mrr = (lancamentosRes.data || []).reduce((sum, l) => sum + Number(l.valor), 0);
 
-      // Count by especialidade (same base used by users screen: role + prestador pair)
-      const prestadorRoleKeys = new Set(
-        (prestadoresRes.data || []).map((r: any) => `${r.user_id}_${r.condominio_id}`)
-      );
-
-      const countMap: Record<string, number> = {};
+      // Count by especialidade using one effective prestador per user+condominio
+      // (prevents double count when legacy duplicated prestador rows exist).
+      const latestPrestadorByKey = new Map<string, { especialidade: string | null; created_at: string }>();
       (prestadoresAllRes.data || []).forEach((p: any) => {
         const key = `${p.user_id}_${p.condominio_id}`;
-        if (!prestadorRoleKeys.has(key)) return;
+        const current = latestPrestadorByKey.get(key);
+        if (!current || new Date(p.created_at).getTime() > new Date(current.created_at).getTime()) {
+          latestPrestadorByKey.set(key, { especialidade: p.especialidade ?? null, created_at: p.created_at });
+        }
+      });
 
-        const esp = (p.especialidade || "").trim() || "Outros";
+      const countMap: Record<string, number> = {};
+      (prestadoresRes.data || []).forEach((r: any) => {
+        const key = `${r.user_id}_${r.condominio_id}`;
+        const prestador = latestPrestadorByKey.get(key);
+        const esp = (prestador?.especialidade || "").trim() || "Outros";
         countMap[esp] = (countMap[esp] || 0) + 1;
       });
       const categoriaCounts = Object.entries(countMap)
