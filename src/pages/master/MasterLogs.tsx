@@ -169,15 +169,40 @@ const MasterLogs = () => {
                     {log.erro && (
                       <p className="text-xs text-destructive mt-1 break-all">❌ {log.erro}</p>
                     )}
-                    {log.evento === "login_error" && log.email && similarEmails[log.email] && (
+                    {log.evento === "login_error" && log.email && (
                       <div className="mt-2 p-2 rounded-md bg-primary/5 border border-primary/20">
-                        <p className="text-xs font-medium text-primary">💡 Email similar encontrado:</p>
-                        {similarEmails[log.email].map((s) => (
-                          <p key={s.email} className="text-xs text-foreground mt-0.5">
-                            O email cadastrado é <strong>{s.email}</strong>
-                            {s.nome ? ` (${s.nome})` : ""} mas tentou logar com <strong>{log.email}</strong>
-                          </p>
-                        ))}
+                        {similarEmails[log.email] ? (
+                          <>
+                            <p className="text-xs font-medium text-primary">💡 Email similar encontrado:</p>
+                            {similarEmails[log.email].map((s) => (
+                              <p key={s.email} className="text-xs text-foreground mt-0.5">
+                                O email cadastrado é <strong>{s.email}</strong>
+                                {s.nome ? ` (${s.nome})` : ""} mas tentou logar com <strong>{log.email}</strong>
+                              </p>
+                            ))}
+                          </>
+                        ) : log.erro === "Senha incorreta" ? (
+                          <>
+                            <p className="text-xs font-medium text-primary">💡 Diagnóstico:</p>
+                            <p className="text-xs text-foreground mt-0.5">
+                              O email <strong>{log.email}</strong> está cadastrado no sistema, mas a <strong>senha digitada está errada</strong>.
+                            </p>
+                          </>
+                        ) : log.erro === "Email não cadastrado" ? (
+                          <>
+                            <p className="text-xs font-medium text-primary">💡 Diagnóstico:</p>
+                            <p className="text-xs text-foreground mt-0.5">
+                              <strong>Nenhuma conta encontrada</strong> com o email <strong>{log.email}</strong>. O usuário pode ter digitado errado ou não possui cadastro.
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-xs font-medium text-primary">💡 Diagnóstico:</p>
+                            <p className="text-xs text-foreground mt-0.5">
+                              Falha na autenticação com <strong>{log.email}</strong>. Não foi possível determinar se o problema é no email ou na senha (log antigo).
+                            </p>
+                          </>
+                        )}
                       </div>
                     )}
                     {log.detalhes && (
