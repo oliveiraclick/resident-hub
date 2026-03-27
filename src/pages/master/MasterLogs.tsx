@@ -30,6 +30,7 @@ const MasterLogs = () => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [similarEmails, setSimilarEmails] = useState<Record<string, SimilarEmail[]>>({});
+  const [phones, setPhones] = useState<Record<string, string>>({});
 
   const fetchLogs = async () => {
     setLoading(true);
