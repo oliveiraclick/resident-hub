@@ -89,12 +89,28 @@ const Auth = () => {
         toast.success("Cadastro realizado! Verifique seu email para confirmar.");
       }
     } catch (err: any) {
-      const msg = err.message?.includes("Invalid login")
-        ? "Email ou senha incorretos"
-        : err.message?.includes("already registered")
-        ? "Este email já está cadastrado"
-        : err.message || "Erro inesperado";
-      toast.error(msg);
+      let msg = err.message || "Erro inesperado";
+      let detalhes = err.message || null;
+
+      if (err.message?.includes("Invalid login")) {
+        // Check if email exists to give better info in logs
+        try {
+          const { data: exists } = await supabase.rpc("check_email_exists", { _email: email.trim() });
+          if (exists) {
+            msg = "Senha incorreta";
+            detalhes = "Email encontrado no sistema, mas a senha está errada";
+          } else {
+            msg = "Email não cadastrado";
+            detalhes = "Nenhuma conta encontrada com este email";
+          }
+        } catch (_) {
+          msg = "Email ou senha incorretos";
+        }
+      } else if (err.message?.includes("already registered")) {
+        msg = "Este email já está cadastrado";
+      }
+
+      toast.error(msg === "Senha incorreta" || msg === "Email não cadastrado" ? "Email ou senha incorretos" : msg);
 
       // Log auth error to database
       try {
@@ -102,7 +118,7 @@ const Auth = () => {
           email: email.trim(),
           evento: isLogin ? "login_error" : "signup_error",
           erro: msg,
-          detalhes: err.message || null,
+          detalhes,
           user_agent: navigator.userAgent,
         });
       } catch (_) { /* silent */ }

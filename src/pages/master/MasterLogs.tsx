@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Trash2, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Trash2, AlertCircle, ChevronLeft, ChevronRight, Phone } from "lucide-react";
 import { toast } from "sonner";
 
 interface AuthLog {
@@ -30,6 +30,7 @@ const MasterLogs = () => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [similarEmails, setSimilarEmails] = useState<Record<string, SimilarEmail[]>>({});
+  const [phones, setPhones] = useState<Record<string, string>>({});
 
   const fetchLogs = async () => {
     setLoading(true);
@@ -41,6 +42,17 @@ const MasterLogs = () => {
     const logsData = (data as AuthLog[]) || [];
     setLogs(logsData);
     setLoading(false);
+
+    // Fetch phones for all unique emails
+    const allEmails = [...new Set(logsData.filter(l => l.email).map(l => l.email!))];
+    if (allEmails.length > 0) {
+      const { data: phoneData } = await supabase.rpc("get_phones_by_emails", { _emails: allEmails });
+      if (phoneData) {
+        const phoneMap: Record<string, string> = {};
+        (phoneData as { email: string; telefone: string }[]).forEach(p => { phoneMap[p.email] = p.telefone; });
+        setPhones(phoneMap);
+      }
+    }
 
     // Fetch similar emails for login errors
     const errorEmails = [...new Set(
@@ -137,6 +149,17 @@ const MasterLogs = () => {
                     </div>
                     {log.nome && <p className="text-sm font-medium mt-1">{log.nome}</p>}
                     {log.email && <p className="text-xs text-muted-foreground">{log.email}</p>}
+                    {log.email && phones[log.email] && (
+                      <a
+                        href={`https://wa.me/55${phones[log.email].replace(/\D/g, "")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-xs text-emerald-600 mt-0.5 hover:underline"
+                      >
+                        <Phone size={12} />
+                        {phones[log.email]}
+                      </a>
+                    )}
                     {log.erro && (
                       <p className="text-xs text-destructive mt-1 break-all">❌ {log.erro}</p>
                     )}

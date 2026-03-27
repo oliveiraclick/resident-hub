@@ -1913,6 +1913,7 @@ export type Database = {
         Args: { _condominio_id: string; _user_id: string }
         Returns: boolean
       }
+      check_email_exists: { Args: { _email: string }; Returns: boolean }
       find_similar_emails: {
         Args: { _target_email: string }
         Returns: {
@@ -1951,6 +1952,13 @@ export type Database = {
           nome: string
           telefone: string
           user_id: string
+        }[]
+      }
+      get_phones_by_emails: {
+        Args: { _emails: string[] }
+        Returns: {
+          email: string
+          telefone: string
         }[]
       }
       get_prestador_codigo: { Args: { p_user_id: string }; Returns: string }
