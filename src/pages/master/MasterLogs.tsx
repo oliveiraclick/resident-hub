@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Trash2, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Trash2, AlertCircle, ChevronLeft, ChevronRight, Phone } from "lucide-react";
 import { toast } from "sonner";
 
 interface AuthLog {
