@@ -149,6 +149,17 @@ const MasterLogs = () => {
                     </div>
                     {log.nome && <p className="text-sm font-medium mt-1">{log.nome}</p>}
                     {log.email && <p className="text-xs text-muted-foreground">{log.email}</p>}
+                    {log.email && phones[log.email] && (
+                      <a
+                        href={`https://wa.me/55${phones[log.email].replace(/\D/g, "")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-xs text-emerald-600 mt-0.5 hover:underline"
+                      >
+                        <Phone size={12} />
+                        {phones[log.email]}
+                      </a>
+                    )}
                     {log.erro && (
                       <p className="text-xs text-destructive mt-1 break-all">❌ {log.erro}</p>
                     )}
