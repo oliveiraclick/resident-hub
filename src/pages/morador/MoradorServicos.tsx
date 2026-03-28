@@ -362,9 +362,14 @@ const MoradorServicos = () => {
   }
 
   const filteredCategorias = searchTerm
-    ? categorias.filter((cat) =>
-        cat.nome.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+    ? categorias.filter((cat) => {
+        const term = searchTerm.toLowerCase();
+        const matchCategoria = cat.nome.toLowerCase().includes(term);
+        const matchPrestadorNome = allPrestadores.some(
+          (p) => p.especialidade === cat.nome && p.nome.toLowerCase().includes(term)
+        );
+        return matchCategoria || matchPrestadorNome;
+      })
     : categorias;
 
   return (
