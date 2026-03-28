@@ -11,6 +11,7 @@ import {
   ArrowRight, MapPin, Building2, Gift, Image,
 } from "lucide-react";
 import MissingPhotoModal from "@/components/MissingPhotoModal";
+import PrestadorCupomCard from "@/components/PrestadorCupomCard";
 
 const PrestadorHome = () => {
   const navigate = useNavigate();
@@ -240,6 +241,12 @@ const PrestadorHome = () => {
                   </CardContent>
                 </Card>
               </div>
+            </div>
+
+            {/* Cupom de desconto */}
+            <div>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">Cupom Promocional</p>
+              <PrestadorCupomCard prestadorId={prestadorId} />
             </div>
 
             {/* Banner promo CTA */}

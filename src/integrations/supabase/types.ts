@@ -617,6 +617,44 @@ export type Database = {
           },
         ]
       }
+      cupons_prestador: {
+        Row: {
+          ativo: boolean
+          codigo: string
+          created_at: string
+          desconto_percent: number
+          id: string
+          prestador_id: string
+          validade: string | null
+        }
+        Insert: {
+          ativo?: boolean
+          codigo: string
+          created_at?: string
+          desconto_percent?: number
+          id?: string
+          prestador_id: string
+          validade?: string | null
+        }
+        Update: {
+          ativo?: boolean
+          codigo?: string
+          created_at?: string
+          desconto_percent?: number
+          id?: string
+          prestador_id?: string
+          validade?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cupons_prestador_prestador_id_fkey"
+            columns: ["prestador_id"]
+            isOneToOne: false
+            referencedRelation: "prestadores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       desapegos: {
         Row: {
           condominio_id: string

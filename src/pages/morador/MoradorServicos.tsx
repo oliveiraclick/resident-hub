@@ -5,7 +5,7 @@ import { useSearchParams } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { Wrench, Search, MessageCircle, ArrowLeft, User } from "lucide-react";
+import { Wrench, Search, MessageCircle, ArrowLeft, User, Ticket } from "lucide-react";
 import { getIcon } from "@/lib/iconMap";
 import { Button } from "@/components/ui/button";
 
@@ -28,14 +28,17 @@ const coverImages: Record<string, string> = {
 };
 
 interface CategoriaIconMap {
-  [nome: string]: string; // icon name string
+  [nome: string]: string;
 }
-
-
 
 interface Categoria {
   nome: string;
   count: number;
+}
+
+interface CupomInfo {
+  codigo: string;
+  desconto_percent: number;
 }
 
 interface PrestadorCompleto {
@@ -46,6 +49,7 @@ interface PrestadorCompleto {
   nome: string;
   telefone: string | null;
   avatar_url: string | null;
+  cupom: CupomInfo | null;
   servicos: {
     id: string;
     titulo: string;
@@ -145,18 +149,26 @@ const MoradorServicos = () => {
       const { data: profiles } = await supabase
         .rpc("get_prestador_profiles", { _user_ids: userIds }) as { data: { user_id: string; nome: string; avatar_url: string | null; telefone: string | null }[] | null };
 
-      // Fetch servicos for these prestadores
+      // Fetch servicos and cupons for these prestadores
       const prestadorIds = prestadoresFiltrados.map((p) => p.id);
-      const { data: servicos } = await supabase
-        .from("servicos")
-        .select("id, titulo, descricao, preco, prestador_id")
-        .eq("condominio_id", condominioId)
-        .in("prestador_id", prestadorIds)
-        .eq("status", "ativo");
+      const [{ data: servicos }, { data: cupons }] = await Promise.all([
+        supabase
+          .from("servicos")
+          .select("id, titulo, descricao, preco, prestador_id")
+          .eq("condominio_id", condominioId)
+          .in("prestador_id", prestadorIds)
+          .eq("status", "ativo"),
+        supabase
+          .from("cupons_prestador")
+          .select("prestador_id, codigo, desconto_percent")
+          .in("prestador_id", prestadorIds)
+          .eq("ativo", true),
+      ]);
 
       const result: PrestadorCompleto[] = prestadoresFiltrados.map((p) => {
         const profile = profiles?.find((pr) => pr.user_id === p.user_id);
         const prestadorServicos = servicos?.filter((s) => s.prestador_id === p.id) || [];
+        const cupom = (cupons as any[])?.find((c) => c.prestador_id === p.id) || null;
         return {
           id: p.id,
           especialidade: p.especialidade,
@@ -165,6 +177,7 @@ const MoradorServicos = () => {
           nome: profile?.nome || "Prestador",
           telefone: profile?.telefone || null,
           avatar_url: profile?.avatar_url || null,
+          cupom: cupom ? { codigo: cupom.codigo, desconto_percent: cupom.desconto_percent } : null,
           servicos: prestadorServicos,
         };
       });
@@ -176,12 +189,14 @@ const MoradorServicos = () => {
     fetchPrestadoresCompletos();
   }, [condominioId, selectedCategoria, allPrestadores]);
 
-  const openWhatsApp = (telefone: string, nome: string, especialidade: string) => {
+  const openWhatsApp = (telefone: string, nome: string, especialidade: string, cupom?: CupomInfo | null) => {
     const cleaned = telefone.replace(/\D/g, "");
     const number = cleaned.startsWith("55") ? cleaned : `55${cleaned}`;
-    const msg = encodeURIComponent(
-      `Olá ${nome}! Vi seu perfil de ${especialidade} no app do condomínio e gostaria de saber mais sobre seus serviços.`
-    );
+    let text = `Olá ${nome}! Vi seu perfil de ${especialidade} no app do condomínio e gostaria de saber mais sobre seus serviços.`;
+    if (cupom) {
+      text += ` Tenho o cupom ${cupom.codigo} (${cupom.desconto_percent}% de desconto).`;
+    }
+    const msg = encodeURIComponent(text);
     window.open(`https://wa.me/${number}?text=${msg}`, "_blank");
   };
 
@@ -285,11 +300,24 @@ const MoradorServicos = () => {
                     </div>
                   )}
 
+                  {/* Cupom de desconto */}
+                  <div className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 ${prestador.cupom ? "bg-primary/10 border border-primary/20" : "bg-muted/30"}`}>
+                    <Ticket size={16} className={prestador.cupom ? "text-primary flex-shrink-0" : "text-muted-foreground flex-shrink-0"} />
+                    {prestador.cupom ? (
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[13px] font-bold text-primary">{prestador.cupom.codigo} — {prestador.cupom.desconto_percent}% OFF</p>
+                        <p className="text-[11px] text-muted-foreground">Mencione o cupom ao entrar em contato</p>
+                      </div>
+                    ) : (
+                      <p className="text-[12px] text-muted-foreground">Nenhum cupom disponível</p>
+                    )}
+                  </div>
+
                   {/* WhatsApp button */}
                   {prestador.telefone ? (
                     <Button
                       onClick={() =>
-                        openWhatsApp(prestador.telefone!, prestador.nome, prestador.especialidade)
+                        openWhatsApp(prestador.telefone!, prestador.nome, prestador.especialidade, prestador.cupom)
                       }
                       className="w-full rounded-xl gap-2 bg-[#25D366] hover:bg-[#1da851] text-white font-semibold"
                     >
