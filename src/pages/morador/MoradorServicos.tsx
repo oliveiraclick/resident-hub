@@ -5,7 +5,7 @@ import { useSearchParams } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { Wrench, Search, MessageCircle, ArrowLeft, User } from "lucide-react";
+import { Wrench, Search, MessageCircle, ArrowLeft, User, Ticket } from "lucide-react";
 import { getIcon } from "@/lib/iconMap";
 import { Button } from "@/components/ui/button";
 
@@ -28,14 +28,17 @@ const coverImages: Record<string, string> = {
 };
 
 interface CategoriaIconMap {
-  [nome: string]: string; // icon name string
+  [nome: string]: string;
 }
-
-
 
 interface Categoria {
   nome: string;
   count: number;
+}
+
+interface CupomInfo {
+  codigo: string;
+  desconto_percent: number;
 }
 
 interface PrestadorCompleto {
@@ -46,6 +49,7 @@ interface PrestadorCompleto {
   nome: string;
   telefone: string | null;
   avatar_url: string | null;
+  cupom: CupomInfo | null;
   servicos: {
     id: string;
     titulo: string;
