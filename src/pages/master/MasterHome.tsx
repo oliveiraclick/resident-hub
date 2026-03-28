@@ -74,7 +74,7 @@ const MasterHome = () => {
         totalBloqueados: (bloqueadosRes.data || []).length,
         totalMoradores: (moradoresRes.data || []).length,
         totalPrestadores: (prestadoresRes.data || []).length,
-        ultimosCondominios: condominios.slice(0, 5),
+        ultimosCondominios: condominios.slice(0, 10),
         categoriaCounts,
       });
       setLoading(false);
