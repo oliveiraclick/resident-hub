@@ -243,6 +243,12 @@ const PrestadorHome = () => {
               </div>
             </div>
 
+            {/* Cupom de desconto */}
+            <div>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">Cupom Promocional</p>
+              <PrestadorCupomCard prestadorId={prestadorId} />
+            </div>
+
             {/* Banner promo CTA */}
             <Card
               className="cursor-pointer active:scale-[0.97] transition-transform border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10 overflow-hidden"
