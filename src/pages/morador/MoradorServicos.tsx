@@ -149,18 +149,26 @@ const MoradorServicos = () => {
       const { data: profiles } = await supabase
         .rpc("get_prestador_profiles", { _user_ids: userIds }) as { data: { user_id: string; nome: string; avatar_url: string | null; telefone: string | null }[] | null };
 
-      // Fetch servicos for these prestadores
+      // Fetch servicos and cupons for these prestadores
       const prestadorIds = prestadoresFiltrados.map((p) => p.id);
-      const { data: servicos } = await supabase
-        .from("servicos")
-        .select("id, titulo, descricao, preco, prestador_id")
-        .eq("condominio_id", condominioId)
-        .in("prestador_id", prestadorIds)
-        .eq("status", "ativo");
+      const [{ data: servicos }, { data: cupons }] = await Promise.all([
+        supabase
+          .from("servicos")
+          .select("id, titulo, descricao, preco, prestador_id")
+          .eq("condominio_id", condominioId)
+          .in("prestador_id", prestadorIds)
+          .eq("status", "ativo"),
+        supabase
+          .from("cupons_prestador")
+          .select("prestador_id, codigo, desconto_percent")
+          .in("prestador_id", prestadorIds)
+          .eq("ativo", true),
+      ]);
 
       const result: PrestadorCompleto[] = prestadoresFiltrados.map((p) => {
         const profile = profiles?.find((pr) => pr.user_id === p.user_id);
         const prestadorServicos = servicos?.filter((s) => s.prestador_id === p.id) || [];
+        const cupom = (cupons as any[])?.find((c) => c.prestador_id === p.id) || null;
         return {
           id: p.id,
           especialidade: p.especialidade,
@@ -169,6 +177,7 @@ const MoradorServicos = () => {
           nome: profile?.nome || "Prestador",
           telefone: profile?.telefone || null,
           avatar_url: profile?.avatar_url || null,
+          cupom: cupom ? { codigo: cupom.codigo, desconto_percent: cupom.desconto_percent } : null,
           servicos: prestadorServicos,
         };
       });
