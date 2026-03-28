@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Pencil, Trash2, CheckCircle, XCircle, Plus, ShieldCheck, Search, Smartphone, Wifi, ChevronLeft, ChevronRight } from "lucide-react";
+import { Pencil, Trash2, CheckCircle, XCircle, Plus, ShieldCheck, Search, Smartphone, Wifi, ChevronLeft, ChevronRight, Phone } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -34,6 +34,7 @@ interface UserRow {
   devicePlatform: string | null;
   appVersion: string | null;
   deviceUpdatedAt: string | null;
+  telefone: string | null;
 }
 
 interface Condominio {
@@ -126,6 +127,7 @@ const MasterUsuarios = () => {
           devicePlatform: profile?.device_platform || null,
           appVersion: profile?.app_version || null,
           deviceUpdatedAt: profile?.device_updated_at || null,
+          telefone: profile?.telefone || null,
         };
       })
     );
@@ -327,6 +329,19 @@ const MasterUsuarios = () => {
                     <p className="text-xs text-muted-foreground">{u.condominioNome}</p>
                     {u.especialidade && (
                       <p className="text-xs text-muted-foreground">🔧 {u.especialidade}{u.subEspecialidade ? ` · ${u.subEspecialidade}` : ""}</p>
+                    )}
+                    {u.telefone && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const digits = u.telefone!.replace(/\D/g, "");
+                          window.open(`https://wa.me/55${digits}`, "_blank", "noopener,noreferrer");
+                        }}
+                        className="inline-flex items-center gap-1 text-xs text-primary mt-0.5 hover:underline"
+                      >
+                        <Phone size={12} />
+                        {u.telefone}
+                      </button>
                     )}
                   </div>
                   <div className="flex items-center gap-1">
