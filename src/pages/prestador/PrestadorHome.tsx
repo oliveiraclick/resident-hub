@@ -11,6 +11,7 @@ import {
   ArrowRight, MapPin, Building2, Gift, Image,
 } from "lucide-react";
 import MissingPhotoModal from "@/components/MissingPhotoModal";
+import PrestadorCupomCard from "@/components/PrestadorCupomCard";
 
 const PrestadorHome = () => {
   const navigate = useNavigate();
