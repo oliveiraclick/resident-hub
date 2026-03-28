@@ -300,11 +300,24 @@ const MoradorServicos = () => {
                     </div>
                   )}
 
+                  {/* Cupom de desconto */}
+                  <div className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 ${prestador.cupom ? "bg-primary/10 border border-primary/20" : "bg-muted/30"}`}>
+                    <Ticket size={16} className={prestador.cupom ? "text-primary flex-shrink-0" : "text-muted-foreground flex-shrink-0"} />
+                    {prestador.cupom ? (
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[13px] font-bold text-primary">{prestador.cupom.codigo} — {prestador.cupom.desconto_percent}% OFF</p>
+                        <p className="text-[11px] text-muted-foreground">Mencione o cupom ao entrar em contato</p>
+                      </div>
+                    ) : (
+                      <p className="text-[12px] text-muted-foreground">Nenhum cupom disponível</p>
+                    )}
+                  </div>
+
                   {/* WhatsApp button */}
                   {prestador.telefone ? (
                     <Button
                       onClick={() =>
-                        openWhatsApp(prestador.telefone!, prestador.nome, prestador.especialidade)
+                        openWhatsApp(prestador.telefone!, prestador.nome, prestador.especialidade, prestador.cupom)
                       }
                       className="w-full rounded-xl gap-2 bg-[#25D366] hover:bg-[#1da851] text-white font-semibold"
                     >
