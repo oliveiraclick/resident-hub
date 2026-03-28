@@ -36,6 +36,14 @@ interface Categoria {
   count: number;
 }
 
+interface PrestadorResumo {
+  id: string;
+  especialidade: string;
+  descricao: string | null;
+  user_id: string;
+  nome: string;
+}
+
 interface CupomInfo {
   codigo: string;
   desconto_percent: number;
@@ -66,7 +74,7 @@ const MoradorServicos = () => {
 
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [iconMap, setIconMap] = useState<CategoriaIconMap>({});
-  const [allPrestadores, setAllPrestadores] = useState<any[]>([]);
+  const [allPrestadores, setAllPrestadores] = useState<PrestadorResumo[]>([]);
   const [selectedCategoria, setSelectedCategoria] = useState<string | null>(null);
   const [prestadoresCompletos, setPrestadoresCompletos] = useState<PrestadorCompleto[]>([]);
   const [loading, setLoading] = useState(true);
@@ -97,9 +105,24 @@ const MoradorServicos = () => {
         .eq("condominio_id", condominioId);
 
       if (data) {
-        setAllPrestadores(data);
+        const userIds = data.map((p) => p.user_id);
+        const { data: profiles } = await supabase
+          .rpc("get_prestador_profiles", { _user_ids: userIds }) as { data: { user_id: string; nome: string }[] | null };
+
+        const enriched: PrestadorResumo[] = data.map((p) => {
+          const profile = profiles?.find((pr) => pr.user_id === p.user_id);
+          return {
+            id: p.id,
+            especialidade: p.especialidade,
+            descricao: p.descricao,
+            user_id: p.user_id,
+            nome: profile?.nome || "Prestador",
+          };
+        });
+
+        setAllPrestadores(enriched);
         const map: Record<string, number> = {};
-        data.forEach((p) => {
+        enriched.forEach((p) => {
           map[p.especialidade] = (map[p.especialidade] || 0) + 1;
         });
         setCategorias(
@@ -339,9 +362,14 @@ const MoradorServicos = () => {
   }
 
   const filteredCategorias = searchTerm
-    ? categorias.filter((cat) =>
-        cat.nome.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+    ? categorias.filter((cat) => {
+        const term = searchTerm.toLowerCase();
+        const matchCategoria = cat.nome.toLowerCase().includes(term);
+        const matchPrestadorNome = allPrestadores.some(
+          (p) => p.especialidade === cat.nome && p.nome.toLowerCase().includes(term)
+        );
+        return matchCategoria || matchPrestadorNome;
+      })
     : categorias;
 
   return (
