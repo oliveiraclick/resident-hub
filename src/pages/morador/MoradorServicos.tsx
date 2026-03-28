@@ -189,12 +189,14 @@ const MoradorServicos = () => {
     fetchPrestadoresCompletos();
   }, [condominioId, selectedCategoria, allPrestadores]);
 
-  const openWhatsApp = (telefone: string, nome: string, especialidade: string) => {
+  const openWhatsApp = (telefone: string, nome: string, especialidade: string, cupom?: CupomInfo | null) => {
     const cleaned = telefone.replace(/\D/g, "");
     const number = cleaned.startsWith("55") ? cleaned : `55${cleaned}`;
-    const msg = encodeURIComponent(
-      `Olá ${nome}! Vi seu perfil de ${especialidade} no app do condomínio e gostaria de saber mais sobre seus serviços.`
-    );
+    let text = `Olá ${nome}! Vi seu perfil de ${especialidade} no app do condomínio e gostaria de saber mais sobre seus serviços.`;
+    if (cupom) {
+      text += ` Tenho o cupom ${cupom.codigo} (${cupom.desconto_percent}% de desconto).`;
+    }
+    const msg = encodeURIComponent(text);
     window.open(`https://wa.me/${number}?text=${msg}`, "_blank");
   };
 
