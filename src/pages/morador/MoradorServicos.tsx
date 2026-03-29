@@ -77,6 +77,7 @@ const MoradorServicos = () => {
   const [iconMap, setIconMap] = useState<CategoriaIconMap>({});
   const [allPrestadores, setAllPrestadores] = useState<PrestadorResumo[]>([]);
   const [selectedCategoria, setSelectedCategoria] = useState<string | null>(null);
+  const [selectedNomeFilter, setSelectedNomeFilter] = useState<string | null>(null);
   const [prestadoresCompletos, setPrestadoresCompletos] = useState<PrestadorCompleto[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingDetail, setLoadingDetail] = useState(false);
@@ -144,8 +145,10 @@ const MoradorServicos = () => {
       );
       if (exactMatch) {
         setSelectedCategoria(exactMatch.nome);
+        setSelectedNomeFilter(nomeFromUrl || null);
       } else {
         setSearchTerm(queryFromUrl);
+        setSelectedNomeFilter(null);
       }
       setSearchParams({}, { replace: true });
     }
@@ -207,8 +210,8 @@ const MoradorServicos = () => {
       });
 
       // If nome filter is present, filter by name
-      if (nomeFromUrl) {
-        const nomeFilter = nomeFromUrl.toLowerCase();
+      if (selectedNomeFilter) {
+        const nomeFilter = selectedNomeFilter.toLowerCase();
         setPrestadoresCompletos(result.filter((p) => p.nome.toLowerCase().includes(nomeFilter)));
       } else {
         setPrestadoresCompletos(result);
@@ -217,7 +220,7 @@ const MoradorServicos = () => {
     };
 
     fetchPrestadoresCompletos();
-  }, [condominioId, selectedCategoria, allPrestadores, nomeFromUrl]);
+  }, [condominioId, selectedCategoria, allPrestadores, selectedNomeFilter]);
 
   const openWhatsApp = (telefone: string, nome: string, especialidade: string, cupom?: CupomInfo | null) => {
     const cleaned = telefone.replace(/\D/g, "");
@@ -238,6 +241,7 @@ const MoradorServicos = () => {
           <button
             onClick={() => {
               setSelectedCategoria(null);
+              setSelectedNomeFilter(null);
               setPrestadoresCompletos([]);
             }}
             className="flex items-center gap-1.5 text-[13px] font-medium text-primary w-fit"
@@ -410,7 +414,10 @@ const MoradorServicos = () => {
               <Card
                 key={cat.nome}
                 className="cursor-pointer active:scale-[0.98] transition-transform"
-                onClick={() => setSelectedCategoria(cat.nome)}
+                onClick={() => {
+                  setSelectedNomeFilter(null);
+                  setSelectedCategoria(cat.nome);
+                }}
               >
                 <CardContent className="flex items-center gap-4 p-4">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10">
