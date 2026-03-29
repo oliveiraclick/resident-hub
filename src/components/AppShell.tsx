@@ -30,13 +30,30 @@ interface AppShellProps {
 
 interface SearchResult {
   id: string;
+  nome: string;
   especialidade: string;
   descricao: string | null;
 }
 
+interface PrestadorSearchItem {
+  id: string;
+  user_id: string;
+  nome: string;
+  especialidade: string;
+  descricao: string | null;
+}
+
+const normalizeSearchText = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+
 const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSearch = false, onQrPress, condominioName, condominioLogo, aprovado = true, title, showBack = false }: AppShellProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
+  const [searchIndex, setSearchIndex] = useState<PrestadorSearchItem[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
@@ -52,38 +69,78 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
+  // Load searchable prestadores index (nome + especialidade)
+  useEffect(() => {
+    if (!user || !showSearch) return;
+
+    let isActive = true;
+
+    const loadSearchIndex = async () => {
+      const { data: prestadores } = await supabase
+        .from("prestadores")
+        .select("id, user_id, especialidade, descricao")
+        .limit(500);
+
+      if (!prestadores || prestadores.length === 0) {
+        if (isActive) setSearchIndex([]);
+        return;
+      }
+
+      const userIds = [...new Set(prestadores.map((p) => p.user_id))];
+      const { data: profiles } = await supabase
+        .rpc("get_prestador_profiles", { _user_ids: userIds }) as { data: { user_id: string; nome: string }[] | null };
+
+      const nomePorUserId = new Map((profiles || []).map((p) => [p.user_id, p.nome]));
+
+      const indexData: PrestadorSearchItem[] = prestadores.map((p) => ({
+        id: p.id,
+        user_id: p.user_id,
+        especialidade: p.especialidade,
+        descricao: p.descricao,
+        nome: nomePorUserId.get(p.user_id) || "Prestador",
+      }));
+
+      if (isActive) setSearchIndex(indexData);
+    };
+
+    loadSearchIndex();
+
+    return () => {
+      isActive = false;
+    };
+  }, [user, showSearch]);
+
   // Live search
   useEffect(() => {
-    if (!searchTerm.trim() || !user) {
+    if (!searchTerm.trim()) {
       setResults([]);
       setShowResults(false);
       return;
     }
 
-    const timer = setTimeout(async () => {
-      const { data } = await supabase
-        .from("prestadores")
-        .select("id, especialidade, descricao")
-        .ilike("especialidade", `%${searchTerm.trim()}%`)
-        .limit(8);
+    const timer = setTimeout(() => {
+      const term = normalizeSearchText(searchTerm);
 
-      if (data && data.length > 0) {
-        const unique = data.reduce((acc: SearchResult[], curr) => {
-          if (!acc.find((r) => r.especialidade === curr.especialidade)) {
-            acc.push(curr);
-          }
-          return acc;
-        }, []);
-        setResults(unique);
-        setShowResults(true);
-      } else {
-        setResults([]);
-        setShowResults(true);
-      }
-    }, 250);
+      const filtered = searchIndex
+        .filter((item) => {
+          const nome = normalizeSearchText(item.nome);
+          const especialidade = normalizeSearchText(item.especialidade);
+          return nome.includes(term) || especialidade.includes(term);
+        })
+        .slice(0, 8)
+        .map((item) => ({
+          id: item.id,
+          nome: item.nome,
+          especialidade: item.especialidade,
+          descricao: item.descricao,
+        }));
+
+      setResults(filtered);
+      setShowResults(true);
+    }, 180);
 
     return () => clearTimeout(timer);
-  }, [searchTerm, user]);
+  }, [searchTerm, searchIndex]);
 
   // Close on click outside
   useEffect(() => {
@@ -96,10 +153,10 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const handleSelectResult = (especialidade: string) => {
+  const handleSelectResult = (query: string) => {
     setSearchTerm("");
     setShowResults(false);
-    navigate(`/morador/servicos?q=${encodeURIComponent(especialidade)}`);
+    navigate(`/morador/servicos?q=${encodeURIComponent(query)}`);
   };
 
   const firstName = userName?.split(" ")[0] || "Morador";
@@ -241,18 +298,16 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
               ) : (
                 results.map((r) => (
                   <button
-                    key={r.especialidade}
-                    onClick={() => handleSelectResult(r.especialidade)}
+                    key={r.id}
+                    onClick={() => handleSelectResult(r.nome)}
                     className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/50 active:bg-muted transition-colors text-left"
                   >
                     <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                       <Wrench size={16} className="text-primary" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-[13px] font-medium text-foreground truncate">{r.especialidade}</p>
-                      {r.descricao && (
-                        <p className="text-[11px] text-muted-foreground truncate">{r.descricao}</p>
-                      )}
+                      <p className="text-[13px] font-semibold text-foreground truncate">{r.nome}</p>
+                      <p className="text-[11px] text-primary truncate">{r.especialidade}</p>
                     </div>
                   </button>
                 ))
@@ -288,13 +343,13 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
                 <div className="px-4 py-3 text-[13px] text-muted-foreground text-center">Nenhum resultado para "{searchTerm}"</div>
               ) : (
                 results.map((r) => (
-                  <button key={r.especialidade} onClick={() => handleSelectResult(r.especialidade)} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/50 active:bg-muted transition-colors text-left">
+                  <button key={r.id} onClick={() => handleSelectResult(r.nome)} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/50 active:bg-muted transition-colors text-left">
                     <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                       <Wrench size={16} className="text-primary" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-[13px] font-medium text-foreground truncate">{r.especialidade}</p>
-                      {r.descricao && <p className="text-[11px] text-muted-foreground truncate">{r.descricao}</p>}
+                      <p className="text-[13px] font-semibold text-foreground truncate">{r.nome}</p>
+                      <p className="text-[11px] text-primary truncate">{r.especialidade}</p>
                     </div>
                   </button>
                 ))
