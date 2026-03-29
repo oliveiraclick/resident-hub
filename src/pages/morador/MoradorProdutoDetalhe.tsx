@@ -256,6 +256,45 @@ const MoradorProdutoDetalhe = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Cupom surprise dialog */}
+      <AlertDialog open={showCupom} onOpenChange={setShowCupom}>
+        <AlertDialogContent className="max-w-[360px] rounded-2xl">
+          <AlertDialogHeader>
+            <div className="flex flex-col items-center text-center gap-3 pt-2">
+              <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center animate-bounce">
+                <Gift size={32} className="text-primary" />
+              </div>
+              <AlertDialogTitle className="text-[18px] flex items-center gap-2">
+                <Sparkles size={18} className="text-primary" />
+                Surpresa! Você ganhou um cupom
+              </AlertDialogTitle>
+              <AlertDialogDescription asChild>
+                <div className="space-y-3">
+                  <p className="text-[13px] text-muted-foreground">
+                    O prestador <strong className="text-foreground">{item?.profile?.nome}</strong> tem uma oferta especial pra você!
+                  </p>
+                  <div className="bg-primary/10 rounded-xl px-5 py-3 border-2 border-dashed border-primary/30">
+                    <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider mb-1">Código do cupom</p>
+                    <p className="text-[22px] font-extrabold text-primary tracking-widest">{item?.cupom?.codigo}</p>
+                    <p className="text-[13px] font-bold text-primary mt-1">{item?.cupom?.desconto_percent}% de desconto</p>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    Mencione o código ao falar com o prestador no WhatsApp 😉
+                  </p>
+                </div>
+              </AlertDialogDescription>
+            </div>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-row gap-2 mt-2">
+            <AlertDialogCancel className="mt-0 flex-1">Fechar</AlertDialogCancel>
+            <AlertDialogAction onClick={openWhatsApp} className="flex-1 bg-[#25D366] hover:bg-[#1da851] text-white gap-1">
+              <MessageCircle size={16} />
+              Usar cupom no WhatsApp
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
