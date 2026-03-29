@@ -26,6 +26,10 @@ interface ProdutoDetail {
     telefone: string | null;
     avatar_url: string | null;
   };
+  cupom?: {
+    codigo: string;
+    desconto_percent: number;
+  } | null;
 }
 
 const MoradorProdutoDetalhe = () => {
