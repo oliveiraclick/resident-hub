@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { formatBRL } from "@/lib/utils";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, MessageCircle, AlertTriangle, User, Store, ShieldCheck } from "lucide-react";
+import { ArrowLeft, MessageCircle, AlertTriangle, User, Store, ShieldCheck, Gift, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -38,6 +38,7 @@ const MoradorProdutoDetalhe = () => {
   const [item, setItem] = useState<ProdutoDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [showSafetyTip, setShowSafetyTip] = useState(false);
+  const [showCupom, setShowCupom] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
