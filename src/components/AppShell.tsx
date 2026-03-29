@@ -153,10 +153,21 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const handleSelectResult = (query: string) => {
+  const handleSelectResult = (result: SearchResult) => {
     setSearchTerm("");
     setShowResults(false);
-    navigate(`/morador/servicos?q=${encodeURIComponent(query)}`);
+    // Check if user typed something matching the name → navigate with prestador name
+    const term = normalizeSearchText(searchTerm);
+    const nameMatch = normalizeSearchText(result.nome).includes(term);
+    const espMatch = normalizeSearchText(result.especialidade).includes(term);
+    
+    if (nameMatch && !espMatch) {
+      // Searched by name → go to category but filter by name
+      navigate(`/morador/servicos?q=${encodeURIComponent(result.especialidade)}&nome=${encodeURIComponent(result.nome)}`);
+    } else {
+      // Searched by especialidade → show all in category
+      navigate(`/morador/servicos?q=${encodeURIComponent(result.especialidade)}`);
+    }
   };
 
   const firstName = userName?.split(" ")[0] || "Morador";
@@ -299,7 +310,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
                 results.map((r) => (
                   <button
                     key={r.id}
-                    onClick={() => handleSelectResult(r.nome)}
+                    onClick={() => handleSelectResult(r)}
                     className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/50 active:bg-muted transition-colors text-left"
                   >
                     <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -343,7 +354,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
                 <div className="px-4 py-3 text-[13px] text-muted-foreground text-center">Nenhum resultado para "{searchTerm}"</div>
               ) : (
                 results.map((r) => (
-                  <button key={r.id} onClick={() => handleSelectResult(r.nome)} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/50 active:bg-muted transition-colors text-left">
+                  <button key={r.id} onClick={() => handleSelectResult(r)} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/50 active:bg-muted transition-colors text-left">
                     <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                       <Wrench size={16} className="text-primary" />
                     </div>

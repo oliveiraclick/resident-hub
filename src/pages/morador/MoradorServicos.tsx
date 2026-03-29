@@ -71,6 +71,7 @@ const MoradorServicos = () => {
   const condominioId = roles[0]?.condominio_id;
   const [searchParams, setSearchParams] = useSearchParams();
   const queryFromUrl = searchParams.get("q") || "";
+  const nomeFromUrl = searchParams.get("nome") || "";
 
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [iconMap, setIconMap] = useState<CategoriaIconMap>({});
@@ -148,7 +149,7 @@ const MoradorServicos = () => {
       }
       setSearchParams({}, { replace: true });
     }
-  }, [queryFromUrl, categorias]);
+  }, [queryFromUrl, categorias, nomeFromUrl]);
 
   // Fetch full prestador details when category is selected
   useEffect(() => {
@@ -205,12 +206,18 @@ const MoradorServicos = () => {
         };
       });
 
-      setPrestadoresCompletos(result);
+      // If nome filter is present, filter by name
+      if (nomeFromUrl) {
+        const nomeFilter = nomeFromUrl.toLowerCase();
+        setPrestadoresCompletos(result.filter((p) => p.nome.toLowerCase().includes(nomeFilter)));
+      } else {
+        setPrestadoresCompletos(result);
+      }
       setLoadingDetail(false);
     };
 
     fetchPrestadoresCompletos();
-  }, [condominioId, selectedCategoria, allPrestadores]);
+  }, [condominioId, selectedCategoria, allPrestadores, nomeFromUrl]);
 
   const openWhatsApp = (telefone: string, nome: string, especialidade: string, cupom?: CupomInfo | null) => {
     const cleaned = telefone.replace(/\D/g, "");
