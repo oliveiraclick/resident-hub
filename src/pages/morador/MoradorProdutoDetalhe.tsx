@@ -229,7 +229,7 @@ const MoradorProdutoDetalhe = () => {
       {/* Fixed WhatsApp button */}
       {isActive && item.profile?.telefone && (
         <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-20 bg-card px-5 py-4" style={{ borderTop: "1px solid hsl(var(--border))" }}>
-          <Button onClick={() => setShowSafetyTip(true)} className="w-full h-[52px] rounded-2xl gap-2 text-[15px] font-semibold">
+          <Button onClick={handleWhatsAppClick} className="w-full h-[52px] rounded-2xl gap-2 text-[15px] font-semibold">
             <MessageCircle size={20} />
             Falar no WhatsApp
           </Button>
