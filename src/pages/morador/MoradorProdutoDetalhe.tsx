@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { formatBRL } from "@/lib/utils";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, MessageCircle, AlertTriangle, User, Store, ShieldCheck } from "lucide-react";
+import { ArrowLeft, MessageCircle, AlertTriangle, User, Store, ShieldCheck, Gift, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -26,6 +26,10 @@ interface ProdutoDetail {
     telefone: string | null;
     avatar_url: string | null;
   };
+  cupom?: {
+    codigo: string;
+    desconto_percent: number;
+  } | null;
 }
 
 const MoradorProdutoDetalhe = () => {
@@ -34,6 +38,7 @@ const MoradorProdutoDetalhe = () => {
   const [item, setItem] = useState<ProdutoDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [showSafetyTip, setShowSafetyTip] = useState(false);
+  const [showCupom, setShowCupom] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -74,10 +79,24 @@ const MoradorProdutoDetalhe = () => {
         }
       }
 
+      // Fetch active cupom for this prestador
+      let cupom: ProdutoDetail["cupom"] = null;
+      const { data: cupomData } = await supabase
+        .from("cupons_prestador")
+        .select("codigo, desconto_percent")
+        .eq("prestador_id", data.prestador_id)
+        .eq("ativo", true)
+        .limit(1)
+        .maybeSingle();
+      if (cupomData) {
+        cupom = { codigo: cupomData.codigo, desconto_percent: cupomData.desconto_percent };
+      }
+
       setItem({
         ...data,
         prestador_user_id: prestador?.user_id,
         profile,
+        cupom,
       });
       setLoading(false);
     };
@@ -89,8 +108,17 @@ const MoradorProdutoDetalhe = () => {
     if (!item?.profile?.telefone) return;
     const phone = item.profile.telefone.replace(/\D/g, "");
     const fullPhone = phone.startsWith("55") ? phone : `55${phone}`;
-    const text = encodeURIComponent(`Olá, tenho interesse no produto ${item.titulo}`);
+    const cupomText = item.cupom ? ` | Cupom: ${item.cupom.codigo} (${item.cupom.desconto_percent}% OFF)` : "";
+    const text = encodeURIComponent(`Olá, tenho interesse no produto ${item.titulo}${cupomText}`);
     window.open(`https://wa.me/${fullPhone}?text=${text}`, "_blank");
+  };
+
+  const handleWhatsAppClick = () => {
+    if (item?.cupom) {
+      setShowCupom(true);
+    } else {
+      setShowSafetyTip(true);
+    }
   };
 
   const isActive = item?.status === "ativo";
@@ -201,7 +229,7 @@ const MoradorProdutoDetalhe = () => {
       {/* Fixed WhatsApp button */}
       {isActive && item.profile?.telefone && (
         <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-20 bg-card px-5 py-4" style={{ borderTop: "1px solid hsl(var(--border))" }}>
-          <Button onClick={() => setShowSafetyTip(true)} className="w-full h-[52px] rounded-2xl gap-2 text-[15px] font-semibold">
+          <Button onClick={handleWhatsAppClick} className="w-full h-[52px] rounded-2xl gap-2 text-[15px] font-semibold">
             <MessageCircle size={20} />
             Falar no WhatsApp
           </Button>
@@ -224,6 +252,45 @@ const MoradorProdutoDetalhe = () => {
             <AlertDialogCancel className="mt-0 flex-1">Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={openWhatsApp} className="flex-1 bg-[#25D366] hover:bg-[#1da851] text-white">
               Entendi, continuar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Cupom surprise dialog */}
+      <AlertDialog open={showCupom} onOpenChange={setShowCupom}>
+        <AlertDialogContent className="max-w-[360px] rounded-2xl">
+          <AlertDialogHeader>
+            <div className="flex flex-col items-center text-center gap-3 pt-2">
+              <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center animate-bounce">
+                <Gift size={32} className="text-primary" />
+              </div>
+              <AlertDialogTitle className="text-[18px] flex items-center gap-2">
+                <Sparkles size={18} className="text-primary" />
+                Surpresa! Você ganhou um cupom
+              </AlertDialogTitle>
+              <AlertDialogDescription asChild>
+                <div className="space-y-3">
+                  <p className="text-[13px] text-muted-foreground">
+                    O prestador <strong className="text-foreground">{item?.profile?.nome}</strong> tem uma oferta especial pra você!
+                  </p>
+                  <div className="bg-primary/10 rounded-xl px-5 py-3 border-2 border-dashed border-primary/30">
+                    <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider mb-1">Código do cupom</p>
+                    <p className="text-[22px] font-extrabold text-primary tracking-widest">{item?.cupom?.codigo}</p>
+                    <p className="text-[13px] font-bold text-primary mt-1">{item?.cupom?.desconto_percent}% de desconto</p>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    Mencione o código ao falar com o prestador no WhatsApp 😉
+                  </p>
+                </div>
+              </AlertDialogDescription>
+            </div>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-row gap-2 mt-2">
+            <AlertDialogCancel className="mt-0 flex-1">Fechar</AlertDialogCancel>
+            <AlertDialogAction onClick={openWhatsApp} className="flex-1 bg-[#25D366] hover:bg-[#1da851] text-white gap-1">
+              <MessageCircle size={16} />
+              Usar cupom no WhatsApp
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
