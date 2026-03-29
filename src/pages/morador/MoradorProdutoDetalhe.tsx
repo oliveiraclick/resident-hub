@@ -79,10 +79,24 @@ const MoradorProdutoDetalhe = () => {
         }
       }
 
+      // Fetch active cupom for this prestador
+      let cupom: ProdutoDetail["cupom"] = null;
+      const { data: cupomData } = await supabase
+        .from("cupons_prestador")
+        .select("codigo, desconto_percent")
+        .eq("prestador_id", data.prestador_id)
+        .eq("ativo", true)
+        .limit(1)
+        .maybeSingle();
+      if (cupomData) {
+        cupom = { codigo: cupomData.codigo, desconto_percent: cupomData.desconto_percent };
+      }
+
       setItem({
         ...data,
         prestador_user_id: prestador?.user_id,
         profile,
+        cupom,
       });
       setLoading(false);
     };
@@ -94,8 +108,17 @@ const MoradorProdutoDetalhe = () => {
     if (!item?.profile?.telefone) return;
     const phone = item.profile.telefone.replace(/\D/g, "");
     const fullPhone = phone.startsWith("55") ? phone : `55${phone}`;
-    const text = encodeURIComponent(`Olá, tenho interesse no produto ${item.titulo}`);
+    const cupomText = item.cupom ? ` | Cupom: ${item.cupom.codigo} (${item.cupom.desconto_percent}% OFF)` : "";
+    const text = encodeURIComponent(`Olá, tenho interesse no produto ${item.titulo}${cupomText}`);
     window.open(`https://wa.me/${fullPhone}?text=${text}`, "_blank");
+  };
+
+  const handleWhatsAppClick = () => {
+    if (item?.cupom) {
+      setShowCupom(true);
+    } else {
+      setShowSafetyTip(true);
+    }
   };
 
   const isActive = item?.status === "ativo";
