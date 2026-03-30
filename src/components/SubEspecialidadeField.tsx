@@ -8,9 +8,10 @@ interface Props {
   categoriaNome: string;
   value: string;
   onChange: (value: string) => void;
+  showSuggestions?: boolean;
 }
 
-const SubEspecialidadeField = ({ categoriaNome, value, onChange }: Props) => {
+const SubEspecialidadeField = ({ categoriaNome, value, onChange, showSuggestions = true }: Props) => {
   const { subs, addSub } = useSubEspecialidades(categoriaNome);
   const [custom, setCustom] = useState("");
   const [showCustom, setShowCustom] = useState(false);
@@ -24,6 +25,28 @@ const SubEspecialidadeField = ({ categoriaNome, value, onChange }: Props) => {
   };
 
   if (!categoriaNome) return null;
+
+  if (!showSuggestions) {
+    return (
+      <div className="flex gap-2">
+        <Input
+          placeholder="Ex: Churrasqueiro, Confeiteira..."
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="flex-1"
+        />
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={() => onChange("")}
+          disabled={!value.trim()}
+        >
+          Limpar
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-2">
@@ -70,9 +93,18 @@ const SubEspecialidadeField = ({ categoriaNome, value, onChange }: Props) => {
       )}
 
       {value && (
-        <p className="text-xs text-muted-foreground ml-1">
-          Selecionado: <span className="font-semibold text-foreground">{value}</span>
-        </p>
+        <div className="flex items-center gap-2 ml-1">
+          <p className="text-xs text-muted-foreground">
+            Selecionado: <span className="font-semibold text-foreground">{value}</span>
+          </p>
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            className="text-xs text-muted-foreground hover:text-foreground underline"
+          >
+            limpar
+          </button>
+        </div>
       )}
     </div>
   );

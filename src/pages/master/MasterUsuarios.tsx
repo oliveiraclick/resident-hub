@@ -455,9 +455,11 @@ const MasterUsuarios = () => {
                   <div>
                     <label className="text-sm text-muted-foreground mb-1 block">Sub-especialidade</label>
                     <SubEspecialidadeField
+                      key={`${editTarget?.userId ?? "none"}-${editTarget?.condominioId ?? "none"}-${editEspecialidade}`}
                       categoriaNome={editEspecialidade}
                       value={editSubEspecialidade}
                       onChange={setEditSubEspecialidade}
+                      showSuggestions={false}
                     />
                   </div>
                 )}
