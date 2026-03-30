@@ -46,6 +46,17 @@ const PrestadorLoja = () => {
     if (!prestadorId) return;
     (async () => {
       setLoading(true);
+      // Reset all form state before loading new data
+      setLojaId(null);
+      setNome("");
+      setDescricao("");
+      setHorario("");
+      setWhatsapp("");
+      setSlug("");
+      setAtiva(true);
+      setBannerPreview(null);
+      setBannerFile(null);
+
       const { data } = await supabase
         .from("lojas")
         .select("*")
