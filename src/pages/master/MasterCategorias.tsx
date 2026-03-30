@@ -47,7 +47,7 @@ const MasterCategorias = () => {
   const fetchCategorias = async () => {
     setLoading(true);
     const [catRes, subRes] = await Promise.all([
-      supabase.from("categorias_servico").select("*").order("ordem", { ascending: true }),
+      supabase.from("categorias_servico").select("*").order("nome", { ascending: true }),
       supabase.from("sub_especialidades").select("*").order("nome", { ascending: true }),
     ]);
     setCategorias((catRes.data as CategoriaServico[]) || []);
