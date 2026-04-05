@@ -112,33 +112,49 @@ const MasterObservabilidade = () => {
         </Button>
       </div>
 
-      {/* Overview Cards */}
+      {/* Period Filter */}
+      <div className="flex items-center gap-2 mb-4 flex-wrap">
+        <span className="text-xs text-muted-foreground">Período:</span>
+        {(["7d", "30d", "all"] as const).map((p) => (
+          <Button
+            key={p}
+            variant={period === p ? "default" : "outline"}
+            size="sm"
+            className="text-xs h-7"
+            onClick={() => setPeriod(p)}
+          >
+            {p === "7d" ? "7 dias" : p === "30d" ? "30 dias" : "Tudo"}
+          </Button>
+        ))}
+      </div>
+
+      {/* Overview Cards - Clickable */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        <Card>
+        <Card className="cursor-pointer hover:ring-2 hover:ring-primary/30 transition-all" onClick={() => setTab("activities")}>
           <CardContent className="p-4 text-center">
             <Activity size={24} className="mx-auto text-primary mb-1" />
-            <p className="text-2xl font-bold">{activities.length}</p>
+            <p className="text-2xl font-bold">{filteredActivities.length}</p>
             <p className="text-xs text-muted-foreground">Ações</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="cursor-pointer hover:ring-2 hover:ring-blue-500/30 transition-all" onClick={() => setTab("overview")}>
           <CardContent className="p-4 text-center">
             <Eye size={24} className="mx-auto text-blue-500 mb-1" />
-            <p className="text-2xl font-bold">{pageViews.length}</p>
+            <p className="text-2xl font-bold">{filteredPageViews.length}</p>
             <p className="text-xs text-muted-foreground">Page Views</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="cursor-pointer hover:ring-2 hover:ring-destructive/30 transition-all" onClick={() => setTab("errors")}>
           <CardContent className="p-4 text-center">
             <AlertTriangle size={24} className="mx-auto text-destructive mb-1" />
-            <p className="text-2xl font-bold">{errors.length}</p>
+            <p className="text-2xl font-bold">{filteredErrors.length}</p>
             <p className="text-xs text-muted-foreground">Erros</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="cursor-pointer hover:ring-2 hover:ring-green-500/30 transition-all" onClick={() => setTab("functions")}>
           <CardContent className="p-4 text-center">
             <Server size={24} className="mx-auto text-green-500 mb-1" />
-            <p className="text-2xl font-bold">{functions.length}</p>
+            <p className="text-2xl font-bold">{filteredFunctions.length}</p>
             <p className="text-xs text-muted-foreground">Functions</p>
           </CardContent>
         </Card>
