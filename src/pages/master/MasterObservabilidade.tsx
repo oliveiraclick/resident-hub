@@ -267,9 +267,9 @@ const MasterObservabilidade = () => {
               <Trash2 size={14} className="mr-1" /> Limpar
             </Button>
           </div>
-          {errors.length === 0 ? (
+          {filteredErrors.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-8">Nenhum erro registrado 🎉</p>
-          ) : errors.slice(0, 50).map(e => (
+          ) : filteredErrors.slice(0, 50).map(e => (
             <Card key={e.id}>
               <CardContent className="p-3">
                 <p className="text-sm text-destructive font-medium">❌ {e.message}</p>
@@ -318,9 +318,9 @@ const MasterObservabilidade = () => {
             </Card>
           )}
 
-          {functions.length === 0 ? (
+          {filteredFunctions.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-8">Nenhum log de function registrado</p>
-          ) : functions.slice(0, 50).map(f => (
+          ) : filteredFunctions.slice(0, 50).map(f => (
             <Card key={f.id}>
               <CardContent className="p-3">
                 <div className="flex items-center gap-2">
