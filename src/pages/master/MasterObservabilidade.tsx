@@ -52,6 +52,20 @@ const MasterObservabilidade = () => {
   const [functions, setFunctions] = useState<FunctionLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("overview");
+  const [period, setPeriod] = useState<"7d" | "30d" | "all">("all");
+
+  const filterByPeriod = <T extends { created_at: string }>(items: T[]): T[] => {
+    if (period === "all") return items;
+    const days = period === "7d" ? 7 : 30;
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - days);
+    return items.filter((i) => new Date(i.created_at) >= cutoff);
+  };
+
+  const filteredActivities = filterByPeriod(activities);
+  const filteredPageViews = filterByPeriod(pageViews);
+  const filteredErrors = filterByPeriod(errors);
+  const filteredFunctions = filterByPeriod(functions);
 
   const fetchAll = async () => {
     setLoading(true);
