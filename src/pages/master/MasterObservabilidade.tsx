@@ -91,21 +91,21 @@ const MasterObservabilidade = () => {
   };
 
   // Module usage stats
-  const moduleStats = pageViews.reduce<Record<string, number>>((acc, pv) => {
+  const moduleStats = filteredPageViews.reduce<Record<string, number>>((acc, pv) => {
     const m = pv.module || "outro";
     acc[m] = (acc[m] || 0) + 1;
     return acc;
   }, {});
 
   // Top pages
-  const pageStats = pageViews.reduce<Record<string, number>>((acc, pv) => {
+  const pageStats = filteredPageViews.reduce<Record<string, number>>((acc, pv) => {
     acc[pv.page] = (acc[pv.page] || 0) + 1;
     return acc;
   }, {});
   const topPages = Object.entries(pageStats).sort((a, b) => b[1] - a[1]).slice(0, 10);
 
   // Function stats
-  const fnStats = functions.reduce<Record<string, { total: number; errors: number; avgMs: number }>>((acc, fl) => {
+  const fnStats = filteredFunctions.reduce<Record<string, { total: number; errors: number; avgMs: number }>>((acc, fl) => {
     if (!acc[fl.function_name]) acc[fl.function_name] = { total: 0, errors: 0, avgMs: 0 };
     acc[fl.function_name].total++;
     if (fl.status !== "success") acc[fl.function_name].errors++;
