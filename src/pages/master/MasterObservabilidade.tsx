@@ -155,7 +155,7 @@ const MasterObservabilidade = () => {
           <CardContent className="p-4 text-center">
             <Eye size={24} className="mx-auto text-blue-500 mb-1" />
             <p className="text-2xl font-bold">{filteredPageViews.length}</p>
-            <p className="text-xs text-muted-foreground">Page Views</p>
+            <p className="text-xs text-muted-foreground">Visualizações</p>
           </CardContent>
         </Card>
         <Card className="cursor-pointer hover:ring-2 hover:ring-destructive/30 transition-all" onClick={() => setTab("errors")}>
@@ -169,7 +169,7 @@ const MasterObservabilidade = () => {
           <CardContent className="p-4 text-center">
             <Server size={24} className="mx-auto text-green-500 mb-1" />
             <p className="text-2xl font-bold">{filteredFunctions.length}</p>
-            <p className="text-xs text-muted-foreground">Functions</p>
+            <p className="text-xs text-muted-foreground">Funções</p>
           </CardContent>
         </Card>
       </div>
