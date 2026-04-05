@@ -289,7 +289,7 @@ const MasterObservabilidade = () => {
           ) : filteredErrors.slice(0, 50).map(e => (
             <Card key={e.id}>
               <CardContent className="p-3">
-                <p className="text-sm text-destructive font-medium">❌ {e.message}</p>
+                <p className="text-sm text-destructive font-medium">❌ {translateError(e.message)}</p>
                 {e.url && <p className="text-[11px] text-muted-foreground mt-1 truncate">{e.url}</p>}
                 {e.stack && (
                   <details className="mt-1">
