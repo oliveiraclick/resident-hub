@@ -155,7 +155,7 @@ const MasterObservabilidade = () => {
           <CardContent className="p-4 text-center">
             <Eye size={24} className="mx-auto text-blue-500 mb-1" />
             <p className="text-2xl font-bold">{filteredPageViews.length}</p>
-            <p className="text-xs text-muted-foreground">Page Views</p>
+            <p className="text-xs text-muted-foreground">Visualizações</p>
           </CardContent>
         </Card>
         <Card className="cursor-pointer hover:ring-2 hover:ring-destructive/30 transition-all" onClick={() => setTab("errors")}>
@@ -169,7 +169,7 @@ const MasterObservabilidade = () => {
           <CardContent className="p-4 text-center">
             <Server size={24} className="mx-auto text-green-500 mb-1" />
             <p className="text-2xl font-bold">{filteredFunctions.length}</p>
-            <p className="text-xs text-muted-foreground">Functions</p>
+            <p className="text-xs text-muted-foreground">Funções</p>
           </CardContent>
         </Card>
       </div>
@@ -179,7 +179,7 @@ const MasterObservabilidade = () => {
           <TabsTrigger value="overview">Uso</TabsTrigger>
           <TabsTrigger value="activities">Ações</TabsTrigger>
           <TabsTrigger value="errors">Erros</TabsTrigger>
-          <TabsTrigger value="functions">Functions</TabsTrigger>
+          <TabsTrigger value="functions">Funções</TabsTrigger>
         </TabsList>
 
         {/* Usage Tab */}
@@ -276,7 +276,7 @@ const MasterObservabilidade = () => {
                 {e.url && <p className="text-[11px] text-muted-foreground mt-1 truncate">{e.url}</p>}
                 {e.stack && (
                   <details className="mt-1">
-                    <summary className="text-[10px] text-muted-foreground cursor-pointer">Stack trace</summary>
+                    <summary className="text-[10px] text-muted-foreground cursor-pointer">Rastreamento de erro</summary>
                     <pre className="text-[10px] text-muted-foreground mt-1 whitespace-pre-wrap break-all max-h-32 overflow-auto">{e.stack}</pre>
                   </details>
                 )}
@@ -297,7 +297,7 @@ const MasterObservabilidade = () => {
           {Object.keys(fnStats).length > 0 && (
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Resumo por Function</CardTitle>
+                <CardTitle className="text-sm">Resumo por Função</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
@@ -305,11 +305,11 @@ const MasterObservabilidade = () => {
                     <div key={name} className="flex items-center justify-between text-sm">
                       <span className="font-medium">{name}</span>
                       <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                        <span>{stats.total} exec</span>
+                        <span>{stats.total} execuções</span>
                         <span className={stats.errors > 0 ? "text-destructive" : "text-green-500"}>
                           {stats.errors} erros
                         </span>
-                        <span>{stats.avgMs}ms avg</span>
+                        <span>{stats.avgMs}ms média</span>
                       </div>
                     </div>
                   ))}
@@ -319,7 +319,7 @@ const MasterObservabilidade = () => {
           )}
 
           {filteredFunctions.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-8">Nenhum log de function registrado</p>
+            <p className="text-sm text-muted-foreground text-center py-8">Nenhum log de função registrado</p>
           ) : filteredFunctions.slice(0, 50).map(f => (
             <Card key={f.id}>
               <CardContent className="p-3">
@@ -327,7 +327,7 @@ const MasterObservabilidade = () => {
                   <span className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full ${
                     f.status === "success" ? "bg-green-500/10 text-green-600" : "bg-destructive/10 text-destructive"
                   }`}>
-                    {f.status}
+                    {f.status === "success" ? "sucesso" : f.status}
                   </span>
                   <span className="text-sm font-medium">{f.function_name}</span>
                   {f.duration_ms && <span className="text-xs text-muted-foreground ml-auto">{f.duration_ms}ms</span>}
