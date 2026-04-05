@@ -238,9 +238,9 @@ const MasterObservabilidade = () => {
               <Trash2 size={14} className="mr-1" /> Limpar
             </Button>
           </div>
-          {activities.length === 0 ? (
+          {filteredActivities.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-8">Nenhuma ação registrada</p>
-          ) : activities.slice(0, 50).map(a => (
+          ) : filteredActivities.slice(0, 50).map(a => (
             <Card key={a.id}>
               <CardContent className="p-3">
                 <div className="flex items-center gap-2 flex-wrap">
