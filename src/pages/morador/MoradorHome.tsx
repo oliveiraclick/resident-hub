@@ -449,7 +449,7 @@ const MoradorHome = () => {
           </div>
           <p className="text-[11px] text-muted-foreground font-medium mb-3">De prestadores do seu condomínio</p>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {productList.slice(0, 8).map((product: any, idx: number) => (
+            {productList.slice(0, 4).map((product: any, idx: number) => (
               <button
                 key={product.id}
                 onClick={() => product.id.startsWith("mock") ? navigate("/morador/produtos") : navigate(`/morador/produtos/${product.id}`)}
@@ -488,7 +488,7 @@ const MoradorHome = () => {
           </div>
           <p className="text-[11px] text-muted-foreground font-medium mb-3">Entre vizinhos do condomínio</p>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {desapegoList.slice(0, 6).map((item: any, idx: number) => (
+            {desapegoList.slice(0, 4).map((item: any, idx: number) => (
               <button
                 key={item.id}
                 onClick={() => item.id.startsWith("mock") ? navigate("/morador/desapegos") : navigate(`/morador/desapegos/${item.id}`)}
