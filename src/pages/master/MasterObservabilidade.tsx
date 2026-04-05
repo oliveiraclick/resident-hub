@@ -52,6 +52,20 @@ const MasterObservabilidade = () => {
   const [functions, setFunctions] = useState<FunctionLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("overview");
+  const [period, setPeriod] = useState<"7d" | "30d" | "all">("all");
+
+  const filterByPeriod = <T extends { created_at: string }>(items: T[]): T[] => {
+    if (period === "all") return items;
+    const days = period === "7d" ? 7 : 30;
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - days);
+    return items.filter((i) => new Date(i.created_at) >= cutoff);
+  };
+
+  const filteredActivities = filterByPeriod(activities);
+  const filteredPageViews = filterByPeriod(pageViews);
+  const filteredErrors = filterByPeriod(errors);
+  const filteredFunctions = filterByPeriod(functions);
 
   const fetchAll = async () => {
     setLoading(true);
@@ -77,21 +91,21 @@ const MasterObservabilidade = () => {
   };
 
   // Module usage stats
-  const moduleStats = pageViews.reduce<Record<string, number>>((acc, pv) => {
+  const moduleStats = filteredPageViews.reduce<Record<string, number>>((acc, pv) => {
     const m = pv.module || "outro";
     acc[m] = (acc[m] || 0) + 1;
     return acc;
   }, {});
 
   // Top pages
-  const pageStats = pageViews.reduce<Record<string, number>>((acc, pv) => {
+  const pageStats = filteredPageViews.reduce<Record<string, number>>((acc, pv) => {
     acc[pv.page] = (acc[pv.page] || 0) + 1;
     return acc;
   }, {});
   const topPages = Object.entries(pageStats).sort((a, b) => b[1] - a[1]).slice(0, 10);
 
   // Function stats
-  const fnStats = functions.reduce<Record<string, { total: number; errors: number; avgMs: number }>>((acc, fl) => {
+  const fnStats = filteredFunctions.reduce<Record<string, { total: number; errors: number; avgMs: number }>>((acc, fl) => {
     if (!acc[fl.function_name]) acc[fl.function_name] = { total: 0, errors: 0, avgMs: 0 };
     acc[fl.function_name].total++;
     if (fl.status !== "success") acc[fl.function_name].errors++;
@@ -112,33 +126,49 @@ const MasterObservabilidade = () => {
         </Button>
       </div>
 
-      {/* Overview Cards */}
+      {/* Period Filter */}
+      <div className="flex items-center gap-2 mb-4 flex-wrap">
+        <span className="text-xs text-muted-foreground">Período:</span>
+        {(["7d", "30d", "all"] as const).map((p) => (
+          <Button
+            key={p}
+            variant={period === p ? "default" : "outline"}
+            size="sm"
+            className="text-xs h-7"
+            onClick={() => setPeriod(p)}
+          >
+            {p === "7d" ? "7 dias" : p === "30d" ? "30 dias" : "Tudo"}
+          </Button>
+        ))}
+      </div>
+
+      {/* Overview Cards - Clickable */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        <Card>
+        <Card className="cursor-pointer hover:ring-2 hover:ring-primary/30 transition-all" onClick={() => setTab("activities")}>
           <CardContent className="p-4 text-center">
             <Activity size={24} className="mx-auto text-primary mb-1" />
-            <p className="text-2xl font-bold">{activities.length}</p>
+            <p className="text-2xl font-bold">{filteredActivities.length}</p>
             <p className="text-xs text-muted-foreground">Ações</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="cursor-pointer hover:ring-2 hover:ring-blue-500/30 transition-all" onClick={() => setTab("overview")}>
           <CardContent className="p-4 text-center">
             <Eye size={24} className="mx-auto text-blue-500 mb-1" />
-            <p className="text-2xl font-bold">{pageViews.length}</p>
+            <p className="text-2xl font-bold">{filteredPageViews.length}</p>
             <p className="text-xs text-muted-foreground">Page Views</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="cursor-pointer hover:ring-2 hover:ring-destructive/30 transition-all" onClick={() => setTab("errors")}>
           <CardContent className="p-4 text-center">
             <AlertTriangle size={24} className="mx-auto text-destructive mb-1" />
-            <p className="text-2xl font-bold">{errors.length}</p>
+            <p className="text-2xl font-bold">{filteredErrors.length}</p>
             <p className="text-xs text-muted-foreground">Erros</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="cursor-pointer hover:ring-2 hover:ring-green-500/30 transition-all" onClick={() => setTab("functions")}>
           <CardContent className="p-4 text-center">
             <Server size={24} className="mx-auto text-green-500 mb-1" />
-            <p className="text-2xl font-bold">{functions.length}</p>
+            <p className="text-2xl font-bold">{filteredFunctions.length}</p>
             <p className="text-xs text-muted-foreground">Functions</p>
           </CardContent>
         </Card>
@@ -208,9 +238,9 @@ const MasterObservabilidade = () => {
               <Trash2 size={14} className="mr-1" /> Limpar
             </Button>
           </div>
-          {activities.length === 0 ? (
+          {filteredActivities.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-8">Nenhuma ação registrada</p>
-          ) : activities.slice(0, 50).map(a => (
+          ) : filteredActivities.slice(0, 50).map(a => (
             <Card key={a.id}>
               <CardContent className="p-3">
                 <div className="flex items-center gap-2 flex-wrap">
@@ -237,9 +267,9 @@ const MasterObservabilidade = () => {
               <Trash2 size={14} className="mr-1" /> Limpar
             </Button>
           </div>
-          {errors.length === 0 ? (
+          {filteredErrors.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-8">Nenhum erro registrado 🎉</p>
-          ) : errors.slice(0, 50).map(e => (
+          ) : filteredErrors.slice(0, 50).map(e => (
             <Card key={e.id}>
               <CardContent className="p-3">
                 <p className="text-sm text-destructive font-medium">❌ {e.message}</p>
@@ -288,9 +318,9 @@ const MasterObservabilidade = () => {
             </Card>
           )}
 
-          {functions.length === 0 ? (
+          {filteredFunctions.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-8">Nenhum log de function registrado</p>
-          ) : functions.slice(0, 50).map(f => (
+          ) : filteredFunctions.slice(0, 50).map(f => (
             <Card key={f.id}>
               <CardContent className="p-3">
                 <div className="flex items-center gap-2">
