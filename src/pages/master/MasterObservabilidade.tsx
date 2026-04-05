@@ -114,7 +114,24 @@ const MasterObservabilidade = () => {
   }, {});
   Object.values(fnStats).forEach(s => { if (s.total > 0) s.avgMs = Math.round(s.avgMs / s.total); });
 
-  const fmt = (d: string) => new Date(d).toLocaleString("pt-BR");
+  const translateError = (msg: string) => {
+    const translations: Record<string, string> = {
+      "Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.":
+        "Falha ao remover elemento do DOM: o nó a ser removido não é filho deste nó. (Geralmente causado por extensões do navegador)",
+      "Failed to fetch": "Falha na requisição de rede",
+      "NetworkError": "Erro de rede",
+      "Load failed": "Falha ao carregar",
+      "Script error.": "Erro de script (origem externa)",
+      "ResizeObserver loop completed with undelivered notifications.":
+        "Loop do ResizeObserver com notificações não entregues (inofensivo)",
+    };
+    for (const [en, pt] of Object.entries(translations)) {
+      if (msg.includes(en)) return msg.replace(en, pt);
+    }
+    return msg;
+  };
+
+
 
   return (
     <MasterLayout title="Observabilidade">
