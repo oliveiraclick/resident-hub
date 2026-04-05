@@ -131,7 +131,7 @@ const MasterObservabilidade = () => {
     return msg;
   };
 
-
+  const fmt = (d: string) => new Date(d).toLocaleString("pt-BR");
 
   return (
     <MasterLayout title="Observabilidade">
