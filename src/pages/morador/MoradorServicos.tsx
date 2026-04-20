@@ -225,7 +225,35 @@ const MoradorServicos = () => {
     fetchPrestadoresCompletos();
   }, [condominioId, selectedCategoria, allPrestadores, selectedNomeFilter]);
 
-  const openWhatsApp = (telefone: string, nome: string, especialidade: string, cupom?: CupomInfo | null) => {
+  // Carrega solicitações já feitas (para habilitar botão Avaliar)
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("solicitacoes_servico")
+      .select("prestador_user_id")
+      .eq("morador_id", user.id)
+      .then(({ data }) => {
+        setSolicitados(new Set((data || []).map((s) => s.prestador_user_id)));
+      });
+  }, [user]);
+
+  const openWhatsApp = async (
+    prestadorUserId: string,
+    telefone: string,
+    nome: string,
+    especialidade: string,
+    cupom?: CupomInfo | null,
+  ) => {
+    // Registrar solicitação (idempotente via UNIQUE)
+    if (user && condominioId && !solicitados.has(prestadorUserId)) {
+      await supabase.from("solicitacoes_servico").insert({
+        morador_id: user.id,
+        prestador_user_id: prestadorUserId,
+        condominio_id: condominioId,
+      });
+      setSolicitados((prev) => new Set(prev).add(prestadorUserId));
+    }
+
     const cleaned = telefone.replace(/\D/g, "");
     const number = cleaned.startsWith("55") ? cleaned : `55${cleaned}`;
     let text = `Olá ${nome}! Vi seu perfil de ${especialidade} no app do condomínio e gostaria de saber mais sobre seus serviços.`;
