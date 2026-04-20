@@ -51,6 +51,14 @@ interface CupomInfo {
   desconto_percent: number;
 }
 
+interface AvaliacaoResumo {
+  id: string;
+  nota: number;
+  comentario: string | null;
+  created_at: string;
+  avaliador_nome: string;
+}
+
 interface PrestadorCompleto {
   id: string;
   especialidade: string;
@@ -67,6 +75,9 @@ interface PrestadorCompleto {
     descricao: string | null;
     preco: number | null;
   }[];
+  avaliacoes: AvaliacaoResumo[];
+  mediaNota: number | null;
+  totalAvaliacoes: number;
 }
 
 const MoradorServicos = () => {
