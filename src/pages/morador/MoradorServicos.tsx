@@ -68,7 +68,7 @@ interface PrestadorCompleto {
 }
 
 const MoradorServicos = () => {
-  const { roles } = useAuth();
+  const { user, roles } = useAuth();
   const condominioId = roles[0]?.condominio_id;
   const [searchParams, setSearchParams] = useSearchParams();
   const queryFromUrl = searchParams.get("q") || "";
@@ -83,6 +83,8 @@ const MoradorServicos = () => {
   const [loading, setLoading] = useState(true);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [solicitados, setSolicitados] = useState<Set<string>>(new Set());
+  const [avaliarDialog, setAvaliarDialog] = useState<{ userId: string; nome: string } | null>(null);
 
   // Fetch all prestadores for categories
   useEffect(() => {
