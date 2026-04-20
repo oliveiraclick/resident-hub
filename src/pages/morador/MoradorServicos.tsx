@@ -423,6 +423,15 @@ const MoradorServicos = () => {
             ))
           )}
         </div>
+        {avaliarDialog && condominioId && (
+          <AvaliarPrestadorDialog
+            open={!!avaliarDialog}
+            onOpenChange={(o) => !o && setAvaliarDialog(null)}
+            prestadorUserId={avaliarDialog.userId}
+            prestadorNome={avaliarDialog.nome}
+            condominioId={condominioId}
+          />
+        )}
       </MoradorLayout>
     );
   }
