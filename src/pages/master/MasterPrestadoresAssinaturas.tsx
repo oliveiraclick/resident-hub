@@ -33,6 +33,7 @@ interface Preco {
   trial_dias: number;
   chave_pix: string | null;
   tipo_chave_pix: string | null;
+  link_pagamento_automatico: string | null;
 }
 
 const statusBadge: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
