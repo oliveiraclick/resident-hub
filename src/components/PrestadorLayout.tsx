@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import AppShell from "@/components/AppShell";
-import { Home, Wrench, ShoppingBag, DollarSign, User, Image, Store, ClipboardList, UtensilsCrossed } from "lucide-react";
+import { Home, Wrench, ShoppingBag, DollarSign, User, Image, Store, ClipboardList, UtensilsCrossed, Star } from "lucide-react";
 
 interface PrestadorLayoutProps {
   children: ReactNode;
@@ -21,6 +21,7 @@ const menuItems = [
   { icon: UtensilsCrossed, label: "Cardápio", path: "/prestador/cardapio" },
   { icon: ClipboardList, label: "Pedidos", path: "/prestador/pedidos" },
   { icon: Image, label: "Banners", path: "/prestador/banners" },
+  { icon: Star, label: "Avaliações", path: "/prestador/avaliacoes" },
 ];
 
 const PrestadorLayout = ({ children, title, showBack }: PrestadorLayoutProps) => {
