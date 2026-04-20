@@ -211,6 +211,30 @@ const PrestadorCondominios = () => {
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-3">
+              {preco?.link_pagamento_automatico && (
+                <div className="p-3 rounded-lg bg-primary/10 border border-primary/30 space-y-2">
+                  <p className="text-xs font-semibold flex items-center gap-1.5 text-primary">
+                    <Zap size={13} /> Pagamento automático (recomendado)
+                  </p>
+                  <p className="text-[11px] text-muted-foreground">
+                    Pague com cartão recorrente — liberação automática, sem envio de comprovante.
+                  </p>
+                  <Button
+                    size="sm"
+                    className="w-full gap-1.5"
+                    onClick={() => window.open(preco.link_pagamento_automatico!, "_blank")}
+                  >
+                    <ExternalLink size={13} /> Pagar agora
+                  </Button>
+                </div>
+              )}
+
+              {preco?.link_pagamento_automatico && preco?.chave_pix && (
+                <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                  <div className="flex-1 h-px bg-border" /> ou pague via Pix manual <div className="flex-1 h-px bg-border" />
+                </div>
+              )}
+
               {preco?.chave_pix ? (
                 <div className="p-3 rounded-lg bg-muted/50 border border-border space-y-2">
                   <p className="text-[11px] text-muted-foreground">Chave Pix ({preco.tipo_chave_pix || "—"}):</p>
@@ -221,9 +245,9 @@ const PrestadorCondominios = () => {
                     </Button>
                   </div>
                 </div>
-              ) : (
-                <p className="text-xs text-destructive">Chave Pix ainda não configurada. Contate o administrador.</p>
-              )}
+              ) : !preco?.link_pagamento_automatico ? (
+                <p className="text-xs text-destructive">Forma de pagamento ainda não configurada. Contate o administrador.</p>
+              ) : null}
               <div>
                 <Label className="text-xs">Comprovante (imagem) *</Label>
                 <Input className="mt-1" type="file" accept="image/*" onChange={(e) => setComprovanteFile(e.target.files?.[0] || null)} />
