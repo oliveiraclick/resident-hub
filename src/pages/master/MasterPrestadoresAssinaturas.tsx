@@ -92,6 +92,7 @@ const MasterPrestadoresAssinaturas = () => {
       trial_dias: preco.trial_dias,
       chave_pix: preco.chave_pix,
       tipo_chave_pix: preco.tipo_chave_pix,
+      link_pagamento_automatico: preco.link_pagamento_automatico,
       updated_at: new Date().toISOString(),
     }).eq("id", preco.id);
     setSaving(false);
