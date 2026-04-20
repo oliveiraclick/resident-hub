@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Building2, Plus, Clock, DollarSign, Copy, Check, Loader2 } from "lucide-react";
+import { Building2, Plus, Clock, DollarSign, Copy, Check, Loader2, ExternalLink, Zap } from "lucide-react";
 import { formatBRL } from "@/lib/utils";
 
 interface Vinculo {
