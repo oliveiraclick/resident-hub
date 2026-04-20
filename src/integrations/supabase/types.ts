@@ -349,6 +349,7 @@ export type Database = {
           link: string | null
           ordem: number
           publico: string
+          solicitacao_id: string | null
           subtitulo: string | null
           titulo: string
           whatsapp: string | null
@@ -362,6 +363,7 @@ export type Database = {
           link?: string | null
           ordem?: number
           publico?: string
+          solicitacao_id?: string | null
           subtitulo?: string | null
           titulo: string
           whatsapp?: string | null
@@ -375,6 +377,7 @@ export type Database = {
           link?: string | null
           ordem?: number
           publico?: string
+          solicitacao_id?: string | null
           subtitulo?: string | null
           titulo?: string
           whatsapp?: string | null
