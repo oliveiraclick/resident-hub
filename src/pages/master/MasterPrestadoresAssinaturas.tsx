@@ -60,8 +60,8 @@ const MasterPrestadoresAssinaturas = () => {
     if (precoData) setPreco(precoData);
 
     if (vincData && vincData.length > 0) {
-      const userIds = [...new Set(vincData.map((v: any) => v.prestador_user_id))];
-      const condIds = [...new Set(vincData.map((v: any) => v.condominio_id))];
+      const userIds: string[] = Array.from(new Set(vincData.map((v: any) => v.prestador_user_id as string)));
+      const condIds: string[] = Array.from(new Set(vincData.map((v: any) => v.condominio_id as string)));
       const [{ data: profiles }, { data: condos }] = await Promise.all([
         supabase.from("profiles").select("user_id, nome").in("user_id", userIds),
         supabase.from("condominios").select("id, nome").in("id", condIds),

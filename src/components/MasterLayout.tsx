@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import AppShell from "@/components/AppShell";
-import { Home, Building2, Users, DollarSign, User, Wrench, Image, Layout, Tag, FileCheck, Bell, Merge, ScrollText, FlaskConical, BarChart3 } from "lucide-react";
+import { Home, Building2, Users, DollarSign, User, Wrench, Image, Layout, Tag, FileCheck, Bell, Merge, ScrollText, FlaskConical, BarChart3, Briefcase } from "lucide-react";
 import { useBannerSolicitacaoAlert } from "@/hooks/useBannerSolicitacaoAlert";
 
 interface MasterLayoutProps {
@@ -21,6 +21,7 @@ const menuItems = [
   { icon: Image, label: "Banners", path: "/master/banners" },
   { icon: Tag, label: "Preços Banners", path: "/master/banner-precos" },
   { icon: FileCheck, label: "Solicitações Banners", path: "/master/banner-solicitacoes" },
+  { icon: Briefcase, label: "Assinaturas Prestadores", path: "/master/prestadores-assinaturas" },
   { icon: Layout, label: "Landing Page", path: "/master/lp" },
   { icon: DollarSign, label: "Financeiro", path: "/master/financeiro" },
   { icon: Bell, label: "Push", path: "/master/push" },
