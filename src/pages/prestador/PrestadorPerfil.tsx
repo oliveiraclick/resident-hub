@@ -246,6 +246,47 @@ const PrestadorPerfil = () => {
 
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[12px] font-medium text-muted-foreground ml-1 flex items-center gap-1.5">
+                      <ImagePlus size={12} /> Imagem de capa do card
+                    </label>
+                    <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={handleCoverChange} />
+                    {coverUrl ? (
+                      <div className="relative">
+                        <img src={coverUrl} alt="Capa" className="w-full h-28 object-cover rounded-lg" />
+                        <button
+                          type="button"
+                          onClick={handleRemoveCover}
+                          className="absolute top-1.5 right-1.5 bg-background/90 rounded-full p-1 shadow"
+                          aria-label="Remover capa"
+                        >
+                          <X size={14} className="text-destructive" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => coverInputRef.current?.click()}
+                          className="absolute bottom-1.5 right-1.5 bg-background/90 rounded-full px-2 py-1 text-[11px] font-medium shadow flex items-center gap-1"
+                        >
+                          <Camera size={12} /> Trocar
+                        </button>
+                      </div>
+                    ) : (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="gap-1.5"
+                        onClick={() => coverInputRef.current?.click()}
+                        disabled={!prestadorId}
+                      >
+                        <ImagePlus size={16} /> Adicionar capa personalizada
+                      </Button>
+                    )}
+                    <p className="text-[10px] text-muted-foreground ml-1">
+                      Aparece no topo do seu card na lista de serviços. Recomendado: 800×280px.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[12px] font-medium text-muted-foreground ml-1 flex items-center gap-1.5">
                       <FileText size={12} /> Descrição profissional
                     </label>
                     <Textarea value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder="Conte sobre seus serviços..." rows={3} />
