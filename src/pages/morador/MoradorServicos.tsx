@@ -9,6 +9,7 @@ import { Wrench, Search, MessageCircle, ArrowLeft, User, Ticket, Star } from "lu
 import { getIcon } from "@/lib/iconMap";
 import { Button } from "@/components/ui/button";
 import AvaliarPrestadorDialog from "@/components/AvaliarPrestadorDialog";
+import AvaliacoesListDialog, { AvaliacaoItem } from "@/components/AvaliacoesListDialog";
 
 import coverJardinagem from "@/assets/cover-jardinagem.jpg";
 import coverFaxina from "@/assets/cover-faxina.jpg";
@@ -98,6 +99,8 @@ const MoradorServicos = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [solicitados, setSolicitados] = useState<Set<string>>(new Set());
   const [avaliarDialog, setAvaliarDialog] = useState<{ userId: string; nome: string } | null>(null);
+  const [verAvaliacoesDialog, setVerAvaliacoesDialog] = useState<{ nome: string; avaliacoes: AvaliacaoItem[]; media: number | null } | null>(null);
+  const [todasAvaliacoesPorPrestador, setTodasAvaliacoesPorPrestador] = useState<Record<string, AvaliacaoItem[]>>({});
 
   // Fetch all prestadores for categories
   useEffect(() => {
