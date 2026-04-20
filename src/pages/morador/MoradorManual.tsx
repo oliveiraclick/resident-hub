@@ -177,15 +177,39 @@ const sections = [
   },
   {
     icon: Star,
-    title: "Avaliações",
-    content: `Avalie os prestadores de serviço do seu condomínio.
+    title: "Avaliações — Passo a Passo",
+    content: `Avalie os prestadores de serviço do seu condomínio e ajude outros moradores a escolherem os melhores profissionais.
 
-**Como avaliar:**
-1. Acesse "Avaliações" pelo menu ou pelo perfil do prestador.
-2. Dê uma nota de 1 a 5 estrelas.
-3. Escreva um comentário (opcional) sobre a experiência.
+**Passo 1 — Acesse a tela de Avaliações:**
+• Toque no menu principal (Home) e selecione "Avaliações".
+• Ou, dentro da página de um prestador, toque no botão "Avaliar".
 
-⭐ Suas avaliações ajudam outros moradores a escolherem os melhores prestadores.`,
+**Passo 2 — Escolha o prestador:**
+• Você verá a lista de prestadores disponíveis no seu condomínio.
+• Toque no card do prestador que deseja avaliar.
+
+**Passo 3 — Dê a sua nota:**
+• Toque nas estrelas para definir a nota (de 1 a 5).
+   ⭐ 1 estrela = Muito ruim
+   ⭐⭐ 2 estrelas = Ruim
+   ⭐⭐⭐ 3 estrelas = Regular
+   ⭐⭐⭐⭐ 4 estrelas = Bom
+   ⭐⭐⭐⭐⭐ 5 estrelas = Excelente
+
+**Passo 4 — Escreva um comentário (opcional):**
+• No campo "Comentário", conte sua experiência com o serviço.
+• Seja honesto e respeitoso — seu feedback ajuda toda a comunidade.
+
+**Passo 5 — Envie a avaliação:**
+• Toque em "Enviar Avaliação" para confirmar.
+• Pronto! Sua avaliação aparecerá no perfil do prestador.
+
+💡 **Dicas importantes:**
+• Avalie apenas prestadores com os quais você realmente contratou serviços.
+• Comentários construtivos ajudam mais do que críticas vazias.
+• Você pode voltar e avaliar outros prestadores a qualquer momento.
+
+⭐ Suas avaliações tornam o condomínio um ambiente mais confiável para todos!`,
   },
   {
     icon: User,
