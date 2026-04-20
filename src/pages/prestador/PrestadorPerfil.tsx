@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { LogOut, Save, User, Phone, Briefcase, FileText, Camera, Trash2, AlertTriangle } from "lucide-react";
+import { LogOut, Save, User, Phone, Briefcase, FileText, Camera, Trash2, AlertTriangle, ImagePlus, X } from "lucide-react";
 import { useCategorias } from "@/hooks/useCategorias";
 import SubEspecialidadeField from "@/components/SubEspecialidadeField";
 import { APP_VERSION_LABEL } from "@/lib/appVersion";
@@ -27,10 +27,12 @@ const PrestadorPerfil = () => {
   const [subEspecialidade, setSubEspecialidade] = useState("");
   const [descricao, setDescricao] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [coverUrl, setCoverUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [prestadorId, setPrestadorId] = useState<string | null>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!user || !condominioId) return;
@@ -38,7 +40,7 @@ const PrestadorPerfil = () => {
     const fetchData = async () => {
       const [profileRes, prestadorRes] = await Promise.all([
         supabase.from("profiles").select("nome, telefone, avatar_url").eq("user_id", user.id).maybeSingle(),
-        supabase.from("prestadores").select("id, especialidade, sub_especialidade, descricao").eq("user_id", user.id).eq("condominio_id", condominioId).limit(1).maybeSingle(),
+        supabase.from("prestadores").select("id, especialidade, sub_especialidade, descricao, cover_url").eq("user_id", user.id).eq("condominio_id", condominioId).limit(1).maybeSingle(),
       ]);
 
       if (profileRes.data) {
@@ -51,6 +53,7 @@ const PrestadorPerfil = () => {
         setEspecialidade(prestadorRes.data.especialidade || "");
         setSubEspecialidade((prestadorRes.data as any).sub_especialidade || "");
         setDescricao(prestadorRes.data.descricao || "");
+        setCoverUrl((prestadorRes.data as any).cover_url || null);
       }
       setLoading(false);
     };
@@ -71,6 +74,28 @@ const PrestadorPerfil = () => {
     await supabase.from("profiles").update({ avatar_url: url } as any).eq("user_id", user.id);
     setAvatarUrl(url);
     toast.success("Foto atualizada!");
+  };
+
+  const handleCoverChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user || !prestadorId) return;
+    if (file.size > 5 * 1024 * 1024) { toast.error("Imagem deve ter no máximo 5MB"); return; }
+    const ext = file.name.split(".").pop();
+    const path = `${user.id}/cover.${ext}`;
+    const { error } = await supabase.storage.from("produtos").upload(path, file, { upsert: true });
+    if (error) { toast.error("Erro ao enviar capa"); return; }
+    const { data } = supabase.storage.from("produtos").getPublicUrl(path);
+    const url = `${data.publicUrl}?t=${Date.now()}`;
+    await supabase.from("prestadores").update({ cover_url: url } as any).eq("id", prestadorId);
+    setCoverUrl(url);
+    toast.success("Capa atualizada!");
+  };
+
+  const handleRemoveCover = async () => {
+    if (!prestadorId) return;
+    await supabase.from("prestadores").update({ cover_url: null } as any).eq("id", prestadorId);
+    setCoverUrl(null);
+    toast.success("Capa removida");
   };
 
   const handleSave = async () => {
@@ -218,6 +243,47 @@ const PrestadorPerfil = () => {
                     </div>
                   )}
 
+
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[12px] font-medium text-muted-foreground ml-1 flex items-center gap-1.5">
+                      <ImagePlus size={12} /> Imagem de capa do card
+                    </label>
+                    <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={handleCoverChange} />
+                    {coverUrl ? (
+                      <div className="relative">
+                        <img src={coverUrl} alt="Capa" className="w-full h-28 object-cover rounded-lg" />
+                        <button
+                          type="button"
+                          onClick={handleRemoveCover}
+                          className="absolute top-1.5 right-1.5 bg-background/90 rounded-full p-1 shadow"
+                          aria-label="Remover capa"
+                        >
+                          <X size={14} className="text-destructive" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => coverInputRef.current?.click()}
+                          className="absolute bottom-1.5 right-1.5 bg-background/90 rounded-full px-2 py-1 text-[11px] font-medium shadow flex items-center gap-1"
+                        >
+                          <Camera size={12} /> Trocar
+                        </button>
+                      </div>
+                    ) : (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="gap-1.5"
+                        onClick={() => coverInputRef.current?.click()}
+                        disabled={!prestadorId}
+                      >
+                        <ImagePlus size={16} /> Adicionar capa personalizada
+                      </Button>
+                    )}
+                    <p className="text-[10px] text-muted-foreground ml-1">
+                      Aparece no topo do seu card na lista de serviços. Recomendado: 800×280px.
+                    </p>
+                  </div>
 
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[12px] font-medium text-muted-foreground ml-1 flex items-center gap-1.5">
