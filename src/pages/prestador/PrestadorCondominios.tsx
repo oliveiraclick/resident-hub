@@ -35,7 +35,7 @@ const PrestadorCondominios = () => {
   const { user } = useAuth();
   const [vinculos, setVinculos] = useState<Vinculo[]>([]);
   const [condominios, setCondominios] = useState<{ id: string; nome: string }[]>([]);
-  const [preco, setPreco] = useState<{ valor_mensal_condominio_extra: number; chave_pix: string | null; tipo_chave_pix: string | null } | null>(null);
+  const [preco, setPreco] = useState<{ valor_mensal_condominio_extra: number; chave_pix: string | null; tipo_chave_pix: string | null; link_pagamento_automatico: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedCond, setSelectedCond] = useState("");
