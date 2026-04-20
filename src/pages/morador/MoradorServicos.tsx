@@ -193,9 +193,10 @@ const MoradorServicos = () => {
       const { data: profiles } = await supabase
         .rpc("get_prestador_profiles", { _user_ids: userIds }) as { data: { user_id: string; nome: string; avatar_url: string | null; telefone: string | null }[] | null };
 
-      // Fetch servicos and cupons for these prestadores
+      // Fetch servicos, cupons e avaliações para esses prestadores
       const prestadorIds = prestadoresFiltrados.map((p) => p.id);
-      const [{ data: servicos }, { data: cupons }] = await Promise.all([
+      const prestadorUserIds = prestadoresFiltrados.map((p) => p.user_id);
+      const [{ data: servicos }, { data: cupons }, { data: avaliacoesRaw }] = await Promise.all([
         supabase
           .from("servicos")
           .select("id, titulo, descricao, preco, prestador_id")
@@ -207,12 +208,37 @@ const MoradorServicos = () => {
           .select("prestador_id, codigo, desconto_percent")
           .in("prestador_id", prestadorIds)
           .eq("ativo", true),
+        supabase
+          .from("avaliacoes")
+          .select("id, nota, comentario, created_at, avaliado_id, avaliador_id")
+          .in("avaliado_id", prestadorUserIds)
+          .order("created_at", { ascending: false }),
       ]);
+
+      // Buscar nomes dos avaliadores
+      const avaliadorIds = Array.from(new Set((avaliacoesRaw || []).map((a: any) => a.avaliador_id)));
+      let avaliadorMap: Record<string, string> = {};
+      if (avaliadorIds.length > 0) {
+        const { data: avaliadorProfiles } = await supabase
+          .rpc("get_evento_participant_profiles", { _user_ids: avaliadorIds }) as { data: { user_id: string; nome: string }[] | null };
+        (avaliadorProfiles || []).forEach((p) => { avaliadorMap[p.user_id] = p.nome; });
+      }
 
       const result: PrestadorCompleto[] = prestadoresFiltrados.map((p) => {
         const profile = profiles?.find((pr) => pr.user_id === p.user_id);
         const prestadorServicos = servicos?.filter((s) => s.prestador_id === p.id) || [];
         const cupom = (cupons as any[])?.find((c) => c.prestador_id === p.id) || null;
+        const todasAvaliacoes = (avaliacoesRaw as any[])?.filter((a) => a.avaliado_id === p.user_id) || [];
+        const avaliacoes: AvaliacaoResumo[] = todasAvaliacoes.slice(0, 3).map((a) => ({
+          id: a.id,
+          nota: a.nota,
+          comentario: a.comentario,
+          created_at: a.created_at,
+          avaliador_nome: avaliadorMap[a.avaliador_id] || "Morador",
+        }));
+        const mediaNota = todasAvaliacoes.length > 0
+          ? todasAvaliacoes.reduce((sum, a) => sum + a.nota, 0) / todasAvaliacoes.length
+          : null;
         return {
           id: p.id,
           especialidade: p.especialidade,
@@ -224,6 +250,9 @@ const MoradorServicos = () => {
           cover_url: p.cover_url,
           cupom: cupom ? { codigo: cupom.codigo, desconto_percent: cupom.desconto_percent } : null,
           servicos: prestadorServicos,
+          avaliacoes,
+          mediaNota,
+          totalAvaliacoes: todasAvaliacoes.length,
         };
       });
 
