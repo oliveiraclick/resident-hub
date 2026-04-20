@@ -2145,6 +2145,13 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_condominios_for_registration: {
+        Args: never
+        Returns: {
+          id: string
+          nome: string
+        }[]
+      }
       get_desapego_owner_profile: {
         Args: { _user_id: string }
         Returns: {
