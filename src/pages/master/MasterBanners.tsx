@@ -35,7 +35,7 @@ const MasterBanners = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Banner | null>(null);
-  const [form, setForm] = useState({ titulo: "", subtitulo: "", link: "", whatsapp: "", ativo: true, ordem: 0, publico: "prestador", condominio_id: "" });
+  const [form, setForm] = useState({ titulo: "", subtitulo: "", link: "", whatsapp: "", ativo: true, ordem: 0, publico: "prestador", condominio_id: "", origem: "mkt" });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [filterPublico, setFilterPublico] = useState("todos_filter");
