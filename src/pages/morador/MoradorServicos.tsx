@@ -5,9 +5,10 @@ import { useSearchParams } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { Wrench, Search, MessageCircle, ArrowLeft, User, Ticket } from "lucide-react";
+import { Wrench, Search, MessageCircle, ArrowLeft, User, Ticket, Star } from "lucide-react";
 import { getIcon } from "@/lib/iconMap";
 import { Button } from "@/components/ui/button";
+import AvaliarPrestadorDialog from "@/components/AvaliarPrestadorDialog";
 
 import coverJardinagem from "@/assets/cover-jardinagem.jpg";
 import coverFaxina from "@/assets/cover-faxina.jpg";
