@@ -500,7 +500,7 @@ const MoradorServicos = () => {
 
                   {/* Ações: WhatsApp + Avaliar */}
                   {prestador.telefone ? (
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 w-full">
                       <Button
                         onClick={() =>
                           openWhatsApp(
@@ -511,10 +511,10 @@ const MoradorServicos = () => {
                             prestador.cupom,
                           )
                         }
-                        className="flex-1 rounded-xl gap-2 bg-[#25D366] hover:bg-[#1da851] text-white font-semibold"
+                        className="flex-1 min-w-0 rounded-xl gap-1.5 px-3 bg-[#25D366] hover:bg-[#1da851] text-white font-semibold"
                       >
-                        <MessageCircle size={18} />
-                        Falar no WhatsApp
+                        <MessageCircle size={16} className="flex-shrink-0" />
+                        <span className="truncate">WhatsApp</span>
                       </Button>
                       <Button
                         variant="outline"
@@ -522,15 +522,15 @@ const MoradorServicos = () => {
                         onClick={() =>
                           setAvaliarDialog({ userId: prestador.user_id, nome: prestador.nome })
                         }
-                        className="rounded-xl gap-1.5"
+                        className="flex-1 min-w-0 rounded-xl gap-1.5 px-3"
                         title={
                           solicitados.has(prestador.user_id)
                             ? "Avaliar este prestador"
                             : "Solicite um serviço (WhatsApp) antes de avaliar"
                         }
                       >
-                        <Star size={16} />
-                        Avaliar
+                        <Star size={16} className="flex-shrink-0" />
+                        <span className="truncate">Avaliar</span>
                       </Button>
                     </div>
                   ) : (
