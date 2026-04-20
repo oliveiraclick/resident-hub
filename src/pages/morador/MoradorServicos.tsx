@@ -368,6 +368,17 @@ const MoradorServicos = () => {
                       <p className="text-[12px] text-primary font-medium">
                         {prestador.especialidade}
                       </p>
+                      {prestador.mediaNota !== null && (
+                        <div className="flex items-center gap-1 mt-0.5">
+                          <Star size={12} className="fill-yellow-500 text-yellow-500" />
+                          <span className="text-[11px] font-semibold text-foreground">
+                            {prestador.mediaNota.toFixed(1)}
+                          </span>
+                          <span className="text-[11px] text-muted-foreground">
+                            ({prestador.totalAvaliacoes})
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -376,6 +387,40 @@ const MoradorServicos = () => {
                     <p className="text-[13px] text-muted-foreground leading-relaxed">
                       {prestador.descricao}
                     </p>
+                  )}
+
+                  {/* Últimas avaliações */}
+                  {prestador.avaliacoes.length > 0 && (
+                    <div className="flex flex-col gap-2">
+                      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
+                        Últimas avaliações
+                      </p>
+                      <div className="flex flex-col gap-1.5">
+                        {prestador.avaliacoes.map((av) => (
+                          <div key={av.id} className="bg-muted/50 rounded-xl px-3 py-2">
+                            <div className="flex items-center justify-between gap-2 mb-0.5">
+                              <p className="text-[12px] font-semibold text-foreground truncate">
+                                {av.avaliador_nome}
+                              </p>
+                              <div className="flex items-center gap-0.5 flex-shrink-0">
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                  <Star
+                                    key={i}
+                                    size={10}
+                                    className={i < av.nota ? "fill-yellow-500 text-yellow-500" : "text-muted-foreground/30"}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                            {av.comentario && (
+                              <p className="text-[11px] text-muted-foreground leading-snug line-clamp-2">
+                                "{av.comentario}"
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   )}
 
                   {/* Serviços oferecidos */}
