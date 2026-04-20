@@ -213,6 +213,48 @@ export type Database = {
           },
         ]
       }
+      banner_audit_log: {
+        Row: {
+          acao: string
+          ator_nome: string | null
+          ator_user_id: string | null
+          banner_id: string
+          banner_tipo: string
+          condominio_id: string | null
+          created_at: string
+          detalhes: Json | null
+          id: string
+          status_anterior: string | null
+          status_novo: string | null
+        }
+        Insert: {
+          acao: string
+          ator_nome?: string | null
+          ator_user_id?: string | null
+          banner_id: string
+          banner_tipo: string
+          condominio_id?: string | null
+          created_at?: string
+          detalhes?: Json | null
+          id?: string
+          status_anterior?: string | null
+          status_novo?: string | null
+        }
+        Update: {
+          acao?: string
+          ator_nome?: string | null
+          ator_user_id?: string | null
+          banner_id?: string
+          banner_tipo?: string
+          condominio_id?: string | null
+          created_at?: string
+          detalhes?: Json | null
+          id?: string
+          status_anterior?: string | null
+          status_novo?: string | null
+        }
+        Relationships: []
+      }
       banner_precos: {
         Row: {
           chave_pix: string | null
@@ -1947,6 +1989,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _get_ator_nome: { Args: { _user_id: string }; Returns: string }
       belongs_to_condominio: {
         Args: { _condominio_id: string; _user_id: string }
         Returns: boolean
@@ -1957,6 +2000,15 @@ export type Database = {
         Returns: {
           email: string
           nome: string
+        }[]
+      }
+      get_banner_last_actions: {
+        Args: { _banner_ids: string[]; _banner_tipo: string }
+        Returns: {
+          acao: string
+          ator_nome: string
+          banner_id: string
+          created_at: string
         }[]
       }
       get_condominio_morador_counts: {
