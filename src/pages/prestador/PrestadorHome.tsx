@@ -72,11 +72,46 @@ const PrestadorHome = () => {
         avaliacoes: notas.length,
         mediaNotas: Math.round(media * 10) / 10,
       });
+
+      // Check for new ratings since last visit and show popup
+      const lastSeenKey = `prestador_avaliacoes_last_seen_${user.id}`;
+      const lastSeen = localStorage.getItem(lastSeenKey);
+      const { data: novasAval } = await supabase
+        .from("avaliacoes")
+        .select("id, nota, comentario, created_at, avaliador_id")
+        .eq("avaliado_id", user.id)
+        .eq("condominio_id", condominioId)
+        .gt("created_at", lastSeen || "1970-01-01")
+        .order("created_at", { ascending: false });
+
+      if (novasAval && novasAval.length > 0) {
+        const qtd = novasAval.length;
+        const stars = "⭐".repeat(novasAval[0].nota);
+        toast.success(
+          qtd === 1
+            ? `Você recebeu uma nova avaliação ${stars}`
+            : `Você recebeu ${qtd} novas avaliações!`,
+          {
+            description: novasAval[0].comentario
+              ? `"${novasAval[0].comentario.slice(0, 80)}${novasAval[0].comentario.length > 80 ? "…" : ""}"`
+              : "Toque para ver os detalhes",
+            duration: 8000,
+            action: {
+              label: "Ver",
+              onClick: () => navigate("/prestador/avaliacoes"),
+            },
+          }
+        );
+        localStorage.setItem(lastSeenKey, new Date().toISOString());
+      } else if (!lastSeen) {
+        localStorage.setItem(lastSeenKey, new Date().toISOString());
+      }
+
       setLoading(false);
     };
 
     fetchData();
-  }, [user, condominioId]);
+  }, [user, condominioId, navigate]);
 
   // Auto-expire check
   useEffect(() => {
