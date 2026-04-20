@@ -232,82 +232,119 @@ const MasterBanners = () => {
         )}
 
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="max-w-[400px]">
-            <DialogHeader>
-              <DialogTitle>{editing ? "Editar Banner" : "Novo Banner"}</DialogTitle>
+          <DialogContent className="max-w-[420px] max-h-[90vh] overflow-y-auto p-0">
+            <DialogHeader className="px-5 pt-5 pb-3 border-b border-border sticky top-0 bg-background z-10">
+              <DialogTitle className="text-base">{editing ? "Editar Banner" : "Novo Banner"}</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Label>Condomínio *</Label>
-                <Select value={form.condominio_id} onValueChange={(v) => setForm({ ...form, condominio_id: v })}>
-                  <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                  <SelectContent>
-                    {condominios.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Público-alvo *</Label>
-                <Select value={form.publico} onValueChange={(v) => setForm({ ...form, publico: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="morador">🏠 Morador</SelectItem>
-                    <SelectItem value="prestador">🔧 Prestador</SelectItem>
-                    <SelectItem value="todos">👥 Todos</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Origem do banner *</Label>
-                <Select value={form.origem} onValueChange={(v) => setForm({ ...form, origem: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="mkt">🎁 MKT / Cortesia (sem pagamento)</SelectItem>
-                    <SelectItem value="pagamento">💳 Pago pelo anunciante</SelectItem>
-                  </SelectContent>
-                </Select>
-                <p className="text-[10px] text-muted-foreground mt-1">
-                  {form.origem === "pagamento"
-                    ? "Use esta opção quando o anunciante pagou diretamente fora do fluxo de Solicitações."
-                    : "Banner institucional ou cortesia da plataforma — sem cobrança."}
-                </p>
-              </div>
-              <div>
-                <Label>Título *</Label>
-                <Input value={form.titulo} onChange={(e) => setForm({ ...form, titulo: e.target.value })} placeholder="Ex: Oferta Especial" />
-              </div>
-              <div>
-                <Label>Subtítulo</Label>
-                <Input value={form.subtitulo} onChange={(e) => setForm({ ...form, subtitulo: e.target.value })} />
-              </div>
-              <div>
-                <Label>Link (opcional)</Label>
-                <Input value={form.link} onChange={(e) => setForm({ ...form, link: e.target.value })} placeholder="https://..." />
-              </div>
-              <div>
-                <Label>WhatsApp (opcional)</Label>
-                <Input value={form.whatsapp} onChange={(e) => setForm({ ...form, whatsapp: e.target.value })} placeholder="5511999999999" />
-                <p className="text-[10px] text-muted-foreground mt-1">Número com DDD e código do país. Ao clicar no banner, abre o WhatsApp.</p>
-              </div>
-              <div>
-                <Label>Imagem</Label>
-                <Input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] || null)} />
-                {editing?.imagem_url && !imageFile && (
-                  <img src={editing.imagem_url} alt="Preview" className="mt-2 h-20 rounded-lg object-cover" />
-                )}
-              </div>
-              <div>
-                <Label>Ordem</Label>
-                <Input type="number" value={form.ordem} onChange={(e) => setForm({ ...form, ordem: Number(e.target.value) })} />
-              </div>
-              <div className="flex items-center gap-2">
-                <Switch checked={form.ativo} onCheckedChange={(v) => setForm({ ...form, ativo: v })} />
-                <Label>Ativo</Label>
-              </div>
+
+            <div className="px-5 py-4 space-y-5">
+              {/* Seção 1: Destino */}
+              <section className="space-y-3">
+                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">📍 Destino</h3>
+                <div className="space-y-3 p-3 rounded-lg bg-muted/40 border border-border">
+                  <div>
+                    <Label className="text-xs">Condomínio *</Label>
+                    <Select value={form.condominio_id} onValueChange={(v) => setForm({ ...form, condominio_id: v })}>
+                      <SelectTrigger className="mt-1"><SelectValue placeholder="Selecione" /></SelectTrigger>
+                      <SelectContent>
+                        {condominios.map((c) => (
+                          <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="text-xs">Público-alvo *</Label>
+                    <Select value={form.publico} onValueChange={(v) => setForm({ ...form, publico: v })}>
+                      <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="morador">🏠 Morador</SelectItem>
+                        <SelectItem value="prestador">🔧 Prestador</SelectItem>
+                        <SelectItem value="todos">👥 Todos</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </section>
+
+              {/* Seção 2: Origem (cards) */}
+              <section className="space-y-2">
+                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">💼 Origem comercial *</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setForm({ ...form, origem: "mkt" })}
+                    className={`p-3 rounded-lg border-2 text-left transition-all ${form.origem === "mkt" ? "border-primary bg-primary/5" : "border-border bg-card hover:border-muted-foreground/30"}`}
+                  >
+                    <div className="text-xl mb-1">🎁</div>
+                    <p className="text-xs font-semibold text-foreground">MKT / Cortesia</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">Sem cobrança</p>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setForm({ ...form, origem: "pagamento" })}
+                    className={`p-3 rounded-lg border-2 text-left transition-all ${form.origem === "pagamento" ? "border-primary bg-primary/5" : "border-border bg-card hover:border-muted-foreground/30"}`}
+                  >
+                    <div className="text-xl mb-1">💳</div>
+                    <p className="text-xs font-semibold text-foreground">Pago</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">Anunciante pagou</p>
+                  </button>
+                </div>
+              </section>
+
+              {/* Seção 3: Conteúdo */}
+              <section className="space-y-3">
+                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">✏️ Conteúdo</h3>
+                <div>
+                  <Label className="text-xs">Título *</Label>
+                  <Input className="mt-1" value={form.titulo} onChange={(e) => setForm({ ...form, titulo: e.target.value })} placeholder="Ex: Oferta Especial" />
+                </div>
+                <div>
+                  <Label className="text-xs">Subtítulo</Label>
+                  <Input className="mt-1" value={form.subtitulo} onChange={(e) => setForm({ ...form, subtitulo: e.target.value })} />
+                </div>
+                <div>
+                  <Label className="text-xs">Imagem</Label>
+                  <Input className="mt-1" type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] || null)} />
+                  {editing?.imagem_url && !imageFile && (
+                    <img src={editing.imagem_url} alt="Preview" className="mt-2 h-20 rounded-lg object-cover" />
+                  )}
+                </div>
+              </section>
+
+              {/* Seção 4: Ação ao clicar */}
+              <section className="space-y-3">
+                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">🔗 Ação ao clicar</h3>
+                <div>
+                  <Label className="text-xs">Link (opcional)</Label>
+                  <Input className="mt-1" value={form.link} onChange={(e) => setForm({ ...form, link: e.target.value })} placeholder="https://..." />
+                </div>
+                <div>
+                  <Label className="text-xs">WhatsApp (opcional)</Label>
+                  <Input className="mt-1" value={form.whatsapp} onChange={(e) => setForm({ ...form, whatsapp: e.target.value })} placeholder="5511999999999" />
+                  <p className="text-[10px] text-muted-foreground mt-1">DDD + país. Abre o WhatsApp ao clicar.</p>
+                </div>
+              </section>
+
+              {/* Seção 5: Configurações */}
+              <section className="space-y-3">
+                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">⚙️ Configurações</h3>
+                <div className="flex items-end gap-3">
+                  <div className="flex-1">
+                    <Label className="text-xs">Ordem</Label>
+                    <Input className="mt-1" type="number" value={form.ordem} onChange={(e) => setForm({ ...form, ordem: Number(e.target.value) })} />
+                  </div>
+                  <div className="flex flex-col items-center gap-1.5">
+                    <Switch checked={form.ativo} onCheckedChange={(v) => setForm({ ...form, ativo: v })} />
+                    <Label className="text-[10px]">{form.ativo ? "Ativo" : "Inativo"}</Label>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <div className="px-5 py-3 border-t border-border sticky bottom-0 bg-background">
               <Button onClick={handleSave} disabled={uploading} className="w-full">
-                {uploading ? "Salvando..." : "Salvar"}
+                {uploading ? "Salvando..." : "Salvar Banner"}
               </Button>
             </div>
           </DialogContent>
