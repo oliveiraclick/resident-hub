@@ -378,17 +378,41 @@ const MoradorServicos = () => {
                     )}
                   </div>
 
-                  {/* WhatsApp button */}
+                  {/* Ações: WhatsApp + Avaliar */}
                   {prestador.telefone ? (
-                    <Button
-                      onClick={() =>
-                        openWhatsApp(prestador.telefone!, prestador.nome, prestador.especialidade, prestador.cupom)
-                      }
-                      className="w-full rounded-xl gap-2 bg-[#25D366] hover:bg-[#1da851] text-white font-semibold"
-                    >
-                      <MessageCircle size={18} />
-                      Falar no WhatsApp
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() =>
+                          openWhatsApp(
+                            prestador.user_id,
+                            prestador.telefone!,
+                            prestador.nome,
+                            prestador.especialidade,
+                            prestador.cupom,
+                          )
+                        }
+                        className="flex-1 rounded-xl gap-2 bg-[#25D366] hover:bg-[#1da851] text-white font-semibold"
+                      >
+                        <MessageCircle size={18} />
+                        Falar no WhatsApp
+                      </Button>
+                      <Button
+                        variant="outline"
+                        disabled={!solicitados.has(prestador.user_id)}
+                        onClick={() =>
+                          setAvaliarDialog({ userId: prestador.user_id, nome: prestador.nome })
+                        }
+                        className="rounded-xl gap-1.5"
+                        title={
+                          solicitados.has(prestador.user_id)
+                            ? "Avaliar este prestador"
+                            : "Solicite um serviço (WhatsApp) antes de avaliar"
+                        }
+                      >
+                        <Star size={16} />
+                        Avaliar
+                      </Button>
+                    </div>
                   ) : (
                     <p className="text-[12px] text-muted-foreground text-center py-1">
                       Telefone não cadastrado
