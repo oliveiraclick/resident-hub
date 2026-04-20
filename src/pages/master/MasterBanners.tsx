@@ -39,15 +39,38 @@ const MasterBanners = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [filterPublico, setFilterPublico] = useState("todos_filter");
+  const [lastActions, setLastActions] = useState<Record<string, { acao: string; ator_nome: string; created_at: string }>>({});
 
   const fetchData = async () => {
     const [bannersRes, condRes] = await Promise.all([
       supabase.from("banners").select("*").order("ordem", { ascending: true }),
       supabase.from("condominios").select("id, nome").order("nome"),
     ]);
-    setBanners((bannersRes.data as Banner[]) || []);
+    const bannersData = (bannersRes.data as Banner[]) || [];
+    setBanners(bannersData);
     setCondominios(condRes.data || []);
+
+    // Fetch last audit action for each banner
+    if (bannersData.length > 0) {
+      const { data: actions } = await supabase.rpc("get_banner_last_actions", {
+        _banner_tipo: "institucional",
+        _banner_ids: bannersData.map((b) => b.id),
+      });
+      if (actions) {
+        const map: Record<string, any> = {};
+        actions.forEach((a: any) => { map[a.banner_id] = a; });
+        setLastActions(map);
+      }
+    }
     setLoading(false);
+  };
+
+  const formatAcao = (acao: string) => {
+    const map: Record<string, string> = {
+      ativado: "Ativado", desativado: "Desativado",
+      criado_e_ativado: "Criado e ativado", criado: "Criado",
+    };
+    return map[acao] || acao;
   };
 
   useEffect(() => { fetchData(); }, []);
@@ -184,6 +207,11 @@ const MasterBanners = () => {
                           {b.publico === "prestador" ? "🔧 Prestador" : b.publico === "todos" ? "👥 Todos" : "🏠 Morador"}
                         </span>
                       </div>
+                      {lastActions[b.id] && (
+                        <p className="text-[10px] text-muted-foreground mt-1">
+                          {formatAcao(lastActions[b.id].acao)} por <strong>{lastActions[b.id].ator_nome}</strong> em {new Date(lastActions[b.id].created_at).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" })}
+                        </p>
+                      )}
                     </div>
                     <div className="flex gap-1">
                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => toggleAtivo(b)}>
