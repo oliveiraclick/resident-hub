@@ -161,6 +161,17 @@ const MasterPrestadoresAssinaturas = () => {
                     onChange={(e) => setPreco({ ...preco, tipo_chave_pix: e.target.value })}
                   />
                 </div>
+                <div className="col-span-2">
+                  <Label className="text-xs">Link de pagamento automático (Kiwify, Stripe, etc.)</Label>
+                  <Input
+                    className="mt-1" placeholder="https://pay.kiwify.com.br/..."
+                    value={preco.link_pagamento_automatico || ""}
+                    onChange={(e) => setPreco({ ...preco, link_pagamento_automatico: e.target.value })}
+                  />
+                  <p className="text-[10px] text-muted-foreground mt-1">
+                    Quando preenchido, o prestador verá um botão "Pagar agora" que abre este link de cobrança recorrente.
+                  </p>
+                </div>
               </div>
               <Button size="sm" onClick={savePreco} disabled={saving} className="gap-1.5">
                 <Save size={14} /> {saving ? "Salvando…" : "Salvar configurações"}
