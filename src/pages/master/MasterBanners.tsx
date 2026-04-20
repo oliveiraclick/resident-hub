@@ -39,15 +39,38 @@ const MasterBanners = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [filterPublico, setFilterPublico] = useState("todos_filter");
+  const [lastActions, setLastActions] = useState<Record<string, { acao: string; ator_nome: string; created_at: string }>>({});
 
   const fetchData = async () => {
     const [bannersRes, condRes] = await Promise.all([
       supabase.from("banners").select("*").order("ordem", { ascending: true }),
       supabase.from("condominios").select("id, nome").order("nome"),
     ]);
-    setBanners((bannersRes.data as Banner[]) || []);
+    const bannersData = (bannersRes.data as Banner[]) || [];
+    setBanners(bannersData);
     setCondominios(condRes.data || []);
+
+    // Fetch last audit action for each banner
+    if (bannersData.length > 0) {
+      const { data: actions } = await supabase.rpc("get_banner_last_actions", {
+        _banner_tipo: "institucional",
+        _banner_ids: bannersData.map((b) => b.id),
+      });
+      if (actions) {
+        const map: Record<string, any> = {};
+        actions.forEach((a: any) => { map[a.banner_id] = a; });
+        setLastActions(map);
+      }
+    }
     setLoading(false);
+  };
+
+  const formatAcao = (acao: string) => {
+    const map: Record<string, string> = {
+      ativado: "Ativado", desativado: "Desativado",
+      criado_e_ativado: "Criado e ativado", criado: "Criado",
+    };
+    return map[acao] || acao;
   };
 
   useEffect(() => { fetchData(); }, []);
