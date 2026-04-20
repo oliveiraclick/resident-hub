@@ -34,6 +34,7 @@ const statusMap: Record<string, { label: string; variant: "default" | "secondary
 const MasterBannerSolicitacoes = () => {
   const [solicitacoes, setSolicitacoes] = useState<Solicitacao[]>([]);
   const [loading, setLoading] = useState(true);
+  const [lastActions, setLastActions] = useState<Record<string, { acao: string; ator_nome: string; created_at: string }>>({});
 
   const fetchData = async () => {
     setLoading(true);
@@ -52,9 +53,13 @@ const MasterBannerSolicitacoes = () => {
     const prestadorIds = [...new Set(solis.map((s) => s.prestador_id))];
     const condominioIds = [...new Set(solis.map((s) => s.condominio_id))];
 
-    const [{ data: prestadores }, { data: condominios }] = await Promise.all([
+    const [{ data: prestadores }, { data: condominios }, { data: actions }] = await Promise.all([
       supabase.from("prestadores").select("id, user_id").in("id", prestadorIds),
       supabase.from("condominios").select("id, nome").in("id", condominioIds),
+      supabase.rpc("get_banner_last_actions", {
+        _banner_tipo: "solicitacao",
+        _banner_ids: solis.map((s) => s.id),
+      }),
     ]);
 
     let profileMap: Record<string, string> = {};
@@ -79,6 +84,10 @@ const MasterBannerSolicitacoes = () => {
       condoMap[c.id] = c.nome;
     });
 
+    const actionMap: Record<string, any> = {};
+    actions?.forEach((a: any) => { actionMap[a.banner_id] = a; });
+    setLastActions(actionMap);
+
     const enriched = solis.map((s) => ({
       ...s,
       prestador_nome: prestadorNameMap[s.prestador_id] || "—",
@@ -87,6 +96,14 @@ const MasterBannerSolicitacoes = () => {
 
     setSolicitacoes(enriched);
     setLoading(false);
+  };
+
+  const formatAcao = (acao: string) => {
+    const map: Record<string, string> = {
+      aprovado: "Aprovado", ativo: "Ativado", rejeitado: "Rejeitado",
+      expirado: "Expirado", criado: "Solicitado",
+    };
+    return map[acao] || acao;
   };
 
   useEffect(() => {
