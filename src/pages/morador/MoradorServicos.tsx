@@ -51,6 +51,14 @@ interface CupomInfo {
   desconto_percent: number;
 }
 
+interface AvaliacaoResumo {
+  id: string;
+  nota: number;
+  comentario: string | null;
+  created_at: string;
+  avaliador_nome: string;
+}
+
 interface PrestadorCompleto {
   id: string;
   especialidade: string;
@@ -67,6 +75,9 @@ interface PrestadorCompleto {
     descricao: string | null;
     preco: number | null;
   }[];
+  avaliacoes: AvaliacaoResumo[];
+  mediaNota: number | null;
+  totalAvaliacoes: number;
 }
 
 const MoradorServicos = () => {
@@ -182,9 +193,10 @@ const MoradorServicos = () => {
       const { data: profiles } = await supabase
         .rpc("get_prestador_profiles", { _user_ids: userIds }) as { data: { user_id: string; nome: string; avatar_url: string | null; telefone: string | null }[] | null };
 
-      // Fetch servicos and cupons for these prestadores
+      // Fetch servicos, cupons e avaliações para esses prestadores
       const prestadorIds = prestadoresFiltrados.map((p) => p.id);
-      const [{ data: servicos }, { data: cupons }] = await Promise.all([
+      const prestadorUserIds = prestadoresFiltrados.map((p) => p.user_id);
+      const [{ data: servicos }, { data: cupons }, { data: avaliacoesRaw }] = await Promise.all([
         supabase
           .from("servicos")
           .select("id, titulo, descricao, preco, prestador_id")
@@ -196,12 +208,37 @@ const MoradorServicos = () => {
           .select("prestador_id, codigo, desconto_percent")
           .in("prestador_id", prestadorIds)
           .eq("ativo", true),
+        supabase
+          .from("avaliacoes")
+          .select("id, nota, comentario, created_at, avaliado_id, avaliador_id")
+          .in("avaliado_id", prestadorUserIds)
+          .order("created_at", { ascending: false }),
       ]);
+
+      // Buscar nomes dos avaliadores
+      const avaliadorIds = Array.from(new Set((avaliacoesRaw || []).map((a: any) => a.avaliador_id)));
+      let avaliadorMap: Record<string, string> = {};
+      if (avaliadorIds.length > 0) {
+        const { data: avaliadorProfiles } = await supabase
+          .rpc("get_evento_participant_profiles", { _user_ids: avaliadorIds }) as { data: { user_id: string; nome: string }[] | null };
+        (avaliadorProfiles || []).forEach((p) => { avaliadorMap[p.user_id] = p.nome; });
+      }
 
       const result: PrestadorCompleto[] = prestadoresFiltrados.map((p) => {
         const profile = profiles?.find((pr) => pr.user_id === p.user_id);
         const prestadorServicos = servicos?.filter((s) => s.prestador_id === p.id) || [];
         const cupom = (cupons as any[])?.find((c) => c.prestador_id === p.id) || null;
+        const todasAvaliacoes = (avaliacoesRaw as any[])?.filter((a) => a.avaliado_id === p.user_id) || [];
+        const avaliacoes: AvaliacaoResumo[] = todasAvaliacoes.slice(0, 3).map((a) => ({
+          id: a.id,
+          nota: a.nota,
+          comentario: a.comentario,
+          created_at: a.created_at,
+          avaliador_nome: avaliadorMap[a.avaliador_id] || "Morador",
+        }));
+        const mediaNota = todasAvaliacoes.length > 0
+          ? todasAvaliacoes.reduce((sum, a) => sum + a.nota, 0) / todasAvaliacoes.length
+          : null;
         return {
           id: p.id,
           especialidade: p.especialidade,
@@ -213,6 +250,9 @@ const MoradorServicos = () => {
           cover_url: p.cover_url,
           cupom: cupom ? { codigo: cupom.codigo, desconto_percent: cupom.desconto_percent } : null,
           servicos: prestadorServicos,
+          avaliacoes,
+          mediaNota,
+          totalAvaliacoes: todasAvaliacoes.length,
         };
       });
 
@@ -328,6 +368,17 @@ const MoradorServicos = () => {
                       <p className="text-[12px] text-primary font-medium">
                         {prestador.especialidade}
                       </p>
+                      {prestador.mediaNota !== null && (
+                        <div className="flex items-center gap-1 mt-0.5">
+                          <Star size={12} className="fill-yellow-500 text-yellow-500" />
+                          <span className="text-[11px] font-semibold text-foreground">
+                            {prestador.mediaNota.toFixed(1)}
+                          </span>
+                          <span className="text-[11px] text-muted-foreground">
+                            ({prestador.totalAvaliacoes})
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -336,6 +387,40 @@ const MoradorServicos = () => {
                     <p className="text-[13px] text-muted-foreground leading-relaxed">
                       {prestador.descricao}
                     </p>
+                  )}
+
+                  {/* Últimas avaliações */}
+                  {prestador.avaliacoes.length > 0 && (
+                    <div className="flex flex-col gap-2">
+                      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
+                        Últimas avaliações
+                      </p>
+                      <div className="flex flex-col gap-1.5">
+                        {prestador.avaliacoes.map((av) => (
+                          <div key={av.id} className="bg-muted/50 rounded-xl px-3 py-2">
+                            <div className="flex items-center justify-between gap-2 mb-0.5">
+                              <p className="text-[12px] font-semibold text-foreground truncate">
+                                {av.avaliador_nome}
+                              </p>
+                              <div className="flex items-center gap-0.5 flex-shrink-0">
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                  <Star
+                                    key={i}
+                                    size={10}
+                                    className={i < av.nota ? "fill-yellow-500 text-yellow-500" : "text-muted-foreground/30"}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                            {av.comentario && (
+                              <p className="text-[11px] text-muted-foreground leading-snug line-clamp-2">
+                                "{av.comentario}"
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   )}
 
                   {/* Serviços oferecidos */}
