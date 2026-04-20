@@ -43,6 +43,7 @@ interface PrestadorResumo {
   descricao: string | null;
   user_id: string;
   nome: string;
+  cover_url: string | null;
 }
 
 interface CupomInfo {
@@ -58,6 +59,7 @@ interface PrestadorCompleto {
   nome: string;
   telefone: string | null;
   avatar_url: string | null;
+  cover_url: string | null;
   cupom: CupomInfo | null;
   servicos: {
     id: string;
@@ -106,7 +108,7 @@ const MoradorServicos = () => {
 
       const { data } = await supabase
         .from("prestadores")
-        .select("id, especialidade, descricao, user_id")
+        .select("id, especialidade, descricao, user_id, cover_url")
         .eq("condominio_id", condominioId);
 
       if (data) {
@@ -114,7 +116,7 @@ const MoradorServicos = () => {
         const { data: profiles } = await supabase
           .rpc("get_prestador_profiles", { _user_ids: userIds }) as { data: { user_id: string; nome: string }[] | null };
 
-        const enriched: PrestadorResumo[] = data.map((p) => {
+        const enriched: PrestadorResumo[] = data.map((p: any) => {
           const profile = profiles?.find((pr) => pr.user_id === p.user_id);
           return {
             id: p.id,
@@ -122,6 +124,7 @@ const MoradorServicos = () => {
             descricao: p.descricao,
             user_id: p.user_id,
             nome: profile?.nome || "Prestador",
+            cover_url: p.cover_url || null,
           };
         });
 
@@ -207,6 +210,7 @@ const MoradorServicos = () => {
           nome: profile?.nome || "Prestador",
           telefone: profile?.telefone || null,
           avatar_url: profile?.avatar_url || null,
+          cover_url: p.cover_url,
           cupom: cupom ? { codigo: cupom.codigo, desconto_percent: cupom.desconto_percent } : null,
           servicos: prestadorServicos,
         };
@@ -292,15 +296,15 @@ const MoradorServicos = () => {
             </div>
           ) : (
             prestadoresCompletos.map((prestador) => (
-              <Card key={prestador.id} className="overflow-hidden">
-                {/* Cover image */}
-                <div className="relative h-[120px] overflow-hidden">
+              <Card key={prestador.id} className="overflow-hidden rounded-card shadow-md border-0">
+                {/* Cover image (custom do prestador, com fallback por categoria) */}
+                <div className="relative h-[140px] overflow-hidden bg-muted">
                   <img
-                    src={coverImages[prestador.especialidade] || coverImages.Jardinagem}
+                    src={prestador.cover_url || coverImages[prestador.especialidade] || coverImages.Jardinagem}
                     alt={prestador.especialidade}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent" />
                 </div>
 
                 <CardContent className="p-4 -mt-8 relative flex flex-col gap-3">
