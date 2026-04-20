@@ -188,22 +188,23 @@ const MasterBannerSolicitacoes = () => {
 
                   {s.status === "pendente" && (
                     <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        className="flex-1 gap-1"
-                        onClick={() => updateStatus(s.id, "aprovado")}
-                      >
+                      <Button size="sm" className="flex-1 gap-1" onClick={() => updateStatus(s.id, "aprovado")}>
                         <CreditCard size={14} /> Confirmar Pgto
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        className="flex-1 gap-1"
-                        onClick={() => updateStatus(s.id, "rejeitado")}
-                      >
+                      <Button size="sm" variant="destructive" className="flex-1 gap-1" onClick={() => updateStatus(s.id, "rejeitado")}>
                         <X size={14} /> Rejeitar
                       </Button>
                     </div>
+                  )}
+                  {s.status === "aprovado" && (
+                    <Button size="sm" className="w-full gap-1" onClick={() => updateStatus(s.id, "ativo")}>
+                      ✅ Publicar banner agora
+                    </Button>
+                  )}
+                  {s.status === "ativo" && (
+                    <p className="text-[11px] text-green-600 font-medium border-t border-border pt-2">
+                      ✅ Banner publicado e visível aos moradores
+                    </p>
                   )}
                 </CardContent>
               </Card>
