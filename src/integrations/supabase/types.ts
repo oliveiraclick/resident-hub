@@ -1651,6 +1651,92 @@ export type Database = {
           },
         ]
       }
+      prestador_condominios: {
+        Row: {
+          condominio_id: string
+          created_at: string
+          id: string
+          is_primeiro: boolean
+          pagamento_aprovado_em: string | null
+          pagamento_aprovado_por: string | null
+          pagamento_comprovante_url: string | null
+          pagamento_status: string | null
+          prestador_user_id: string
+          status: string
+          trial_fim: string | null
+          trial_inicio: string | null
+          updated_at: string
+          valor_mensal: number
+        }
+        Insert: {
+          condominio_id: string
+          created_at?: string
+          id?: string
+          is_primeiro?: boolean
+          pagamento_aprovado_em?: string | null
+          pagamento_aprovado_por?: string | null
+          pagamento_comprovante_url?: string | null
+          pagamento_status?: string | null
+          prestador_user_id: string
+          status?: string
+          trial_fim?: string | null
+          trial_inicio?: string | null
+          updated_at?: string
+          valor_mensal?: number
+        }
+        Update: {
+          condominio_id?: string
+          created_at?: string
+          id?: string
+          is_primeiro?: boolean
+          pagamento_aprovado_em?: string | null
+          pagamento_aprovado_por?: string | null
+          pagamento_comprovante_url?: string | null
+          pagamento_status?: string | null
+          prestador_user_id?: string
+          status?: string
+          trial_fim?: string | null
+          trial_inicio?: string | null
+          updated_at?: string
+          valor_mensal?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prestador_condominios_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prestador_precos: {
+        Row: {
+          chave_pix: string | null
+          id: string
+          tipo_chave_pix: string | null
+          trial_dias: number
+          updated_at: string
+          valor_mensal_condominio_extra: number
+        }
+        Insert: {
+          chave_pix?: string | null
+          id?: string
+          tipo_chave_pix?: string | null
+          trial_dias?: number
+          updated_at?: string
+          valor_mensal_condominio_extra?: number
+        }
+        Update: {
+          chave_pix?: string | null
+          id?: string
+          tipo_chave_pix?: string | null
+          trial_dias?: number
+          updated_at?: string
+          valor_mensal_condominio_extra?: number
+        }
+        Relationships: []
+      }
       prestadores: {
         Row: {
           codigo_indicacao: string | null
@@ -2082,6 +2168,7 @@ export type Database = {
         Returns: boolean
       }
       is_platform_admin: { Args: { p_user_id: string }; Returns: boolean }
+      is_trial_eligible: { Args: { _user_id: string }; Returns: boolean }
       search_prestadores_by_especialidade: {
         Args: { _condominio_id: string; _term: string }
         Returns: {

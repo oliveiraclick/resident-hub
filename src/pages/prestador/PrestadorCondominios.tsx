@@ -1,256 +1,239 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import PrestadorLayout from "@/components/PrestadorLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Building2, Users, Check, Plus, Loader2 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { Building2, Plus, Clock, DollarSign, Copy, Check, Loader2 } from "lucide-react";
+import { formatBRL } from "@/lib/utils";
 
-interface CondominioItem {
+interface Vinculo {
   id: string;
-  nome: string;
-  endereco: string | null;
-  logo_url: string | null;
-  totalMoradores: number;
-  jaInscrito: boolean;
-  assinaturaStatus: string | null;
+  condominio_id: string;
+  status: string;
+  is_primeiro: boolean;
+  trial_fim: string | null;
+  pagamento_status: string | null;
+  pagamento_comprovante_url: string | null;
+  valor_mensal: number;
+  condominio_nome?: string;
 }
 
+const statusBadge: Record<string, { label: string; cls: string }> = {
+  trial: { label: "🎁 Trial gratuito", cls: "bg-blue-100 text-blue-700" },
+  ativo: { label: "✅ Ativo", cls: "bg-green-100 text-green-700" },
+  pendente_pagamento: { label: "💳 Aguardando pagamento", cls: "bg-amber-100 text-amber-700" },
+  expirado: { label: "Expirado", cls: "bg-red-100 text-red-700" },
+};
+
 const PrestadorCondominios = () => {
-  const { user, roles } = useAuth();
-  const [condominios, setCondominios] = useState<CondominioItem[]>([]);
+  const { user } = useAuth();
+  const [vinculos, setVinculos] = useState<Vinculo[]>([]);
+  const [condominios, setCondominios] = useState<{ id: string; nome: string }[]>([]);
+  const [preco, setPreco] = useState<{ valor_mensal_condominio_extra: number; chave_pix: string | null; tipo_chave_pix: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
-  const [adding, setAdding] = useState<string | null>(null);
-
-  const prestadorRoles = roles.filter((r) => r.role === "prestador");
-  const meuCondominioIds = prestadorRoles.map((r) => r.condominio_id);
-
-  useEffect(() => {
-    if (!user) return;
-    fetchData();
-  }, [user]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedCond, setSelectedCond] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [comprovanteFile, setComprovanteFile] = useState<File | null>(null);
+  const [pagamentoDialog, setPagamentoDialog] = useState<Vinculo | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const fetchData = async () => {
+    if (!user) return;
     setLoading(true);
-    try {
-      // Buscar todos os condomínios
-      const { data: conds } = await supabase
-        .from("condominios")
-        .select("id, nome, endereco, logo_url")
-        .order("nome");
-
-      // Buscar contagem de moradores via RPC segura
-      const { data: countsData } = await supabase.rpc("get_condominio_morador_counts");
-
-      // Buscar prestadores do usuário atual
-      const { data: meusPrestadores } = await supabase
-        .from("prestadores")
-        .select("id, condominio_id")
-        .eq("user_id", user!.id);
-
-      // Buscar assinaturas do prestador
-      const prestadorIds = (meusPrestadores || []).map((p) => p.id);
-      let assinaturas: any[] = [];
-      if (prestadorIds.length > 0) {
-        const { data } = await supabase
-          .from("assinaturas_prestador")
-          .select("prestador_id, condominio_id, status")
-          .in("prestador_id", prestadorIds);
-        assinaturas = data || [];
-      }
-
-      const inscritosCondIds = (meusPrestadores || []).map((p) => p.condominio_id);
-
-      const list: CondominioItem[] = (conds || []).map((c) => {
-        const countRow = (countsData || []).find((r: any) => r.condominio_id === c.id);
-        const moradores = countRow ? Number(countRow.total) : 0;
-        const jaInscrito = inscritosCondIds.includes(c.id);
-        const assinatura = assinaturas.find((a) => a.condominio_id === c.id);
-        return {
-          ...c,
-          totalMoradores: moradores,
-          jaInscrito,
-          assinaturaStatus: assinatura?.status || null,
-        };
-      });
-
-      setCondominios(list);
-    } catch (e) {
-      console.error("fetchData error", e);
-    }
+    const [{ data: vincs }, { data: conds }, { data: precoData }] = await Promise.all([
+      (supabase as any).from("prestador_condominios").select("*").eq("prestador_user_id", user.id).order("created_at"),
+      supabase.from("condominios").select("id, nome").order("nome"),
+      (supabase as any).from("prestador_precos").select("*").maybeSingle(),
+    ]);
+    if (precoData) setPreco(precoData);
+    const cMap: Record<string, string> = {};
+    conds?.forEach((c) => { cMap[c.id] = c.nome; });
+    setCondominios(conds || []);
+    setVinculos((vincs || []).map((v: any) => ({ ...v, condominio_nome: cMap[v.condominio_id] || "—" })));
     setLoading(false);
   };
 
-  const handleSolicitar = async (condId: string) => {
-    if (!user) return;
-    setAdding(condId);
-    try {
-      // Buscar especialidade do prestador existente
-      const { data: meuPrestador } = await supabase
-        .from("prestadores")
-        .select("especialidade, descricao")
-        .eq("user_id", user.id)
-        .limit(1)
-        .single();
+  useEffect(() => { fetchData(); }, [user]);
 
-      if (!meuPrestador) {
-        toast.error("Perfil de prestador não encontrado");
-        setAdding(null);
-        return;
-      }
+  const condominiosDisponiveis = condominios.filter(
+    (c) => !vinculos.some((v) => v.condominio_id === c.id)
+  );
 
-      // Criar registro de prestador no novo condomínio
-      const { data: novoPrestador, error: errPrest } = await supabase
-        .from("prestadores")
-        .insert({
-          user_id: user.id,
-          condominio_id: condId,
-          especialidade: meuPrestador.especialidade,
-          descricao: meuPrestador.descricao,
-        })
-        .select("id")
-        .single();
-
-      if (errPrest) throw errPrest;
-
-      // Criar user_role para o novo condomínio
-      await supabase.from("user_roles").insert({
-        user_id: user.id,
-        role: "prestador",
-        condominio_id: condId,
-      });
-
-      // Criar assinatura trial
-      if (novoPrestador) {
-        await supabase.from("assinaturas_prestador").insert({
-          prestador_id: novoPrestador.id,
-          condominio_id: condId,
-          status: "trial",
-          valor_mensal: 24.90,
-        });
-      }
-
-      toast.success("Condomínio adicionado com sucesso!");
-      fetchData();
-    } catch (e: any) {
-      console.error("handleSolicitar error", e);
-      toast.error("Erro ao adicionar condomínio");
+  const solicitarNovo = async () => {
+    if (!user || !selectedCond) { toast.error("Selecione um condomínio"); return; }
+    setSubmitting(true);
+    const { data, error } = await (supabase as any).from("prestador_condominios")
+      .insert({ prestador_user_id: user.id, condominio_id: selectedCond })
+      .select().single();
+    setSubmitting(false);
+    if (error) { toast.error("Erro: " + error.message); return; }
+    setDialogOpen(false);
+    setSelectedCond("");
+    if (data.status === "trial") {
+      toast.success("🎉 Acesso liberado em modo trial!");
+    } else if (data.status === "ativo") {
+      toast.success("✅ Acesso liberado!");
+    } else {
+      toast.info("Solicitação criada. Realize o pagamento para liberar o acesso.");
+      setPagamentoDialog(data);
     }
-    setAdding(null);
+    fetchData();
   };
 
-  const totalAtivos = condominios.filter((c) => c.jaInscrito).length;
-
-  const getValor = (condId: string, jaInscrito: boolean) => {
-    if (jaInscrito) {
-      // Se é o único ativo, paga 29,90. Se tem mais, os extras pagam 24,90
-      // O primeiro inscrito paga 29,90, os demais 24,90
-      const inscritos = condominios.filter((c) => c.jaInscrito);
-      const idx = inscritos.findIndex((c) => c.id === condId);
-      return idx === 0 ? 29.90 : 24.90;
+  const enviarComprovante = async () => {
+    if (!comprovanteFile || !pagamentoDialog) return;
+    setSubmitting(true);
+    const path = `assinaturas/${pagamentoDialog.id}.${comprovanteFile.name.split(".").pop()}`;
+    const { error: upErr } = await supabase.storage.from("recibos").upload(path, comprovanteFile, { upsert: true });
+    if (upErr) { toast.error("Erro no upload"); setSubmitting(false); return; }
+    const { data: urlData } = supabase.storage.from("recibos").getPublicUrl(path);
+    const { error } = await (supabase as any).from("prestador_condominios")
+      .update({ pagamento_comprovante_url: urlData.publicUrl }).eq("id", pagamentoDialog.id);
+    setSubmitting(false);
+    if (error) toast.error("Erro: " + error.message);
+    else {
+      toast.success("Comprovante enviado! Aguarde aprovação.");
+      setPagamentoDialog(null);
+      setComprovanteFile(null);
+      fetchData();
     }
-    // Novo: se já tem pelo menos 1 ativo, o próximo é 24,90
-    return totalAtivos >= 1 ? 24.90 : 29.90;
+  };
+
+  const copyPix = () => {
+    if (preco?.chave_pix) {
+      navigator.clipboard.writeText(preco.chave_pix);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   return (
-    <PrestadorLayout title="Condomínios" showBack>
-      <div className="flex flex-col gap-4">
-        <p className="text-sm text-muted-foreground">
-          Escolha os condomínios onde deseja oferecer seus serviços e produtos.
-        </p>
+    <PrestadorLayout title="Meus Condomínios" showBack>
+      <div className="flex flex-col gap-4 max-w-2xl mx-auto">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-semibold">Condomínios atendidos</h2>
+          <Button size="sm" onClick={() => setDialogOpen(true)} className="gap-1.5">
+            <Plus size={14} /> Novo
+          </Button>
+        </div>
 
         {loading ? (
-          <div className="flex justify-center py-12">
-            <Loader2 className="animate-spin text-primary" size={32} />
-          </div>
+          <div className="flex justify-center py-12"><Loader2 className="animate-spin text-primary" size={28} /></div>
+        ) : vinculos.length === 0 ? (
+          <Card><CardContent className="p-6 text-center text-sm text-muted-foreground">
+            Você ainda não está vinculado a nenhum condomínio. Clique em "Novo" para começar — o primeiro vem com período de avaliação gratuito.
+          </CardContent></Card>
         ) : (
-          <>
-            {/* Cards resumo */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-2xl border border-border bg-card p-4 text-center" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}>
-                <Building2 size={20} className="text-primary mx-auto mb-1.5" />
-                <p className="text-[22px] font-extrabold text-foreground">{condominios.length}</p>
-                <p className="text-[11px] text-muted-foreground font-medium">Condomínios</p>
-              </div>
-              <div className="rounded-2xl border border-border bg-card p-4 text-center" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}>
-                <Users size={20} className="text-primary mx-auto mb-1.5" />
-                <p className="text-[22px] font-extrabold text-foreground">
-                  {condominios.reduce((sum, c) => sum + c.totalMoradores, 0)}
-                </p>
-                <p className="text-[11px] text-muted-foreground font-medium">Moradores cadastrados</p>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-3">
-            {condominios.map((c) => (
-              <div
-                key={c.id}
-                className="rounded-2xl border border-border bg-card p-4"
-                style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}
-              >
-                <div className="flex items-start gap-3">
-                  {/* Logo / Ícone */}
-                  <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                    {c.logo_url ? (
-                      <img src={c.logo_url} alt={c.nome} className="w-full h-full object-cover" />
-                    ) : (
-                      <Building2 size={22} className="text-primary" />
-                    )}
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-[15px] font-bold text-foreground truncate">{c.nome}</h3>
-                    {c.endereco && (
-                      <p className="text-[12px] text-muted-foreground truncate mt-0.5">{c.endereco}</p>
-                    )}
-                    <div className="flex items-center gap-1.5 mt-2">
-                      <Users size={13} className="text-primary" />
-                      <span className="text-[12px] font-semibold text-primary">
-                        {c.totalMoradores} morador{c.totalMoradores !== 1 ? "es" : ""}
-                      </span>
+          <div className="space-y-2">
+            {vinculos.map((v) => {
+              const st = statusBadge[v.status] || statusBadge.expirado;
+              return (
+                <Card key={v.id}>
+                  <CardContent className="p-3 space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="text-sm font-semibold flex items-center gap-1.5">
+                          <Building2 size={14} className="text-primary" /> {v.condominio_nome}
+                        </p>
+                        {v.is_primeiro && <span className="text-[10px] text-muted-foreground">Primeiro condomínio</span>}
+                      </div>
+                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${st.cls}`}>{st.label}</span>
                     </div>
-                  </div>
-
-                  {/* Ação */}
-                  <div className="flex-shrink-0 flex flex-col items-end gap-1">
-                    {c.jaInscrito ? (
-                      <Badge variant="secondary" className="gap-1 bg-primary/10 text-primary border-0">
-                        <Check size={12} /> Ativo
-                      </Badge>
-                    ) : (
-                      <Button
-                        size="sm"
-                        onClick={() => handleSolicitar(c.id)}
-                        disabled={adding === c.id}
-                        className="gap-1 rounded-xl text-xs h-8"
-                      >
-                        {adding === c.id ? (
-                          <Loader2 size={14} className="animate-spin" />
-                        ) : (
-                          <Plus size={14} />
-                        )}
-                        Adicionar
+                    <div className="flex flex-wrap gap-3 text-[11px] text-muted-foreground">
+                      {v.trial_fim && v.status === "trial" && (
+                        <span className="flex items-center gap-1"><Clock size={11} /> Até {new Date(v.trial_fim).toLocaleDateString("pt-BR")}</span>
+                      )}
+                      {v.valor_mensal > 0 && (
+                        <span className="flex items-center gap-1"><DollarSign size={11} /> R$ {formatBRL(v.valor_mensal)}/mês</span>
+                      )}
+                    </div>
+                    {v.status === "pendente_pagamento" && !v.pagamento_comprovante_url && (
+                      <Button size="sm" className="w-full" onClick={() => setPagamentoDialog(v)}>
+                        💳 Realizar pagamento
                       </Button>
                     )}
-                    <span className="text-[11px] font-semibold text-primary">
-                      R$ {getValor(c.id, c.jaInscrito).toFixed(2).replace(".", ",")}/mês
-                    </span>
+                    {v.pagamento_comprovante_url && v.status === "pendente_pagamento" && (
+                      <p className="text-[11px] text-amber-700 bg-amber-50 px-2 py-1.5 rounded">
+                        ⏳ Comprovante enviado, aguardando aprovação do administrador.
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Dialog Novo Condomínio */}
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogContent className="max-w-[400px]">
+            <DialogHeader>
+              <DialogTitle>Novo condomínio</DialogTitle>
+              <DialogDescription className="text-xs">
+                {vinculos.length === 0
+                  ? "Seu primeiro condomínio inclui período de avaliação gratuito."
+                  : `Condomínios adicionais têm cobrança mensal de R$ ${preco ? formatBRL(preco.valor_mensal_condominio_extra) : "—"}.`}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-3">
+              <div>
+                <Label className="text-xs">Condomínio *</Label>
+                <Select value={selectedCond} onValueChange={setSelectedCond}>
+                  <SelectTrigger className="mt-1"><SelectValue placeholder="Selecione" /></SelectTrigger>
+                  <SelectContent>
+                    {condominiosDisponiveis.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button onClick={solicitarNovo} disabled={submitting || !selectedCond} className="w-full">
+                {submitting ? "Enviando…" : "Solicitar acesso"}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Dialog Pagamento Pix */}
+        <Dialog open={!!pagamentoDialog} onOpenChange={(o) => !o && setPagamentoDialog(null)}>
+          <DialogContent className="max-w-[400px]">
+            <DialogHeader>
+              <DialogTitle>Pagamento via Pix</DialogTitle>
+              <DialogDescription className="text-xs">
+                Pague R$ {pagamentoDialog ? formatBRL(pagamentoDialog.valor_mensal) : "—"} e envie o comprovante.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-3">
+              {preco?.chave_pix ? (
+                <div className="p-3 rounded-lg bg-muted/50 border border-border space-y-2">
+                  <p className="text-[11px] text-muted-foreground">Chave Pix ({preco.tipo_chave_pix || "—"}):</p>
+                  <div className="flex items-center gap-2">
+                    <code className="flex-1 text-sm font-mono break-all">{preco.chave_pix}</code>
+                    <Button size="sm" variant="outline" onClick={copyPix} className="gap-1">
+                      {copied ? <><Check size={12} /> Copiado</> : <><Copy size={12} /> Copiar</>}
+                    </Button>
                   </div>
                 </div>
-
-                {/* Info trial para não inscritos */}
-                {!c.jaInscrito && (
-                  <p className="text-[11px] text-muted-foreground mt-2 ml-[60px]">
-                    60 dias grátis para testar
-                  </p>
-                )}
+              ) : (
+                <p className="text-xs text-destructive">Chave Pix ainda não configurada. Contate o administrador.</p>
+              )}
+              <div>
+                <Label className="text-xs">Comprovante (imagem) *</Label>
+                <Input className="mt-1" type="file" accept="image/*" onChange={(e) => setComprovanteFile(e.target.files?.[0] || null)} />
               </div>
-            ))}
+              <Button onClick={enviarComprovante} disabled={submitting || !comprovanteFile} className="w-full">
+                {submitting ? "Enviando…" : "Enviar comprovante"}
+              </Button>
             </div>
-          </>
-        )}
+          </DialogContent>
+        </Dialog>
       </div>
     </PrestadorLayout>
   );

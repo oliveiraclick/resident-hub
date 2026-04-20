@@ -16,6 +16,7 @@ import MasterNoticiasCategorias from "./MasterNoticiasCategorias";
 import MasterLogs from "./MasterLogs";
 import MasterSimulacao from "./MasterSimulacao";
 import MasterObservabilidade from "./MasterObservabilidade";
+import MasterPrestadoresAssinaturas from "./MasterPrestadoresAssinaturas";
 
 const MasterDashboard = () => {
   return (
@@ -37,6 +38,7 @@ const MasterDashboard = () => {
       <Route path="/logs" element={<MasterLogs />} />
       <Route path="/simulacao" element={<MasterSimulacao />} />
       <Route path="/observabilidade" element={<MasterObservabilidade />} />
+      <Route path="/prestadores-assinaturas" element={<MasterPrestadoresAssinaturas />} />
     </Routes>
   );
 };
