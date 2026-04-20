@@ -54,8 +54,8 @@ const CadastroPrestador = () => {
   const [showScanner, setShowScanner] = useState(false);
 
   useEffect(() => {
-    supabase.from("condominios").select("id, nome").order("nome").then(({ data }) => {
-      if (data) setCondominios(data);
+    supabase.rpc("get_condominios_for_registration").then(({ data }) => {
+      if (data) setCondominios(data as any);
     });
   }, []);
 
