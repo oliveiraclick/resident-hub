@@ -33,6 +33,7 @@ interface Preco {
   trial_dias: number;
   chave_pix: string | null;
   tipo_chave_pix: string | null;
+  link_pagamento_automatico: string | null;
 }
 
 const statusBadge: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
@@ -91,6 +92,7 @@ const MasterPrestadoresAssinaturas = () => {
       trial_dias: preco.trial_dias,
       chave_pix: preco.chave_pix,
       tipo_chave_pix: preco.tipo_chave_pix,
+      link_pagamento_automatico: preco.link_pagamento_automatico,
       updated_at: new Date().toISOString(),
     }).eq("id", preco.id);
     setSaving(false);
@@ -158,6 +160,17 @@ const MasterPrestadoresAssinaturas = () => {
                     value={preco.tipo_chave_pix || ""}
                     onChange={(e) => setPreco({ ...preco, tipo_chave_pix: e.target.value })}
                   />
+                </div>
+                <div className="col-span-2">
+                  <Label className="text-xs">Link de pagamento automático (Kiwify, Stripe, etc.)</Label>
+                  <Input
+                    className="mt-1" placeholder="https://pay.kiwify.com.br/..."
+                    value={preco.link_pagamento_automatico || ""}
+                    onChange={(e) => setPreco({ ...preco, link_pagamento_automatico: e.target.value })}
+                  />
+                  <p className="text-[10px] text-muted-foreground mt-1">
+                    Quando preenchido, o prestador verá um botão "Pagar agora" que abre este link de cobrança recorrente.
+                  </p>
                 </div>
               </div>
               <Button size="sm" onClick={savePreco} disabled={saving} className="gap-1.5">

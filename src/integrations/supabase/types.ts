@@ -1714,6 +1714,7 @@ export type Database = {
         Row: {
           chave_pix: string | null
           id: string
+          link_pagamento_automatico: string | null
           tipo_chave_pix: string | null
           trial_dias: number
           updated_at: string
@@ -1722,6 +1723,7 @@ export type Database = {
         Insert: {
           chave_pix?: string | null
           id?: string
+          link_pagamento_automatico?: string | null
           tipo_chave_pix?: string | null
           trial_dias?: number
           updated_at?: string
@@ -1730,6 +1732,7 @@ export type Database = {
         Update: {
           chave_pix?: string | null
           id?: string
+          link_pagamento_automatico?: string | null
           tipo_chave_pix?: string | null
           trial_dias?: number
           updated_at?: string
