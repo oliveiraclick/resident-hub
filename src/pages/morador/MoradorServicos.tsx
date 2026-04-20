@@ -437,6 +437,20 @@ const MoradorServicos = () => {
                           </div>
                         ))}
                       </div>
+                      {prestador.totalAvaliacoes > 3 && (
+                        <button
+                          onClick={() =>
+                            setVerAvaliacoesDialog({
+                              nome: prestador.nome,
+                              avaliacoes: todasAvaliacoesPorPrestador[prestador.user_id] || [],
+                              media: prestador.mediaNota,
+                            })
+                          }
+                          className="text-[12px] font-semibold text-primary text-left w-fit"
+                        >
+                          Ver todas as {prestador.totalAvaliacoes} avaliações →
+                        </button>
+                      )}
                     </div>
                   )}
 
