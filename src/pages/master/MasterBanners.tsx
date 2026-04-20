@@ -207,6 +207,11 @@ const MasterBanners = () => {
                           {b.publico === "prestador" ? "🔧 Prestador" : b.publico === "todos" ? "👥 Todos" : "🏠 Morador"}
                         </span>
                       </div>
+                      {lastActions[b.id] && (
+                        <p className="text-[10px] text-muted-foreground mt-1">
+                          {formatAcao(lastActions[b.id].acao)} por <strong>{lastActions[b.id].ator_nome}</strong> em {new Date(lastActions[b.id].created_at).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" })}
+                        </p>
+                      )}
                     </div>
                     <div className="flex gap-1">
                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => toggleAtivo(b)}>
