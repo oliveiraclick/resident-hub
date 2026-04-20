@@ -552,6 +552,15 @@ const MoradorServicos = () => {
             condominioId={condominioId}
           />
         )}
+        {verAvaliacoesDialog && (
+          <AvaliacoesListDialog
+            open={!!verAvaliacoesDialog}
+            onOpenChange={(o) => !o && setVerAvaliacoesDialog(null)}
+            prestadorNome={verAvaliacoesDialog.nome}
+            avaliacoes={verAvaliacoesDialog.avaliacoes}
+            mediaNota={verAvaliacoesDialog.media}
+          />
+        )}
       </MoradorLayout>
     );
   }
