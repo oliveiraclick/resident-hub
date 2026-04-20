@@ -180,6 +180,12 @@ const MasterBannerSolicitacoes = () => {
                     />
                   )}
 
+                  {lastActions[s.id] && (
+                    <p className="text-[11px] text-muted-foreground border-t border-border pt-2">
+                      {formatAcao(lastActions[s.id].acao)} por <strong className="text-foreground">{lastActions[s.id].ator_nome}</strong> em {new Date(lastActions[s.id].created_at).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" })}
+                    </p>
+                  )}
+
                   {s.status === "pendente" && (
                     <div className="flex gap-2">
                       <Button
