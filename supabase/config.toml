@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.gerar-noticias]
 verify_jwt = false
+
+[functions.notify-avaliacao]
+verify_jwt = false
