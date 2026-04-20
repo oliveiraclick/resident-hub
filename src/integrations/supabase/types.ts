@@ -1744,6 +1744,7 @@ export type Database = {
         Row: {
           codigo_indicacao: string | null
           condominio_id: string
+          cover_url: string | null
           created_at: string
           descricao: string | null
           especialidade: string
@@ -1756,6 +1757,7 @@ export type Database = {
         Insert: {
           codigo_indicacao?: string | null
           condominio_id: string
+          cover_url?: string | null
           created_at?: string
           descricao?: string | null
           especialidade: string
@@ -1768,6 +1770,7 @@ export type Database = {
         Update: {
           codigo_indicacao?: string | null
           condominio_id?: string
+          cover_url?: string | null
           created_at?: string
           descricao?: string | null
           especialidade?: string
