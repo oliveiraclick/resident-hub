@@ -5,9 +5,10 @@ import { useSearchParams } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { Wrench, Search, MessageCircle, ArrowLeft, User, Ticket } from "lucide-react";
+import { Wrench, Search, MessageCircle, ArrowLeft, User, Ticket, Star } from "lucide-react";
 import { getIcon } from "@/lib/iconMap";
 import { Button } from "@/components/ui/button";
+import AvaliarPrestadorDialog from "@/components/AvaliarPrestadorDialog";
 
 import coverJardinagem from "@/assets/cover-jardinagem.jpg";
 import coverFaxina from "@/assets/cover-faxina.jpg";
@@ -67,7 +68,7 @@ interface PrestadorCompleto {
 }
 
 const MoradorServicos = () => {
-  const { roles } = useAuth();
+  const { user, roles } = useAuth();
   const condominioId = roles[0]?.condominio_id;
   const [searchParams, setSearchParams] = useSearchParams();
   const queryFromUrl = searchParams.get("q") || "";
@@ -82,6 +83,8 @@ const MoradorServicos = () => {
   const [loading, setLoading] = useState(true);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [solicitados, setSolicitados] = useState<Set<string>>(new Set());
+  const [avaliarDialog, setAvaliarDialog] = useState<{ userId: string; nome: string } | null>(null);
 
   // Fetch all prestadores for categories
   useEffect(() => {
@@ -222,7 +225,35 @@ const MoradorServicos = () => {
     fetchPrestadoresCompletos();
   }, [condominioId, selectedCategoria, allPrestadores, selectedNomeFilter]);
 
-  const openWhatsApp = (telefone: string, nome: string, especialidade: string, cupom?: CupomInfo | null) => {
+  // Carrega solicitações já feitas (para habilitar botão Avaliar)
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("solicitacoes_servico")
+      .select("prestador_user_id")
+      .eq("morador_id", user.id)
+      .then(({ data }) => {
+        setSolicitados(new Set((data || []).map((s) => s.prestador_user_id)));
+      });
+  }, [user]);
+
+  const openWhatsApp = async (
+    prestadorUserId: string,
+    telefone: string,
+    nome: string,
+    especialidade: string,
+    cupom?: CupomInfo | null,
+  ) => {
+    // Registrar solicitação (idempotente via UNIQUE)
+    if (user && condominioId && !solicitados.has(prestadorUserId)) {
+      await supabase.from("solicitacoes_servico").insert({
+        morador_id: user.id,
+        prestador_user_id: prestadorUserId,
+        condominio_id: condominioId,
+      });
+      setSolicitados((prev) => new Set(prev).add(prestadorUserId));
+    }
+
     const cleaned = telefone.replace(/\D/g, "");
     const number = cleaned.startsWith("55") ? cleaned : `55${cleaned}`;
     let text = `Olá ${nome}! Vi seu perfil de ${especialidade} no app do condomínio e gostaria de saber mais sobre seus serviços.`;
@@ -347,17 +378,41 @@ const MoradorServicos = () => {
                     )}
                   </div>
 
-                  {/* WhatsApp button */}
+                  {/* Ações: WhatsApp + Avaliar */}
                   {prestador.telefone ? (
-                    <Button
-                      onClick={() =>
-                        openWhatsApp(prestador.telefone!, prestador.nome, prestador.especialidade, prestador.cupom)
-                      }
-                      className="w-full rounded-xl gap-2 bg-[#25D366] hover:bg-[#1da851] text-white font-semibold"
-                    >
-                      <MessageCircle size={18} />
-                      Falar no WhatsApp
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() =>
+                          openWhatsApp(
+                            prestador.user_id,
+                            prestador.telefone!,
+                            prestador.nome,
+                            prestador.especialidade,
+                            prestador.cupom,
+                          )
+                        }
+                        className="flex-1 rounded-xl gap-2 bg-[#25D366] hover:bg-[#1da851] text-white font-semibold"
+                      >
+                        <MessageCircle size={18} />
+                        Falar no WhatsApp
+                      </Button>
+                      <Button
+                        variant="outline"
+                        disabled={!solicitados.has(prestador.user_id)}
+                        onClick={() =>
+                          setAvaliarDialog({ userId: prestador.user_id, nome: prestador.nome })
+                        }
+                        className="rounded-xl gap-1.5"
+                        title={
+                          solicitados.has(prestador.user_id)
+                            ? "Avaliar este prestador"
+                            : "Solicite um serviço (WhatsApp) antes de avaliar"
+                        }
+                      >
+                        <Star size={16} />
+                        Avaliar
+                      </Button>
+                    </div>
                   ) : (
                     <p className="text-[12px] text-muted-foreground text-center py-1">
                       Telefone não cadastrado
@@ -368,6 +423,15 @@ const MoradorServicos = () => {
             ))
           )}
         </div>
+        {avaliarDialog && condominioId && (
+          <AvaliarPrestadorDialog
+            open={!!avaliarDialog}
+            onOpenChange={(o) => !o && setAvaliarDialog(null)}
+            prestadorUserId={avaliarDialog.userId}
+            prestadorNome={avaliarDialog.nome}
+            condominioId={condominioId}
+          />
+        )}
       </MoradorLayout>
     );
   }

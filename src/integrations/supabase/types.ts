@@ -1985,6 +1985,30 @@ export type Database = {
           },
         ]
       }
+      solicitacoes_servico: {
+        Row: {
+          condominio_id: string
+          created_at: string
+          id: string
+          morador_id: string
+          prestador_user_id: string
+        }
+        Insert: {
+          condominio_id: string
+          created_at?: string
+          id?: string
+          morador_id: string
+          prestador_user_id: string
+        }
+        Update: {
+          condominio_id?: string
+          created_at?: string
+          id?: string
+          morador_id?: string
+          prestador_user_id?: string
+        }
+        Relationships: []
+      }
       sub_especialidades: {
         Row: {
           categoria_nome: string
