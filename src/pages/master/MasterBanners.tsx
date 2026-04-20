@@ -77,14 +77,14 @@ const MasterBanners = () => {
 
   const openNew = () => {
     setEditing(null);
-    setForm({ titulo: "", subtitulo: "", link: "", whatsapp: "", ativo: true, ordem: banners.length, publico: "prestador", condominio_id: condominios[0]?.id || "" });
+    setForm({ titulo: "", subtitulo: "", link: "", whatsapp: "", ativo: true, ordem: banners.length, publico: "prestador", condominio_id: condominios[0]?.id || "", origem: "mkt" });
     setImageFile(null);
     setDialogOpen(true);
   };
 
   const openEdit = (b: Banner) => {
     setEditing(b);
-    setForm({ titulo: b.titulo, subtitulo: b.subtitulo || "", link: b.link || "", whatsapp: b.whatsapp || "", ativo: b.ativo, ordem: b.ordem, publico: b.publico, condominio_id: b.condominio_id });
+    setForm({ titulo: b.titulo, subtitulo: b.subtitulo || "", link: b.link || "", whatsapp: b.whatsapp || "", ativo: b.ativo, ordem: b.ordem, publico: b.publico, condominio_id: b.condominio_id, origem: "mkt" });
     setImageFile(null);
     setDialogOpen(true);
   };
@@ -258,6 +258,21 @@ const MasterBanners = () => {
                     <SelectItem value="todos">👥 Todos</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+              <div>
+                <Label>Origem do banner *</Label>
+                <Select value={form.origem} onValueChange={(v) => setForm({ ...form, origem: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="mkt">🎁 MKT / Cortesia (sem pagamento)</SelectItem>
+                    <SelectItem value="pagamento">💳 Pago pelo anunciante</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-[10px] text-muted-foreground mt-1">
+                  {form.origem === "pagamento"
+                    ? "Use esta opção quando o anunciante pagou diretamente fora do fluxo de Solicitações."
+                    : "Banner institucional ou cortesia da plataforma — sem cobrança."}
+                </p>
               </div>
               <div>
                 <Label>Título *</Label>
