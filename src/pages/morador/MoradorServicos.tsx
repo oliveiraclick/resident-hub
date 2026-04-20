@@ -259,6 +259,20 @@ const MoradorServicos = () => {
         };
       });
 
+      // Build map of all avaliacoes per prestador (for "Ver mais")
+      const allAvalMap: Record<string, AvaliacaoItem[]> = {};
+      prestadoresFiltrados.forEach((p) => {
+        const todas = (avaliacoesRaw as any[])?.filter((a) => a.avaliado_id === p.user_id) || [];
+        allAvalMap[p.user_id] = todas.map((a) => ({
+          id: a.id,
+          nota: a.nota,
+          comentario: a.comentario,
+          created_at: a.created_at,
+          avaliador_nome: avaliadorMap[a.avaliador_id] || "Morador",
+        }));
+      });
+      setTodasAvaliacoesPorPrestador(allAvalMap);
+
       // If nome filter is present, filter by name
       if (selectedNomeFilter) {
         const nomeFilter = selectedNomeFilter.toLowerCase();
