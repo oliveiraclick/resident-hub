@@ -298,7 +298,7 @@ const Auth = () => {
             return isNative ? `App ${NATIVE_APP_VERSION} · Base ${APP_VERSION}` : `Web · Base ${APP_VERSION}`;
           })()}
         </p>
-        <p className="text-xs text-muted-foreground/50">app desenvolvido por ia&co. tecnologia</p>
+        <p className="text-xs text-muted-foreground/50">Desenvolvido por <a href="https://criative.pro" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors underline underline-offset-2">Criative.pro</a></p>
       </div>
     </div>
   );

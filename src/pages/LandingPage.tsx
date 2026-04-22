@@ -516,7 +516,7 @@ const LandingPage = () => {
         </div>
         <div className="max-w-7xl mx-auto px-6 mt-10 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
           <p className="text-xs text-white/40">{get("footer", "copyright", "© 2025 Morador.app. Todos os direitos reservados.")}</p>
-          <p className="text-xs text-white/40">{get("footer", "dev_by", "")}</p>
+          <p className="text-xs text-white/40">Desenvolvido por <a href="https://criative.pro" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors underline underline-offset-2">Criative.pro</a></p>
         </div>
       </footer>
     </div>
