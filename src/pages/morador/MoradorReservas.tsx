@@ -4,10 +4,9 @@ import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { CalendarCheck, Trash2, X, Users, DollarSign, Info, Home } from "lucide-react";
+import { CalendarCheck, Trash2, X, Users, DollarSign, Info, Home, Clock } from "lucide-react";
 
 interface Espaco {
   id: string;
@@ -39,10 +38,13 @@ const MoradorReservas = () => {
   const [loading, setLoading] = useState(true);
 
   const [selectedEspaco, setSelectedEspaco] = useState<Espaco | null>(null);
-  const [data, setData] = useState("");
+  const [data, setData] = useState(new Date().toISOString().split("T")[0]);
   const [horarioInicio, setHorarioInicio] = useState("");
   const [horarioFim, setHorarioFim] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  // For Quadra schedule
+  const [occupiedSlots, setOccupiedSlots] = useState<string[]>([]);
 
   const fetchData = async () => {
     if (!condominioId || !user) return;
@@ -73,9 +75,43 @@ const MoradorReservas = () => {
     fetchData();
   }, [condominioId, user]);
 
+  // Fetch occupied slots when quadra is selected or date changes
+  useEffect(() => {
+    const fetchOccupiedSlots = async () => {
+      if (selectedEspaco?.categoria === "quadra" && data) {
+        const { data: res } = await supabase
+          .from("reservas")
+          .select("horario_inicio")
+          .eq("espaco_id", selectedEspaco.id)
+          .eq("data", data)
+          .eq("status", "confirmada");
+        
+        setOccupiedSlots(res?.map(r => r.horario_inicio.slice(0, 5)) || []);
+      }
+    };
+    fetchOccupiedSlots();
+  }, [selectedEspaco, data]);
+
   const handleSubmit = async () => {
     if (!selectedEspaco || !data || !horarioInicio || !horarioFim || !user || !condominioId) return;
     setSubmitting(true);
+
+    // Rule for Quadra: 1 reservation per day per resident
+    if (selectedEspaco.categoria === "quadra") {
+      const { count } = await supabase
+        .from("reservas")
+        .select("id", { count: "exact", head: true })
+        .eq("morador_id", user.id)
+        .eq("espaco_id", selectedEspaco.id)
+        .eq("data", data)
+        .eq("status", "confirmada");
+
+      if (count && count > 0) {
+        toast.error("Você já possui uma reserva para esta quadra neste dia.");
+        setSubmitting(false);
+        return;
+      }
+    }
 
     const { error } = await supabase.from("reservas").insert({
       condominio_id: condominioId,
@@ -92,7 +128,6 @@ const MoradorReservas = () => {
     } else {
       toast.success("Reserva solicitada!");
       setSelectedEspaco(null);
-      setData("");
       setHorarioInicio("");
       setHorarioFim("");
       fetchData();
@@ -116,6 +151,18 @@ const MoradorReservas = () => {
     quadra: "Quadra",
     piscina: "Piscina",
     academia: "Academia",
+  };
+
+  const hours = Array.from({ length: 17 }, (_, i) => {
+    const hour = (i + 6).toString().padStart(2, '0');
+    return `${hour}:00`;
+  });
+
+  const selectSlot = (start: string) => {
+    setHorarioInicio(start);
+    const [h, m] = start.split(':');
+    const endHour = (parseInt(h) + 1).toString().padStart(2, '0');
+    setHorarioFim(`${endHour}:00`);
   };
 
   return (
@@ -214,39 +261,82 @@ const MoradorReservas = () => {
       {selectedEspaco && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setSelectedEspaco(null)}>
           <Card className="w-full max-w-md rounded-t-[var(--radius-card)] sm:rounded-[var(--radius-card)] max-h-[90vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
-            <CardContent className="flex flex-col gap-3 p-4">
+            <CardContent className="flex flex-col gap-4 p-5">
               <div className="flex items-center justify-between">
-                <p className="text-[14px] font-semibold text-foreground">Reservar {selectedEspaco.nome}</p>
-                <button onClick={() => setSelectedEspaco(null)}>
-                  <X size={18} className="text-muted-foreground" />
+                <div>
+                  <p className="text-[15px] font-bold text-foreground">Reservar {selectedEspaco.nome}</p>
+                  <p className="text-[11px] text-muted-foreground">{categoriaLabel[selectedEspaco.categoria]}</p>
+                </div>
+                <button onClick={() => setSelectedEspaco(null)} className="p-1 hover:bg-muted rounded-full">
+                  <X size={20} className="text-muted-foreground" />
                 </button>
               </div>
 
-              <div className="flex flex-col gap-1">
-                <label className="text-[12px] font-medium text-muted-foreground ml-1">Data</label>
-                <Input type="date" value={data} onChange={(e) => setData(e.target.value)} min={new Date().toISOString().split("T")[0]} />
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[12px] font-semibold text-foreground ml-1">Data da Reserva</label>
+                <Input type="date" value={data} onChange={(e) => setData(e.target.value)} min={new Date().toISOString().split("T")[0]} className="h-11" />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex flex-col gap-1">
-                  <label className="text-[12px] font-medium text-muted-foreground ml-1">Início</label>
-                  <Input type="time" value={horarioInicio} onChange={(e) => setHorarioInicio(e.target.value)} />
+              {selectedEspaco.categoria === "quadra" ? (
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-2 text-primary">
+                    <Clock size={16} />
+                    <span className="text-[13px] font-bold uppercase tracking-wide">Horários Disponíveis (1h cada)</span>
+                  </div>
+                  <div className="grid grid-cols-4 gap-2">
+                    {hours.map((h) => {
+                      const isOccupied = occupiedSlots.includes(h);
+                      const isSelected = horarioInicio === h;
+                      return (
+                        <button
+                          key={h}
+                          disabled={isOccupied}
+                          onClick={() => selectSlot(h)}
+                          className={`
+                            py-2.5 text-[13px] font-bold rounded-xl border transition-all
+                            ${isSelected ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 
+                              isOccupied ? 'bg-muted/50 text-muted-foreground border-transparent cursor-not-allowed opacity-50' : 
+                              'bg-card text-foreground border-border hover:border-primary/50'}
+                          `}
+                        >
+                          {h}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="text-[11px] text-muted-foreground text-center bg-muted/30 py-2 rounded-lg">
+                    * Limite de 1 horário por dia por morador.
+                  </p>
                 </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[12px] font-medium text-muted-foreground ml-1">Fim</label>
-                  <Input type="time" value={horarioFim} onChange={(e) => setHorarioFim(e.target.value)} />
-                </div>
-              </div>
-
-              {selectedEspaco.preco > 0 && (
-                <div className="flex items-center gap-2 bg-primary/5 rounded-lg p-3 text-[12px]">
-                  <DollarSign size={14} className="text-primary" />
-                  <span className="text-foreground">Taxa de locação: <strong>R$ {selectedEspaco.preco.toFixed(2)}</strong></span>
+              ) : (
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[12px] font-medium text-muted-foreground ml-1">Início</label>
+                    <Input type="time" value={horarioInicio} onChange={(e) => setHorarioInicio(e.target.value)} className="h-11" />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[12px] font-medium text-muted-foreground ml-1">Fim</label>
+                    <Input type="time" value={horarioFim} onChange={(e) => setHorarioFim(e.target.value)} className="h-11" />
+                  </div>
                 </div>
               )}
 
-              <Button onClick={handleSubmit} disabled={submitting || !data || !horarioInicio || !horarioFim}>
-                {submitting ? "Reservando..." : "Confirmar Reserva"}
+              {selectedEspaco.preco > 0 && (
+                <div className="flex items-center justify-between bg-primary/5 border border-primary/10 rounded-xl p-4 mt-2">
+                  <div className="flex items-center gap-2">
+                    <DollarSign size={16} className="text-primary" />
+                    <span className="text-[13px] font-medium text-foreground">Taxa de Locação</span>
+                  </div>
+                  <span className="text-[16px] font-extrabold text-primary">R$ {selectedEspaco.preco.toFixed(2)}</span>
+                </div>
+              )}
+
+              <Button 
+                onClick={handleSubmit} 
+                disabled={submitting || !data || !horarioInicio || !horarioFim} 
+                className="h-12 text-[15px] font-bold mt-2 shadow-xl shadow-primary/20"
+              >
+                {submitting ? "Reservando..." : "Confirmar Agendamento"}
               </Button>
             </CardContent>
           </Card>
