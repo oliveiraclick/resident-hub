@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "areas-availability": {
+      "verify_jwt": false
+    }
+  }
+}
