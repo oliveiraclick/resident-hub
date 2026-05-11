@@ -3,7 +3,7 @@ import { formatBRL } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import {
-  Package, ShoppingBag, Repeat, MapPin, ArrowRight, Sparkles, Wrench, UserCheck,
+  Package, ShoppingBag, Repeat, MapPin, ArrowRight, Sparkles, Wrench, UserCheck, CalendarCheck
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
@@ -281,6 +281,25 @@ const MoradorHome = () => {
       <EventoConviteBadge count={pendingInvitesCount} onClick={() => navigate("/morador/entre-amigos")} />
       <MissingPhotoModal />
       <div className="flex flex-col gap-7">
+        {/* ═══ ATALHO RESERVAS ═══ */}
+        <button
+          onClick={() => navigate("/morador/reservas")}
+          className="w-full text-left border-none cursor-pointer rounded-[22px] flex items-center gap-4 relative overflow-hidden active:scale-[0.98] transition-transform"
+          style={{
+            background: "linear-gradient(135deg, hsl(var(--primary)), #eab308)",
+            padding: "16px 20px",
+            boxShadow: "0 6px 20px rgba(0,0,0,0.1)",
+          }}
+        >
+          <div className="absolute -top-5 -right-5 w-24 h-24 rounded-full bg-white/10" />
+          <div className="h-[48px] w-[48px] rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0" style={{ backdropFilter: "blur(8px)" }}>
+            <CalendarCheck size={26} className="text-white" />
+          </div>
+          <div className="flex-1 relative z-[1]">
+            <p className="text-[17px] font-bold text-white m-0">Área de Reservas</p>
+            <p className="text-[11px] text-white/80 mt-0.5 m-0 uppercase tracking-wider font-semibold">Quiosques, Salões e Quadras →</p>
+          </div>
+        </button>
 
         {/* ═══ BANNER ═══ */}
         {banners.length > 0 && (
