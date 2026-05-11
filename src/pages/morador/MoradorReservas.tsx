@@ -166,7 +166,15 @@ const MoradorReservas = () => {
   };
 
   return (
-    <MoradorLayout title="Reservas">
+    <MoradorLayout title="Reservas" showBack>
+      <div className="flex flex-col items-center justify-center text-center gap-3 py-20">
+        <CalendarCheck size={48} className="text-muted-foreground" />
+        <h2 className="text-[18px] font-bold text-foreground">Em breve</h2>
+        <p className="text-[13px] text-muted-foreground max-w-xs">
+          A área de reservas está em fase de testes e ficará disponível em breve.
+        </p>
+      </div>
+      {false && (
       <div className="flex flex-col gap-5 pb-6">
         {/* Header */}
         <div>
@@ -256,6 +264,7 @@ const MoradorReservas = () => {
           </>
         )}
       </div>
+      )}
 
       {/* Modal Form */}
       {selectedEspaco && (
