@@ -294,9 +294,11 @@ const MoradorReservas = () => {
                 <CardContent className="p-4 flex flex-col gap-2">
                   <div className="flex items-start justify-between gap-2">
                     <h3 className="text-[15px] font-bold text-foreground">{e.nome}</h3>
-                    <p className="text-[16px] font-extrabold text-primary whitespace-nowrap">
-                      {e.preco > 0 ? `R$ ${e.preco.toFixed(2)}` : "Grátis"}
-                    </p>
+                    {e.categoria !== "quadra" && (
+                      <p className="text-[16px] font-extrabold text-primary whitespace-nowrap">
+                        {e.preco > 0 ? `R$ ${e.preco.toFixed(2)}` : "Grátis"}
+                      </p>
+                    )}
                   </div>
                   {e.descricao && <p className="text-[12px] text-muted-foreground">{e.descricao}</p>}
                   <div className="flex flex-wrap gap-3 text-[11px] text-muted-foreground font-medium mt-1">
@@ -419,7 +421,7 @@ const MoradorReservas = () => {
                 </div>
               )}
 
-              {selectedEspaco.preco > 0 && (
+              {selectedEspaco.preco > 0 && selectedEspaco.categoria !== "quadra" && (
                 <div className="flex items-center justify-between bg-primary/5 border border-primary/10 rounded-xl p-4 mt-2">
                   <div className="flex items-center gap-2">
                     <DollarSign size={16} className="text-primary" />

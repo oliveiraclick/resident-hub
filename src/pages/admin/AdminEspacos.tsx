@@ -92,7 +92,7 @@ const AdminEspacos = () => {
       categoria,
       descricao,
       capacidade: capacidade ? parseInt(capacidade) : null,
-      preco: parseFloat(preco) || 0,
+      preco: categoria === "quadra" ? 0 : (parseFloat(preco) || 0),
       regras,
       imagem_url: imagemUrl,
     };
@@ -188,10 +188,12 @@ const AdminEspacos = () => {
                   <label className="text-[12px] font-medium text-muted-foreground ml-1">Capacidade (Pessoas)</label>
                   <Input type="number" value={capacidade} onChange={(e) => setCapacidade(e.target.value)} placeholder="0" />
                 </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[12px] font-medium text-muted-foreground ml-1">Preço Locação (R$)</label>
-                  <Input type="number" value={preco} onChange={(e) => setPreco(e.target.value)} placeholder="0.00" />
-                </div>
+                {categoria !== "quadra" && (
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[12px] font-medium text-muted-foreground ml-1">Preço Locação (R$)</label>
+                    <Input type="number" value={preco} onChange={(e) => setPreco(e.target.value)} placeholder="0.00" />
+                  </div>
+                )}
               </div>
 
               <div className="flex flex-col gap-1">
@@ -251,9 +253,11 @@ const AdminEspacos = () => {
                         <span className="flex items-center gap-1">
                           Capacidade: <span className="text-foreground">{e.capacidade || "—"}</span>
                         </span>
-                        <span className="flex items-center gap-1">
-                          Preço: <span className="text-primary font-bold">R$ {e.preco.toFixed(2)}</span>
-                        </span>
+                        {e.categoria !== "quadra" && (
+                          <span className="flex items-center gap-1">
+                            Preço: <span className="text-primary font-bold">R$ {e.preco.toFixed(2)}</span>
+                          </span>
+                        )}
                       </div>
                     </div>
                   </CardContent>
