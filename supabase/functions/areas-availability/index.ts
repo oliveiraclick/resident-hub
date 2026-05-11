@@ -17,18 +17,11 @@ serve(async (req) => {
     const authHeader = req.headers.get('Authorization')?.trim();
     const externalToken = Deno.env.get('EXTERNAL_AI_API_KEY')?.trim();
 
-    if (externalToken) {
-      console.log(`Debug: Secret found. Length: ${externalToken.length}, Starts with: ${externalToken.substring(0, 3)}...`);
-    } else {
-      console.error('CRITICAL: EXTERNAL_AI_API_KEY secret is not set!');
-    }
-
     const isValid = authHeader === `Bearer ${externalToken}` || 
                     authHeader === externalToken ||
                     (authHeader?.startsWith('Bearer ') && authHeader.slice(7) === externalToken);
 
     if (!authHeader || !isValid) {
-      console.log(`Unauthorized. Header length: ${authHeader?.length}, Match: ${isValid}`);
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
