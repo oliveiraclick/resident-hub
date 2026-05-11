@@ -165,13 +165,102 @@ const MoradorReservas = () => {
     setHorarioFim(`${endHour}:59:50`);
   };
 
+  // ─────── Pré-reservas pendentes (criadas pela IA via WhatsApp) ───────
+  const [preReservas, setPreReservas] = useState<any[]>([]);
+  const [now, setNow] = useState(Date.now());
+
+  const fetchPreReservas = async () => {
+    if (!user) return;
+    const { data: rows } = await supabase
+      .from("reservas")
+      .select("id, espaco_id, data, horario_inicio, horario_fim, expira_em, espacos(nome)")
+      .eq("morador_id", user.id)
+      .eq("status", "pre_reserva")
+      .order("expira_em", { ascending: true });
+    const validas = (rows || []).filter((r: any) => r.expira_em && new Date(r.expira_em).getTime() > Date.now());
+    setPreReservas(validas);
+  };
+
+  useEffect(() => {
+    fetchPreReservas();
+    const i = setInterval(() => {
+      setNow(Date.now());
+      fetchPreReservas();
+    }, 15000);
+    return () => clearInterval(i);
+  }, [user]);
+
+  const confirmarPreReserva = async (id: string) => {
+    const { error } = await supabase
+      .from("reservas")
+      .update({ status: "confirmada", expira_em: null })
+      .eq("id", id);
+    if (error) toast.error("Erro ao confirmar");
+    else {
+      toast.success("Reserva confirmada!");
+      fetchPreReservas();
+      fetchData();
+    }
+  };
+
+  const cancelarPreReserva = async (id: string) => {
+    const { error } = await supabase.from("reservas").delete().eq("id", id);
+    if (error) toast.error("Erro ao cancelar");
+    else {
+      toast.success("Pré-reserva cancelada");
+      fetchPreReservas();
+    }
+  };
+
+  const formatRestante = (expira: string) => {
+    const ms = new Date(expira).getTime() - now;
+    if (ms <= 0) return "expirado";
+    const min = Math.floor(ms / 60000);
+    const sec = Math.floor((ms % 60000) / 1000);
+    return `${min}m ${sec.toString().padStart(2, "0")}s`;
+  };
+
   return (
     <MoradorLayout title="Reservas" showBack>
-      <div className="flex flex-col items-center justify-center text-center gap-3 py-20">
+      {preReservas.length > 0 && (
+        <div className="flex flex-col gap-3 mb-6">
+          <h2 className="text-[15px] font-bold text-foreground">Pré-reservas aguardando confirmação</h2>
+          {preReservas.map((p) => (
+            <Card key={p.id} className="border-primary/40 bg-primary/5">
+              <CardContent className="flex flex-col gap-3 p-4">
+                <div className="flex items-start gap-3">
+                  <div className="h-10 w-10 rounded-2xl bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <Clock size={18} className="text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[14px] font-bold text-foreground">{p.espacos?.nome || "Espaço"}</p>
+                    <p className="text-[12px] text-muted-foreground">
+                      {new Date(p.data + "T00:00:00").toLocaleDateString("pt-BR")} · {p.horario_inicio?.slice(0, 5)} - {p.horario_fim?.slice(0, 5)}
+                    </p>
+                    <p className="text-[11px] font-semibold text-primary mt-1">
+                      Solicitada via WhatsApp · expira em {formatRestante(p.expira_em)}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button size="sm" className="flex-1" onClick={() => confirmarPreReserva(p.id)}>
+                    Confirmar reserva
+                  </Button>
+                  <Button size="sm" variant="outline" className="flex-1" onClick={() => cancelarPreReserva(p.id)}>
+                    Cancelar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      <div className="flex flex-col items-center justify-center text-center gap-3 py-12">
         <CalendarCheck size={48} className="text-muted-foreground" />
         <h2 className="text-[18px] font-bold text-foreground">Em breve</h2>
         <p className="text-[13px] text-muted-foreground max-w-xs">
-          A área de reservas está em fase de testes e ficará disponível em breve.
+          A área de reservas está em fase de testes. Pré-reservas solicitadas pela IA do condomínio aparecem aqui para você confirmar.
         </p>
       </div>
       {false && (

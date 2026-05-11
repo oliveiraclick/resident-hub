@@ -11,3 +11,5 @@ verify_jwt = false
 
 [functions.notify-avaliacao]
 verify_jwt = false
+[functions.pre-reserva]
+verify_jwt = false
