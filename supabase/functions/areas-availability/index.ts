@@ -14,17 +14,19 @@ serve(async (req) => {
   }
 
   try {
-    const authHeader = req.headers.get('Authorization')
-    const externalToken = Deno.env.get('EXTERNAL_AI_API_KEY')
+    const authHeader = req.headers.get('Authorization')?.trim();
+    const externalToken = Deno.env.get('EXTERNAL_AI_API_KEY')?.trim();
 
     if (!externalToken) {
       console.error('CRITICAL: EXTERNAL_AI_API_KEY secret is not set in the environment!');
     }
 
-    const isValid = authHeader === `Bearer ${externalToken}` || authHeader === externalToken;
+    const isValid = authHeader === `Bearer ${externalToken}` || 
+                    authHeader === externalToken ||
+                    (authHeader?.startsWith('Bearer ') && authHeader.slice(7) === externalToken);
 
     if (!authHeader || !isValid) {
-      console.log('Unauthorized access attempt. Auth header:', authHeader ? 'Present' : 'Missing', 'Match:', isValid);
+      console.log(`Unauthorized. Header present: ${!!authHeader}, Token set: ${!!externalToken}, Match: ${isValid}`);
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
