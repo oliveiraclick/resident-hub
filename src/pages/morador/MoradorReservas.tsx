@@ -161,8 +161,8 @@ const MoradorReservas = () => {
   const selectSlot = (start: string) => {
     setHorarioInicio(start);
     const [h, m] = start.split(':');
-    const endHour = (parseInt(h) + 1).toString().padStart(2, '0');
-    setHorarioFim(`${endHour}:00`);
+    const endHour = parseInt(h).toString().padStart(2, '0');
+    setHorarioFim(`${endHour}:59:50`);
   };
 
   return (

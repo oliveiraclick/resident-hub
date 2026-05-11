@@ -53,12 +53,17 @@ serve(async (req) => {
 
     if (areasError) throw areasError
 
-    // 2. Get reservations for that date
+    // 2. Get reservations for that date/time
+    const now = new Date()
+    const currentTime = now.toLocaleTimeString('pt-BR', { hour12: false })
+
     const { data: reservations, error: resError } = await supabaseClient
       .from('reservas')
       .select('espaco_id, status')
       .eq('data', date)
       .eq('status', 'confirmada')
+      .lte('horario_inicio', currentTime)
+      .gte('horario_fim', currentTime)
 
     if (resError) throw resError
 
