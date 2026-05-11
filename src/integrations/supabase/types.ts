@@ -809,7 +809,10 @@ export type Database = {
           created_at: string
           descricao: string | null
           id: string
+          imagem_url: string | null
           nome: string
+          preco: number | null
+          regras: string | null
         }
         Insert: {
           capacidade?: number | null
@@ -818,7 +821,10 @@ export type Database = {
           created_at?: string
           descricao?: string | null
           id?: string
+          imagem_url?: string | null
           nome: string
+          preco?: number | null
+          regras?: string | null
         }
         Update: {
           capacidade?: number | null
@@ -827,7 +833,10 @@ export type Database = {
           created_at?: string
           descricao?: string | null
           id?: string
+          imagem_url?: string | null
           nome?: string
+          preco?: number | null
+          regras?: string | null
         }
         Relationships: [
           {
