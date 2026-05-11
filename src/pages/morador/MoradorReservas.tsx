@@ -264,6 +264,7 @@ const MoradorReservas = () => {
           </>
         )}
       </div>
+      )}
 
       {/* Modal Form */}
       {selectedEspaco && (
