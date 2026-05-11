@@ -28,7 +28,7 @@ interface Reserva {
 
 const MoradorReservas = () => {
   const { user, roles } = useAuth();
-  const condominioId = roles[0]?.condominio_id;
+  const condominioId = roles.find((r) => r.role === "morador")?.condominio_id || roles[0]?.condominio_id;
 
   const [espacos, setEspacos] = useState<Espaco[]>([]);
   const [reservas, setReservas] = useState<Reserva[]>([]);
