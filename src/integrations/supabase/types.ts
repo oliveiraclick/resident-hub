@@ -804,6 +804,7 @@ export type Database = {
       espacos: {
         Row: {
           capacidade: number | null
+          categoria: string | null
           condominio_id: string
           created_at: string
           descricao: string | null
@@ -812,6 +813,7 @@ export type Database = {
         }
         Insert: {
           capacidade?: number | null
+          categoria?: string | null
           condominio_id: string
           created_at?: string
           descricao?: string | null
@@ -820,6 +822,7 @@ export type Database = {
         }
         Update: {
           capacidade?: number | null
+          categoria?: string | null
           condominio_id?: string
           created_at?: string
           descricao?: string | null
