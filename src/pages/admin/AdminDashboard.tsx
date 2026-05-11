@@ -12,6 +12,7 @@ import Retirada from "./encomendas/Retirada";
 import Historico from "./encomendas/Historico";
 import AdminBanners from "./AdminBanners";
 import AdminAvisos from "./AdminAvisos";
+import AdminEspacos from "./AdminEspacos";
 
 const AdminDashboard = () => {
   return (
@@ -29,6 +30,7 @@ const AdminDashboard = () => {
       <Route path="avisos" element={<AdminAvisos />} />
       <Route path="configuracoes" element={<AdminConfiguracoes />} />
       <Route path="perfil" element={<AdminPerfil />} />
+      <Route path="espacos" element={<AdminEspacos />} />
     </Routes>
   );
 };

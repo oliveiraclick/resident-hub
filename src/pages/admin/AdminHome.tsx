@@ -1,5 +1,5 @@
 import AdminLayout from "@/components/AdminLayout";
-import { Package, DollarSign, Users, Settings, Image, Megaphone } from "lucide-react";
+import { Package, DollarSign, Users, Settings, Image, Megaphone, CalendarCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const cards = [
