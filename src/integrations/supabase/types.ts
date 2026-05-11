@@ -1907,6 +1907,7 @@ export type Database = {
           created_at: string
           data: string
           espaco_id: string
+          expira_em: string | null
           horario_fim: string
           horario_inicio: string
           id: string
@@ -1918,6 +1919,7 @@ export type Database = {
           created_at?: string
           data: string
           espaco_id: string
+          expira_em?: string | null
           horario_fim: string
           horario_inicio: string
           id?: string
@@ -1929,6 +1931,7 @@ export type Database = {
           created_at?: string
           data?: string
           espaco_id?: string
+          expira_em?: string | null
           horario_fim?: string
           horario_inicio?: string
           id?: string
@@ -2126,6 +2129,14 @@ export type Database = {
         Returns: boolean
       }
       check_email_exists: { Args: { _email: string }; Returns: boolean }
+      expirar_pre_reservas: { Args: never; Returns: undefined }
+      find_morador_by_phone: {
+        Args: { _condominio_id: string; _telefone: string }
+        Returns: {
+          nome: string
+          user_id: string
+        }[]
+      }
       find_similar_emails: {
         Args: { _target_email: string }
         Returns: {
