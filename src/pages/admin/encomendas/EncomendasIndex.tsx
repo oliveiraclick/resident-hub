@@ -1,30 +1,24 @@
 import { useNavigate } from "react-router-dom";
 import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent } from "@/components/ui/card";
-import { Package, PlusCircle, ScanLine, ArrowRightLeft, CheckCircle, History } from "lucide-react";
+import { PlusCircle, MapPin, CheckCircle, History } from "lucide-react";
 
 const menuItems = [
   {
-    label: "Novo Lote",
-    description: "Registrar recebimento de encomendas",
+    label: "Recebimento (Lote)",
+    description: "Registrar chegada da transportadora",
     icon: PlusCircle,
     path: "/admin/encomendas/novo-lote",
   },
   {
-    label: "Leitura",
-    description: "Ler QR code de pacote",
-    icon: ScanLine,
-    path: "/admin/encomendas/leitura",
-  },
-  {
-    label: "Triagem",
-    description: "Vincular pacote ao morador",
-    icon: ArrowRightLeft,
+    label: "Endereçamento (Triagem)",
+    description: "Vincular pacotes aos moradores",
+    icon: MapPin,
     path: "/admin/encomendas/triagem",
   },
   {
-    label: "Retirada",
-    description: "Confirmar retirada de pacote",
+    label: "Entrega de Encomenda",
+    description: "Entregar pacote ao morador",
     icon: CheckCircle,
     path: "/admin/encomendas/retirada",
   },
@@ -41,11 +35,11 @@ const EncomendasIndex = () => {
 
   return (
     <AdminLayout title="Encomendas" showBack={true}>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 max-w-2xl mx-auto">
         {menuItems.map((item) => (
           <Card
             key={item.path}
-            className="cursor-pointer active:scale-[0.98] transition-transform"
+            className="cursor-pointer active:scale-[0.98] transition-all hover:border-primary/50"
             onClick={() => navigate(item.path)}
           >
             <CardContent className="flex items-center gap-4 p-4">
@@ -53,8 +47,8 @@ const EncomendasIndex = () => {
                 <item.icon size={22} className="text-primary" />
               </div>
               <div className="flex-1">
-                <p className="text-title-md">{item.label}</p>
-                <p className="text-subtitle text-muted-foreground">{item.description}</p>
+                <p className="text-lg font-bold">{item.label}</p>
+                <p className="text-sm text-muted-foreground">{item.description}</p>
               </div>
             </CardContent>
           </Card>
