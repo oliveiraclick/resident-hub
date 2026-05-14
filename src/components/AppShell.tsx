@@ -173,48 +173,53 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
   const firstName = userName?.split(" ")[0] || "Morador";
 
   return (
-    <div className="min-h-screen flex flex-col bg-background mx-auto max-w-[480px] sm:max-w-[600px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1200px] overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-background mx-auto max-w-[480px] sm:max-w-[600px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1200px] overflow-x-hidden relative">
       {/* ═══ HERO HEADER ═══ */}
       {isHome && !showBack ? (
         <div className="relative overflow-hidden">
-          {/* Gradient background */}
+          {/* Header background with glassmorphism feel */}
           <div
-            className="text-primary-foreground"
+            className="text-primary-foreground relative z-10"
             style={{
-              background: "linear-gradient(145deg, hsl(var(--header-bg)) 0%, hsl(var(--header-mid)) 40%, hsl(var(--primary)) 100%)",
-              padding: "48px 20px 80px",
+              background: "linear-gradient(135deg, hsl(var(--header-bg)) 0%, hsl(var(--header-mid)) 100%)",
+              padding: "40px 20px 60px",
             }}
           >
-            {/* Decorative blobs */}
-            <div className="absolute top-5 -right-8 w-44 h-44 rounded-full opacity-100" style={{ background: "hsla(var(--primary), 0.15)", filter: "blur(40px)" }} />
-            <div className="absolute bottom-10 -left-10 w-30 h-30 rounded-full" style={{ background: "hsla(var(--primary), 0.1)", filter: "blur(30px)" }} />
+            {/* Soft decorative elements */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/4" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/10 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/4" />
 
             {/* Top row */}
-            <div className="flex justify-between items-center mb-7 relative z-[2]">
-              <div className="flex items-center gap-2.5">
-                {condominioLogo ? (
-                  <img src={condominioLogo} alt={condominioName || ""} className="h-[38px] w-[38px] rounded-xl object-cover border-2 border-white/20" />
-                ) : (
-                  <img src={logoSymbol} alt="Morador.app" className="h-[48px] w-[48px] object-contain" />
-                )}
-                <div>
-                  <span className="font-bold text-[16px] block leading-none text-white">
+            <div className="flex justify-between items-center mb-8 relative z-20">
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  {condominioLogo ? (
+                    <img src={condominioLogo} alt={condominioName || ""} className="h-12 w-12 rounded-2xl object-cover ring-2 ring-white/10 shadow-lg" />
+                  ) : (
+                    <div className="h-12 w-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center ring-1 ring-white/20">
+                      <img src={logoSymbol} alt="Morador.app" className="h-8 w-8 object-contain" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold text-lg tracking-tight text-white leading-none mb-1">
                     {condominioName || "Morador.app"}
                   </span>
-                  <span className="text-[10px] text-primary-light font-medium tracking-wider uppercase">Seu condomínio digital</span>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                    <span className="text-[10px] text-white/60 font-semibold tracking-widest uppercase">Digital & Seguro</span>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <button
                   onClick={onQrPress || (() => navigate("/morador/qr-id"))}
-                  className="w-[42px] h-[42px] rounded-[14px] flex items-center justify-center border cursor-pointer"
-                  style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(10px)", borderColor: "rgba(255,255,255,0.1)" }}
+                  className="w-11 h-11 rounded-2xl flex items-center justify-center bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md ring-1 ring-white/10 transition-all shadow-sm"
                 >
                   <QrCode size={20} className="text-white" />
                 </button>
                 <button
-                  className="w-[42px] h-[42px] rounded-[14px] flex items-center justify-center border cursor-pointer"
-                  style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(10px)", borderColor: "rgba(255,255,255,0.1)" }}
+                  className="w-11 h-11 rounded-2xl flex items-center justify-center bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md ring-1 ring-white/10 transition-all shadow-sm"
                 >
                   <Bell size={20} className="text-white" />
                 </button>
@@ -222,79 +227,79 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
             </div>
 
             {/* Big greeting */}
-            <div className="relative z-[2]">
-              <p className="text-[14px] text-primary-light font-medium m-0">Bem-vindo de volta,</p>
-              <h1 className="text-[32px] font-extrabold mt-1 leading-none tracking-tight text-white">{firstName}</h1>
+            <div className="relative z-20 space-y-1">
+              <p className="text-sm font-medium text-white/70">Olá, bem-vindo!</p>
+              <h1 className="text-4xl font-black tracking-tight text-white">{firstName}</h1>
             </div>
           </div>
 
-          {/* Wave cutout */}
-          <svg viewBox="0 0 430 40" preserveAspectRatio="none" className="absolute -bottom-[1px] left-0 w-full h-[35px] block">
-            <path d="M0,20 Q107,45 215,20 Q323,-5 430,20 L430,40 L0,40 Z" fill="hsl(var(--background))" />
-          </svg>
+          {/* Clean transition to content */}
+          <div className="h-10 -mt-10 bg-background rounded-t-[40px] relative z-20" />
         </div>
       ) : (
         /* ═══ SUBPAGE HEADER ═══ */
         <header
-          className="sticky top-0 z-20 px-5 pt-4 pb-3 text-white"
+          className="sticky top-0 z-30 px-5 pt-4 pb-4 backdrop-blur-xl border-b border-white/5"
           style={{
-            background: "linear-gradient(145deg, hsl(var(--header-bg)) 0%, hsl(var(--header-mid)) 60%, hsl(var(--primary)) 100%)",
-            borderBottom: "none",
+            background: "linear-gradient(135deg, hsla(var(--header-bg), 0.95), hsla(var(--header-mid), 0.95))",
           }}
         >
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2.5">
-              {condominioLogo ? (
-                <img src={condominioLogo} alt={condominioName || "Condomínio"} className="h-9 w-9 rounded-lg object-cover border border-white/20" />
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              {showBack ? (
+                <button 
+                  onClick={() => navigate(-1)} 
+                  className="h-10 w-10 rounded-2xl flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all active:scale-95"
+                >
+                  <ArrowLeft size={20} className="text-white" />
+                </button>
               ) : (
-                <img src={logoSymbol} alt="Morador.app" className="h-12 w-12 object-contain" />
+                condominioLogo ? (
+                  <img src={condominioLogo} alt={condominioName || "Condomínio"} className="h-10 w-10 rounded-xl object-cover ring-1 ring-white/10" />
+                ) : (
+                  <img src={logoSymbol} alt="Morador.app" className="h-10 w-10 object-contain" />
+                )
+              )}
+              {title && (
+                <h1 className="text-lg font-bold text-white truncate max-w-[180px] sm:max-w-none">
+                  {title}
+                </h1>
               )}
             </div>
+            
             <div className="flex items-center gap-2">
               <button
                 onClick={onQrPress || (() => navigate("/morador/qr-id"))}
-                className="h-10 w-10 rounded-full flex items-center justify-center"
-                style={{ background: "rgba(255,255,255,0.12)" }}
+                className="h-10 w-10 rounded-2xl flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all"
               >
-                <QrCode size={18} className="text-white/80" />
+                <QrCode size={18} className="text-white" />
               </button>
               <button
-                className="h-10 w-10 rounded-full flex items-center justify-center"
-                style={{ background: "rgba(255,255,255,0.12)" }}
+                className="h-10 w-10 rounded-2xl flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all"
               >
-                <Bell size={18} className="text-white/80" />
+                <Bell size={18} className="text-white" />
               </button>
             </div>
           </div>
-
-          {/* Back + Title */}
-          {showBack && title && (
-            <div className="flex items-center gap-2 mb-3">
-              <button onClick={() => navigate(-1)} className="h-8 w-8 rounded-full flex items-center justify-center" style={{ background: "rgba(255,255,255,0.15)" }}>
-                <ArrowLeft size={18} className="text-white" />
-              </button>
-              <h1 className="text-[17px] font-bold text-white">{title}</h1>
-            </div>
-          )}
         </header>
       )}
 
       {/* Floating search bar (home only) */}
       {isHome && showSearch && (
-        <div ref={searchRef} className="px-5 relative z-10" style={{ marginTop: -28 }}>
-          <div className="bg-card rounded-2xl py-3.5 px-[18px] flex items-center gap-3 border border-border" style={{ boxShadow: "0 8px 30px rgba(0,0,0,0.08)" }}>
-            <Search size={18} className="text-primary" />
+        <div ref={searchRef} className="px-5 relative z-30" style={{ marginTop: -44 }}>
+          <div className="bg-card rounded-[24px] py-4 px-5 flex items-center gap-4 border border-border shadow-[0_12px_40px_-12px_rgba(0,0,0,0.1)] focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+            <Search size={20} className="text-primary shrink-0" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onFocus={() => { if (results.length > 0) setShowResults(true); }}
-              placeholder="Buscar prestadores, serviços..."
-              className="flex-1 text-[14px] text-foreground placeholder:text-muted-foreground outline-none border-0 bg-transparent"
+              placeholder="Buscar serviços ou prestadores..."
+              className="flex-1 text-[15px] font-medium text-foreground placeholder:text-muted-foreground outline-none border-0 bg-transparent"
             />
             {searchTerm && (
-              <button onClick={() => { setSearchTerm(""); setShowResults(false); }} className="text-muted-foreground">
-                <X size={14} />
+              <button onClick={() => { setSearchTerm(""); setShowResults(false); }} className="text-muted-foreground hover:text-foreground">
+                <X size={16} />
               </button>
             )}
           </div>
@@ -381,22 +386,24 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
       {/* Scrollable content */}
       <main className="px-5 pt-6 pb-[100px] flex-1">{children}</main>
 
-      {/* ═══ BOTTOM NAV — Pill Style ═══ */}
+      {/* ═══ BOTTOM NAV — Modern Pill Style ═══ */}
       <nav
-        className="fixed z-20"
+        className="fixed z-40"
         style={{
-          bottom: 12,
+          bottom: 20,
           left: "50%",
           transform: "translateX(-50%)",
-          width: "calc(100% - 40px)",
-          maxWidth: 390,
-          background: "hsl(var(--header-bg))",
-          borderRadius: 22,
+          width: "calc(100% - 32px)",
+          maxWidth: 420,
+          background: "rgba(22, 23, 28, 0.9)",
+          backdropFilter: "blur(20px) saturate(180%)",
+          borderRadius: 28,
           display: "flex",
           justifyContent: "space-around",
           alignItems: "center",
-          height: 64,
-          boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
+          height: 72,
+          boxShadow: "0 20px 40px -10px rgba(0,0,0,0.4), inset 0 1px 0 0 rgba(255,255,255,0.05)",
+          border: "1px solid rgba(255,255,255,0.08)",
         }}
       >
         {navItems.map((item) => {
@@ -408,25 +415,24 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
-              className="flex flex-col items-center gap-[3px] border-none cursor-pointer"
+              className="flex flex-col items-center justify-center gap-1.5 border-none cursor-pointer relative group transition-all"
               style={{
-                background: isActive ? "hsla(var(--primary), 0.15)" : "transparent",
-                padding: "8px 14px",
-                borderRadius: 14,
+                width: 64,
+                height: 56,
               }}
             >
+              {isActive && (
+                <div 
+                  className="absolute inset-0 bg-primary/10 rounded-2xl animate-in fade-in zoom-in-95 duration-200"
+                />
+              )}
               <item.icon
-                size={20}
-                color={isActive ? "hsl(var(--primary))" : "rgba(255,255,255,0.45)"}
+                size={22}
+                className={`transition-all duration-300 ${isActive ? 'text-primary scale-110' : 'text-white/40 group-hover:text-white/60'}`}
                 strokeWidth={isActive ? 2.5 : 1.8}
               />
               <span
-                style={{
-                  fontSize: 9,
-                  fontWeight: isActive ? 700 : 400,
-                  color: isActive ? "hsl(var(--primary))" : "rgba(255,255,255,0.45)",
-                  letterSpacing: 0.3,
-                }}
+                className={`text-[10px] tracking-wide transition-all duration-300 ${isActive ? 'font-bold text-primary opacity-100' : 'font-medium text-white/40 opacity-70'}`}
               >
                 {item.label}
               </span>
