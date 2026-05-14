@@ -34,13 +34,17 @@ const AdminUsuarios = () => {
     if (!condominioId) return;
     setLoading(true);
 
-    const [rolesRes, profilesRes] = await Promise.all([
-      supabase.from("user_roles").select("*").eq("condominio_id", condominioId),
-      supabase.from("profiles").select("user_id, nome, device_platform, app_version"),
-    ]);
+    try {
+      const [rolesRes, profilesRes] = await Promise.all([
+        supabase.from("user_roles").select("*").eq("condominio_id", condominioId),
+        supabase.from("profiles").select("user_id, nome, device_platform, app_version"),
+      ]);
 
-    const rolesData = rolesRes.data || [];
-    const profiles = profilesRes.data || [];
+      if (rolesRes.error) throw rolesRes.error;
+      if (profilesRes.error) throw profilesRes.error;
+
+      const rolesData = rolesRes.data || [];
+      const profiles = profilesRes.data || [];
     const profileMap = new Map(profiles.map((p: any) => [p.user_id, p]));
 
     setUsers(
@@ -59,8 +63,13 @@ const AdminUsuarios = () => {
             appVersion: profile?.app_version || null,
           };
         })
-    );
-    setLoading(false);
+      );
+    } catch (err: any) {
+      toast.error("Erro ao carregar usuários");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
