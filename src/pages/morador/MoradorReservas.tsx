@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Calendar } from "@/components/ui/calendar";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { CalendarCheck, Trash2, X, Users, DollarSign, Info, Home, Clock, MapPin, ChevronRight } from "lucide-react";
+import { CalendarCheck, Trash2, X, Users, DollarSign, Info, Home, Clock, MapPin, ChevronRight, Search, LayoutGrid, Dumbbell, Coffee } from "lucide-react";
 import { ptBR } from "date-fns/locale";
 
 const FULL_DAY_CATEGORIES = ["salao", "quiosque"];
@@ -50,6 +50,9 @@ const MoradorReservas = () => {
   const [horarioInicio, setHorarioInicio] = useState("");
   const [horarioFim, setHorarioFim] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchDate, setSearchDate] = useState<string>(new Date().toISOString().split("T")[0]);
+  const [allReservations, setAllReservations] = useState<any[]>([]);
 
   // For Quadra schedule
   const [occupiedSlots, setOccupiedSlots] = useState<string[]>([]);
@@ -62,7 +65,7 @@ const MoradorReservas = () => {
     if (!condominioId || !user) return;
     setLoading(true);
 
-    const [espacosRes, reservasRes] = await Promise.all([
+    const [espacosRes, reservasRes, allResRes] = await Promise.all([
       supabase.from("espacos").select("*").eq("condominio_id", condominioId).order("categoria"),
       supabase
         .from("reservas")
@@ -71,10 +74,17 @@ const MoradorReservas = () => {
         .eq("condominio_id", condominioId)
         .gte("data", new Date().toISOString().split("T")[0])
         .order("data", { ascending: true }),
+      supabase
+        .from("reservas")
+        .select("espaco_id, data, status")
+        .eq("condominio_id", condominioId)
+        .eq("status", "confirmada")
+        .gte("data", new Date().toISOString().split("T")[0])
     ]);
 
     const espacosList = (espacosRes.data as any[]) || [];
     setEspacos(espacosList as Espaco[]);
+    setAllReservations(allResRes.data || []);
 
     const reservasList = ((reservasRes.data as any[]) || []).map((r: any) => ({
       ...r,
@@ -259,6 +269,25 @@ const MoradorReservas = () => {
     return `${min}m ${sec.toString().padStart(2, "0")}s`;
   };
 
+  const categories = [
+    { id: "salao", label: "Salão", icon: Coffee, color: "from-amber-500/10 to-amber-500/5", textColor: "text-amber-600", count: espacos.filter(e => e.categoria === "salao").length },
+    { id: "quiosque", label: "Quiosques", icon: Home, color: "from-emerald-500/10 to-emerald-500/5", textColor: "text-emerald-600", count: espacos.filter(e => e.categoria === "quiosque").length },
+    { id: "quadra", label: "Esportes", icon: Dumbbell, color: "from-blue-500/10 to-blue-500/5", textColor: "text-blue-600", count: espacos.filter(e => e.categoria === "quadra" || e.categoria === "piscina" || e.categoria === "academia").length },
+  ];
+
+  const filteredEspacos = useMemo(() => {
+    if (!selectedCategory) return [];
+    if (selectedCategory === "quadra") {
+      return espacos.filter(e => e.categoria === "quadra" || e.categoria === "piscina" || e.categoria === "academia");
+    }
+    return espacos.filter(e => e.categoria === selectedCategory);
+  }, [espacos, selectedCategory]);
+
+  const getAvailabilityStatus = (espacoId: string) => {
+    const isReserved = allReservations.some(r => r.espaco_id === espacoId && r.data === searchDate);
+    return isReserved ? "Indisponível" : "Disponível";
+  };
+
   return (
     <MoradorLayout title="Reservas" showBack>
       <div className="flex flex-col gap-8 pb-20">
@@ -304,79 +333,132 @@ const MoradorReservas = () => {
           </section>
         )}
 
-        <section className="animate-in fade-in-up duration-500 delay-150">
-          <div className="flex items-center gap-2 mb-4 px-1">
-            <div className="w-1.5 h-4 bg-primary rounded-full" />
-            <h2 className="text-sm font-black text-muted-foreground/60 uppercase tracking-widest">Áreas Comuns</h2>
-          </div>
-
-          {loading ? (
-            <div className="grid gap-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-28 rounded-[28px] bg-muted/40 animate-pulse" />
-              ))}
+        {!selectedCategory ? (
+          <section className="animate-in fade-in-up duration-500 delay-150">
+            <div className="flex items-center gap-2 mb-6 px-1">
+              <div className="w-1.5 h-4 bg-primary rounded-full" />
+              <h2 className="text-sm font-black text-muted-foreground/60 uppercase tracking-widest">O que deseja agendar?</h2>
             </div>
-          ) : espacos.length === 0 ? (
-            <Card className="border-none shadow-soft rounded-[32px]">
-              <CardContent className="flex flex-col items-center text-center gap-4 py-12 px-6">
-                <div className="h-16 w-16 rounded-3xl bg-muted flex items-center justify-center text-muted-foreground">
-                  <Home size={28} />
-                </div>
-                <div>
-                  <p className="text-base font-black text-foreground">Nenhuma área disponível</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    O síndico ainda não cadastrou áreas comuns para reserva.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid gap-4">
-              {espacos.map((e) => (
-                <Card
-                  key={e.id}
-                  onClick={() => setSelectedEspaco(e)}
-                  className="border-none shadow-premium rounded-[28px] hover:shadow-lg transition-all active:scale-[0.98] cursor-pointer overflow-hidden group"
+            
+            <div className="grid grid-cols-1 gap-4">
+              {categories.map((cat) => (
+                <Card 
+                  key={cat.id} 
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className="border-none shadow-premium rounded-[32px] overflow-hidden cursor-pointer active:scale-[0.98] transition-all group relative h-48"
                 >
-                  <CardContent className="flex items-center gap-4 p-4">
-                    {e.imagem_url ? (
-                      <img
-                        src={e.imagem_url}
-                        alt={e.nome}
-                        className="h-20 w-20 rounded-2xl object-cover flex-shrink-0"
-                      />
-                    ) : (
-                      <div className="h-20 w-20 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary">
-                        <Home size={28} />
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <p className="text-lg font-black text-foreground tracking-tight truncate">{e.nome}</p>
-                      <p className="text-[11px] font-black text-muted-foreground/60 uppercase tracking-wider mt-0.5">
-                        {categoriaLabel[e.categoria] || e.categoria}
-                      </p>
-                      <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground font-medium">
-                        {e.capacidade && (
-                          <span className="inline-flex items-center gap-1">
-                            <Users size={12} /> {e.capacidade}
-                          </span>
-                        )}
-                        {e.preco > 0 ? (
-                          <span className="inline-flex items-center gap-1 text-success font-bold">
-                            <DollarSign size={12} /> R$ {Number(e.preco).toFixed(2)}
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 text-success font-bold">Gratuito</span>
-                        )}
-                      </div>
+                  <div className={`absolute inset-0 bg-gradient-to-br ${cat.color}`} />
+                  <CardContent className="relative h-full flex flex-col justify-end p-8">
+                    <div className="absolute top-8 right-8 h-16 w-16 rounded-2xl bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-soft">
+                      <cat.icon size={32} className={cat.textColor} />
                     </div>
-                    <ChevronRight className="text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" size={22} />
+                    <div className="space-y-1">
+                      <h3 className="text-3xl font-black tracking-tight text-foreground">{cat.label}</h3>
+                      <p className="text-sm font-bold text-muted-foreground/80">{cat.count} {cat.count === 1 ? 'opção disponível' : 'opções disponíveis'}</p>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
-          )}
-        </section>
+          </section>
+        ) : (
+          <section className="animate-in fade-in-up duration-500">
+            <div className="flex items-center justify-between mb-6 px-1">
+              <div className="flex items-center gap-3">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => setSelectedCategory(null)}
+                  className="h-10 w-10 rounded-full bg-muted/50"
+                >
+                  <ChevronRight className="rotate-180" size={20} />
+                </Button>
+                <div>
+                  <h2 className="text-xl font-black text-foreground tracking-tight">
+                    {categories.find(c => c.id === selectedCategory)?.label}
+                  </h2>
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    {filteredEspacos.length} {filteredEspacos.length === 1 ? 'Local' : 'Locais'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <Card className="border-none shadow-premium rounded-[32px] bg-muted/30 p-4 mb-8">
+              <div className="flex flex-col gap-3">
+                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Consultar Disponibilidade</Label>
+                <div className="flex gap-3">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40" size={18} />
+                    <Input 
+                      type="date" 
+                      value={searchDate}
+                      min={new Date().toISOString().split("T")[0]}
+                      onChange={(e) => setSearchDate(e.target.value)}
+                      className="h-14 pl-12 rounded-2xl border-none shadow-soft bg-white font-bold"
+                    />
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+            <div className="grid gap-6">
+              {filteredEspacos.map((e) => (
+                <Card
+                  key={e.id}
+                  onClick={() => {
+                    setSelectedEspaco(e);
+                    setData(searchDate);
+                  }}
+                  className="border-none shadow-premium rounded-[32px] hover:shadow-lg transition-all active:scale-[0.98] cursor-pointer overflow-hidden group bg-white"
+                >
+                  <div className="relative h-56">
+                    {e.imagem_url ? (
+                      <img
+                        src={e.imagem_url}
+                        alt={e.nome}
+                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <div className="h-full w-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center text-primary/20">
+                        <Home size={64} />
+                      </div>
+                    )}
+                    <div className="absolute top-4 right-4">
+                      <span className={`text-[10px] font-black px-4 py-2 rounded-full shadow-lg backdrop-blur-md uppercase tracking-wider ${
+                        getAvailabilityStatus(e.id) === "Disponível" 
+                          ? "bg-success/90 text-white" 
+                          : "bg-destructive/90 text-white"
+                      }`}>
+                        {getAvailabilityStatus(e.id)}
+                      </span>
+                    </div>
+                  </div>
+                  <CardContent className="p-6">
+                    <div className="flex justify-between items-start gap-4">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-2xl font-black text-foreground tracking-tight truncate mb-1">{e.nome}</h3>
+                        <div className="flex items-center gap-4 text-sm font-bold text-muted-foreground/60">
+                          {e.capacidade && (
+                            <span className="flex items-center gap-1.5">
+                              <Users size={16} className="text-primary/40" /> {e.capacidade} pessoas
+                            </span>
+                          )}
+                          <span className="flex items-center gap-1.5">
+                            <DollarSign size={16} className="text-success/40" /> {e.preco > 0 ? `R$ ${Number(e.preco).toFixed(2)}` : "Gratuito"}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="h-12 w-12 rounded-2xl bg-muted/50 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                        <ChevronRight size={24} />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Reservation Dialog */}
         <Dialog open={!!selectedEspaco} onOpenChange={(o) => !o && setSelectedEspaco(null)}>
