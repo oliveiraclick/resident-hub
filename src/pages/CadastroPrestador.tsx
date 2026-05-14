@@ -129,7 +129,7 @@ const CadastroPrestador = () => {
       if (signUpError) throw signUpError;
 
       toast.success("Cadastro realizado! Verifique seu email para confirmar.");
-      navigate("/auth");
+      navigate("/auth", { replace: true });
     } catch (err: any) {
       const msg = err.message?.includes("already registered")
         ? "Este email já está cadastrado"

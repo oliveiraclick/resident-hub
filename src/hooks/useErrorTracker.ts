@@ -5,7 +5,7 @@ export const useErrorTracker = () => {
   useEffect(() => {
     const handleError = (event: ErrorEvent) => {
       supabase
-        .from("error_logs" as any)
+        .from("error_logs")
         .insert({
           message: event.message || "Unknown error",
           stack: event.error?.stack?.substring(0, 2000) || null,
@@ -19,7 +19,7 @@ export const useErrorTracker = () => {
       const msg =
         event.reason?.message || String(event.reason) || "Unhandled rejection";
       supabase
-        .from("error_logs" as any)
+        .from("error_logs")
         .insert({
           message: msg.substring(0, 500),
           stack: event.reason?.stack?.substring(0, 2000) || null,

@@ -14,7 +14,7 @@ export const useActivityLog = () => {
     ) => {
       if (!user) return;
       try {
-        await supabase.from("activity_logs" as any).insert({
+        await supabase.from("activity_logs").insert({
           user_id: user.id,
           action,
           entity_type: entityType || null,
