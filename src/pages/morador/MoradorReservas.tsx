@@ -65,7 +65,7 @@ const MoradorReservas = () => {
     if (!condominioId || !user) return;
     setLoading(true);
 
-    const [espacosRes, reservasRes] = await Promise.all([
+    const [espacosRes, reservasRes, allResRes] = await Promise.all([
       supabase.from("espacos").select("*").eq("condominio_id", condominioId).order("categoria"),
       supabase
         .from("reservas")
@@ -74,10 +74,17 @@ const MoradorReservas = () => {
         .eq("condominio_id", condominioId)
         .gte("data", new Date().toISOString().split("T")[0])
         .order("data", { ascending: true }),
+      supabase
+        .from("reservas")
+        .select("espaco_id, data, status")
+        .eq("condominio_id", condominioId)
+        .eq("status", "confirmada")
+        .gte("data", new Date().toISOString().split("T")[0])
     ]);
 
     const espacosList = (espacosRes.data as any[]) || [];
     setEspacos(espacosList as Espaco[]);
+    setAllReservations(allResRes.data || []);
 
     const reservasList = ((reservasRes.data as any[]) || []).map((r: any) => ({
       ...r,
