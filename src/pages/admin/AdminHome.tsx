@@ -1,4 +1,5 @@
 import AdminLayout from "@/components/AdminLayout";
+import { Card, CardContent } from "@/components/ui/card";
 import { Package, DollarSign, Users, Settings, Image, Megaphone, CalendarCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
