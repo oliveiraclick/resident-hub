@@ -302,7 +302,7 @@ const MoradorServicos = () => {
         ) : filteredCategorias.length === 0 ? (
           <div className="flex flex-col items-center justify-center text-center gap-4 py-20 px-8 bg-card rounded-[40px] border border-dashed"><Wrench size={48} className="text-muted-foreground/20" /><p className="text-muted-foreground font-bold">{searchTerm ? `Nenhum resultado para "${searchTerm}"` : "Nenhum prestador disponível"}</p></div>
         ) : (
-          <div className="grid grid-cols-1 gap-4 animate-in fade-in-up duration-500">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-in fade-in-up duration-500">
             {filteredCategorias.map((cat) => {
               const Icon = getIcon(iconMap[cat.nome] || "Wrench");
               return (
