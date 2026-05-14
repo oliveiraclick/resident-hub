@@ -38,7 +38,7 @@ const RotatingServicos = ({ categorias, navigate }: { categorias: any[]; navigat
   const visible = categorias.length > 0 ? (shuffled.length > 0 ? shuffled : categorias.slice(0, ITEMS_PER_PAGE)) : [];
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
       {visible.map((item) => {
         const Icon = getIcon(item.icone);
         return (
