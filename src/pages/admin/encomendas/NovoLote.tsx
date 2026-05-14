@@ -1,9 +1,9 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminLayout from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -23,13 +23,15 @@ const NovoLote = () => {
   const condominioId = roles[0]?.condominio_id;
 
   const handleAddCode = (code: string) => {
-    if (!code) return;
-    if (scannedCodes.includes(code)) {
+    const trimmedCode = code.trim();
+    if (!trimmedCode) return;
+    if (scannedCodes.includes(trimmedCode)) {
       toast.error("Este código já foi bipado");
       return;
     }
-    setScannedCodes([...scannedCodes, code]);
+    setScannedCodes([...scannedCodes, trimmedCode]);
     toast.success("Pacote bipado!");
+    if (inputRef.current) inputRef.current.focus();
   };
 
   const handleRemoveCode = (index: number) => {
@@ -180,28 +182,28 @@ const NovoLote = () => {
               </Button>
             </div>
 
-            <div className="space-y-2 mt-4">
+            <div className="space-y-2 mt-4 max-h-[400px] overflow-y-auto pr-2">
               {scannedCodes.length === 0 ? (
                 <p className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">
                   Nenhum pacote bipado ainda.
                 </p>
               ) : (
-                scannedCodes.map((code, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg animate-in fade-in slide-in-from-left-2">
+                [...scannedCodes].reverse().map((code, index) => (
+                  <div key={scannedCodes.length - 1 - index} className="flex items-center justify-between p-3 bg-muted rounded-lg animate-in fade-in slide-in-from-left-2">
                     <div className="flex items-center gap-3">
-                      <span className="text-sm font-bold text-primary w-6">{index + 1}</span>
+                      <span className="text-sm font-bold text-primary w-6">{scannedCodes.length - index}</span>
                       <span className="font-mono text-sm">{code}</span>
                     </div>
                     <Button 
                       variant="ghost" 
                       size="icon" 
                       className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                      onClick={() => handleRemoveCode(index)}
+                      onClick={() => handleRemoveCode(scannedCodes.length - 1 - index)}
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
-                )).reverse()
+                ))
               )}
             </div>
           </CardContent>
@@ -223,4 +225,3 @@ const NovoLote = () => {
 
 export default NovoLote;
 
-import { CardHeader } from "@/components/ui/card";
