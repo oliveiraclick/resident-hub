@@ -360,24 +360,36 @@ const MoradorReservas = () => {
             </div>
             
             <div className="grid grid-cols-1 gap-4">
-              {categories.map((cat) => (
-                <Card 
-                  key={cat.id} 
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className="border-none shadow-premium rounded-[32px] overflow-hidden cursor-pointer active:scale-[0.98] transition-all group relative h-48"
-                >
-                  <div className={`absolute inset-0 bg-gradient-to-br ${cat.color}`} />
-                  <CardContent className="relative h-full flex flex-col justify-end p-8">
-                    <div className="absolute top-8 right-8 h-16 w-16 rounded-2xl bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-soft">
-                      <cat.icon size={32} className={cat.textColor} />
-                    </div>
-                    <div className="space-y-1">
-                      <h3 className="text-3xl font-black tracking-tight text-foreground">{cat.label}</h3>
-                      <p className="text-sm font-bold text-muted-foreground/80">{cat.count} {cat.count === 1 ? 'opção disponível' : 'opções disponíveis'}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+              {categories.map((cat) => {
+                const cover = categoryCovers[cat.id] || cat.defaultCover;
+                const Icon = cat.icon;
+                return (
+                  <Card
+                    key={cat.id}
+                    onClick={() => setSelectedCategory(cat.id)}
+                    className="border-none shadow-premium rounded-[32px] overflow-hidden cursor-pointer active:scale-[0.98] transition-all group relative h-56"
+                  >
+                    <img
+                      src={cover}
+                      alt={cat.label}
+                      loading="lazy"
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                    <CardContent className="relative h-full flex flex-col justify-end p-7">
+                      <div className="absolute top-6 right-6 h-14 w-14 rounded-2xl bg-white/95 backdrop-blur-sm flex items-center justify-center shadow-lg">
+                        <Icon size={26} className="text-foreground" />
+                      </div>
+                      <div className="space-y-1">
+                        <h3 className="text-3xl font-black tracking-tight text-white drop-shadow-sm">{cat.label}</h3>
+                        <p className="text-xs font-black text-white/80 uppercase tracking-widest">
+                          {cat.count} {cat.count === 1 ? 'opção disponível' : 'opções disponíveis'}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </section>
         ) : (
