@@ -174,7 +174,7 @@ const LandingPage = () => {
         </div>
 
         {/* Navbar */}
-        <nav className="relative z-10 flex items-center justify-center px-6 py-6 max-w-7xl mx-auto w-full">
+        <nav className="relative z-10 flex items-center justify-between px-6 py-6 max-w-7xl mx-auto w-full">
           <img src={logoSymbol} alt="Morador.app" className="h-16" />
         </nav>
 
