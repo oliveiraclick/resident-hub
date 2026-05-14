@@ -279,30 +279,30 @@ const MoradorHome = () => {
       <EventoConviteFullscreen />
       <EventoConviteBadge count={pendingInvitesCount} onClick={() => navigate("/morador/entre-amigos")} />
       <MissingPhotoModal />
-      <div className="flex flex-col gap-7">
+      <div className="flex flex-col gap-8">
         {/* ═══ BANNER ═══ */}
         {banners.length > 0 && (
           <div
             onClick={() => { const b = banners[bannerIdx]; if (b?.whatsapp) { window.open(`https://wa.me/${b.whatsapp.replace(/\D/g, "")}`, "_blank"); } else if (b?.link) { window.open(b.link, "_blank"); } }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
-            className="rounded-[22px] overflow-hidden relative cursor-pointer"
-            style={{ height: 160, boxShadow: "0 6px 24px rgba(0,0,0,0.1)" }}
+            className="rounded-[32px] overflow-hidden relative cursor-pointer group shadow-lg shadow-black/5"
+            style={{ height: 160 }}
           >
             {banners[bannerIdx]?.imagem_url ? (
-              <img src={banners[bannerIdx].imagem_url} alt={banners[bannerIdx].titulo} className="absolute inset-0 w-full h-full object-cover" />
+              <img src={banners[bannerIdx].imagem_url} alt={banners[bannerIdx].titulo} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             ) : (
-              <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, hsl(var(--header-bg)), hsl(var(--primary)))" }} />
+              <div className="absolute inset-0 bg-gradient-to-br from-header-bg to-primary" />
             )}
+            
+            {/* Overlay gradient for text readability if title exists */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60" />
+
             {banners.length > 1 && (
-              <div className="absolute bottom-3.5 left-1/2 -translate-x-1/2 z-[1] flex gap-1.5">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1] flex gap-2">
                 {banners.map((_, i) => (
                   <button key={i} onClick={(e) => { e.stopPropagation(); setBannerIdx(i); }}
-                    className="border-none cursor-pointer transition-all duration-200"
-                    style={{
-                      width: i === bannerIdx ? 24 : 8, height: 8, borderRadius: 4,
-                      background: i === bannerIdx ? "hsl(var(--primary))" : "rgba(255,255,255,0.35)",
-                    }}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${i === bannerIdx ? 'w-6 bg-white' : 'w-1.5 bg-white/40 hover:bg-white/60'}`}
                   />
                 ))}
               </div>
@@ -310,123 +310,126 @@ const MoradorHome = () => {
           </div>
         )}
 
-        {/* ═══ ATALHOS RÁPIDOS (RESERVAS E ENCOMENDAS) ═══ */}
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            onClick={() => navigate("/morador/reservas")}
-            className="text-left border-none cursor-pointer rounded-[22px] flex flex-col gap-2 relative overflow-hidden active:scale-[0.98] transition-transform h-[100px] justify-center"
-            style={{
-              background: "linear-gradient(135deg, hsl(var(--primary)), #eab308)",
-              padding: "0 16px",
-              boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
-            }}
-          >
-            <div className="h-[36px] w-[36px] rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0" style={{ backdropFilter: "blur(8px)" }}>
-              <CalendarCheck size={20} className="text-white" />
-            </div>
-            <div>
-              <p className="text-[14px] font-bold text-white m-0 leading-tight">Reserva de áreas comuns</p>
-              <p className="text-[9px] text-white/80 mt-0.5 m-0 uppercase tracking-wider font-semibold">Agendar →</p>
-            </div>
-          </button>
+        {/* ═══ ATALHOS RÁPIDOS ═══ */}
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-1.5 h-4 bg-primary rounded-full" />
+            <h2 className="text-xl font-black tracking-tight text-foreground uppercase text-[13px] opacity-40">Facilidades</h2>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <button
+              onClick={() => navigate("/morador/reservas")}
+              className="group text-left p-5 rounded-[28px] flex flex-col gap-4 relative overflow-hidden active:scale-[0.96] transition-all bg-gradient-to-br from-primary to-orange-400 shadow-xl shadow-primary/20 border border-white/10"
+            >
+              <div className="h-10 w-10 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center ring-1 ring-white/30 transition-transform group-hover:scale-110">
+                <CalendarCheck size={22} className="text-white" />
+              </div>
+              <div className="space-y-0.5">
+                <p className="text-[15px] font-black text-white leading-tight">Reservas</p>
+                <p className="text-[10px] text-white/70 uppercase tracking-widest font-bold">Agendar Espaço</p>
+              </div>
+              {/* Abstract decorative shape */}
+              <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-white/10 rounded-full blur-2xl" />
+            </button>
 
-          <button
-            onClick={() => navigate("/morador/encomendas")}
-            className="text-left border-none cursor-pointer rounded-[22px] flex flex-col gap-2 relative overflow-hidden active:scale-[0.98] transition-transform h-[100px] justify-center"
-            style={{
-              background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
-              padding: "0 16px",
-              boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
-            }}
-          >
-            <div className="h-[36px] w-[36px] rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0 relative" style={{ backdropFilter: "blur(8px)" }}>
-              <Package size={20} className="text-white" />
-              {pendingCount > 0 && (
-                <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-[#6366f1]">
-                  {pendingCount}
-                </span>
-              )}
-            </div>
-            <div>
-              <p className="text-[14px] font-bold text-white m-0 leading-tight">Minhas encomendas</p>
-              <p className="text-[9px] text-white/80 mt-0.5 m-0 uppercase tracking-wider font-semibold">Ver todas →</p>
-            </div>
-          </button>
+            <button
+              onClick={() => navigate("/morador/encomendas")}
+              className="group text-left p-5 rounded-[28px] flex flex-col gap-4 relative overflow-hidden active:scale-[0.96] transition-all bg-gradient-to-br from-indigo-500 to-purple-500 shadow-xl shadow-indigo-500/20 border border-white/10"
+            >
+              <div className="h-10 w-10 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center ring-1 ring-white/30 relative transition-transform group-hover:scale-110">
+                <Package size={22} className="text-white" />
+                {pendingCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 h-5 w-5 bg-white text-indigo-600 text-[10px] font-black rounded-full flex items-center justify-center shadow-lg">
+                    {pendingCount}
+                  </span>
+                )}
+              </div>
+              <div className="space-y-0.5">
+                <p className="text-[15px] font-black text-white leading-tight">Encomendas</p>
+                <p className="text-[10px] text-white/70 uppercase tracking-widest font-bold">Ver Chegadas</p>
+              </div>
+              {/* Abstract decorative shape */}
+              <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-white/10 rounded-full blur-2xl" />
+            </button>
+          </div>
         </div>
 
         {/* ═══ NEWS TICKER ═══ */}
         {avisos.length > 0 && (
-          <div className="rounded-2xl overflow-hidden relative" style={{ background: "hsl(var(--primary))", padding: "12px 16px" }}>
-            <div className="absolute right-0 top-0 bottom-0 w-[60px] z-[2]" style={{ background: `linear-gradient(to right, transparent, hsl(var(--primary)))` }} />
-            <div className="flex items-center gap-2.5">
-              <span className="text-[9px] font-extrabold uppercase tracking-widest flex-shrink-0 px-2.5 py-1 rounded-lg flex items-center gap-1 text-white" style={{ background: "hsl(var(--header-bg))" }}>
-                <Sparkles size={10} /> News
-              </span>
-              <div className="overflow-hidden flex-1">
-                <p className="whitespace-nowrap animate-[ticker_18s_linear_infinite] text-[12px] font-normal text-white m-0 flex items-center gap-1">
-                  {avisos.map((a: any, i: number) => (
-                    <span key={a.id} className="inline-flex items-center gap-1">
-                      {i > 0 && <span className="inline-block w-1 h-1 rounded-full bg-primary/60 mx-3 flex-shrink-0" />}
-                      <span>📢</span><span>{a.texto}</span>
-                    </span>
-                  ))}
-                </p>
-              </div>
+          <div className="rounded-2xl overflow-hidden bg-primary/5 border border-primary/10 p-3.5 flex items-center gap-3">
+            <div className="flex-shrink-0 bg-primary/10 px-2.5 py-1.5 rounded-xl flex items-center gap-1.5">
+              <Sparkles size={12} className="text-primary" />
+              <span className="text-[10px] font-black text-primary uppercase tracking-wider">News</span>
+            </div>
+            <div className="overflow-hidden flex-1 relative">
+              <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background/0 to-transparent z-10" />
+              <p className="whitespace-nowrap animate-[ticker_20s_linear_infinite] text-[13px] font-semibold text-foreground/80 flex items-center">
+                {avisos.map((a: any, i: number) => (
+                  <span key={a.id} className="flex items-center">
+                    {i > 0 && <span className="mx-4 text-primary/30">•</span>}
+                    {a.texto}
+                  </span>
+                ))}
+              </p>
             </div>
           </div>
         )}
 
-
         {/* ═══ SERVIÇOS ═══ */}
-        <div>
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex items-center gap-2">
-              <div className="w-1 h-5 rounded-sm bg-primary" />
-              <h2 className="text-[20px] font-bold text-foreground m-0">Serviços</h2>
+        <section>
+          <div className="flex justify-between items-end mb-5 px-1">
+            <div className="space-y-1">
+              <h2 className="text-2xl font-black tracking-tight text-foreground">Serviços</h2>
+              <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">Para o seu dia a dia</p>
             </div>
-            <button onClick={() => navigate("/morador/servicos/categorias")} className="text-[13px] font-semibold text-primary bg-transparent border-none cursor-pointer flex items-center gap-1">
-              Ver tudo <ArrowRight size={14} />
+            <button 
+              onClick={() => navigate("/morador/servicos/categorias")} 
+              className="text-[13px] font-bold text-primary hover:opacity-80 transition-opacity flex items-center gap-1"
+            >
+              Ver Tudo <ArrowRight size={14} />
             </button>
           </div>
           <RotatingServicos categorias={allCategorias} navigate={navigate} />
-        </div>
+        </section>
 
         {/* ═══ PRESTADORES NO CONDOMÍNIO ═══ */}
         {prestadoresVisiveis.length > 0 && (
-          <div>
-            <div className="flex items-center gap-2 mb-3.5">
-              <div className="w-1 h-5 rounded-sm bg-primary" />
-              <MapPin size={16} className="text-primary" />
-              <h2 className="text-[20px] font-bold text-foreground m-0">No condomínio agora</h2>
+          <section>
+            <div className="flex items-center gap-2 mb-5 px-1">
+              <div className="space-y-1">
+                <h2 className="text-2xl font-black tracking-tight text-foreground flex items-center gap-2">
+                  No Condomínio <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
+                </h2>
+                <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">Profissionais por perto</p>
+              </div>
             </div>
-            <div className="flex gap-3 overflow-x-auto pb-1" style={hs}>
+            <div className="flex gap-4 overflow-x-auto pb-4 -mx-1 px-1 scrollbar-hide" style={hs}>
               {prestadoresVisiveis.map((p) => {
                 const mins = Math.max(0, Math.ceil((new Date(p.visivel_ate).getTime() - Date.now()) / 60000));
                 return (
                   <button
                     key={p.id}
                     onClick={() => navigate(`/morador/servicos?q=${encodeURIComponent(p.especialidade)}`)}
-                    className="flex-shrink-0 rounded-[18px] bg-card border border-border p-4 cursor-pointer text-left min-w-[200px] active:scale-[0.97] transition-transform"
-                    style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}
+                    className="flex-shrink-0 rounded-[28px] bg-card border border-border/60 p-5 cursor-pointer text-left min-w-[240px] shadow-sm hover:shadow-md hover:border-primary/20 transition-all active:scale-[0.97]"
                   >
-                    <div className="flex items-center gap-3 mb-2.5">
-                      <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center text-[20px] font-extrabold text-white">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary to-orange-400 flex items-center justify-center text-xl font-black text-white shadow-lg shadow-primary/10">
                         {p.nome?.charAt(0)?.toUpperCase() || "P"}
                       </div>
-                      <div>
-                        <p className="text-[15px] font-semibold text-foreground m-0">{p.nome}</p>
-                        <p className="text-[12px] text-primary font-semibold mt-0.5 m-0">{p.especialidade}</p>
+                      <div className="min-w-0">
+                        <p className="text-base font-bold text-foreground truncate">{p.nome}</p>
+                        <p className="text-xs font-black text-primary uppercase tracking-wider">{p.especialidade}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-                      <p className="text-[11px] text-muted-foreground m-0 font-medium">Disponível por {mins} min</p>
+                    <div className="flex items-center justify-between bg-muted/50 p-3 rounded-2xl">
+                      <span className="text-[11px] text-muted-foreground font-bold uppercase tracking-wider">Disponibilidade</span>
+                      <span className="text-[11px] text-success font-black uppercase tracking-wider">{mins} MIN</span>
                     </div>
                   </button>
                 );
               })}
             </div>
-          </div>
+          </section>
         )}
 
         {/* ═══ CONVITES ATIVOS ═══ */}
