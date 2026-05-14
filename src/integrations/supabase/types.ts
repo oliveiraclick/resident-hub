@@ -1339,6 +1339,7 @@ export type Database = {
           created_at: string
           data_recebimento: string
           descricao: string | null
+          entregador: string | null
           id: string
           quantidade_itens: number
           status: string
@@ -1348,6 +1349,7 @@ export type Database = {
           created_at?: string
           data_recebimento?: string
           descricao?: string | null
+          entregador?: string | null
           id?: string
           quantidade_itens?: number
           status?: string
@@ -1357,6 +1359,7 @@ export type Database = {
           created_at?: string
           data_recebimento?: string
           descricao?: string | null
+          entregador?: string | null
           id?: string
           quantidade_itens?: number
           status?: string
@@ -1484,10 +1487,12 @@ export type Database = {
       }
       pacotes: {
         Row: {
+          codigo_rastreio: string | null
           condominio_id: string
           created_at: string
           descricao: string | null
           id: string
+          localizacao: string | null
           lote_id: string | null
           morador_id: string | null
           qr_code: string | null
@@ -1497,10 +1502,12 @@ export type Database = {
           unidade_id: string
         }
         Insert: {
+          codigo_rastreio?: string | null
           condominio_id: string
           created_at?: string
           descricao?: string | null
           id?: string
+          localizacao?: string | null
           lote_id?: string | null
           morador_id?: string | null
           qr_code?: string | null
@@ -1510,10 +1517,12 @@ export type Database = {
           unidade_id: string
         }
         Update: {
+          codigo_rastreio?: string | null
           condominio_id?: string
           created_at?: string
           descricao?: string | null
           id?: string
+          localizacao?: string | null
           lote_id?: string | null
           morador_id?: string | null
           qr_code?: string | null
