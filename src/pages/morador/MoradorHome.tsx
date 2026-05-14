@@ -286,7 +286,6 @@ const MoradorHome = () => {
             onClick={() => { const b = banners[bannerIdx]; if (b?.whatsapp) { window.open(`https://wa.me/${b.whatsapp.replace(/\D/g, "")}`, "_blank"); } else if (b?.link) { window.open(b.link, "_blank"); } }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
-            className="rounded-[32px] overflow-hidden relative cursor-pointer group shadow-lg shadow-black/5"
             className="rounded-[32px] overflow-hidden relative cursor-pointer group shadow-lg shadow-black/5 aspect-[21/9] sm:aspect-[21/7] h-auto"
           >
             {banners[bannerIdx]?.imagem_url ? (
