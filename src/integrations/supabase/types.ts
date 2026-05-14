@@ -516,6 +516,41 @@ export type Database = {
           },
         ]
       }
+      categoria_capas: {
+        Row: {
+          categoria: string
+          condominio_id: string
+          created_at: string
+          id: string
+          imagem_url: string
+          updated_at: string
+        }
+        Insert: {
+          categoria: string
+          condominio_id: string
+          created_at?: string
+          id?: string
+          imagem_url: string
+          updated_at?: string
+        }
+        Update: {
+          categoria?: string
+          condominio_id?: string
+          created_at?: string
+          id?: string
+          imagem_url?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "categoria_capas_condominio_id_fkey"
+            columns: ["condominio_id"]
+            isOneToOne: false
+            referencedRelation: "condominios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categorias_servico: {
         Row: {
           ativo: boolean

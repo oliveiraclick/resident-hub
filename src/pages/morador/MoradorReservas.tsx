@@ -9,8 +9,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Calendar } from "@/components/ui/calendar";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { CalendarCheck, Trash2, X, Users, DollarSign, Info, Home, Clock, MapPin, ChevronRight, Search, LayoutGrid, Dumbbell, Coffee } from "lucide-react";
+import { CalendarCheck, Trash2, X, Users, DollarSign, Info, Home, Clock, MapPin, ChevronRight, Search, LayoutGrid, Crown, Beef } from "lucide-react";
 import { ptBR } from "date-fns/locale";
+import salaoCover from "@/assets/categoria-salao.jpg";
+import quiosqueCover from "@/assets/categoria-quiosque.jpg";
+import esportesCover from "@/assets/categoria-esportes.jpg";
 
 const FULL_DAY_CATEGORIES = ["salao", "quiosque"];
 const FULL_DAY_INICIO = "09:00";
@@ -58,6 +61,8 @@ const MoradorReservas = () => {
   const [occupiedSlots, setOccupiedSlots] = useState<string[]>([]);
   // For Salão/Quiosque - dates already booked (any morador)
   const [bookedDates, setBookedDates] = useState<string[]>([]);
+  // Custom category covers managed by admin
+  const [categoryCovers, setCategoryCovers] = useState<Record<string, string>>({});
 
   const isFullDay = selectedEspaco && FULL_DAY_CATEGORIES.includes(selectedEspaco.categoria);
 
@@ -91,6 +96,16 @@ const MoradorReservas = () => {
       espaco_nome: espacosList.find((e: any) => e.id === r.espaco_id)?.nome || "Espaço",
     }));
     setReservas(reservasList);
+
+    // Load custom category covers
+    const { data: capas } = await supabase
+      .from("categoria_capas" as any)
+      .select("categoria, imagem_url")
+      .eq("condominio_id", condominioId);
+    const coversMap: Record<string, string> = {};
+    (capas as any[] || []).forEach((c) => { coversMap[c.categoria] = c.imagem_url; });
+    setCategoryCovers(coversMap);
+
     setLoading(false);
   };
 
@@ -269,10 +284,14 @@ const MoradorReservas = () => {
     return `${min}m ${sec.toString().padStart(2, "0")}s`;
   };
 
+  const SoccerBall = (props: { size?: number; className?: string }) => (
+    <span className={props.className} style={{ fontSize: props.size || 24, lineHeight: 1 }}>⚽</span>
+  );
+
   const categories = [
-    { id: "salao", label: "Salão", icon: Coffee, color: "from-amber-500/10 to-amber-500/5", textColor: "text-amber-600", count: espacos.filter(e => e.categoria === "salao").length },
-    { id: "quiosque", label: "Quiosques", icon: Home, color: "from-emerald-500/10 to-emerald-500/5", textColor: "text-emerald-600", count: espacos.filter(e => e.categoria === "quiosque").length },
-    { id: "quadra", label: "Esportes", icon: Dumbbell, color: "from-blue-500/10 to-blue-500/5", textColor: "text-blue-600", count: espacos.filter(e => e.categoria === "quadra" || e.categoria === "piscina" || e.categoria === "academia").length },
+    { id: "salao", label: "Salão", icon: Crown, defaultCover: salaoCover, accent: "bg-amber-500", count: espacos.filter(e => e.categoria === "salao").length },
+    { id: "quiosque", label: "Quiosques", icon: Beef, defaultCover: quiosqueCover, accent: "bg-emerald-500", count: espacos.filter(e => e.categoria === "quiosque").length },
+    { id: "quadra", label: "Esportes", icon: SoccerBall as any, defaultCover: esportesCover, accent: "bg-blue-500", count: espacos.filter(e => e.categoria === "quadra" || e.categoria === "piscina" || e.categoria === "academia").length },
   ];
 
   const filteredEspacos = useMemo(() => {
@@ -341,24 +360,36 @@ const MoradorReservas = () => {
             </div>
             
             <div className="grid grid-cols-1 gap-4">
-              {categories.map((cat) => (
-                <Card 
-                  key={cat.id} 
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className="border-none shadow-premium rounded-[32px] overflow-hidden cursor-pointer active:scale-[0.98] transition-all group relative h-48"
-                >
-                  <div className={`absolute inset-0 bg-gradient-to-br ${cat.color}`} />
-                  <CardContent className="relative h-full flex flex-col justify-end p-8">
-                    <div className="absolute top-8 right-8 h-16 w-16 rounded-2xl bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-soft">
-                      <cat.icon size={32} className={cat.textColor} />
-                    </div>
-                    <div className="space-y-1">
-                      <h3 className="text-3xl font-black tracking-tight text-foreground">{cat.label}</h3>
-                      <p className="text-sm font-bold text-muted-foreground/80">{cat.count} {cat.count === 1 ? 'opção disponível' : 'opções disponíveis'}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+              {categories.map((cat) => {
+                const cover = categoryCovers[cat.id] || cat.defaultCover;
+                const Icon = cat.icon;
+                return (
+                  <Card
+                    key={cat.id}
+                    onClick={() => setSelectedCategory(cat.id)}
+                    className="border-none shadow-premium rounded-[32px] overflow-hidden cursor-pointer active:scale-[0.98] transition-all group relative h-56"
+                  >
+                    <img
+                      src={cover}
+                      alt={cat.label}
+                      loading="lazy"
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                    <CardContent className="relative h-full flex flex-col justify-end p-7">
+                      <div className="absolute top-6 right-6 h-14 w-14 rounded-2xl bg-white/95 backdrop-blur-sm flex items-center justify-center shadow-lg">
+                        <Icon size={26} className="text-foreground" />
+                      </div>
+                      <div className="space-y-1">
+                        <h3 className="text-3xl font-black tracking-tight text-white drop-shadow-sm">{cat.label}</h3>
+                        <p className="text-xs font-black text-white/80 uppercase tracking-widest">
+                          {cat.count} {cat.count === 1 ? 'opção disponível' : 'opções disponíveis'}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </section>
         ) : (

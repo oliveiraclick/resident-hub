@@ -7,8 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2, Edit2, X, Home, MapPin } from "lucide-react";
+import { Plus, Trash2, Edit2, X, Home, MapPin, Crown, Beef, Upload, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
+import salaoCover from "@/assets/categoria-salao.jpg";
+import quiosqueCover from "@/assets/categoria-quiosque.jpg";
+import esportesCover from "@/assets/categoria-esportes.jpg";
 
 interface Espaco {
   id: string;
@@ -39,6 +42,64 @@ const AdminEspacos = () => {
   const [regras, setRegras] = useState("");
   const [imagemUrl, setImagemUrl] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [categoryCovers, setCategoryCovers] = useState<Record<string, string>>({});
+  const [uploadingCover, setUploadingCover] = useState<string | null>(null);
+
+  const SoccerBall = (props: { size?: number; className?: string }) => (
+    <span className={props.className} style={{ fontSize: props.size || 20, lineHeight: 1 }}>⚽</span>
+  );
+
+  const categoryCards = [
+    { id: "salao", label: "Salão", icon: Crown, defaultCover: salaoCover },
+    { id: "quiosque", label: "Quiosques", icon: Beef, defaultCover: quiosqueCover },
+    { id: "quadra", label: "Esportes", icon: SoccerBall as any, defaultCover: esportesCover },
+  ];
+
+  const fetchCovers = async () => {
+    if (!condominioId) return;
+    const { data } = await supabase
+      .from("categoria_capas" as any)
+      .select("categoria, imagem_url")
+      .eq("condominio_id", condominioId);
+    const map: Record<string, string> = {};
+    (data as any[] || []).forEach((c) => { map[c.categoria] = c.imagem_url; });
+    setCategoryCovers(map);
+  };
+
+  useEffect(() => { fetchCovers(); }, [condominioId]);
+
+  const handleCoverUpload = async (categoria: string, file: File) => {
+    if (!condominioId || !file) return;
+    setUploadingCover(categoria);
+    try {
+      const ext = file.name.split(".").pop();
+      const path = `categoria-capas/${condominioId}-${categoria}-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("banners").upload(path, file, { upsert: true });
+      if (upErr) throw upErr;
+      const { data: pub } = supabase.storage.from("banners").getPublicUrl(path);
+      const { error } = await supabase
+        .from("categoria_capas" as any)
+        .upsert({ condominio_id: condominioId, categoria, imagem_url: pub.publicUrl }, { onConflict: "condominio_id,categoria" });
+      if (error) throw error;
+      toast.success("Capa atualizada!");
+      fetchCovers();
+    } catch (e: any) {
+      toast.error(e.message || "Erro ao enviar imagem");
+    } finally {
+      setUploadingCover(null);
+    }
+  };
+
+  const handleResetCover = async (categoria: string) => {
+    if (!condominioId) return;
+    await supabase
+      .from("categoria_capas" as any)
+      .delete()
+      .eq("condominio_id", condominioId)
+      .eq("categoria", categoria);
+    toast.success("Capa restaurada para o padrão");
+    fetchCovers();
+  };
 
   const fetchData = async () => {
     if (!condominioId) return;
@@ -133,7 +194,67 @@ const AdminEspacos = () => {
 
   return (
     <AdminLayout title="Espaços Comuns">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-6">
+        {/* ─── Capas das categorias ─── */}
+        <div className="flex flex-col gap-3">
+          <div>
+            <h2 className="text-[16px] font-semibold text-foreground">Capas das Categorias</h2>
+            <p className="text-[12px] text-muted-foreground mt-0.5">
+              Imagens exibidas no app dos moradores ao escolher Salão, Quiosques ou Esportes.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {categoryCards.map((cat) => {
+              const cover = categoryCovers[cat.id] || cat.defaultCover;
+              const isCustom = !!categoryCovers[cat.id];
+              const Icon = cat.icon;
+              return (
+                <Card key={cat.id} className="rounded-[var(--radius-card)] overflow-hidden">
+                  <div className="relative h-32">
+                    <img src={cover} alt={cat.label} className="absolute inset-0 w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                    <div className="absolute top-2 right-2 h-9 w-9 rounded-xl bg-white/95 flex items-center justify-center shadow">
+                      <Icon size={18} className="text-foreground" />
+                    </div>
+                    <div className="absolute bottom-2 left-3">
+                      <p className="text-white font-bold text-sm drop-shadow">{cat.label}</p>
+                      <p className="text-[10px] text-white/80 uppercase tracking-wider font-bold">
+                        {isCustom ? "Personalizado" : "Padrão"}
+                      </p>
+                    </div>
+                  </div>
+                  <CardContent className="p-3 flex gap-2">
+                    <label className="flex-1">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        disabled={uploadingCover === cat.id}
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (f) handleCoverUpload(cat.id, f);
+                        }}
+                      />
+                      <div className={`w-full h-9 rounded-lg border border-dashed border-border bg-muted/30 hover:bg-muted flex items-center justify-center gap-1.5 cursor-pointer text-[11px] font-bold text-muted-foreground transition-colors ${uploadingCover === cat.id ? "opacity-50" : ""}`}>
+                        <Upload size={13} />
+                        {uploadingCover === cat.id ? "Enviando..." : "Trocar foto"}
+                      </div>
+                    </label>
+                    {isCustom && (
+                      <button
+                        onClick={() => handleResetCover(cat.id)}
+                        className="h-9 px-3 rounded-lg text-[11px] font-bold text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors"
+                      >
+                        Restaurar
+                      </button>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="flex items-center justify-between">
           <h2 className="text-[16px] font-semibold text-foreground">Gestão de Espaços</h2>
           {!showForm && (
