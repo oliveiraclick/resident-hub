@@ -2178,6 +2178,7 @@ export type Database = {
         Args: { _condominio_id: string; _telefone: string }
         Returns: {
           nome: string
+          unidade_numero: string
           user_id: string
         }[]
       }
