@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { LogOut, Save, Trash2, AlertTriangle, Users, Sparkles, Store, Mail, Phone, MapPin, Hash, UserCircle } from "lucide-react";
+import { LogOut, Save, Trash2, AlertTriangle, Users, Sparkles, Store, Mail, Phone, MapPin, Hash, UserCircle, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import QrDisplay from "@/components/QrDisplay";
 import { APP_VERSION_LABEL } from "@/lib/appVersion";
