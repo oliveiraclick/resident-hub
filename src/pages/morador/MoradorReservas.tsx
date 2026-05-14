@@ -531,7 +531,7 @@ const MoradorReservas = () => {
                           <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 block">
                             Escolha a data
                           </Label>
-                          <div className="rounded-3xl border border-border/60 bg-card p-2 shadow-soft flex justify-center">
+                          <div className="rounded-3xl bg-gradient-to-br from-primary/10 via-card to-primary/5 border border-primary/20 p-4 shadow-lg">
                             <Calendar
                               mode="single"
                               locale={ptBR}
@@ -548,16 +548,38 @@ const MoradorReservas = () => {
                                 booked: bookedDates.map((d) => new Date(d + "T12:00:00")),
                               }}
                               modifiersClassNames={{
-                                booked: "line-through opacity-40",
+                                booked: "!bg-destructive/10 !text-destructive line-through",
+                              }}
+                              className="w-full"
+                              classNames={{
+                                months: "flex flex-col w-full",
+                                month: "space-y-4 w-full",
+                                caption: "flex justify-center pt-1 relative items-center mb-2",
+                                caption_label: "text-base font-bold capitalize text-foreground",
+                                nav: "space-x-1 flex items-center",
+                                nav_button: "h-9 w-9 bg-primary/10 hover:bg-primary/20 text-primary rounded-full inline-flex items-center justify-center transition-colors",
+                                nav_button_previous: "absolute left-1",
+                                nav_button_next: "absolute right-1",
+                                table: "w-full border-collapse",
+                                head_row: "flex w-full justify-between mb-2",
+                                head_cell: "text-primary/70 rounded-md flex-1 font-bold text-[0.7rem] uppercase tracking-wider",
+                                row: "flex w-full justify-between mt-1",
+                                cell: "flex-1 aspect-square text-center text-sm p-0.5 relative",
+                                day: "h-full w-full p-0 font-semibold rounded-2xl hover:bg-primary/15 transition-all aria-selected:opacity-100 inline-flex items-center justify-center",
+                                day_selected: "!bg-primary !text-primary-foreground shadow-md hover:!bg-primary scale-105",
+                                day_today: "ring-2 ring-primary/40 text-primary font-bold",
+                                day_outside: "text-muted-foreground/40",
+                                day_disabled: "text-muted-foreground/30 line-through hover:bg-transparent cursor-not-allowed",
+                                day_hidden: "invisible",
                               }}
                             />
                           </div>
-                          <div className="flex items-center gap-4 mt-3 px-1 text-[11px] font-semibold text-muted-foreground">
-                            <span className="inline-flex items-center gap-1.5">
+                          <div className="flex items-center justify-center gap-5 mt-3 px-1 text-[11px] font-bold uppercase tracking-wider">
+                            <span className="inline-flex items-center gap-1.5 text-primary">
                               <span className="w-2.5 h-2.5 rounded-full bg-primary" /> Disponível
                             </span>
-                            <span className="inline-flex items-center gap-1.5">
-                              <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/30" /> Reservado
+                            <span className="inline-flex items-center gap-1.5 text-destructive">
+                              <span className="w-2.5 h-2.5 rounded-full bg-destructive/40" /> Reservado
                             </span>
                           </div>
                         </div>
