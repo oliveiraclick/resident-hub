@@ -42,6 +42,64 @@ const AdminEspacos = () => {
   const [regras, setRegras] = useState("");
   const [imagemUrl, setImagemUrl] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [categoryCovers, setCategoryCovers] = useState<Record<string, string>>({});
+  const [uploadingCover, setUploadingCover] = useState<string | null>(null);
+
+  const SoccerBall = (props: { size?: number; className?: string }) => (
+    <span className={props.className} style={{ fontSize: props.size || 20, lineHeight: 1 }}>⚽</span>
+  );
+
+  const categoryCards = [
+    { id: "salao", label: "Salão", icon: Crown, defaultCover: salaoCover },
+    { id: "quiosque", label: "Quiosques", icon: Beef, defaultCover: quiosqueCover },
+    { id: "quadra", label: "Esportes", icon: SoccerBall as any, defaultCover: esportesCover },
+  ];
+
+  const fetchCovers = async () => {
+    if (!condominioId) return;
+    const { data } = await supabase
+      .from("categoria_capas" as any)
+      .select("categoria, imagem_url")
+      .eq("condominio_id", condominioId);
+    const map: Record<string, string> = {};
+    (data as any[] || []).forEach((c) => { map[c.categoria] = c.imagem_url; });
+    setCategoryCovers(map);
+  };
+
+  useEffect(() => { fetchCovers(); }, [condominioId]);
+
+  const handleCoverUpload = async (categoria: string, file: File) => {
+    if (!condominioId || !file) return;
+    setUploadingCover(categoria);
+    try {
+      const ext = file.name.split(".").pop();
+      const path = `categoria-capas/${condominioId}-${categoria}-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("banners").upload(path, file, { upsert: true });
+      if (upErr) throw upErr;
+      const { data: pub } = supabase.storage.from("banners").getPublicUrl(path);
+      const { error } = await supabase
+        .from("categoria_capas" as any)
+        .upsert({ condominio_id: condominioId, categoria, imagem_url: pub.publicUrl }, { onConflict: "condominio_id,categoria" });
+      if (error) throw error;
+      toast.success("Capa atualizada!");
+      fetchCovers();
+    } catch (e: any) {
+      toast.error(e.message || "Erro ao enviar imagem");
+    } finally {
+      setUploadingCover(null);
+    }
+  };
+
+  const handleResetCover = async (categoria: string) => {
+    if (!condominioId) return;
+    await supabase
+      .from("categoria_capas" as any)
+      .delete()
+      .eq("condominio_id", condominioId)
+      .eq("categoria", categoria);
+    toast.success("Capa restaurada para o padrão");
+    fetchCovers();
+  };
 
   const fetchData = async () => {
     if (!condominioId) return;
