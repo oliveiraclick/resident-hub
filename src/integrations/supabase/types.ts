@@ -1911,6 +1911,7 @@ export type Database = {
           rua: string | null
           telefone: string | null
           termos_aceitos_em: string | null
+          updated_at: string | null
           user_id: string
         }
         Insert: {
@@ -1926,6 +1927,7 @@ export type Database = {
           rua?: string | null
           telefone?: string | null
           termos_aceitos_em?: string | null
+          updated_at?: string | null
           user_id: string
         }
         Update: {
@@ -1941,6 +1943,7 @@ export type Database = {
           rua?: string | null
           telefone?: string | null
           termos_aceitos_em?: string | null
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []
@@ -2178,6 +2181,7 @@ export type Database = {
         Args: { _condominio_id: string; _telefone: string }
         Returns: {
           nome: string
+          unidade_numero: string
           user_id: string
         }[]
       }

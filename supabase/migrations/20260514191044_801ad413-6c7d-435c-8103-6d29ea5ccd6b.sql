@@ -1,0 +1,1 @@
+UPDATE public.pacotes SET status = 'AGUARDANDO_RETIRADA' WHERE codigo_rastreio = 'ML123456789BR';
