@@ -288,7 +288,7 @@ const MoradorHome = () => {
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
             className="rounded-[22px] overflow-hidden relative cursor-pointer"
-            style={{ height: 140, boxShadow: "0 6px 24px rgba(0,0,0,0.1)" }}
+            style={{ height: 100, boxShadow: "0 6px 24px rgba(0,0,0,0.1)" }}
           >
             {banners[bannerIdx]?.imagem_url ? (
               <img src={banners[bannerIdx].imagem_url} alt={banners[bannerIdx].titulo} className="absolute inset-0 w-full h-full object-cover" />
