@@ -50,6 +50,9 @@ const MoradorReservas = () => {
   const [horarioInicio, setHorarioInicio] = useState("");
   const [horarioFim, setHorarioFim] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchDate, setSearchDate] = useState<string>(new Date().toISOString().split("T")[0]);
+  const [allReservations, setAllReservations] = useState<any[]>([]);
 
   // For Quadra schedule
   const [occupiedSlots, setOccupiedSlots] = useState<string[]>([]);
