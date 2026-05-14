@@ -53,6 +53,10 @@ const MoradorReservas = () => {
 
   // For Quadra schedule
   const [occupiedSlots, setOccupiedSlots] = useState<string[]>([]);
+  // For Salão/Quiosque - dates already booked (any morador)
+  const [bookedDates, setBookedDates] = useState<string[]>([]);
+
+  const isFullDay = selectedEspaco && FULL_DAY_CATEGORIES.includes(selectedEspaco.categoria);
 
   const fetchData = async () => {
     if (!condominioId || !user) return;
@@ -84,21 +88,31 @@ const MoradorReservas = () => {
     fetchData();
   }, [condominioId, user]);
 
-  // Fetch occupied slots when quadra is selected or date changes
+  // Fetch occupied data when an espaco is selected
   useEffect(() => {
-    const fetchOccupiedSlots = async () => {
-      if (selectedEspaco?.categoria === "quadra" && data) {
+    const fetchAvailability = async () => {
+      if (!selectedEspaco) return;
+
+      if (selectedEspaco.categoria === "quadra" && data) {
         const { data: res } = await supabase
           .from("reservas")
           .select("horario_inicio")
           .eq("espaco_id", selectedEspaco.id)
           .eq("data", data)
           .eq("status", "confirmada");
-        
-        setOccupiedSlots(res?.map(r => r.horario_inicio.slice(0, 5)) || []);
+        setOccupiedSlots(res?.map((r: any) => r.horario_inicio.slice(0, 5)) || []);
+      } else if (FULL_DAY_CATEGORIES.includes(selectedEspaco.categoria)) {
+        const today = new Date().toISOString().split("T")[0];
+        const { data: res } = await supabase
+          .from("reservas")
+          .select("data")
+          .eq("espaco_id", selectedEspaco.id)
+          .eq("status", "confirmada")
+          .gte("data", today);
+        setBookedDates(res?.map((r: any) => r.data) || []);
       }
     };
-    fetchOccupiedSlots();
+    fetchAvailability();
   }, [selectedEspaco, data]);
 
   const handleSubmit = async () => {
