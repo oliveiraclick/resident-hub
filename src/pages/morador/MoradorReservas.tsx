@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Calendar } from "@/components/ui/calendar";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { CalendarCheck, Trash2, X, Users, DollarSign, Info, Home, Clock, MapPin, ChevronRight } from "lucide-react";
+import { CalendarCheck, Trash2, X, Users, DollarSign, Info, Home, Clock, MapPin, ChevronRight, Search, LayoutGrid, Dumbbell, Coffee } from "lucide-react";
 import { ptBR } from "date-fns/locale";
 
 const FULL_DAY_CATEGORIES = ["salao", "quiosque"];
