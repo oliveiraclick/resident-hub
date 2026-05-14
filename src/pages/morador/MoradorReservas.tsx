@@ -116,7 +116,23 @@ const MoradorReservas = () => {
   }, [selectedEspaco, data]);
 
   const handleSubmit = async () => {
-    if (!selectedEspaco || !data || !horarioInicio || !horarioFim || !user || !condominioId) return;
+    if (!selectedEspaco || !data || !user || !condominioId) return;
+
+    const fullDay = FULL_DAY_CATEGORIES.includes(selectedEspaco.categoria);
+    const inicio = fullDay ? FULL_DAY_INICIO : horarioInicio;
+    const fim = fullDay ? FULL_DAY_FIM : horarioFim;
+
+    if (!inicio || !fim) {
+      toast.error("Selecione o horário");
+      return;
+    }
+    setSubmitting(true);
+
+    if (fullDay && bookedDates.includes(data)) {
+      toast.error("Esta data já está reservada.");
+      setSubmitting(false);
+      return;
+    }
     setSubmitting(true);
 
     // Rule for Quadra: 1 reservation per day per resident
