@@ -274,10 +274,14 @@ const MoradorReservas = () => {
     return `${min}m ${sec.toString().padStart(2, "0")}s`;
   };
 
+  const SoccerBall = (props: { size?: number; className?: string }) => (
+    <span className={props.className} style={{ fontSize: props.size || 24, lineHeight: 1 }}>⚽</span>
+  );
+
   const categories = [
-    { id: "salao", label: "Salão", icon: Coffee, color: "from-amber-500/10 to-amber-500/5", textColor: "text-amber-600", count: espacos.filter(e => e.categoria === "salao").length },
-    { id: "quiosque", label: "Quiosques", icon: Home, color: "from-emerald-500/10 to-emerald-500/5", textColor: "text-emerald-600", count: espacos.filter(e => e.categoria === "quiosque").length },
-    { id: "quadra", label: "Esportes", icon: Dumbbell, color: "from-blue-500/10 to-blue-500/5", textColor: "text-blue-600", count: espacos.filter(e => e.categoria === "quadra" || e.categoria === "piscina" || e.categoria === "academia").length },
+    { id: "salao", label: "Salão", icon: Crown, defaultCover: salaoCover, accent: "bg-amber-500", count: espacos.filter(e => e.categoria === "salao").length },
+    { id: "quiosque", label: "Quiosques", icon: Beef, defaultCover: quiosqueCover, accent: "bg-emerald-500", count: espacos.filter(e => e.categoria === "quiosque").length },
+    { id: "quadra", label: "Esportes", icon: SoccerBall as any, defaultCover: esportesCover, accent: "bg-blue-500", count: espacos.filter(e => e.categoria === "quadra" || e.categoria === "piscina" || e.categoria === "academia").length },
   ];
 
   const filteredEspacos = useMemo(() => {
