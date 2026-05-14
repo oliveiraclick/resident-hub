@@ -23,19 +23,19 @@ const fallbackShopImages = [productBolo, productSabonete, productBrigadeiro, pro
 
 const hs: React.CSSProperties = { scrollbarWidth: "none", msOverflowStyle: "none" };
 
-const ITEMS_PER_PAGE = 4;
+const ITEMS_PER_PAGE = 10;
 
 const RotatingServicos = ({ categorias, navigate }: { categorias: any[]; navigate: (path: string) => void }) => {
-  const [shuffled] = useState(() => {
+  const shuffled = useMemo(() => {
     const arr = [...categorias];
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [arr[i], arr[j]] = [arr[j], arr[i]];
     }
     return arr.slice(0, ITEMS_PER_PAGE);
-  });
+  }, [categorias]);
 
-  const visible = categorias.length > 0 ? (shuffled.length > 0 ? shuffled : categorias.slice(0, ITEMS_PER_PAGE)) : [];
+  const visible = categorias.length > 0 ? shuffled : [];
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
