@@ -4,9 +4,11 @@ import MoradorLayout from "@/components/MoradorLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { CalendarCheck, Trash2, X, Users, DollarSign, Info, Home, Clock } from "lucide-react";
+import { CalendarCheck, Trash2, X, Users, DollarSign, Info, Home, Clock, MapPin, ChevronRight } from "lucide-react";
 
 interface Espaco {
   id: string;
@@ -266,27 +268,186 @@ const MoradorReservas = () => {
         )}
 
         <section className="animate-in fade-in-up duration-500 delay-150">
-          <div className="flex flex-col items-center justify-center text-center gap-6 py-16 px-8 bg-card rounded-[48px] border border-border/50 shadow-soft relative overflow-hidden">
-            {/* Background decorative elements */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-            
-            <div className="h-24 w-24 rounded-[36px] bg-primary/5 flex items-center justify-center text-primary shadow-inner-glass">
-              <CalendarCheck size={48} />
-            </div>
-            <div className="space-y-3">
-              <h2 className="text-3xl font-black tracking-tighter">Reservar Espaço</h2>
-              <p className="text-sm text-muted-foreground max-w-[280px] mx-auto leading-relaxed font-medium">
-                Agende áreas comuns de forma rápida e segura através da nossa <strong>IA no WhatsApp</strong>.
-              </p>
-            </div>
-            <Button 
-              className="mt-4 px-10 h-14 rounded-full font-black text-base shadow-xl shadow-primary/20 group active:scale-95 transition-all" 
-              onClick={() => window.open('https://wa.me/seu-numero', '_blank')}
-            >
-              Chamar IA Agora
-            </Button>
+          <div className="flex items-center gap-2 mb-4 px-1">
+            <div className="w-1.5 h-4 bg-primary rounded-full" />
+            <h2 className="text-sm font-black text-muted-foreground/60 uppercase tracking-widest">Áreas Comuns</h2>
           </div>
+
+          {loading ? (
+            <div className="grid gap-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-28 rounded-[28px] bg-muted/40 animate-pulse" />
+              ))}
+            </div>
+          ) : espacos.length === 0 ? (
+            <Card className="border-none shadow-soft rounded-[32px]">
+              <CardContent className="flex flex-col items-center text-center gap-4 py-12 px-6">
+                <div className="h-16 w-16 rounded-3xl bg-muted flex items-center justify-center text-muted-foreground">
+                  <Home size={28} />
+                </div>
+                <div>
+                  <p className="text-base font-black text-foreground">Nenhuma área disponível</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    O síndico ainda não cadastrou áreas comuns para reserva.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-4">
+              {espacos.map((e) => (
+                <Card
+                  key={e.id}
+                  onClick={() => setSelectedEspaco(e)}
+                  className="border-none shadow-premium rounded-[28px] hover:shadow-lg transition-all active:scale-[0.98] cursor-pointer overflow-hidden group"
+                >
+                  <CardContent className="flex items-center gap-4 p-4">
+                    {e.imagem_url ? (
+                      <img
+                        src={e.imagem_url}
+                        alt={e.nome}
+                        className="h-20 w-20 rounded-2xl object-cover flex-shrink-0"
+                      />
+                    ) : (
+                      <div className="h-20 w-20 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary">
+                        <Home size={28} />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-lg font-black text-foreground tracking-tight truncate">{e.nome}</p>
+                      <p className="text-[11px] font-black text-muted-foreground/60 uppercase tracking-wider mt-0.5">
+                        {categoriaLabel[e.categoria] || e.categoria}
+                      </p>
+                      <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground font-medium">
+                        {e.capacidade && (
+                          <span className="inline-flex items-center gap-1">
+                            <Users size={12} /> {e.capacidade}
+                          </span>
+                        )}
+                        {e.preco > 0 ? (
+                          <span className="inline-flex items-center gap-1 text-success font-bold">
+                            <DollarSign size={12} /> R$ {Number(e.preco).toFixed(2)}
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-success font-bold">Gratuito</span>
+                        )}
+                      </div>
+                    </div>
+                    <ChevronRight className="text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" size={22} />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </section>
+
+        {/* Reservation Dialog */}
+        <Dialog open={!!selectedEspaco} onOpenChange={(o) => !o && setSelectedEspaco(null)}>
+          <DialogContent className="max-w-md rounded-[32px] p-0 overflow-hidden gap-0 max-h-[90vh] overflow-y-auto">
+            {selectedEspaco && (
+              <>
+                {selectedEspaco.imagem_url ? (
+                  <img src={selectedEspaco.imagem_url} alt={selectedEspaco.nome} className="w-full h-40 object-cover" />
+                ) : (
+                  <div className="w-full h-40 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center text-primary">
+                    <Home size={48} />
+                  </div>
+                )}
+                <div className="p-6 flex flex-col gap-5">
+                  <DialogHeader className="text-left space-y-2">
+                    <DialogTitle className="text-2xl font-black tracking-tight">{selectedEspaco.nome}</DialogTitle>
+                    <DialogDescription className="text-sm">
+                      {categoriaLabel[selectedEspaco.categoria] || selectedEspaco.categoria}
+                      {selectedEspaco.capacidade ? ` · até ${selectedEspaco.capacidade} pessoas` : ""}
+                      {selectedEspaco.preco > 0 ? ` · R$ ${Number(selectedEspaco.preco).toFixed(2)}` : " · Gratuito"}
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  {selectedEspaco.descricao && (
+                    <p className="text-sm text-muted-foreground leading-relaxed">{selectedEspaco.descricao}</p>
+                  )}
+
+                  {selectedEspaco.regras && (
+                    <div className="flex gap-2 p-3 rounded-2xl bg-muted/50 text-xs text-muted-foreground">
+                      <Info size={14} className="flex-shrink-0 mt-0.5" />
+                      <p className="leading-relaxed">{selectedEspaco.regras}</p>
+                    </div>
+                  )}
+
+                  <div className="grid gap-3">
+                    <div>
+                      <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Data</Label>
+                      <Input
+                        type="date"
+                        value={data}
+                        min={new Date().toISOString().split("T")[0]}
+                        onChange={(ev) => setData(ev.target.value)}
+                        className="mt-1.5 h-12 rounded-2xl"
+                      />
+                    </div>
+
+                    {selectedEspaco.categoria === "quadra" ? (
+                      <div>
+                        <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Horário (1h)</Label>
+                        <div className="grid grid-cols-4 gap-2 mt-1.5">
+                          {hours.map((h) => {
+                            const isOccupied = occupiedSlots.includes(h);
+                            const isSelected = horarioInicio === h;
+                            return (
+                              <button
+                                key={h}
+                                disabled={isOccupied}
+                                onClick={() => selectSlot(h)}
+                                className={`h-11 rounded-xl text-xs font-bold transition-all ${
+                                  isOccupied
+                                    ? "bg-muted text-muted-foreground/40 line-through cursor-not-allowed"
+                                    : isSelected
+                                    ? "bg-primary text-primary-foreground shadow-md"
+                                    : "bg-muted/50 hover:bg-muted text-foreground"
+                                }`}
+                              >
+                                {h}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Início</Label>
+                          <Input
+                            type="time"
+                            value={horarioInicio}
+                            onChange={(ev) => setHorarioInicio(ev.target.value)}
+                            className="mt-1.5 h-12 rounded-2xl"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Fim</Label>
+                          <Input
+                            type="time"
+                            value={horarioFim}
+                            onChange={(ev) => setHorarioFim(ev.target.value)}
+                            className="mt-1.5 h-12 rounded-2xl"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <Button
+                    className="h-14 rounded-2xl font-black text-base shadow-lg shadow-primary/20 mt-2"
+                    disabled={submitting || !horarioInicio || !horarioFim}
+                    onClick={handleSubmit}
+                  >
+                    {submitting ? "Reservando..." : "Confirmar Reserva"}
+                  </Button>
+                </div>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
 
         {reservas.length > 0 && (
           <section className="animate-in fade-in-up duration-500 delay-300">
