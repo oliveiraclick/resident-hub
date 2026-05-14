@@ -38,20 +38,19 @@ const RotatingServicos = ({ categorias, navigate }: { categorias: any[]; navigat
   const visible = categorias.length > 0 ? (shuffled.length > 0 ? shuffled : categorias.slice(0, ITEMS_PER_PAGE)) : [];
 
   return (
-    <div className="grid grid-cols-2 gap-2.5">
+    <div className="grid grid-cols-2 gap-3">
       {visible.map((item) => {
         const Icon = getIcon(item.icone);
         return (
           <button
             key={item.id}
             onClick={() => navigate(`/morador/servicos?q=${encodeURIComponent(item.nome)}`)}
-            className="flex items-center gap-2.5 bg-card border border-border rounded-[14px] py-3 px-4 cursor-pointer active:scale-95 transition-transform"
-            style={{ minWidth: 0, boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}
+            className="group flex flex-col items-center gap-3 bg-card border border-border/60 p-5 rounded-[24px] cursor-pointer hover:border-primary/30 active:scale-[0.96] transition-all hover:shadow-[0_8px_20px_-8px_rgba(0,0,0,0.08)]"
           >
-            <div className="h-10 w-10 rounded-xl bg-primary/[0.07] flex items-center justify-center flex-shrink-0">
-              <Icon size={20} className="text-primary" />
+            <div className="h-12 w-12 rounded-2xl bg-primary/[0.05] group-hover:bg-primary/[0.08] flex items-center justify-center transition-colors">
+              <Icon size={24} className="text-primary" />
             </div>
-            <span className="text-[13px] font-medium text-foreground text-left leading-tight truncate">{item.nome}</span>
+            <span className="text-sm font-bold text-foreground leading-tight text-center">{item.nome}</span>
           </button>
         );
       })}
