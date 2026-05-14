@@ -21,14 +21,21 @@ export const useCategorias = () => {
   const [loading, setLoading] = useState(true);
 
   const fetch = async () => {
-    setLoading(true);
-    const { data } = await supabase
-      .from("categorias_servico")
-      .select("*")
-      .eq("ativo", true)
-      .order("ordem", { ascending: true });
-    setCategorias((data as CategoriaServico[]) || []);
-    setLoading(false);
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("categorias_servico")
+        .select("*")
+        .eq("ativo", true)
+        .order("ordem", { ascending: true });
+      
+      if (error) throw error;
+      setCategorias((data as CategoriaServico[]) || []);
+    } catch (err) {
+      console.error("Error fetching categories:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { fetch(); }, []);

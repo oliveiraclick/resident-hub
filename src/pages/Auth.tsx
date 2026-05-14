@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import logoSymbol from "@/assets/logo-symbol.png";
 import { Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -43,7 +43,7 @@ const Auth = () => {
     return <Navigate to="/dashboard" replace />;
   }
 
-  const validate = () => {
+  const validate = useCallback(() => {
     const schema = isLogin ? loginSchema : signupSchema;
     const data = isLogin ? { email, password } : { email, password, nome };
     const result = schema.safeParse(data);
@@ -60,7 +60,7 @@ const Auth = () => {
 
     setErrors({});
     return true;
-  };
+  }, [isLogin, email, password, nome]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,24 +93,13 @@ const Auth = () => {
       let detalhes = err.message || null;
 
       if (err.message?.includes("Invalid login")) {
-        // Check if email exists to give better info in logs
-        try {
-          const { data: exists } = await supabase.rpc("check_email_exists", { _email: email.trim() });
-          if (exists) {
-            msg = "Senha incorreta";
-            detalhes = "Email encontrado no sistema, mas a senha está errada";
-          } else {
-            msg = "Email não cadastrado";
-            detalhes = "Nenhuma conta encontrada com este email";
-          }
-        } catch (_) {
-          msg = "Email ou senha incorretos";
-        }
+        msg = "Email ou senha incorretos";
+        detalhes = "Tentativa de login com credenciais inválidas";
       } else if (err.message?.includes("already registered")) {
         msg = "Este email já está cadastrado";
       }
 
-      toast.error(msg === "Senha incorreta" || msg === "Email não cadastrado" ? "Email ou senha incorretos" : msg);
+      toast.error(msg);
 
       // Log auth error to database
       try {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, createContext, useContext, ReactNode } from "react";
+import { useState, useEffect, useRef, createContext, useContext, ReactNode, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useDeviceInfo } from "@/hooks/useDeviceInfo";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
@@ -59,8 +59,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
-    // Skip re-fetching roles if the user hasn't actually changed
-    // This prevents unmounting pages when the app resumes from background (e.g. file picker)
     if (prevUserIdRef.current === user.id) {
       return;
     }
@@ -82,15 +80,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     fetchRoles();
   }, [user]);
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     await supabase.auth.signOut();
-  };
+    setUser(null);
+    setSession(null);
+    setRoles([]);
+  }, []);
 
-  const hasRole = (condominioId: string, role: AppRole): boolean => {
+  const hasRole = useCallback((condominioId: string, role: AppRole): boolean => {
     return roles.some(
       (r) => r.condominio_id === condominioId && r.role === role
     );
-  };
+  }, [roles]);
 
   const isPlatformAdmin = roles.some((r) => r.role === "platform_admin");
 

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import QrScanner from "@/components/QrScanner";
@@ -20,13 +20,12 @@ const PorteiroScanner = () => {
   const [result, setResult] = useState<ValidationResult | null>(null);
   const actionRef = useRef(false);
 
-  const handleScan = async (qrData: string) => {
+  const handleScan = useCallback(async (qrData: string) => {
     if (actionRef.current) return;
     actionRef.current = true;
     setScanning(false);
 
     try {
-      // qrData is the convite qr_code (which is the convite id)
       const { data: convite, error } = await supabase
         .from("convites_visitante")
         .select("id, nome_visitante, nome_registrado, foto_url, data_visita, horario_inicio, horario_fim, status, usado_em")
@@ -48,14 +47,12 @@ const PorteiroScanner = () => {
         return;
       }
 
-      // Check date
       const today = new Date().toISOString().split("T")[0];
       if (convite.data_visita !== today) {
         setResult({ status: "denied", message: `Convite válido apenas para ${convite.data_visita}` });
         return;
       }
 
-      // Check time window
       const now = new Date();
       const [hI, mI] = convite.horario_inicio.split(":").map(Number);
       const [hF, mF] = convite.horario_fim.split(":").map(Number);
@@ -71,10 +68,9 @@ const PorteiroScanner = () => {
         return;
       }
 
-      // Mark as used
       const { error: updateError } = await supabase
         .from("convites_visitante")
-        .update({ usado_em: new Date().toISOString(), status: "usado" })
+        .update({ usado_em: new Date().toISOString(), status: "usado" } as any)
         .eq("id", convite.id);
 
       if (updateError) {
@@ -93,16 +89,24 @@ const PorteiroScanner = () => {
     } finally {
       actionRef.current = false;
     }
-  };
+  }, []);
 
   const reset = () => {
     setResult(null);
     setScanning(true);
+    actionRef.current = false;
   };
+
+  const handleSignOut = useCallback(async () => {
+    try {
+      await signOut();
+    } catch (err) {
+      toast.error("Erro ao sair");
+    }
+  }, [signOut]);
 
   return (
     <div className="min-h-screen bg-background mx-auto max-w-[480px] flex flex-col">
-      {/* Header */}
       <header
         className="px-5 pt-6 pb-4 flex items-center justify-between"
         style={{
@@ -116,12 +120,11 @@ const PorteiroScanner = () => {
             <span className="text-[10px] text-white/50 font-medium uppercase tracking-wider">Scanner de visitantes</span>
           </div>
         </div>
-        <Button variant="ghost" size="icon" onClick={signOut} className="text-white/60 hover:text-white hover:bg-white/10">
+        <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-white/60 hover:text-white hover:bg-white/10">
           <LogOut size={20} />
         </Button>
       </header>
 
-      {/* Content */}
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-8 gap-6">
         {scanning && !result && (
           <>
@@ -137,8 +140,7 @@ const PorteiroScanner = () => {
         )}
 
         {result && (
-          <div className="w-full max-w-sm flex flex-col items-center gap-6">
-            {/* Result card */}
+          <div className="w-full max-w-sm flex flex-col items-center gap-6 animate-in fade-in zoom-in-95 duration-300">
             <div
               className="w-full rounded-3xl p-8 flex flex-col items-center gap-4 text-center"
               style={{
@@ -171,7 +173,7 @@ const PorteiroScanner = () => {
               <p className="text-[16px] font-semibold text-white/90">{result.message}</p>
             </div>
 
-            <Button onClick={reset} variant="outline" className="gap-2">
+            <Button onClick={reset} variant="outline" className="gap-2 w-full h-12 rounded-2xl border-2">
               <RotateCcw size={16} />
               Escanear outro
             </Button>
