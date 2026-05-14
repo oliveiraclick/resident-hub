@@ -59,7 +59,8 @@ const MoradorReservas = () => {
         .select("id, espaco_id, data, horario_inicio, horario_fim, status")
         .eq("morador_id", user.id)
         .eq("condominio_id", condominioId)
-        .order("data", { ascending: false }),
+        .gte("data", new Date().toISOString().split("T")[0])
+        .order("data", { ascending: true }),
     ]);
 
     const espacosList = (espacosRes.data as any[]) || [];
