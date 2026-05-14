@@ -6,9 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Calendar } from "@/components/ui/calendar";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { CalendarCheck, Trash2, X, Users, DollarSign, Info, Home, Clock, MapPin, ChevronRight } from "lucide-react";
+import { ptBR } from "date-fns/locale";
+
+const FULL_DAY_CATEGORIES = ["salao", "quiosque"];
+const FULL_DAY_INICIO = "09:00";
+const FULL_DAY_FIM = "22:00";
 
 interface Espaco {
   id: string;
@@ -47,6 +53,10 @@ const MoradorReservas = () => {
 
   // For Quadra schedule
   const [occupiedSlots, setOccupiedSlots] = useState<string[]>([]);
+  // For Salão/Quiosque - dates already booked (any morador)
+  const [bookedDates, setBookedDates] = useState<string[]>([]);
+
+  const isFullDay = selectedEspaco && FULL_DAY_CATEGORIES.includes(selectedEspaco.categoria);
 
   const fetchData = async () => {
     if (!condominioId || !user) return;
@@ -78,25 +88,51 @@ const MoradorReservas = () => {
     fetchData();
   }, [condominioId, user]);
 
-  // Fetch occupied slots when quadra is selected or date changes
+  // Fetch occupied data when an espaco is selected
   useEffect(() => {
-    const fetchOccupiedSlots = async () => {
-      if (selectedEspaco?.categoria === "quadra" && data) {
+    const fetchAvailability = async () => {
+      if (!selectedEspaco) return;
+
+      if (selectedEspaco.categoria === "quadra" && data) {
         const { data: res } = await supabase
           .from("reservas")
           .select("horario_inicio")
           .eq("espaco_id", selectedEspaco.id)
           .eq("data", data)
           .eq("status", "confirmada");
-        
-        setOccupiedSlots(res?.map(r => r.horario_inicio.slice(0, 5)) || []);
+        setOccupiedSlots(res?.map((r: any) => r.horario_inicio.slice(0, 5)) || []);
+      } else if (FULL_DAY_CATEGORIES.includes(selectedEspaco.categoria)) {
+        const today = new Date().toISOString().split("T")[0];
+        const { data: res } = await supabase
+          .from("reservas")
+          .select("data")
+          .eq("espaco_id", selectedEspaco.id)
+          .eq("status", "confirmada")
+          .gte("data", today);
+        setBookedDates(res?.map((r: any) => r.data) || []);
       }
     };
-    fetchOccupiedSlots();
+    fetchAvailability();
   }, [selectedEspaco, data]);
 
   const handleSubmit = async () => {
-    if (!selectedEspaco || !data || !horarioInicio || !horarioFim || !user || !condominioId) return;
+    if (!selectedEspaco || !data || !user || !condominioId) return;
+
+    const fullDay = FULL_DAY_CATEGORIES.includes(selectedEspaco.categoria);
+    const inicio = fullDay ? FULL_DAY_INICIO : horarioInicio;
+    const fim = fullDay ? FULL_DAY_FIM : horarioFim;
+
+    if (!inicio || !fim) {
+      toast.error("Selecione o horário");
+      return;
+    }
+    setSubmitting(true);
+
+    if (fullDay && bookedDates.includes(data)) {
+      toast.error("Esta data já está reservada.");
+      setSubmitting(false);
+      return;
+    }
     setSubmitting(true);
 
     // Rule for Quadra: 1 reservation per day per resident
@@ -121,8 +157,8 @@ const MoradorReservas = () => {
       espaco_id: selectedEspaco.id,
       morador_id: user.id,
       data,
-      horario_inicio: horarioInicio,
-      horario_fim: horarioFim,
+      horario_inicio: inicio,
+      horario_fim: fim,
       status: "confirmada",
     } as any);
 
@@ -375,71 +411,118 @@ const MoradorReservas = () => {
                     </div>
                   )}
 
-                  <div className="grid gap-3">
-                    <div>
-                      <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Data</Label>
-                      <Input
-                        type="date"
-                        value={data}
-                        min={new Date().toISOString().split("T")[0]}
-                        onChange={(ev) => setData(ev.target.value)}
-                        className="mt-1.5 h-12 rounded-2xl"
-                      />
-                    </div>
-
-                    {selectedEspaco.categoria === "quadra" ? (
-                      <div>
-                        <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Horário (1h)</Label>
-                        <div className="grid grid-cols-4 gap-2 mt-1.5">
-                          {hours.map((h) => {
-                            const isOccupied = occupiedSlots.includes(h);
-                            const isSelected = horarioInicio === h;
-                            return (
-                              <button
-                                key={h}
-                                disabled={isOccupied}
-                                onClick={() => selectSlot(h)}
-                                className={`h-11 rounded-xl text-xs font-bold transition-all ${
-                                  isOccupied
-                                    ? "bg-muted text-muted-foreground/40 line-through cursor-not-allowed"
-                                    : isSelected
-                                    ? "bg-primary text-primary-foreground shadow-md"
-                                    : "bg-muted/50 hover:bg-muted text-foreground"
-                                }`}
-                              >
-                                {h}
-                              </button>
-                            );
-                          })}
+                  <div className="grid gap-4">
+                    {isFullDay ? (
+                      <>
+                        <div>
+                          <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 block">
+                            Escolha a data
+                          </Label>
+                          <div className="rounded-3xl border border-border/60 bg-card p-2 shadow-soft flex justify-center">
+                            <Calendar
+                              mode="single"
+                              locale={ptBR}
+                              selected={data ? new Date(data + "T12:00:00") : undefined}
+                              onSelect={(d) => d && setData(d.toISOString().split("T")[0])}
+                              disabled={(date) => {
+                                const today = new Date();
+                                today.setHours(0, 0, 0, 0);
+                                if (date < today) return true;
+                                const iso = date.toISOString().split("T")[0];
+                                return bookedDates.includes(iso);
+                              }}
+                              modifiers={{
+                                booked: bookedDates.map((d) => new Date(d + "T12:00:00")),
+                              }}
+                              modifiersClassNames={{
+                                booked: "line-through opacity-40",
+                              }}
+                            />
+                          </div>
+                          <div className="flex items-center gap-4 mt-3 px-1 text-[11px] font-semibold text-muted-foreground">
+                            <span className="inline-flex items-center gap-1.5">
+                              <span className="w-2.5 h-2.5 rounded-full bg-primary" /> Disponível
+                            </span>
+                            <span className="inline-flex items-center gap-1.5">
+                              <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/30" /> Reservado
+                            </span>
+                          </div>
                         </div>
-                      </div>
+                        <div className="flex items-center gap-2 p-3 rounded-2xl bg-primary/5 text-xs">
+                          <Clock size={14} className="text-primary flex-shrink-0" />
+                          <p className="font-medium text-foreground">
+                            Horário: <strong>09:00 às 22:00</strong> (dia inteiro)
+                          </p>
+                        </div>
+                      </>
                     ) : (
-                      <div className="grid grid-cols-2 gap-3">
+                      <>
                         <div>
-                          <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Início</Label>
+                          <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Data</Label>
                           <Input
-                            type="time"
-                            value={horarioInicio}
-                            onChange={(ev) => setHorarioInicio(ev.target.value)}
+                            type="date"
+                            value={data}
+                            min={new Date().toISOString().split("T")[0]}
+                            onChange={(ev) => setData(ev.target.value)}
                             className="mt-1.5 h-12 rounded-2xl"
                           />
                         </div>
-                        <div>
-                          <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Fim</Label>
-                          <Input
-                            type="time"
-                            value={horarioFim}
-                            onChange={(ev) => setHorarioFim(ev.target.value)}
-                            className="mt-1.5 h-12 rounded-2xl"
-                          />
-                        </div>
-                      </div>
+
+                        {selectedEspaco.categoria === "quadra" ? (
+                          <div>
+                            <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Horário (1h)</Label>
+                            <div className="grid grid-cols-4 gap-2 mt-1.5">
+                              {hours.map((h) => {
+                                const isOccupied = occupiedSlots.includes(h);
+                                const isSelected = horarioInicio === h;
+                                return (
+                                  <button
+                                    key={h}
+                                    disabled={isOccupied}
+                                    onClick={() => selectSlot(h)}
+                                    className={`h-11 rounded-xl text-xs font-bold transition-all ${
+                                      isOccupied
+                                        ? "bg-muted text-muted-foreground/40 line-through cursor-not-allowed"
+                                        : isSelected
+                                        ? "bg-primary text-primary-foreground shadow-md"
+                                        : "bg-muted/50 hover:bg-muted text-foreground"
+                                    }`}
+                                  >
+                                    {h}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Início</Label>
+                              <Input
+                                type="time"
+                                value={horarioInicio}
+                                onChange={(ev) => setHorarioInicio(ev.target.value)}
+                                className="mt-1.5 h-12 rounded-2xl"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Fim</Label>
+                              <Input
+                                type="time"
+                                value={horarioFim}
+                                onChange={(ev) => setHorarioFim(ev.target.value)}
+                                className="mt-1.5 h-12 rounded-2xl"
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
 
                   <Button
                     className="h-14 rounded-2xl font-black text-base shadow-lg shadow-primary/20 mt-2"
-                    disabled={submitting || !horarioInicio || !horarioFim}
+                    disabled={submitting || !data || (!isFullDay && (!horarioInicio || !horarioFim))}
                     onClick={handleSubmit}
                   >
                     {submitting ? "Reservando..." : "Confirmar Reserva"}
