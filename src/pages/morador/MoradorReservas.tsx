@@ -284,7 +284,43 @@ const MoradorReservas = () => {
     <MoradorLayout title="Reservas" showBack>
       <div className="flex flex-col gap-8 pb-20">
         {preReservas.length > 0 && (
-...
+          <section className="animate-in fade-in-up duration-500">
+            <div className="flex items-center gap-2 mb-4 px-1">
+              <div className="w-1.5 h-4 bg-primary rounded-full" />
+              <h2 className="text-sm font-black text-muted-foreground/60 uppercase tracking-widest">Aguardando Você</h2>
+            </div>
+            <div className="flex flex-col gap-4">
+              {preReservas.map((p) => (
+                <Card key={p.id} className="border-none shadow-premium bg-gradient-to-br from-white to-primary/5 overflow-hidden rounded-[32px]">
+                  <CardContent className="flex flex-col gap-5 p-6">
+                    <div className="flex items-start gap-4">
+                      <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary">
+                        <Clock size={24} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xl font-black text-foreground tracking-tight">{p.espacos?.nome || "Espaço"}</p>
+                        <p className="text-sm font-medium text-muted-foreground mt-1">
+                          {new Date(p.data + "T00:00:00").toLocaleDateString("pt-BR")} · {p.horario_inicio?.slice(0, 5)} - {p.horario_fim?.slice(0, 5)}
+                        </p>
+                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full mt-4">
+                          <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                          <p className="text-[11px] font-black text-primary uppercase tracking-wider">
+                            Expira em {formatRestante(p.expira_em)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-3 pt-2">
+                      <Button className="flex-1 h-14 rounded-2xl font-black shadow-lg shadow-primary/20" onClick={() => confirmarPreReserva(p.id)}>
+                        Confirmar
+                      </Button>
+                      <Button variant="outline" className="flex-1 h-14 rounded-2xl font-black border-2" onClick={() => cancelarPreReserva(p.id)}>
+                        Cancelar
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </section>
         )}
