@@ -7,8 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2, Edit2, X, Home, MapPin } from "lucide-react";
+import { Plus, Trash2, Edit2, X, Home, MapPin, Crown, Beef, Upload, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
+import salaoCover from "@/assets/categoria-salao.jpg";
+import quiosqueCover from "@/assets/categoria-quiosque.jpg";
+import esportesCover from "@/assets/categoria-esportes.jpg";
 
 interface Espaco {
   id: string;
