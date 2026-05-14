@@ -9,6 +9,7 @@ import ModuleSwitcher from "@/components/ModuleSwitcher";
 import UpdateBanner from "@/components/UpdateBanner";
 import ForceUpdateScreen from "@/components/ForceUpdateScreen";
 import AppTrackers from "@/components/AppTrackers";
+import { PreReservaPopup } from "@/components/PreReservaPopup";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -116,6 +117,7 @@ const App = () => (
           </Routes>
           <AppTrackers />
           <ModuleSwitcher />
+          <PreReservaPopup />
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
