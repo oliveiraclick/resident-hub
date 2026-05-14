@@ -83,7 +83,7 @@ const MoradorReservas = () => {
         .from("reservas")
         .select("espaco_id, data, status")
         .eq("condominio_id", condominioId)
-        .eq("status", "confirmada")
+        .in("status", ["confirmada", "pre_reserva"])
         .gte("data", new Date().toISOString().split("T")[0])
     ]);
 
@@ -124,7 +124,7 @@ const MoradorReservas = () => {
           .select("horario_inicio")
           .eq("espaco_id", selectedEspaco.id)
           .eq("data", data)
-          .eq("status", "confirmada");
+          .in("status", ["confirmada", "pre_reserva"]);
         setOccupiedSlots(res?.map((r: any) => r.horario_inicio.slice(0, 5)) || []);
       } else if (FULL_DAY_CATEGORIES.includes(selectedEspaco.categoria)) {
         const today = new Date().toISOString().split("T")[0];
@@ -132,7 +132,7 @@ const MoradorReservas = () => {
           .from("reservas")
           .select("data")
           .eq("espaco_id", selectedEspaco.id)
-          .eq("status", "confirmada")
+          .in("status", ["confirmada", "pre_reserva"])
           .gte("data", today);
         setBookedDates(res?.map((r: any) => r.data) || []);
       }
@@ -548,7 +548,7 @@ const MoradorReservas = () => {
                                 booked: bookedDates.map((d) => new Date(d + "T12:00:00")),
                               }}
                               modifiersClassNames={{
-                                booked: "!bg-destructive/10 !text-destructive line-through",
+                                booked: "!bg-destructive/10 !text-destructive line-through decoration-destructive/30",
                               }}
                               className="w-full"
                               classNames={{
