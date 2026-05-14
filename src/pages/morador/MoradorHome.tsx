@@ -288,7 +288,7 @@ const MoradorHome = () => {
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
             className="rounded-[22px] overflow-hidden relative cursor-pointer"
-            style={{ height: 100, boxShadow: "0 6px 24px rgba(0,0,0,0.1)" }}
+            style={{ height: 160, boxShadow: "0 6px 24px rgba(0,0,0,0.1)" }}
           >
             {banners[bannerIdx]?.imagem_url ? (
               <img src={banners[bannerIdx].imagem_url} alt={banners[bannerIdx].titulo} className="absolute inset-0 w-full h-full object-cover" />
@@ -315,42 +315,42 @@ const MoradorHome = () => {
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={() => navigate("/morador/reservas")}
-            className="text-left border-none cursor-pointer rounded-[22px] flex flex-col gap-3 relative overflow-hidden active:scale-[0.98] transition-transform h-full"
+            className="text-left border-none cursor-pointer rounded-[22px] flex flex-col gap-2 relative overflow-hidden active:scale-[0.98] transition-transform h-[100px] justify-center"
             style={{
               background: "linear-gradient(135deg, hsl(var(--primary)), #eab308)",
-              padding: "20px 16px",
+              padding: "0 16px",
               boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
             }}
           >
-            <div className="h-[44px] w-[44px] rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0" style={{ backdropFilter: "blur(8px)" }}>
-              <CalendarCheck size={24} className="text-white" />
+            <div className="h-[36px] w-[36px] rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0" style={{ backdropFilter: "blur(8px)" }}>
+              <CalendarCheck size={20} className="text-white" />
             </div>
             <div>
-              <p className="text-[15px] font-bold text-white m-0 leading-tight">Reserva de áreas comuns</p>
-              <p className="text-[10px] text-white/80 mt-1 m-0 uppercase tracking-wider font-semibold">Agendar →</p>
+              <p className="text-[14px] font-bold text-white m-0 leading-tight">Reserva de áreas comuns</p>
+              <p className="text-[9px] text-white/80 mt-0.5 m-0 uppercase tracking-wider font-semibold">Agendar →</p>
             </div>
           </button>
 
           <button
             onClick={() => navigate("/morador/encomendas")}
-            className="text-left border-none cursor-pointer rounded-[22px] flex flex-col gap-3 relative overflow-hidden active:scale-[0.98] transition-transform h-full"
+            className="text-left border-none cursor-pointer rounded-[22px] flex flex-col gap-2 relative overflow-hidden active:scale-[0.98] transition-transform h-[100px] justify-center"
             style={{
               background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
-              padding: "20px 16px",
+              padding: "0 16px",
               boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
             }}
           >
-            <div className="h-[44px] w-[44px] rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0 relative" style={{ backdropFilter: "blur(8px)" }}>
-              <Package size={24} className="text-white" />
+            <div className="h-[36px] w-[36px] rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0 relative" style={{ backdropFilter: "blur(8px)" }}>
+              <Package size={20} className="text-white" />
               {pendingCount > 0 && (
-                <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-[#6366f1]">
+                <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-[#6366f1]">
                   {pendingCount}
                 </span>
               )}
             </div>
             <div>
-              <p className="text-[15px] font-bold text-white m-0 leading-tight">Minhas encomendas</p>
-              <p className="text-[10px] text-white/80 mt-1 m-0 uppercase tracking-wider font-semibold">Ver todas →</p>
+              <p className="text-[14px] font-bold text-white m-0 leading-tight">Minhas encomendas</p>
+              <p className="text-[9px] text-white/80 mt-0.5 m-0 uppercase tracking-wider font-semibold">Ver todas →</p>
             </div>
           </button>
         </div>
