@@ -24,18 +24,33 @@ const phoneCandidates = (value?: string | null) => {
 
   if (!digits) return candidates
 
-  candidates.add(digits)
+  const addWithBrazilMobileVariants = (candidate: string) => {
+    if (!candidate) return
+    candidates.add(candidate)
+
+    // WhatsApp/telephony integrations sometimes send Brazilian mobile numbers
+    // without the extra ninth digit after the area code. Accept both formats.
+    if (candidate.length === 11 && candidate[2] === '9') {
+      candidates.add(`${candidate.slice(0, 2)}${candidate.slice(3)}`)
+    }
+
+    if (candidate.length === 10) {
+      candidates.add(`${candidate.slice(0, 2)}9${candidate.slice(2)}`)
+    }
+  }
+
+  addWithBrazilMobileVariants(digits)
 
   if (digits.startsWith('55') && (digits.length === 12 || digits.length === 13)) {
-    candidates.add(digits.slice(2))
+    addWithBrazilMobileVariants(digits.slice(2))
   }
 
   if (digits.startsWith('0')) {
-    candidates.add(digits.replace(/^0+/, ''))
+    addWithBrazilMobileVariants(digits.replace(/^0+/, ''))
   }
 
-  if (digits.length >= 11) candidates.add(digits.slice(-11))
-  if (digits.length >= 10) candidates.add(digits.slice(-10))
+  if (digits.length >= 11) addWithBrazilMobileVariants(digits.slice(-11))
+  if (digits.length >= 10) addWithBrazilMobileVariants(digits.slice(-10))
 
   return candidates
 }
