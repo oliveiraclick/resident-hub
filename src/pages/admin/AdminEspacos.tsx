@@ -194,7 +194,67 @@ const AdminEspacos = () => {
 
   return (
     <AdminLayout title="Espaços Comuns">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-6">
+        {/* ─── Capas das categorias ─── */}
+        <div className="flex flex-col gap-3">
+          <div>
+            <h2 className="text-[16px] font-semibold text-foreground">Capas das Categorias</h2>
+            <p className="text-[12px] text-muted-foreground mt-0.5">
+              Imagens exibidas no app dos moradores ao escolher Salão, Quiosques ou Esportes.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {categoryCards.map((cat) => {
+              const cover = categoryCovers[cat.id] || cat.defaultCover;
+              const isCustom = !!categoryCovers[cat.id];
+              const Icon = cat.icon;
+              return (
+                <Card key={cat.id} className="rounded-[var(--radius-card)] overflow-hidden">
+                  <div className="relative h-32">
+                    <img src={cover} alt={cat.label} className="absolute inset-0 w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                    <div className="absolute top-2 right-2 h-9 w-9 rounded-xl bg-white/95 flex items-center justify-center shadow">
+                      <Icon size={18} className="text-foreground" />
+                    </div>
+                    <div className="absolute bottom-2 left-3">
+                      <p className="text-white font-bold text-sm drop-shadow">{cat.label}</p>
+                      <p className="text-[10px] text-white/80 uppercase tracking-wider font-bold">
+                        {isCustom ? "Personalizado" : "Padrão"}
+                      </p>
+                    </div>
+                  </div>
+                  <CardContent className="p-3 flex gap-2">
+                    <label className="flex-1">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        disabled={uploadingCover === cat.id}
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (f) handleCoverUpload(cat.id, f);
+                        }}
+                      />
+                      <div className={`w-full h-9 rounded-lg border border-dashed border-border bg-muted/30 hover:bg-muted flex items-center justify-center gap-1.5 cursor-pointer text-[11px] font-bold text-muted-foreground transition-colors ${uploadingCover === cat.id ? "opacity-50" : ""}`}>
+                        <Upload size={13} />
+                        {uploadingCover === cat.id ? "Enviando..." : "Trocar foto"}
+                      </div>
+                    </label>
+                    {isCustom && (
+                      <button
+                        onClick={() => handleResetCover(cat.id)}
+                        className="h-9 px-3 rounded-lg text-[11px] font-bold text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors"
+                      >
+                        Restaurar
+                      </button>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="flex items-center justify-between">
           <h2 className="text-[16px] font-semibold text-foreground">Gestão de Espaços</h2>
           {!showForm && (
