@@ -386,22 +386,24 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
       {/* Scrollable content */}
       <main className="px-5 pt-6 pb-[100px] flex-1">{children}</main>
 
-      {/* ═══ BOTTOM NAV — Pill Style ═══ */}
+      {/* ═══ BOTTOM NAV — Modern Pill Style ═══ */}
       <nav
-        className="fixed z-20"
+        className="fixed z-40"
         style={{
-          bottom: 12,
+          bottom: 20,
           left: "50%",
           transform: "translateX(-50%)",
-          width: "calc(100% - 40px)",
-          maxWidth: 390,
-          background: "hsl(var(--header-bg))",
-          borderRadius: 22,
+          width: "calc(100% - 32px)",
+          maxWidth: 420,
+          background: "rgba(22, 23, 28, 0.9)",
+          backdropFilter: "blur(20px) saturate(180%)",
+          borderRadius: 28,
           display: "flex",
           justifyContent: "space-around",
           alignItems: "center",
-          height: 64,
-          boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
+          height: 72,
+          boxShadow: "0 20px 40px -10px rgba(0,0,0,0.4), inset 0 1px 0 0 rgba(255,255,255,0.05)",
+          border: "1px solid rgba(255,255,255,0.08)",
         }}
       >
         {navItems.map((item) => {
@@ -413,25 +415,24 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
-              className="flex flex-col items-center gap-[3px] border-none cursor-pointer"
+              className="flex flex-col items-center justify-center gap-1.5 border-none cursor-pointer relative group transition-all"
               style={{
-                background: isActive ? "hsla(var(--primary), 0.15)" : "transparent",
-                padding: "8px 14px",
-                borderRadius: 14,
+                width: 64,
+                height: 56,
               }}
             >
+              {isActive && (
+                <div 
+                  className="absolute inset-0 bg-primary/10 rounded-2xl animate-in fade-in zoom-in-95 duration-200"
+                />
+              )}
               <item.icon
-                size={20}
-                color={isActive ? "hsl(var(--primary))" : "rgba(255,255,255,0.45)"}
+                size={22}
+                className={`transition-all duration-300 ${isActive ? 'text-primary scale-110' : 'text-white/40 group-hover:text-white/60'}`}
                 strokeWidth={isActive ? 2.5 : 1.8}
               />
               <span
-                style={{
-                  fontSize: 9,
-                  fontWeight: isActive ? 700 : 400,
-                  color: isActive ? "hsl(var(--primary))" : "rgba(255,255,255,0.45)",
-                  letterSpacing: 0.3,
-                }}
+                className={`text-[10px] tracking-wide transition-all duration-300 ${isActive ? 'font-bold text-primary opacity-100' : 'font-medium text-white/40 opacity-70'}`}
               >
                 {item.label}
               </span>
