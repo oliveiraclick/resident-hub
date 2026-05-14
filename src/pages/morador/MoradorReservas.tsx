@@ -261,6 +261,14 @@ const MoradorReservas = () => {
     }
   };
 
+  const formatRestante = (expira: string) => {
+    const ms = new Date(expira).getTime() - now;
+    if (ms <= 0) return "expirado";
+    const min = Math.floor(ms / 60000);
+    const sec = Math.floor((ms % 60000) / 1000);
+    return `${min}m ${sec.toString().padStart(2, "0")}s`;
+  };
+
   const categories = [
     { id: "salao", label: "Salão", icon: Coffee, color: "from-amber-500/10 to-amber-500/5", textColor: "text-amber-600", count: espacos.filter(e => e.categoria === "salao").length },
     { id: "quiosque", label: "Quiosques", icon: Home, color: "from-emerald-500/10 to-emerald-500/5", textColor: "text-emerald-600", count: espacos.filter(e => e.categoria === "quiosque").length },
