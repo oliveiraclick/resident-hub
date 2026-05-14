@@ -84,6 +84,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    setUser(null);
+    setSession(null);
+    setRoles([]);
   };
 
   const hasRole = (condominioId: string, role: AppRole): boolean => {

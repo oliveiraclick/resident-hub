@@ -116,7 +116,7 @@ const PorteiroScanner = () => {
             <span className="text-[10px] text-white/50 font-medium uppercase tracking-wider">Scanner de visitantes</span>
           </div>
         </div>
-        <Button variant="ghost" size="icon" onClick={signOut} className="text-white/60 hover:text-white hover:bg-white/10">
+        <Button variant="ghost" size="icon" onClick={() => signOut()} className="text-white/60 hover:text-white hover:bg-white/10">
           <LogOut size={20} />
         </Button>
       </header>

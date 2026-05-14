@@ -36,7 +36,7 @@ const AdminUsuarios = () => {
 
     const [rolesRes, profilesRes] = await Promise.all([
       supabase.from("user_roles").select("*").eq("condominio_id", condominioId),
-      supabase.from("profiles").select("user_id, nome, device_platform, app_version") as any,
+      supabase.from("profiles").select("user_id, nome, device_platform, app_version"),
     ]);
 
     const rolesData = rolesRes.data || [];
