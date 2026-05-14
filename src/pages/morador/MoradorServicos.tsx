@@ -328,115 +328,129 @@ const MoradorServicos = () => {
   // Category detail view
   if (selectedCategoria) {
     return (
-      <MoradorLayout title={selectedCategoria}>
-        <div className="flex flex-col gap-4">
-          <button
-            onClick={() => {
-              setSelectedCategoria(null);
-              setSelectedNomeFilter(null);
-              setPrestadoresCompletos([]);
-            }}
-            className="flex items-center gap-1.5 text-[13px] font-medium text-primary w-fit"
-          >
-            <ArrowLeft size={16} />
-            Voltar às categorias
-          </button>
+      <MoradorLayout title={selectedCategoria} showBack>
+        <div className="flex flex-col gap-6 pb-20">
+          <div className="flex items-center justify-between px-1">
+             <h1 className="text-2xl font-black tracking-tight">{selectedCategoria}</h1>
+             <p className="text-[10px] font-black uppercase tracking-widest text-primary bg-primary/10 px-3 py-1 rounded-full">
+               {prestadoresCompletos.length} Disponíveis
+             </p>
+          </div>
 
           {loadingDetail ? (
-            <p className="text-[13px] text-muted-foreground text-center py-8">Carregando...</p>
+            <div className="flex flex-col gap-4">
+               {[1, 2].map(i => <div key={i} className="h-64 bg-muted animate-pulse rounded-[32px]" />)}
+            </div>
           ) : prestadoresCompletos.length === 0 ? (
-            <div className="flex flex-col items-center gap-3 py-12">
-              <Wrench size={40} className="text-muted-foreground" />
-              <p className="text-[14px] text-muted-foreground">
-                Nenhum prestador de {selectedCategoria} disponível
-              </p>
+            <div className="flex flex-col items-center justify-center text-center gap-4 py-20 px-8 bg-card rounded-[40px] border border-dashed animate-in fade-in duration-500">
+              <Wrench size={48} className="text-muted-foreground/20" />
+              <p className="text-muted-foreground font-bold">Nenhum prestador encontrado.</p>
             </div>
           ) : (
             prestadoresCompletos.map((prestador) => (
-              <Card key={prestador.id} className="overflow-hidden rounded-card shadow-md border-0">
-                {/* Cover image (custom do prestador, com fallback por categoria) */}
-                <div className="relative h-[140px] overflow-hidden bg-muted">
+              <Card key={prestador.id} className="overflow-hidden border-none shadow-premium rounded-[40px] bg-card group">
+                <div className="relative h-[180px] overflow-hidden">
                   <img
                     src={prestador.cover_url || coverImages[prestador.especialidade] || coverImages.Jardinagem}
                     alt={prestador.especialidade}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
+                  {prestador.cupom && (
+                    <div className="absolute top-4 right-4 bg-emerald-500 text-white px-4 py-2 rounded-2xl shadow-lg flex items-center gap-2 animate-in zoom-in-90">
+                      <Ticket size={16} />
+                      <span className="text-xs font-black uppercase tracking-wider">{prestador.cupom.desconto_percent}% OFF</span>
+                    </div>
+                  )}
                 </div>
 
-                <CardContent className="p-4 -mt-8 relative flex flex-col gap-3">
-                  {/* Avatar overlapping cover */}
-                  <div className="flex items-end gap-3">
-                    <div className="h-14 w-14 rounded-full bg-card border-[3px] border-card flex items-center justify-center flex-shrink-0 overflow-hidden shadow-md">
+                <CardContent className="p-6 -mt-12 relative">
+                  <div className="flex items-end gap-4 mb-6">
+                    <div className="h-20 w-20 rounded-[28px] bg-card border-[6px] border-card flex items-center justify-center flex-shrink-0 overflow-hidden shadow-premium">
                       {prestador.avatar_url ? (
-                        <img
-                          src={prestador.avatar_url}
-                          alt={prestador.nome}
-                          className="h-full w-full object-cover"
-                        />
+                        <img src={prestador.avatar_url} alt={prestador.nome} className="h-full w-full object-cover" />
                       ) : (
-                        <User size={24} className="text-primary" />
+                        <User size={32} className="text-primary" />
                       )}
                     </div>
-                    <div className="min-w-0 flex-1 pb-0.5">
-                      <p className="text-[15px] font-semibold text-foreground truncate">
-                        {prestador.nome}
-                      </p>
-                      <p className="text-[12px] text-primary font-medium">
-                        {prestador.especialidade}
-                      </p>
-                      {prestador.mediaNota !== null && (
-                        <div className="flex items-center gap-1 mt-0.5">
-                          <Star size={12} className="fill-yellow-500 text-yellow-500" />
-                          <span className="text-[11px] font-semibold text-foreground">
-                            {prestador.mediaNota.toFixed(1)}
-                          </span>
-                          <span className="text-[11px] text-muted-foreground">
-                            ({prestador.totalAvaliacoes})
-                          </span>
-                        </div>
-                      )}
+                    <div className="min-w-0 flex-1 pb-1">
+                      <h2 className="text-xl font-black text-foreground truncate leading-none mb-1">{prestador.nome}</h2>
+                      <div className="flex items-center gap-2">
+                        {prestador.mediaNota !== null && (
+                          <div className="flex items-center gap-1 bg-yellow-100 px-2 py-0.5 rounded-lg">
+                            <Star size={12} className="fill-yellow-500 text-yellow-500" />
+                            <span className="text-xs font-black text-yellow-700">{prestador.mediaNota.toFixed(1)}</span>
+                          </div>
+                        )}
+                        <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{prestador.especialidade}</p>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Description */}
                   {prestador.descricao && (
-                    <p className="text-[13px] text-muted-foreground leading-relaxed">
-                      {prestador.descricao}
+                    <p className="text-[14px] text-foreground/70 leading-relaxed font-medium mb-6 px-1 italic">
+                      "{prestador.descricao}"
                     </p>
                   )}
 
-                  {/* Últimas avaliações */}
                   {prestador.avaliacoes.length > 0 && (
-                    <div className="flex flex-col gap-2">
-                      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
-                        Últimas avaliações
-                      </p>
-                      <div className="flex flex-col gap-1.5">
+                    <div className="space-y-4 mb-8">
+                      <div className="flex items-center justify-between">
+                         <label className="mb-0">Avaliações Recentes</label>
+                         <button 
+                           onClick={() => setVerAvaliacoesDialog({ 
+                             nome: prestador.nome, 
+                             avaliacoes: todasAvaliacoesPorPrestador[prestador.user_id] || [], 
+                             media: prestador.mediaNota 
+                           })}
+                           className="text-[10px] font-black uppercase text-primary tracking-widest"
+                         >
+                           Ver Todas
+                         </button>
+                      </div>
+                      <div className="space-y-3">
                         {prestador.avaliacoes.map((av) => (
-                          <div key={av.id} className="bg-muted/50 rounded-xl px-3 py-2">
-                            <div className="flex items-center justify-between gap-2 mb-0.5">
-                              <p className="text-[12px] font-semibold text-foreground truncate">
-                                {av.avaliador_nome}
-                              </p>
-                              <div className="flex items-center gap-0.5 flex-shrink-0">
+                          <div key={av.id} className="bg-muted/40 rounded-3xl p-4 border border-white/50">
+                            <div className="flex items-center justify-between gap-2 mb-2">
+                              <p className="text-xs font-black text-foreground">{av.avaliador_nome}</p>
+                              <div className="flex items-center gap-0.5">
                                 {Array.from({ length: 5 }).map((_, i) => (
-                                  <Star
-                                    key={i}
-                                    size={10}
-                                    className={i < av.nota ? "fill-yellow-500 text-yellow-500" : "text-muted-foreground/30"}
-                                  />
+                                  <Star key={i} size={10} className={i < av.nota ? "fill-yellow-500 text-yellow-500" : "text-muted-foreground/20"} />
                                 ))}
                               </div>
                             </div>
-                            {av.comentario && (
-                              <p className="text-[11px] text-muted-foreground leading-snug line-clamp-2">
-                                "{av.comentario}"
-                              </p>
-                            )}
+                            {av.comentario && <p className="text-[13px] text-muted-foreground leading-snug line-clamp-2">"{av.comentario}"</p>}
                           </div>
                         ))}
                       </div>
+                    </div>
+                  )}
+
+                  <div className="flex flex-col gap-3 pt-4 border-t border-border/40">
+                    <Button 
+                      className="h-14 rounded-2xl font-black text-base shadow-xl shadow-primary/20 gap-3" 
+                      onClick={() => openWhatsApp(prestador.user_id, prestador.telefone || "", prestador.nome, prestador.especialidade, prestador.cupom)}
+                      disabled={!prestador.telefone}
+                    >
+                      <MessageCircle size={22} /> Contatar agora
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="h-14 rounded-2xl font-black text-base border-2 hover:bg-muted"
+                      onClick={() => setAvaliarDialog({ userId: prestador.user_id, nome: prestador.nome })}
+                      disabled={!solicitados.has(prestador.user_id)}
+                    >
+                      Avaliar Profissional
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </div>
+      </MoradorLayout>
+    );
+  }
                       {prestador.totalAvaliacoes > 3 && (
                         <button
                           onClick={() =>
