@@ -157,8 +157,8 @@ const MoradorReservas = () => {
       espaco_id: selectedEspaco.id,
       morador_id: user.id,
       data,
-      horario_inicio: horarioInicio,
-      horario_fim: horarioFim,
+      horario_inicio: inicio,
+      horario_fim: fim,
       status: "confirmada",
     } as any);
 
