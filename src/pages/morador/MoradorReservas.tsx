@@ -6,9 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Calendar } from "@/components/ui/calendar";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { CalendarCheck, Trash2, X, Users, DollarSign, Info, Home, Clock, MapPin, ChevronRight } from "lucide-react";
+import { ptBR } from "date-fns/locale";
+
+const FULL_DAY_CATEGORIES = ["salao", "quiosque"];
+const FULL_DAY_INICIO = "09:00";
+const FULL_DAY_FIM = "22:00";
 
 interface Espaco {
   id: string;
