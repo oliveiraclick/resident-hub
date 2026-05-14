@@ -24,7 +24,7 @@ const Retirada = () => {
       // Find resident by QR code (ID)
       const { data: perfil, error: perfilError } = await supabase
         .from("profiles")
-        .select("*")
+        .select("id, display_name")
         .eq("id", qrCode)
         .single();
 

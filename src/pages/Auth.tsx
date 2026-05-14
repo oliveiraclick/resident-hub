@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import logoSymbol from "@/assets/logo-symbol.png";
 import { Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -43,7 +43,7 @@ const Auth = () => {
     return <Navigate to="/dashboard" replace />;
   }
 
-  const validate = () => {
+  const validate = useCallback(() => {
     const schema = isLogin ? loginSchema : signupSchema;
     const data = isLogin ? { email, password } : { email, password, nome };
     const result = schema.safeParse(data);
@@ -60,7 +60,7 @@ const Auth = () => {
 
     setErrors({});
     return true;
-  };
+  }, [isLogin, email, password, nome]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
