@@ -80,7 +80,7 @@ const MoradorPerfil = () => {
 
   return (
     <MoradorLayout title="Meu Perfil" showBack>
-      <div className="flex flex-col gap-8 max-w-2xl mx-auto pb-20">
+      <div className="flex flex-col gap-8 max-w-full mx-auto pb-20">
         <header className="px-1 text-center sm:text-left">
           <h1 className="text-4xl font-black tracking-tight mb-2">Ajustes</h1>
           <p className="text-muted-foreground font-medium uppercase tracking-[0.2em] text-[10px]">Gerencie sua conta e identificação</p>

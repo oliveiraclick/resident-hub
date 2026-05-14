@@ -23,22 +23,22 @@ const fallbackShopImages = [productBolo, productSabonete, productBrigadeiro, pro
 
 const hs: React.CSSProperties = { scrollbarWidth: "none", msOverflowStyle: "none" };
 
-const ITEMS_PER_PAGE = 4;
+const ITEMS_PER_PAGE = 10;
 
 const RotatingServicos = ({ categorias, navigate }: { categorias: any[]; navigate: (path: string) => void }) => {
-  const [shuffled] = useState(() => {
+  const shuffled = useMemo(() => {
     const arr = [...categorias];
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [arr[i], arr[j]] = [arr[j], arr[i]];
     }
     return arr.slice(0, ITEMS_PER_PAGE);
-  });
+  }, [categorias]);
 
-  const visible = categorias.length > 0 ? (shuffled.length > 0 ? shuffled : categorias.slice(0, ITEMS_PER_PAGE)) : [];
+  const visible = categorias.length > 0 ? shuffled : [];
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
       {visible.map((item) => {
         const Icon = getIcon(item.icone);
         return (
@@ -286,8 +286,7 @@ const MoradorHome = () => {
             onClick={() => { const b = banners[bannerIdx]; if (b?.whatsapp) { window.open(`https://wa.me/${b.whatsapp.replace(/\D/g, "")}`, "_blank"); } else if (b?.link) { window.open(b.link, "_blank"); } }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
-            className="rounded-[32px] overflow-hidden relative cursor-pointer group shadow-lg shadow-black/5"
-            style={{ height: 160 }}
+            className="rounded-[32px] overflow-hidden relative cursor-pointer group shadow-lg shadow-black/5 aspect-[21/9] sm:aspect-[21/7] h-auto"
           >
             {banners[bannerIdx]?.imagem_url ? (
               <img src={banners[bannerIdx].imagem_url} alt={banners[bannerIdx].titulo} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -316,7 +315,7 @@ const MoradorHome = () => {
             <div className="w-1.5 h-4 bg-primary rounded-full" />
             <h2 className="text-xl font-black tracking-tight text-foreground uppercase text-[13px] opacity-40">Facilidades</h2>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             <button
               onClick={() => {}}
               className="group text-left p-5 rounded-[28px] flex flex-col gap-4 relative overflow-hidden transition-all bg-gradient-to-br from-primary/50 to-orange-400/50 shadow-xl shadow-primary/5 border border-white/5 cursor-default grayscale-[0.8] opacity-70"
@@ -431,51 +430,54 @@ const MoradorHome = () => {
         )}
 
         {/* ═══ CONVITES ATIVOS ═══ */}
-        {activeConvitesCount > 0 && (
-          <button
-            onClick={() => navigate("/morador/convites")}
-            className="w-full text-left border-none cursor-pointer rounded-[20px] flex items-center gap-4 relative overflow-hidden active:scale-[0.98] transition-transform"
-            style={{
-              background: "linear-gradient(135deg, hsl(var(--info, 210 80% 55%)), hsl(var(--info, 210 80% 45%)))",
-              padding: "16px 20px",
-              boxShadow: "0 6px 20px hsla(210, 80%, 55%, 0.25)",
-            }}
-          >
-            <div className="absolute -top-5 -right-5 w-20 h-20 rounded-full bg-white/[0.08]" />
-            <div className="h-[48px] w-[48px] rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0" style={{ backdropFilter: "blur(8px)" }}>
-              <UserCheck size={24} className="text-white" />
-            </div>
-            <div className="flex-1 relative z-[1]">
-              <p className="text-[15px] font-bold text-white m-0">
-                {activeConvitesCount} convite{activeConvitesCount > 1 ? "s" : ""} ativo{activeConvitesCount > 1 ? "s" : ""}
-              </p>
-              <p className="text-[11px] text-white/75 mt-0.5 m-0">Visitantes aguardando →</p>
-            </div>
-          </button>
-        )}
+        {(activeConvitesCount > 0 || pendingCount > 0) && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {activeConvitesCount > 0 && (
+              <button
+                onClick={() => navigate("/morador/convites")}
+                className="w-full text-left border-none cursor-pointer rounded-[20px] flex items-center gap-4 relative overflow-hidden active:scale-[0.98] transition-transform"
+                style={{
+                  background: "linear-gradient(135deg, hsl(var(--info, 210 80% 55%)), hsl(var(--info, 210 80% 45%)))",
+                  padding: "16px 20px",
+                  boxShadow: "0 6px 20px hsla(210, 80%, 55%, 0.25)",
+                }}
+              >
+                <div className="absolute -top-5 -right-5 w-20 h-20 rounded-full bg-white/[0.08]" />
+                <div className="h-[48px] w-[48px] rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0" style={{ backdropFilter: "blur(8px)" }}>
+                  <UserCheck size={24} className="text-white" />
+                </div>
+                <div className="flex-1 relative z-[1]">
+                  <p className="text-[15px] font-bold text-white m-0">
+                    {activeConvitesCount} convite{activeConvitesCount > 1 ? "s" : ""} ativo{activeConvitesCount > 1 ? "s" : ""}
+                  </p>
+                  <p className="text-[11px] text-white/75 mt-0.5 m-0">Visitantes aguardando →</p>
+                </div>
+              </button>
+            )}
 
-        {/* ═══ ENCOMENDAS PENDENTES ═══ */}
-        {pendingCount > 0 && (
-          <button
-            onClick={() => navigate("/morador/encomendas")}
-            className="w-full text-left border-none cursor-pointer rounded-[20px] flex items-center gap-4 relative overflow-hidden active:scale-[0.98] transition-transform"
-            style={{
-              background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-hover)))",
-              padding: "18px 20px",
-              boxShadow: "0 8px 24px hsla(var(--primary), 0.25)",
-            }}
-          >
-            <div className="absolute -top-5 -right-5 w-20 h-20 rounded-full bg-white/[0.08]" />
-            <div className="h-[52px] w-[52px] rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0" style={{ backdropFilter: "blur(8px)" }}>
-              <Package size={26} className="text-white" />
-            </div>
-            <div className="flex-1 relative z-[1]">
-              <p className="text-[16px] font-bold text-white m-0">
-                {pendingCount} encomenda{pendingCount > 1 ? "s" : ""} pendente{pendingCount > 1 ? "s" : ""}
-              </p>
-              <p className="text-[12px] text-white/75 mt-1 m-0">Toque para conferir →</p>
-            </div>
-          </button>
+            {pendingCount > 0 && (
+              <button
+                onClick={() => navigate("/morador/encomendas")}
+                className="w-full text-left border-none cursor-pointer rounded-[20px] flex items-center gap-4 relative overflow-hidden active:scale-[0.98] transition-transform"
+                style={{
+                  background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-hover)))",
+                  padding: "18px 20px",
+                  boxShadow: "0 8px 24px hsla(var(--primary), 0.25)",
+                }}
+              >
+                <div className="absolute -top-5 -right-5 w-20 h-20 rounded-full bg-white/[0.08]" />
+                <div className="h-[52px] w-[52px] rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0" style={{ backdropFilter: "blur(8px)" }}>
+                  <Package size={26} className="text-white" />
+                </div>
+                <div className="flex-1 relative z-[1]">
+                  <p className="text-[16px] font-bold text-white m-0">
+                    {pendingCount} encomenda{pendingCount > 1 ? "s" : ""} pendente{pendingCount > 1 ? "s" : ""}
+                  </p>
+                  <p className="text-[12px] text-white/75 mt-1 m-0">Toque para conferir →</p>
+                </div>
+              </button>
+            )}
+          </div>
         )}
 
         {/* ═══ VITRINE E-SHOP ═══ */}
@@ -491,7 +493,7 @@ const MoradorHome = () => {
             </button>
           </div>
           <p className="text-[11px] text-muted-foreground font-medium mb-3">De prestadores do seu condomínio</p>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
             {productList.slice(0, 4).map((product: any, idx: number) => (
               <button
                 key={product.id}
@@ -530,7 +532,7 @@ const MoradorHome = () => {
             </button>
           </div>
           <p className="text-[11px] text-muted-foreground font-medium mb-3">Entre vizinhos do condomínio</p>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
             {desapegoList.slice(0, 4).map((item: any, idx: number) => (
               <button
                 key={item.id}

@@ -173,7 +173,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
   const firstName = userName?.split(" ")[0] || "Morador";
 
   return (
-    <div className="min-h-screen flex flex-col bg-background mx-auto max-w-[480px] sm:max-w-[600px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1200px] overflow-x-hidden relative">
+    <div className="min-h-screen flex flex-col bg-background mx-auto w-full max-w-full overflow-x-hidden relative">
       {/* ═══ HERO HEADER ═══ */}
       {isHome && !showBack ? (
         <div className="relative overflow-hidden">
@@ -394,7 +394,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
           left: "50%",
           transform: "translateX(-50%)",
           width: "calc(100% - 32px)",
-          maxWidth: 420,
+          maxWidth: 480,
           background: "rgba(22, 23, 28, 0.9)",
           backdropFilter: "blur(20px) saturate(180%)",
           borderRadius: 28,
