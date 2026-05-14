@@ -281,6 +281,36 @@ const MoradorHome = () => {
       <EventoConviteBadge count={pendingInvitesCount} onClick={() => navigate("/morador/entre-amigos")} />
       <MissingPhotoModal />
       <div className="flex flex-col gap-7">
+        {/* ═══ BANNER ═══ */}
+        {banners.length > 0 && (
+          <div
+            onClick={() => { const b = banners[bannerIdx]; if (b?.whatsapp) { window.open(`https://wa.me/${b.whatsapp.replace(/\D/g, "")}`, "_blank"); } else if (b?.link) { window.open(b.link, "_blank"); } }}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            className="rounded-[22px] overflow-hidden relative cursor-pointer"
+            style={{ height: 140, boxShadow: "0 6px 24px rgba(0,0,0,0.1)" }}
+          >
+            {banners[bannerIdx]?.imagem_url ? (
+              <img src={banners[bannerIdx].imagem_url} alt={banners[bannerIdx].titulo} className="absolute inset-0 w-full h-full object-cover" />
+            ) : (
+              <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, hsl(var(--header-bg)), hsl(var(--primary)))" }} />
+            )}
+            {banners.length > 1 && (
+              <div className="absolute bottom-3.5 left-1/2 -translate-x-1/2 z-[1] flex gap-1.5">
+                {banners.map((_, i) => (
+                  <button key={i} onClick={(e) => { e.stopPropagation(); setBannerIdx(i); }}
+                    className="border-none cursor-pointer transition-all duration-200"
+                    style={{
+                      width: i === bannerIdx ? 24 : 8, height: 8, borderRadius: 4,
+                      background: i === bannerIdx ? "hsl(var(--primary))" : "rgba(255,255,255,0.35)",
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* ═══ ATALHOS RÁPIDOS (RESERVAS E ENCOMENDAS) ═══ */}
         <div className="grid grid-cols-2 gap-3">
           <button
@@ -324,36 +354,6 @@ const MoradorHome = () => {
             </div>
           </button>
         </div>
-
-        {/* ═══ BANNER ═══ */}
-        {banners.length > 0 && (
-          <div
-            onClick={() => { const b = banners[bannerIdx]; if (b?.whatsapp) { window.open(`https://wa.me/${b.whatsapp.replace(/\D/g, "")}`, "_blank"); } else if (b?.link) { window.open(b.link, "_blank"); } }}
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
-            className="rounded-[22px] overflow-hidden relative cursor-pointer"
-            style={{ height: 180, boxShadow: "0 6px 24px rgba(0,0,0,0.1)" }}
-          >
-            {banners[bannerIdx]?.imagem_url ? (
-              <img src={banners[bannerIdx].imagem_url} alt={banners[bannerIdx].titulo} className="absolute inset-0 w-full h-full object-cover" />
-            ) : (
-              <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, hsl(var(--header-bg)), hsl(var(--primary)))" }} />
-            )}
-            {banners.length > 1 && (
-              <div className="absolute bottom-3.5 left-1/2 -translate-x-1/2 z-[1] flex gap-1.5">
-                {banners.map((_, i) => (
-                  <button key={i} onClick={(e) => { e.stopPropagation(); setBannerIdx(i); }}
-                    className="border-none cursor-pointer transition-all duration-200"
-                    style={{
-                      width: i === bannerIdx ? 24 : 8, height: 8, borderRadius: 4,
-                      background: i === bannerIdx ? "hsl(var(--primary))" : "rgba(255,255,255,0.35)",
-                    }}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
 
         {/* ═══ NEWS TICKER ═══ */}
         {avisos.length > 0 && (
