@@ -411,71 +411,118 @@ const MoradorReservas = () => {
                     </div>
                   )}
 
-                  <div className="grid gap-3">
-                    <div>
-                      <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Data</Label>
-                      <Input
-                        type="date"
-                        value={data}
-                        min={new Date().toISOString().split("T")[0]}
-                        onChange={(ev) => setData(ev.target.value)}
-                        className="mt-1.5 h-12 rounded-2xl"
-                      />
-                    </div>
-
-                    {selectedEspaco.categoria === "quadra" ? (
-                      <div>
-                        <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Horário (1h)</Label>
-                        <div className="grid grid-cols-4 gap-2 mt-1.5">
-                          {hours.map((h) => {
-                            const isOccupied = occupiedSlots.includes(h);
-                            const isSelected = horarioInicio === h;
-                            return (
-                              <button
-                                key={h}
-                                disabled={isOccupied}
-                                onClick={() => selectSlot(h)}
-                                className={`h-11 rounded-xl text-xs font-bold transition-all ${
-                                  isOccupied
-                                    ? "bg-muted text-muted-foreground/40 line-through cursor-not-allowed"
-                                    : isSelected
-                                    ? "bg-primary text-primary-foreground shadow-md"
-                                    : "bg-muted/50 hover:bg-muted text-foreground"
-                                }`}
-                              >
-                                {h}
-                              </button>
-                            );
-                          })}
+                  <div className="grid gap-4">
+                    {isFullDay ? (
+                      <>
+                        <div>
+                          <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 block">
+                            Escolha a data
+                          </Label>
+                          <div className="rounded-3xl border border-border/60 bg-card p-2 shadow-soft flex justify-center">
+                            <Calendar
+                              mode="single"
+                              locale={ptBR}
+                              selected={data ? new Date(data + "T12:00:00") : undefined}
+                              onSelect={(d) => d && setData(d.toISOString().split("T")[0])}
+                              disabled={(date) => {
+                                const today = new Date();
+                                today.setHours(0, 0, 0, 0);
+                                if (date < today) return true;
+                                const iso = date.toISOString().split("T")[0];
+                                return bookedDates.includes(iso);
+                              }}
+                              modifiers={{
+                                booked: bookedDates.map((d) => new Date(d + "T12:00:00")),
+                              }}
+                              modifiersClassNames={{
+                                booked: "line-through opacity-40",
+                              }}
+                            />
+                          </div>
+                          <div className="flex items-center gap-4 mt-3 px-1 text-[11px] font-semibold text-muted-foreground">
+                            <span className="inline-flex items-center gap-1.5">
+                              <span className="w-2.5 h-2.5 rounded-full bg-primary" /> Disponível
+                            </span>
+                            <span className="inline-flex items-center gap-1.5">
+                              <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/30" /> Reservado
+                            </span>
+                          </div>
                         </div>
-                      </div>
+                        <div className="flex items-center gap-2 p-3 rounded-2xl bg-primary/5 text-xs">
+                          <Clock size={14} className="text-primary flex-shrink-0" />
+                          <p className="font-medium text-foreground">
+                            Horário: <strong>09:00 às 22:00</strong> (dia inteiro)
+                          </p>
+                        </div>
+                      </>
                     ) : (
-                      <div className="grid grid-cols-2 gap-3">
+                      <>
                         <div>
-                          <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Início</Label>
+                          <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Data</Label>
                           <Input
-                            type="time"
-                            value={horarioInicio}
-                            onChange={(ev) => setHorarioInicio(ev.target.value)}
+                            type="date"
+                            value={data}
+                            min={new Date().toISOString().split("T")[0]}
+                            onChange={(ev) => setData(ev.target.value)}
                             className="mt-1.5 h-12 rounded-2xl"
                           />
                         </div>
-                        <div>
-                          <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Fim</Label>
-                          <Input
-                            type="time"
-                            value={horarioFim}
-                            onChange={(ev) => setHorarioFim(ev.target.value)}
-                            className="mt-1.5 h-12 rounded-2xl"
-                          />
-                        </div>
-                      </div>
+
+                        {selectedEspaco.categoria === "quadra" ? (
+                          <div>
+                            <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Horário (1h)</Label>
+                            <div className="grid grid-cols-4 gap-2 mt-1.5">
+                              {hours.map((h) => {
+                                const isOccupied = occupiedSlots.includes(h);
+                                const isSelected = horarioInicio === h;
+                                return (
+                                  <button
+                                    key={h}
+                                    disabled={isOccupied}
+                                    onClick={() => selectSlot(h)}
+                                    className={`h-11 rounded-xl text-xs font-bold transition-all ${
+                                      isOccupied
+                                        ? "bg-muted text-muted-foreground/40 line-through cursor-not-allowed"
+                                        : isSelected
+                                        ? "bg-primary text-primary-foreground shadow-md"
+                                        : "bg-muted/50 hover:bg-muted text-foreground"
+                                    }`}
+                                  >
+                                    {h}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Início</Label>
+                              <Input
+                                type="time"
+                                value={horarioInicio}
+                                onChange={(ev) => setHorarioInicio(ev.target.value)}
+                                className="mt-1.5 h-12 rounded-2xl"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Fim</Label>
+                              <Input
+                                type="time"
+                                value={horarioFim}
+                                onChange={(ev) => setHorarioFim(ev.target.value)}
+                                className="mt-1.5 h-12 rounded-2xl"
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
 
                   <Button
                     className="h-14 rounded-2xl font-black text-base shadow-lg shadow-primary/20 mt-2"
-                    disabled={submitting || !horarioInicio || !horarioFim}
+                    disabled={submitting || !data || (!isFullDay && (!horarioInicio || !horarioFim))}
                     onClick={handleSubmit}
                   >
                     {submitting ? "Reservando..." : "Confirmar Reserva"}
