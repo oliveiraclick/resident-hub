@@ -96,6 +96,16 @@ const MoradorReservas = () => {
       espaco_nome: espacosList.find((e: any) => e.id === r.espaco_id)?.nome || "Espaço",
     }));
     setReservas(reservasList);
+
+    // Load custom category covers
+    const { data: capas } = await supabase
+      .from("categoria_capas" as any)
+      .select("categoria, imagem_url")
+      .eq("condominio_id", condominioId);
+    const coversMap: Record<string, string> = {};
+    (capas as any[] || []).forEach((c) => { coversMap[c.categoria] = c.imagem_url; });
+    setCategoryCovers(coversMap);
+
     setLoading(false);
   };
 
