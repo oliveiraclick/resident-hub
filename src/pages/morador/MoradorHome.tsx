@@ -491,7 +491,7 @@ const MoradorHome = () => {
             </button>
           </div>
           <p className="text-[11px] text-muted-foreground font-medium mb-3">De prestadores do seu condomínio</p>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {productList.slice(0, 4).map((product: any, idx: number) => (
               <button
                 key={product.id}
@@ -530,7 +530,7 @@ const MoradorHome = () => {
             </button>
           </div>
           <p className="text-[11px] text-muted-foreground font-medium mb-3">Entre vizinhos do condomínio</p>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {desapegoList.slice(0, 4).map((item: any, idx: number) => (
               <button
                 key={item.id}
