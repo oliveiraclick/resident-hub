@@ -182,7 +182,7 @@ const Auth = () => {
       )}
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-6 max-w-md mx-auto w-full">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-6 max-w-sm mx-auto w-full">
         {!isLogin && (
           <div className="flex flex-col gap-1">
             <label className="ml-1">Nome completo</label>

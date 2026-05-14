@@ -72,7 +72,7 @@ const MoradorProdutos = () => {
 
   return (
     <MoradorLayout title="E-shop" showBack>
-      <div className="flex flex-col gap-8 pb-20 max-w-2xl mx-auto">
+      <div className="flex flex-col gap-8 pb-20 max-w-full mx-auto">
         <header className="px-1">
           <h1 className="text-4xl font-black tracking-tight mb-2">Shop</h1>
           <p className="text-muted-foreground font-medium uppercase tracking-[0.2em] text-[10px]">Produtos e ofertas locais</p>
