@@ -318,25 +318,24 @@ const MoradorHome = () => {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <button
-              onClick={() => navigate("/morador/reservas")}
-              className="group text-left p-5 rounded-[28px] flex flex-col gap-4 relative overflow-hidden active:scale-[0.96] transition-all bg-gradient-to-br from-primary to-orange-400 shadow-xl shadow-primary/20 border border-white/10"
+              onClick={() => {}}
+              className="group text-left p-5 rounded-[28px] flex flex-col gap-4 relative overflow-hidden transition-all bg-gradient-to-br from-primary/50 to-orange-400/50 shadow-xl shadow-primary/5 border border-white/5 cursor-default grayscale-[0.8] opacity-70"
             >
-              <div className="h-10 w-10 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center ring-1 ring-white/30 transition-transform group-hover:scale-110">
+              <div className="h-10 w-10 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center ring-1 ring-white/30 transition-transform">
                 <CalendarCheck size={22} className="text-white" />
               </div>
               <div className="space-y-0.5">
                 <p className="text-[15px] font-black text-white leading-tight">Reservas</p>
-                <p className="text-[10px] text-white/70 uppercase tracking-widest font-bold">Agendar Espaço</p>
+                <p className="text-[10px] text-white/70 uppercase tracking-widest font-bold">Em breve</p>
               </div>
-              {/* Abstract decorative shape */}
-              <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-white/10 rounded-full blur-2xl" />
+              <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-white/5 rounded-full blur-2xl" />
             </button>
 
             <button
-              onClick={() => navigate("/morador/encomendas")}
-              className="group text-left p-5 rounded-[28px] flex flex-col gap-4 relative overflow-hidden active:scale-[0.96] transition-all bg-gradient-to-br from-indigo-500 to-purple-500 shadow-xl shadow-indigo-500/20 border border-white/10"
+              onClick={() => {}}
+              className="group text-left p-5 rounded-[28px] flex flex-col gap-4 relative overflow-hidden transition-all bg-gradient-to-br from-indigo-500/50 to-purple-500/50 shadow-xl shadow-indigo-500/5 border border-white/5 cursor-default grayscale-[0.8] opacity-70"
             >
-              <div className="h-10 w-10 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center ring-1 ring-white/30 relative transition-transform group-hover:scale-110">
+              <div className="h-10 w-10 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center ring-1 ring-white/30 relative transition-transform">
                 <Package size={22} className="text-white" />
                 {pendingCount > 0 && (
                   <span className="absolute -top-1.5 -right-1.5 h-5 w-5 bg-white text-indigo-600 text-[10px] font-black rounded-full flex items-center justify-center shadow-lg">
@@ -346,10 +345,9 @@ const MoradorHome = () => {
               </div>
               <div className="space-y-0.5">
                 <p className="text-[15px] font-black text-white leading-tight">Encomendas</p>
-                <p className="text-[10px] text-white/70 uppercase tracking-widest font-bold">Ver Chegadas</p>
+                <p className="text-[10px] text-white/70 uppercase tracking-widest font-bold">Em breve</p>
               </div>
-              {/* Abstract decorative shape */}
-              <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-white/10 rounded-full blur-2xl" />
+              <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-white/5 rounded-full blur-2xl" />
             </button>
           </div>
         </div>
