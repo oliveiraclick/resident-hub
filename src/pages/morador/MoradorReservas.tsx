@@ -61,6 +61,8 @@ const MoradorReservas = () => {
   const [occupiedSlots, setOccupiedSlots] = useState<string[]>([]);
   // For Salão/Quiosque - dates already booked (any morador)
   const [bookedDates, setBookedDates] = useState<string[]>([]);
+  // Custom category covers managed by admin
+  const [categoryCovers, setCategoryCovers] = useState<Record<string, string>>({});
 
   const isFullDay = selectedEspaco && FULL_DAY_CATEGORIES.includes(selectedEspaco.categoria);
 
