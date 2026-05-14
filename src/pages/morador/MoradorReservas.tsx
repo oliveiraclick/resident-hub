@@ -9,8 +9,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Calendar } from "@/components/ui/calendar";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { CalendarCheck, Trash2, X, Users, DollarSign, Info, Home, Clock, MapPin, ChevronRight, Search, LayoutGrid, Dumbbell, Coffee } from "lucide-react";
+import { CalendarCheck, Trash2, X, Users, DollarSign, Info, Home, Clock, MapPin, ChevronRight, Search, LayoutGrid, Crown, Beef } from "lucide-react";
 import { ptBR } from "date-fns/locale";
+import salaoCover from "@/assets/categoria-salao.jpg";
+import quiosqueCover from "@/assets/categoria-quiosque.jpg";
+import esportesCover from "@/assets/categoria-esportes.jpg";
 
 const FULL_DAY_CATEGORIES = ["salao", "quiosque"];
 const FULL_DAY_INICIO = "09:00";
