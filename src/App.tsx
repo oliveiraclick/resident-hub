@@ -119,6 +119,7 @@ const App = () => (
           <AppTrackers />
           <ModuleSwitcher />
           <PreReservaPopup />
+          <AnnouncementModal />
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
