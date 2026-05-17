@@ -455,28 +455,9 @@ const MoradorHome = () => {
               </button>
             )}
 
-            {pendingCount > 0 && (
-              <button
-                onClick={() => navigate("/morador/encomendas")}
-                className="w-full text-left border-none cursor-pointer rounded-[20px] flex items-center gap-4 relative overflow-hidden active:scale-[0.98] transition-transform"
-                style={{
-                  background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-hover)))",
-                  padding: "18px 20px",
-                  boxShadow: "0 8px 24px hsla(var(--primary), 0.25)",
-                }}
-              >
-                <div className="absolute -top-5 -right-5 w-20 h-20 rounded-full bg-white/[0.08]" />
-                <div className="h-[52px] w-[52px] rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0" style={{ backdropFilter: "blur(8px)" }}>
-                  <Package size={26} className="text-white" />
-                </div>
-                <div className="flex-1 relative z-[1]">
-                  <p className="text-[16px] font-bold text-white m-0">
-                    {pendingCount} encomenda{pendingCount > 1 ? "s" : ""} pendente{pendingCount > 1 ? "s" : ""}
-                  </p>
-                  <p className="text-[12px] text-white/75 mt-1 m-0">Toque para conferir →</p>
-                </div>
-              </button>
-            )}
+          </div>
+        )}
+        {false && (
           </div>
         )}
 
