@@ -62,56 +62,49 @@ export const AnnouncementModal = () => {
 
   return (
     <Dialog open={open} onOpenChange={(val) => { if (!val) handleClose(); }}>
-      <DialogContent className="max-w-[340px] sm:max-w-[360px] rounded-[24px] border-none shadow-2xl bg-gradient-to-b from-white to-primary/5 p-0 overflow-hidden max-h-[90vh]">
-        <div className="relative h-20 bg-primary flex items-center justify-center overflow-hidden">
+      <DialogContent className="max-w-[300px] sm:max-w-[320px] rounded-[20px] border-none shadow-2xl bg-gradient-to-b from-white to-primary/5 p-0 overflow-hidden max-h-[90vh]">
+        <div className="relative h-16 bg-primary flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-0 left-0 w-16 h-16 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 blur-2xl" />
-            <div className="absolute bottom-0 right-0 w-24 h-24 bg-white rounded-full translate-x-1/3 translate-y-1/3 blur-3xl" />
+            <div className="absolute top-0 left-0 w-12 h-12 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 blur-2xl" />
+            <div className="absolute bottom-0 right-0 w-16 h-16 bg-white rounded-full translate-x-1/3 translate-y-1/3 blur-3xl" />
           </div>
-          <div className="h-14 w-14 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white animate-in zoom-in duration-500">
-            <Package size={28} strokeWidth={2.5} />
+          <div className="h-10 w-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white animate-in zoom-in duration-500">
+            <Package size={22} strokeWidth={2.5} />
           </div>
         </div>
 
-        <div className="p-5 space-y-3">
+        <div className="p-4 space-y-2.5">
           <DialogHeader>
-            <DialogTitle className="text-lg font-black text-center text-foreground leading-tight">
+            <DialogTitle className="text-base font-black text-center text-foreground leading-tight">
               {total === 1
-                ? "Você tem 1 encomenda pendente!"
-                : `Você tem ${total} encomendas pendentes!`}
+                ? "Encomenda pendente!"
+                : `${total} encomendas pendentes!`}
             </DialogTitle>
-            <DialogDescription className="text-center text-sm font-medium pt-1">
-              {total === 1
-                ? "Uma encomenda chegou e está aguardando você na portaria."
-                : "Suas encomendas estão aguardando retirada na portaria."}
+            <DialogDescription className="text-center text-xs font-medium pt-0.5">
+              Aguardando você na portaria.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="bg-primary/5 rounded-xl p-3 border border-primary/10 space-y-1.5">
+          <div className="bg-primary/5 rounded-lg p-2.5 border border-primary/10 space-y-1">
             {principal.descricao && (
-              <p className="text-sm font-bold text-foreground text-center">
+              <p className="text-[13px] font-bold text-foreground text-center line-clamp-1">
                 📦 {principal.descricao}
               </p>
             )}
             {principal.localizacao && (
-              <div className="flex items-center justify-center gap-1.5 text-xs font-semibold text-muted-foreground">
-                <MapPin size={12} />
+              <div className="flex items-center justify-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
+                <MapPin size={10} />
                 <span>{principal.localizacao}</span>
               </div>
             )}
-            {total > 1 && (
-              <p className="text-xs font-semibold text-center text-muted-foreground pt-0.5">
-                + {total - 1} outra(s) encomenda(s)
-              </p>
-            )}
           </div>
 
-          <DialogFooter className="sm:justify-center pt-1">
+          <DialogFooter className="sm:justify-center pt-0.5">
             <Button
-              className="w-full h-11 rounded-xl font-black text-base shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform"
+              className="w-full h-10 rounded-lg font-black text-sm shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform"
               onClick={handleClose}
             >
-              <Check className="mr-2 h-4 w-4" /> OK, entendi!
+              <Check className="mr-1.5 h-4 w-4" /> OK, entendi!
             </Button>
           </DialogFooter>
         </div>
