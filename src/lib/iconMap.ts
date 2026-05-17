@@ -5,7 +5,7 @@ import {
   Baby, BookOpen, Camera, Dog, Fan, Gamepad2, GraduationCap, Guitar,
   Heart, Lightbulb, Lock, Music, Palette, Pill, Pizza, Plug,
   Refrigerator, Ruler, Stethoscope, Sun, Thermometer, Tv, Umbrella,
-  Volleyball, Waves, Wind, type LucideIcon,
+  Volleyball, Waves, Wind, Flame, Sprout, type LucideIcon,
 } from "lucide-react";
 
 export const ICON_MAP: Record<string, LucideIcon> = {
@@ -15,7 +15,7 @@ export const ICON_MAP: Record<string, LucideIcon> = {
   Baby, BookOpen, Camera, Dog, Fan, Gamepad2, GraduationCap, Guitar,
   Heart, Lightbulb, Lock, Music, Palette, Pill, Pizza, Plug,
   Refrigerator, Ruler, Stethoscope, Sun, Thermometer, Tv, Umbrella,
-  Volleyball, Waves, Wind,
+  Volleyball, Waves, Wind, Flame, Sprout,
 };
 
 export const ICON_NAMES = Object.keys(ICON_MAP);
