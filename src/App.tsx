@@ -10,6 +10,7 @@ import UpdateBanner from "@/components/UpdateBanner";
 import ForceUpdateScreen from "@/components/ForceUpdateScreen";
 import AppTrackers from "@/components/AppTrackers";
 import { PreReservaPopup } from "@/components/PreReservaPopup";
+import { AnnouncementModal } from "@/components/AnnouncementModal";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
