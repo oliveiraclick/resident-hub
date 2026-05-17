@@ -457,9 +457,7 @@ const MoradorHome = () => {
 
           </div>
         )}
-        {false && (
-          </div>
-        )}
+
 
         {/* ═══ VITRINE E-SHOP ═══ */}
         <div>
