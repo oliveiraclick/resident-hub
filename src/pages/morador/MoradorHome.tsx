@@ -23,7 +23,7 @@ const fallbackShopImages = [productBolo, productSabonete, productBrigadeiro, pro
 
 const hs: React.CSSProperties = { scrollbarWidth: "none", msOverflowStyle: "none" };
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 6;
 
 const RotatingServicos = ({ categorias, navigate }: { categorias: any[]; navigate: (path: string) => void }) => {
   const shuffled = useMemo(() => {
