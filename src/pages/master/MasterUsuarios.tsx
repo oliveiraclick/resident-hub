@@ -68,6 +68,14 @@ const MasterUsuarios = () => {
   const [editAprovado, setEditAprovado] = useState(false);
   const [editEspecialidade, setEditEspecialidade] = useState("");
   const [editSubEspecialidade, setEditSubEspecialidade] = useState("");
+  const [editNome, setEditNome] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [editTelefone, setEditTelefone] = useState("");
+  const [originalEmail, setOriginalEmail] = useState("");
+  const [originalNome, setOriginalNome] = useState("");
+  const [originalTelefone, setOriginalTelefone] = useState("");
+  const [loadingEmail, setLoadingEmail] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [filterCategoria, setFilterCategoria] = useState(initialCategoria);
   const { categorias } = useCategorias();
@@ -144,39 +152,99 @@ const MasterUsuarios = () => {
     };
   }, []);
 
-  const openEdit = (u: UserRow) => {
+  const openEdit = async (u: UserRow) => {
     setEditTarget(u);
     setEditRole(u.role);
     setEditCondominio(u.condominioId || "none");
     setEditAprovado(u.aprovado);
     setEditEspecialidade(u.especialidade || "");
     setEditSubEspecialidade(u.subEspecialidade || "");
+    setEditNome(u.nome === "Sem nome" ? "" : u.nome);
+    setOriginalNome(u.nome === "Sem nome" ? "" : u.nome);
+    setEditTelefone(u.telefone || "");
+    setOriginalTelefone(u.telefone || "");
+    setEditEmail("");
+    setOriginalEmail("");
+    setLoadingEmail(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("admin-user-manage", {
+        body: { action: "get", user_id: u.userId },
+      });
+      if (error) throw error;
+      const em = (data as any)?.email || "";
+      setEditEmail(em);
+      setOriginalEmail(em);
+    } catch (e: any) {
+      toast.error("Não foi possível carregar o email: " + (e?.message || ""));
+    } finally {
+      setLoadingEmail(false);
+    }
+  };
+
+  const hasProfileChanges = () =>
+    !!editTarget && (
+      editEmail.trim().toLowerCase() !== originalEmail.trim().toLowerCase() ||
+      editNome.trim() !== originalNome.trim() ||
+      editTelefone.trim() !== originalTelefone.trim()
+    );
+
+  const handleAttemptSave = () => {
+    if (!editTarget) return;
+    // Validate email format if changed
+    if (editEmail.trim().toLowerCase() !== originalEmail.trim().toLowerCase()) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!re.test(editEmail.trim())) {
+        toast.error("Email inválido");
+        return;
+      }
+    }
+    setConfirmOpen(true);
   };
 
   const handleSaveEdit = async () => {
     if (!editTarget) return;
     setSaving(true);
 
-    // Update user_roles
+    // 1) Update profile/email via edge function (only sends changed fields)
+    if (hasProfileChanges()) {
+      const payload: Record<string, unknown> = {
+        action: "update",
+        user_id: editTarget.userId,
+      };
+      if (editEmail.trim().toLowerCase() !== originalEmail.trim().toLowerCase()) {
+        payload.email = editEmail.trim();
+      }
+      if (editNome.trim() !== originalNome.trim()) payload.nome = editNome.trim();
+      if (editTelefone.trim() !== originalTelefone.trim()) payload.telefone = editTelefone.trim();
+
+      const { data, error } = await supabase.functions.invoke("admin-user-manage", { body: payload });
+      const errMsg = error?.message || (data as any)?.error;
+      if (errMsg) {
+        setSaving(false);
+        setConfirmOpen(false);
+        toast.error(errMsg);
+        return;
+      }
+    }
+
+    // 2) Update user_roles
     const { error } = await supabase.from("user_roles").update({
       role: editRole as any,
       condominio_id: editCondominio === "none" ? null : editCondominio || null,
       aprovado: editAprovado,
     }).eq("id", editTarget.roleId);
 
-    if (error) { setSaving(false); toast.error("Erro ao atualizar: " + error.message); return; }
+    if (error) { setSaving(false); setConfirmOpen(false); toast.error("Erro ao atualizar: " + error.message); return; }
 
-    // Handle prestador record
+    // 3) Handle prestador record
     if (editRole === "prestador" && editEspecialidade.trim()) {
       const condId = editCondominio === "none" ? null : editCondominio;
       if (editTarget.prestadorId) {
-        // Update existing prestador
         await supabase.from("prestadores").update({
           especialidade: editEspecialidade.trim(),
           sub_especialidade: editSubEspecialidade.trim() || null,
         } as any).eq("id", editTarget.prestadorId);
       } else if (condId) {
-        // Create prestador record when changing role to prestador
         await supabase.from("prestadores").insert({
           user_id: editTarget.userId,
           condominio_id: condId,
@@ -186,6 +254,7 @@ const MasterUsuarios = () => {
     }
 
     setSaving(false);
+    setConfirmOpen(false);
     toast.success("Usuário atualizado");
     setEditTarget(null);
     fetchData();
@@ -314,7 +383,11 @@ const MasterUsuarios = () => {
         <div className="space-y-3">
           <p className="text-xs text-muted-foreground">{filtered.length} usuário(s) · Página {page} de {totalPages || 1}</p>
           {paginatedUsers.map((u) => (
-            <Card key={u.roleId} className="rounded-[var(--radius-card)]">
+            <Card
+              key={u.roleId}
+              className="rounded-[var(--radius-card)] cursor-pointer hover:bg-muted/30 transition-colors"
+              onClick={() => openEdit(u)}
+            >
               <CardContent className="p-4">
                 <div className="flex justify-between items-start">
                   <div className="min-w-0 flex-1">
@@ -333,7 +406,8 @@ const MasterUsuarios = () => {
                     {u.telefone && (
                       <button
                         type="button"
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           const digits = u.telefone!.replace(/\D/g, "");
                           window.open(`https://wa.me/55${digits}`, "_blank", "noopener,noreferrer");
                         }}
@@ -344,7 +418,7 @@ const MasterUsuarios = () => {
                       </button>
                     )}
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                     <Badge variant="secondary" className="text-[10px]">{u.role}</Badge>
                     <button onClick={() => toggleAprovado(u)} className="h-8 w-8 rounded-full bg-muted flex items-center justify-center"
                       title={u.aprovado ? "Desaprovar" : "Aprovar"}>
@@ -407,12 +481,33 @@ const MasterUsuarios = () => {
       )}
 
       {/* Edit Dialog */}
-      <Dialog open={!!editTarget} onOpenChange={(open) => { if (!open) setEditTarget(null); }}>
-        <DialogContent>
+      <Dialog open={!!editTarget} onOpenChange={(open) => { if (!open) { setEditTarget(null); setConfirmOpen(false); } }}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Editar usuário: {editTarget?.nome}</DialogTitle>
+            <DialogTitle>Editar usuário</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2">
+            <div>
+              <label className="text-sm text-muted-foreground mb-1 block">Nome</label>
+              <Input value={editNome} onChange={(e) => setEditNome(e.target.value)} placeholder="Nome completo" />
+            </div>
+            <div>
+              <label className="text-sm text-muted-foreground mb-1 block">Email</label>
+              <Input
+                type="email"
+                value={editEmail}
+                onChange={(e) => setEditEmail(e.target.value)}
+                placeholder={loadingEmail ? "Carregando..." : "email@exemplo.com"}
+                disabled={loadingEmail}
+              />
+              {editEmail.trim().toLowerCase() !== originalEmail.trim().toLowerCase() && editEmail && (
+                <p className="text-[11px] text-amber-600 mt-1">⚠ O email de login será alterado.</p>
+              )}
+            </div>
+            <div>
+              <label className="text-sm text-muted-foreground mb-1 block">Telefone</label>
+              <Input value={editTelefone} onChange={(e) => setEditTelefone(e.target.value)} placeholder="(00) 00000-0000" />
+            </div>
             <div>
               <label className="text-sm text-muted-foreground mb-1 block">Role</label>
               <Select value={editRole} onValueChange={setEditRole}>
@@ -437,7 +532,6 @@ const MasterUsuarios = () => {
                 </SelectContent>
               </Select>
             </div>
-            {/* Especialidade - only for prestadores */}
             {editRole === "prestador" && (
               <>
                 <div>
@@ -473,12 +567,49 @@ const MasterUsuarios = () => {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditTarget(null)}>Cancelar</Button>
-            <Button onClick={handleSaveEdit} disabled={saving}>
+            <Button onClick={handleAttemptSave} disabled={saving || loadingEmail}>
               {saving ? "Salvando..." : "Salvar"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Confirm Save Dialog */}
+      <AlertDialog open={confirmOpen} onOpenChange={(open) => { if (!saving) setConfirmOpen(open); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar alterações?</AlertDialogTitle>
+            <AlertDialogDescription>
+              <span className="block mb-2">Você está prestes a salvar as seguintes mudanças em <strong>{editTarget?.nome || "este usuário"}</strong>:</span>
+              <ul className="text-xs space-y-1 mt-2">
+                {editNome.trim() !== originalNome.trim() && (
+                  <li>• <strong>Nome:</strong> "{originalNome || "—"}" → "{editNome}"</li>
+                )}
+                {editEmail.trim().toLowerCase() !== originalEmail.trim().toLowerCase() && (
+                  <li>• <strong>Email:</strong> "{originalEmail || "—"}" → "{editEmail}"</li>
+                )}
+                {editTelefone.trim() !== originalTelefone.trim() && (
+                  <li>• <strong>Telefone:</strong> "{originalTelefone || "—"}" → "{editTelefone}"</li>
+                )}
+                {!hasProfileChanges() && (
+                  <li>• Alterações de role / condomínio / aprovação / especialidade.</li>
+                )}
+              </ul>
+              {editEmail.trim().toLowerCase() !== originalEmail.trim().toLowerCase() && (
+                <span className="block mt-3 text-amber-600 text-xs">
+                  ⚠ Alterar o email muda o login do usuário. Avise-o antes.
+                </span>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={saving}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSaveEdit} disabled={saving}>
+              {saving ? "Salvando..." : "Confirmar"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Delete Dialog */}
       <AlertDialog open={!!deleteTarget} onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}>
