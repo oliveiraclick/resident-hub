@@ -65,8 +65,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
+    // Synchronously mark loading BEFORE the render commits, so consumers
+    // don't briefly see roles=[] + rolesLoading=false during the transition.
+    setRolesLoading(true);
+
     const fetchRoles = async () => {
-      setRolesLoading(true);
       const { data, error } = await supabase
         .from("user_roles")
         .select("condominio_id, role")
@@ -75,8 +78,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (!error && data) {
         setRoles(data as UserRole[]);
       }
-      setRolesLoading(false);
       prevUserIdRef.current = user.id;
+      setRolesLoading(false);
     };
 
     fetchRoles();
