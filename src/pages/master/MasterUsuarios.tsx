@@ -481,12 +481,33 @@ const MasterUsuarios = () => {
       )}
 
       {/* Edit Dialog */}
-      <Dialog open={!!editTarget} onOpenChange={(open) => { if (!open) setEditTarget(null); }}>
-        <DialogContent>
+      <Dialog open={!!editTarget} onOpenChange={(open) => { if (!open) { setEditTarget(null); setConfirmOpen(false); } }}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Editar usuário: {editTarget?.nome}</DialogTitle>
+            <DialogTitle>Editar usuário</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2">
+            <div>
+              <label className="text-sm text-muted-foreground mb-1 block">Nome</label>
+              <Input value={editNome} onChange={(e) => setEditNome(e.target.value)} placeholder="Nome completo" />
+            </div>
+            <div>
+              <label className="text-sm text-muted-foreground mb-1 block">Email</label>
+              <Input
+                type="email"
+                value={editEmail}
+                onChange={(e) => setEditEmail(e.target.value)}
+                placeholder={loadingEmail ? "Carregando..." : "email@exemplo.com"}
+                disabled={loadingEmail}
+              />
+              {editEmail.trim().toLowerCase() !== originalEmail.trim().toLowerCase() && editEmail && (
+                <p className="text-[11px] text-amber-600 mt-1">⚠ O email de login será alterado.</p>
+              )}
+            </div>
+            <div>
+              <label className="text-sm text-muted-foreground mb-1 block">Telefone</label>
+              <Input value={editTelefone} onChange={(e) => setEditTelefone(e.target.value)} placeholder="(00) 00000-0000" />
+            </div>
             <div>
               <label className="text-sm text-muted-foreground mb-1 block">Role</label>
               <Select value={editRole} onValueChange={setEditRole}>
@@ -511,7 +532,6 @@ const MasterUsuarios = () => {
                 </SelectContent>
               </Select>
             </div>
-            {/* Especialidade - only for prestadores */}
             {editRole === "prestador" && (
               <>
                 <div>
@@ -547,12 +567,49 @@ const MasterUsuarios = () => {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditTarget(null)}>Cancelar</Button>
-            <Button onClick={handleSaveEdit} disabled={saving}>
+            <Button onClick={handleAttemptSave} disabled={saving || loadingEmail}>
               {saving ? "Salvando..." : "Salvar"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Confirm Save Dialog */}
+      <AlertDialog open={confirmOpen} onOpenChange={(open) => { if (!saving) setConfirmOpen(open); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar alterações?</AlertDialogTitle>
+            <AlertDialogDescription>
+              <span className="block mb-2">Você está prestes a salvar as seguintes mudanças em <strong>{editTarget?.nome || "este usuário"}</strong>:</span>
+              <ul className="text-xs space-y-1 mt-2">
+                {editNome.trim() !== originalNome.trim() && (
+                  <li>• <strong>Nome:</strong> "{originalNome || "—"}" → "{editNome}"</li>
+                )}
+                {editEmail.trim().toLowerCase() !== originalEmail.trim().toLowerCase() && (
+                  <li>• <strong>Email:</strong> "{originalEmail || "—"}" → "{editEmail}"</li>
+                )}
+                {editTelefone.trim() !== originalTelefone.trim() && (
+                  <li>• <strong>Telefone:</strong> "{originalTelefone || "—"}" → "{editTelefone}"</li>
+                )}
+                {!hasProfileChanges() && (
+                  <li>• Alterações de role / condomínio / aprovação / especialidade.</li>
+                )}
+              </ul>
+              {editEmail.trim().toLowerCase() !== originalEmail.trim().toLowerCase() && (
+                <span className="block mt-3 text-amber-600 text-xs">
+                  ⚠ Alterar o email muda o login do usuário. Avise-o antes.
+                </span>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={saving}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSaveEdit} disabled={saving}>
+              {saving ? "Salvando..." : "Confirmar"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Delete Dialog */}
       <AlertDialog open={!!deleteTarget} onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}>
