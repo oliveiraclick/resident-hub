@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Pencil, Trash2, CheckCircle, XCircle, Plus, ShieldCheck, Search, Smartphone, Wifi, ChevronLeft, ChevronRight, Phone } from "lucide-react";
+import { Pencil, Trash2, CheckCircle, XCircle, Plus, ShieldCheck, Search, Smartphone, Wifi, ChevronLeft, ChevronRight, Phone, Key } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -180,6 +180,23 @@ const MasterUsuarios = () => {
       setLoadingEmail(false);
     }
   };
+
+  const handleResetPassword = async (userId: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke("admin-user-manage", {
+        body: { action: "reset_password", user_id: userId }
+      });
+      if (error || data?.error) {
+        toast.error(error?.message || data?.error || "Erro ao resetar senha");
+      } else {
+        toast.success("Senha resetada para 123456 com sucesso!");
+      }
+    } catch (err) {
+      console.error("handleResetPassword error", err);
+      toast.error("Falha ao comunicar com o servidor");
+    }
+  };
+
 
   const hasProfileChanges = () =>
     !!editTarget && (
@@ -428,6 +445,18 @@ const MasterUsuarios = () => {
                     </button>
                     <button onClick={() => openEdit(u)} className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
                       <Pencil size={14} className="text-muted-foreground" />
+                    </button>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (confirm(`Deseja resetar a senha de ${u.nome || 'este usuário'} para "123456"?`)) {
+                          handleResetPassword(u.userId);
+                        }
+                      }} 
+                      className="h-8 w-8 rounded-full bg-muted flex items-center justify-center"
+                      title="Resetar senha para 123456"
+                    >
+                      <Key size={14} className="text-amber-600" />
                     </button>
                     <button onClick={() => setDeleteTarget(u)} className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
                       <Trash2 size={14} className="text-destructive" />
