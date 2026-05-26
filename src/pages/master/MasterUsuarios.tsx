@@ -68,6 +68,14 @@ const MasterUsuarios = () => {
   const [editAprovado, setEditAprovado] = useState(false);
   const [editEspecialidade, setEditEspecialidade] = useState("");
   const [editSubEspecialidade, setEditSubEspecialidade] = useState("");
+  const [editNome, setEditNome] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [editTelefone, setEditTelefone] = useState("");
+  const [originalEmail, setOriginalEmail] = useState("");
+  const [originalNome, setOriginalNome] = useState("");
+  const [originalTelefone, setOriginalTelefone] = useState("");
+  const [loadingEmail, setLoadingEmail] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [filterCategoria, setFilterCategoria] = useState(initialCategoria);
   const { categorias } = useCategorias();
