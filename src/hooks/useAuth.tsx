@@ -29,7 +29,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [roles, setRoles] = useState<UserRole[]>([]);
-  const [rolesLoading, setRolesLoading] = useState(true);
+  const [loadedUserId, setLoadedUserId] = useState<string | null>(null);
+
+  // Derived loading: true until we've fetched roles for the CURRENT user.
+  const rolesLoading = !!user && loadedUserId !== user.id;
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -49,36 +52,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const prevUserIdRef = useRef<string | null>(null);
-
   useEffect(() => {
     if (!user) {
       setRoles([]);
-      setRolesLoading(false);
-      prevUserIdRef.current = null;
+      setLoadedUserId(null);
       return;
     }
 
-    if (prevUserIdRef.current === user.id) {
-      return;
-    }
+    if (loadedUserId === user.id) return;
 
-    const fetchRoles = async () => {
-      setRolesLoading(true);
+    let cancelled = false;
+    (async () => {
       const { data, error } = await supabase
         .from("user_roles")
         .select("condominio_id, role")
         .eq("user_id", user.id);
 
+      if (cancelled) return;
       if (!error && data) {
         setRoles(data as UserRole[]);
       }
-      setRolesLoading(false);
-      prevUserIdRef.current = user.id;
-    };
+      setLoadedUserId(user.id);
+    })();
 
-    fetchRoles();
-  }, [user]);
+    return () => { cancelled = true; };
+  }, [user, loadedUserId]);
 
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
