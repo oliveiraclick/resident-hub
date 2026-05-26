@@ -152,39 +152,99 @@ const MasterUsuarios = () => {
     };
   }, []);
 
-  const openEdit = (u: UserRow) => {
+  const openEdit = async (u: UserRow) => {
     setEditTarget(u);
     setEditRole(u.role);
     setEditCondominio(u.condominioId || "none");
     setEditAprovado(u.aprovado);
     setEditEspecialidade(u.especialidade || "");
     setEditSubEspecialidade(u.subEspecialidade || "");
+    setEditNome(u.nome === "Sem nome" ? "" : u.nome);
+    setOriginalNome(u.nome === "Sem nome" ? "" : u.nome);
+    setEditTelefone(u.telefone || "");
+    setOriginalTelefone(u.telefone || "");
+    setEditEmail("");
+    setOriginalEmail("");
+    setLoadingEmail(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("admin-user-manage", {
+        body: { action: "get", user_id: u.userId },
+      });
+      if (error) throw error;
+      const em = (data as any)?.email || "";
+      setEditEmail(em);
+      setOriginalEmail(em);
+    } catch (e: any) {
+      toast.error("Não foi possível carregar o email: " + (e?.message || ""));
+    } finally {
+      setLoadingEmail(false);
+    }
+  };
+
+  const hasProfileChanges = () =>
+    !!editTarget && (
+      editEmail.trim().toLowerCase() !== originalEmail.trim().toLowerCase() ||
+      editNome.trim() !== originalNome.trim() ||
+      editTelefone.trim() !== originalTelefone.trim()
+    );
+
+  const handleAttemptSave = () => {
+    if (!editTarget) return;
+    // Validate email format if changed
+    if (editEmail.trim().toLowerCase() !== originalEmail.trim().toLowerCase()) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!re.test(editEmail.trim())) {
+        toast.error("Email inválido");
+        return;
+      }
+    }
+    setConfirmOpen(true);
   };
 
   const handleSaveEdit = async () => {
     if (!editTarget) return;
     setSaving(true);
 
-    // Update user_roles
+    // 1) Update profile/email via edge function (only sends changed fields)
+    if (hasProfileChanges()) {
+      const payload: Record<string, unknown> = {
+        action: "update",
+        user_id: editTarget.userId,
+      };
+      if (editEmail.trim().toLowerCase() !== originalEmail.trim().toLowerCase()) {
+        payload.email = editEmail.trim();
+      }
+      if (editNome.trim() !== originalNome.trim()) payload.nome = editNome.trim();
+      if (editTelefone.trim() !== originalTelefone.trim()) payload.telefone = editTelefone.trim();
+
+      const { data, error } = await supabase.functions.invoke("admin-user-manage", { body: payload });
+      const errMsg = error?.message || (data as any)?.error;
+      if (errMsg) {
+        setSaving(false);
+        setConfirmOpen(false);
+        toast.error(errMsg);
+        return;
+      }
+    }
+
+    // 2) Update user_roles
     const { error } = await supabase.from("user_roles").update({
       role: editRole as any,
       condominio_id: editCondominio === "none" ? null : editCondominio || null,
       aprovado: editAprovado,
     }).eq("id", editTarget.roleId);
 
-    if (error) { setSaving(false); toast.error("Erro ao atualizar: " + error.message); return; }
+    if (error) { setSaving(false); setConfirmOpen(false); toast.error("Erro ao atualizar: " + error.message); return; }
 
-    // Handle prestador record
+    // 3) Handle prestador record
     if (editRole === "prestador" && editEspecialidade.trim()) {
       const condId = editCondominio === "none" ? null : editCondominio;
       if (editTarget.prestadorId) {
-        // Update existing prestador
         await supabase.from("prestadores").update({
           especialidade: editEspecialidade.trim(),
           sub_especialidade: editSubEspecialidade.trim() || null,
         } as any).eq("id", editTarget.prestadorId);
       } else if (condId) {
-        // Create prestador record when changing role to prestador
         await supabase.from("prestadores").insert({
           user_id: editTarget.userId,
           condominio_id: condId,
@@ -194,6 +254,7 @@ const MasterUsuarios = () => {
     }
 
     setSaving(false);
+    setConfirmOpen(false);
     toast.success("Usuário atualizado");
     setEditTarget(null);
     fetchData();
