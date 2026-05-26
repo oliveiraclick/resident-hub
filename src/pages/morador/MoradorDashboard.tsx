@@ -19,31 +19,34 @@ import MoradorLojas from "./MoradorLojas";
 import MoradorLoja from "./MoradorLoja";
 import MoradorMeusPedidos from "./MoradorMeusPedidos";
 import MoradorManual from "./MoradorManual";
+import { CompletarCadastroGate } from "@/components/morador/CompletarCadastroGate";
 
 const MoradorDashboard = () => {
   return (
-    <Routes>
-      <Route path="/" element={<MoradorHome />} />
-      <Route path="servicos" element={<MoradorServicos />} />
-      <Route path="servicos/categorias" element={<MoradorServicosCategorias />} />
-      <Route path="desapegos" element={<MoradorDesapegos />} />
-      <Route path="desapegos/:id" element={<MoradorDesapegoDetalhe />} />
-      <Route path="produtos" element={<MoradorProdutos />} />
-      <Route path="produtos/:id" element={<MoradorProdutoDetalhe />} />
-      <Route path="encomendas" element={<MoradorEncomendas />} />
-      <Route path="qr-id" element={<MoradorQrId />} />
-      <Route path="avaliacoes" element={<MoradorAvaliacoes />} />
-      <Route path="perfil" element={<MoradorPerfil />} />
-      <Route path="reservas" element={<MoradorReservas />} />
-      <Route path="convites" element={<MoradorConvites />} />
-      <Route path="entre-amigos" element={<MoradorEntreAmigos />} />
-      <Route path="entre-amigos/:id" element={<MoradorEntreAmigosDetalhe />} />
-      <Route path="lojas" element={<MoradorLojas />} />
-      <Route path="lojas/:lojaId" element={<MoradorLoja />} />
-      <Route path="meus-pedidos" element={<MoradorMeusPedidos />} />
-      <Route path="manual" element={<MoradorManual />} />
-      <Route path="noticias" element={<MoradorNoticias />} />
-    </Routes>
+    <CompletarCadastroGate>
+      <Routes>
+        <Route path="/" element={<MoradorHome />} />
+        <Route path="servicos" element={<MoradorServicos />} />
+        <Route path="servicos/categorias" element={<MoradorServicosCategorias />} />
+        <Route path="desapegos" element={<MoradorDesapegos />} />
+        <Route path="desapegos/:id" element={<MoradorDesapegoDetalhe />} />
+        <Route path="produtos" element={<MoradorProdutos />} />
+        <Route path="produtos/:id" element={<MoradorProdutoDetalhe />} />
+        <Route path="encomendas" element={<MoradorEncomendas />} />
+        <Route path="qr-id" element={<MoradorQrId />} />
+        <Route path="avaliacoes" element={<MoradorAvaliacoes />} />
+        <Route path="perfil" element={<MoradorPerfil />} />
+        <Route path="reservas" element={<MoradorReservas />} />
+        <Route path="convites" element={<MoradorConvites />} />
+        <Route path="entre-amigos" element={<MoradorEntreAmigos />} />
+        <Route path="entre-amigos/:id" element={<MoradorEntreAmigosDetalhe />} />
+        <Route path="lojas" element={<MoradorLojas />} />
+        <Route path="lojas/:lojaId" element={<MoradorLoja />} />
+        <Route path="meus-pedidos" element={<MoradorMeusPedidos />} />
+        <Route path="manual" element={<MoradorManual />} />
+        <Route path="noticias" element={<MoradorNoticias />} />
+      </Routes>
+    </CompletarCadastroGate>
   );
 };
 
