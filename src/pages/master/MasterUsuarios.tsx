@@ -195,6 +195,8 @@ const MasterUsuarios = () => {
       console.error("handleResetPassword error", err);
       toast.error("Falha ao comunicar com o servidor");
     }
+  };
+
 
   const hasProfileChanges = () =>
     !!editTarget && (
