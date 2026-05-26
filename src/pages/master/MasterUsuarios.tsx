@@ -383,7 +383,11 @@ const MasterUsuarios = () => {
         <div className="space-y-3">
           <p className="text-xs text-muted-foreground">{filtered.length} usuário(s) · Página {page} de {totalPages || 1}</p>
           {paginatedUsers.map((u) => (
-            <Card key={u.roleId} className="rounded-[var(--radius-card)]">
+            <Card
+              key={u.roleId}
+              className="rounded-[var(--radius-card)] cursor-pointer hover:bg-muted/30 transition-colors"
+              onClick={() => openEdit(u)}
+            >
               <CardContent className="p-4">
                 <div className="flex justify-between items-start">
                   <div className="min-w-0 flex-1">
@@ -402,7 +406,8 @@ const MasterUsuarios = () => {
                     {u.telefone && (
                       <button
                         type="button"
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           const digits = u.telefone!.replace(/\D/g, "");
                           window.open(`https://wa.me/55${digits}`, "_blank", "noopener,noreferrer");
                         }}
@@ -413,7 +418,7 @@ const MasterUsuarios = () => {
                       </button>
                     )}
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                     <Badge variant="secondary" className="text-[10px]">{u.role}</Badge>
                     <button onClick={() => toggleAprovado(u)} className="h-8 w-8 rounded-full bg-muted flex items-center justify-center"
                       title={u.aprovado ? "Desaprovar" : "Aprovar"}>
