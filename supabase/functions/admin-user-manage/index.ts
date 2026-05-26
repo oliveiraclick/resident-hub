@@ -72,6 +72,16 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    
+    if (action === "reset_password") {
+      const { error: resetErr } = await adminClient.auth.admin.updateUserById(user_id, {
+        password: "123456"
+      });
+      if (resetErr) throw new Error("Erro ao resetar senha: " + resetErr.message);
+      
+      return new Response(JSON.stringify({ ok: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
 
     throw new Error("Unknown action");
   } catch (e: any) {

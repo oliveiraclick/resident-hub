@@ -181,6 +181,21 @@ const MasterUsuarios = () => {
     }
   };
 
+  const handleResetPassword = async (userId: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke("admin-user-manage", {
+        body: { action: "reset_password", user_id: userId }
+      });
+      if (error || data?.error) {
+        toast.error(error?.message || data?.error || "Erro ao resetar senha");
+      } else {
+        toast.success("Senha resetada para 123456 com sucesso!");
+      }
+    } catch (err) {
+      console.error("handleResetPassword error", err);
+      toast.error("Falha ao comunicar com o servidor");
+    }
+
   const hasProfileChanges = () =>
     !!editTarget && (
       editEmail.trim().toLowerCase() !== originalEmail.trim().toLowerCase() ||
@@ -428,6 +443,18 @@ const MasterUsuarios = () => {
                     </button>
                     <button onClick={() => openEdit(u)} className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
                       <Pencil size={14} className="text-muted-foreground" />
+                    </button>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (confirm(`Deseja resetar a senha de ${u.nome || 'este usuário'} para "123456"?`)) {
+                          handleResetPassword(u.userId);
+                        }
+                      }} 
+                      className="h-8 w-8 rounded-full bg-muted flex items-center justify-center"
+                      title="Resetar senha para 123456"
+                    >
+                      <Key size={14} className="text-amber-600" />
                     </button>
                     <button onClick={() => setDeleteTarget(u)} className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
                       <Trash2 size={14} className="text-destructive" />
