@@ -69,6 +69,8 @@ const CopaMorador = () => {
     j.time_away.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const paginatedJogos = filteredJogos.slice(0, visibleCount);
+
   if (!isCopaActive) {
     return (
       <MoradorLayout title="Copa O Morador" showBack>
