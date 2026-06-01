@@ -23,8 +23,38 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
   const [aScore, setAScore] = useState<string>("");
   const [artilheiro, setArtilheiro] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPix, setShowPix] = useState(false);
+  const [pixConfig, setPixConfig] = useState<{ key: string, name: string } | null>(null);
+
+  useEffect(() => {
+    const fetchPixConfig = async () => {
+      const { data } = await supabase
+        .from("app_configs" as any)
+        .select("pix_key, pix_name")
+        .eq("key", "theme_world_cup")
+        .maybeSingle();
+      
+      if (data) {
+        setPixConfig({ 
+          key: (data as any).pix_key || "", 
+          name: (data as any).pix_name || "" 
+        });
+      }
+    };
+    if (isOpen) {
+      fetchPixConfig();
+      setShowPix(false);
+    }
+  }, [isOpen]);
 
   if (!jogo) return null;
+
+  const copyPix = () => {
+    if (pixConfig?.key) {
+      navigator.clipboard.writeText(pixConfig.key);
+      toast.success("Chave PIX copiada!");
+    }
+  };
 
   const handleSubmit = async () => {
     if (!user) {
