@@ -206,7 +206,8 @@ body.native-app {
   }
 
   /* Realoca a logo/saudação para a esquerda, dando espaço ao troféu (direita) */
-  body.theme-brasil .relative.overflow-hidden > div.text-primary-foreground > div {
+  body.theme-brasil [data-module="Morador"] .relative.overflow-hidden > div.text-primary-foreground > div,
+  [data-module="Morador"] .relative.overflow-hidden > div.text-primary-foreground > div {
     max-width: 60%;
   }
 
@@ -216,7 +217,10 @@ body.native-app {
   body.theme-brasil header p,
   body.theme-brasil .text-primary-foreground h1,
   body.theme-brasil .text-primary-foreground span,
-  body.theme-brasil .text-primary-foreground p {
+  body.theme-brasil .text-primary-foreground p,
+  [data-module="Morador"] .text-primary-foreground h1,
+  [data-module="Morador"] .text-primary-foreground span,
+  [data-module="Morador"] .text-primary-foreground p {
     text-shadow: 0 2px 6px rgba(0,0,0,0.6);
   }
 
