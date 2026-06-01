@@ -176,17 +176,25 @@ body.native-app {
   }
 
   /* Faixa Azul e Ajustes de Degradê para o Topo Completo */
-  body.theme-brasil [style*="--header-bg"],
   body.theme-brasil header {
     border-bottom: 4px solid #0038A8 !important;
     position: relative;
   }
 
-  /* Garante que o degradê verde/amarelo se destaque no topo */
-  body.theme-brasil .text-primary-foreground,
-  body.theme-brasil header h1,
-  body.theme-brasil header span,
-  body.theme-brasil header p {
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  /* Home Header (Topo da Home) */
+  body.theme-brasil .relative.overflow-hidden > div[style*="--header-bg"] {
+    position: relative;
+  }
+  
+  body.theme-brasil .relative.overflow-hidden > div[style*="--header-bg"]::after {
+    content: '';
+    position: absolute;
+    bottom: 10px; /* Acima da curvatura da home */
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #0038A8;
+    z-index: 30;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
 }
