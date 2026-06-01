@@ -105,12 +105,18 @@ const CopaMorador = () => {
                   R$ {prizes[activeTab as keyof typeof prizes].toFixed(2)}
                 </h2>
               </div>
-              <TabsList className="bg-black/20 border-none h-auto p-1 rounded-xl">
-                <TabsTrigger value="placar" className="data-[state=active]:bg-white data-[state=active]:text-warning text-[9px] font-bold px-3 py-1.5 rounded-lg transition-all">
-                  PLACAR
+              <TabsList className="bg-black/20 border-none h-auto p-1 rounded-xl flex flex-wrap gap-1">
+                <TabsTrigger value="placar" className="data-[state=active]:bg-white data-[state=active]:text-warning text-[9px] font-bold px-3 py-1.5 rounded-lg transition-all flex-1">
+                  JOGO
                 </TabsTrigger>
-                <TabsTrigger value="artilheiro" className="data-[state=active]:bg-white data-[state=active]:text-warning text-[9px] font-bold px-3 py-1.5 rounded-lg transition-all">
+                <TabsTrigger value="artilheiro" className="data-[state=active]:bg-white data-[state=active]:text-warning text-[9px] font-bold px-3 py-1.5 rounded-lg transition-all flex-1">
                   ARTILHEIRO
+                </TabsTrigger>
+                <TabsTrigger value="campeao" className="data-[state=active]:bg-white data-[state=active]:text-warning text-[9px] font-bold px-3 py-1.5 rounded-lg transition-all flex-1">
+                  CAMPEÃO
+                </TabsTrigger>
+                <TabsTrigger value="artilheiro_brasil" className="data-[state=active]:bg-white data-[state=active]:text-warning text-[9px] font-bold px-3 py-1.5 rounded-lg transition-all flex-1">
+                  ARTILHEIRO BR
                 </TabsTrigger>
               </TabsList>
             </div>
