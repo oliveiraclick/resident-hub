@@ -194,9 +194,8 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
             {!isMoradorModule && <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/4" />}
             {!isMoradorModule && <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/10 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/4" />}
 
-            {/* Top row */}
-            <div className="flex justify-between items-center mb-8 relative z-20">
-              <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 mb-8 relative z-20">
+              <div className="flex items-center gap-3 shrink-0">
                 <div className="relative">
                   {condominioLogo ? (
                     <img src={condominioLogo} alt={condominioName || ""} className="h-12 w-12 rounded-2xl object-cover ring-2 ring-white/10 shadow-lg" />
@@ -207,7 +206,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
                   )}
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-bold text-lg tracking-tight text-white leading-none mb-1">
+                  <span className="font-bold text-lg tracking-tight text-white leading-none mb-1 whitespace-nowrap">
                     {condominioName || "Morador.app"}
                   </span>
                   <div className="flex items-center gap-1.5">
@@ -216,7 +215,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2.5 ml-auto shrink-0">
+              <div className="flex items-center gap-2.5 shrink-0">
                 <button
                   onClick={onQrPress || (() => navigate("/morador/qr-id"))}
                   className={`w-11 h-11 rounded-2xl flex items-center justify-center active:scale-95 backdrop-blur-md transition-all shadow-md ${isMoradorModule ? "bg-black/40 hover:bg-black/55 ring-1 ring-white/20" : "bg-white/10 hover:bg-white/20 ring-1 ring-white/10"}`}
