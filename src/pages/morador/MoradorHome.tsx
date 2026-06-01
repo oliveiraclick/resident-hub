@@ -217,6 +217,24 @@ const MoradorHome = () => {
       }
     };
 
+    const fetchCondoNome = async () => {
+      try {
+        const { data: ids } = await supabase.rpc("get_user_condominio_ids", { _user_id: user.id });
+        const firstId = Array.isArray(ids) && ids.length > 0 ? ids[0] : null;
+        if (firstId) {
+          const { data: cond } = await supabase
+            .from("condominios")
+            .select("nome")
+            .eq("id", firstId)
+            .limit(1)
+            .maybeSingle();
+          if (cond?.nome) setCondoNome(cond.nome);
+        }
+      } catch (e) {
+        console.error("fetchCondoNome error", e);
+      }
+    };
+
     fetchPending();
     fetchProdutos();
     fetchServicos();
@@ -226,7 +244,9 @@ const MoradorHome = () => {
     fetchPrestadoresVisiveis();
     fetchPendingInvites();
     fetchActiveConvites();
+    fetchCondoNome();
   }, [user]);
+
 
   // Auto-rotate banners (robust for iOS WebView)
   useEffect(() => {
