@@ -15,6 +15,7 @@ const MasterCopaConfig = () => {
   const [endAt, setEndAt] = useState("");
   const [pixKey, setPixKey] = useState("");
   const [pixName, setPixName] = useState("");
+  const [betValue, setBetValue] = useState("10");
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
