@@ -91,14 +91,19 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
 
       if (error) throw error;
 
-      toast.success("Palpite enviado com sucesso! Aguarde a confirmação do pagamento.");
+      toast.success("Palpite registrado! Realize o pagamento para validar sua participação.");
       onSuccess();
-      onClose();
+      setShowPix(true);
     } catch (error: any) {
       toast.error("Erro ao enviar palpite: " + error.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleClose = () => {
+    setShowPix(false);
+    onClose();
   };
 
   return (
