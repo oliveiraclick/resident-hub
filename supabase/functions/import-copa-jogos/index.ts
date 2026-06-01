@@ -4,23 +4,33 @@ const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Official FIFA World Cup 2026 Opening Fixtures (Corrected)
+// Official FIFA World Cup 2026 Fixtures (Extracted from Google Search)
 const matches = [
   {
     time_home: "México",
-    time_away: "A confirmar",
-    data_jogo: "2026-06-11T19:00:00Z",
-    rodada: "Grupo A - Jogo 1 (Abertura)",
+    time_away: "África do Sul",
+    data_jogo: "2026-06-11T12:00:00Z",
+    rodada: "Grupo A",
     is_brasil_game: false,
     status: "agendado",
     local: "Cidade do México, México",
     estadio: "Estádio Azteca"
   },
   {
+    time_home: "Coreia do Sul",
+    time_away: "Tchéquia",
+    data_jogo: "2026-06-11T19:00:00Z",
+    rodada: "Grupo A",
+    is_brasil_game: false,
+    status: "agendado",
+    local: "México",
+    estadio: "A confirmar"
+  },
+  {
     time_home: "Canadá",
-    time_away: "A confirmar",
-    data_jogo: "2026-06-12T17:00:00Z",
-    rodada: "Grupo B - Jogo 3",
+    time_away: "Bósnia e Herzegovina",
+    data_jogo: "2026-06-12T12:00:00Z",
+    rodada: "Grupo B",
     is_brasil_game: false,
     status: "agendado",
     local: "Toronto, Canadá",
@@ -28,20 +38,90 @@ const matches = [
   },
   {
     time_home: "Estados Unidos",
-    time_away: "A confirmar",
-    data_jogo: "2026-06-12T19:00:00Z",
-    rodada: "Grupo D - Jogo 4",
+    time_away: "Paraguai",
+    data_jogo: "2026-06-12T18:00:00Z",
+    rodada: "Grupo D",
     is_brasil_game: false,
     status: "agendado",
     local: "Los Angeles, EUA",
     estadio: "SoFi Stadium"
   },
   {
+    time_home: "Catar",
+    time_away: "Suíça",
+    data_jogo: "2026-06-13T12:00:00Z",
+    rodada: "Grupo B",
+    is_brasil_game: false,
+    status: "agendado",
+    local: "Canadá",
+    estadio: "A confirmar"
+  },
+  {
     time_home: "Brasil",
-    time_away: "A confirmar",
-    data_jogo: "2026-06-14T18:00:00Z",
-    rodada: "Grupo G - Jogo 1",
+    time_away: "Marrocos",
+    data_jogo: "2026-06-13T15:00:00Z",
+    rodada: "Grupo C",
     is_brasil_game: true,
+    status: "agendado",
+    local: "A confirmar",
+    estadio: "A confirmar"
+  },
+  {
+    time_home: "Haiti",
+    time_away: "Escócia",
+    data_jogo: "2026-06-13T18:00:00Z",
+    rodada: "Grupo C",
+    is_brasil_game: false,
+    status: "agendado",
+    local: "A confirmar",
+    estadio: "A confirmar"
+  },
+  {
+    time_home: "Austrália",
+    time_away: "Turquia",
+    data_jogo: "2026-06-13T21:00:00Z",
+    rodada: "Grupo D",
+    is_brasil_game: false,
+    status: "agendado",
+    local: "EUA",
+    estadio: "A confirmar"
+  },
+  {
+    time_home: "Alemanha",
+    time_away: "Curaçao",
+    data_jogo: "2026-06-14T10:00:00Z",
+    rodada: "Grupo E",
+    is_brasil_game: false,
+    status: "agendado",
+    local: "A confirmar",
+    estadio: "A confirmar"
+  },
+  {
+    time_home: "Países Baixos",
+    time_away: "Japão",
+    data_jogo: "2026-06-14T13:00:00Z",
+    rodada: "Grupo F",
+    is_brasil_game: false,
+    status: "agendado",
+    local: "A confirmar",
+    estadio: "A confirmar"
+  },
+  {
+    time_home: "Costa do Marfim",
+    time_away: "Equador",
+    data_jogo: "2026-06-14T16:00:00Z",
+    rodada: "Grupo E",
+    is_brasil_game: false,
+    status: "agendado",
+    local: "A confirmar",
+    estadio: "A confirmar"
+  },
+  {
+    time_home: "Suécia",
+    time_away: "Tunísia",
+    data_jogo: "2026-06-14T19:00:00Z",
+    rodada: "Grupo F",
+    is_brasil_game: false,
     status: "agendado",
     local: "A confirmar",
     estadio: "A confirmar"
