@@ -67,6 +67,30 @@ const MasterCopaBets = () => {
     }
   };
 
+  const handleSyncScores = async () => {
+    setSyncing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('sync-copa-results');
+      
+      if (error) throw error;
+      
+      toast({ 
+        title: "Sincronização concluída", 
+        description: data.message || "Resultados atualizados com sucesso." 
+      });
+      fetchData();
+    } catch (error: any) {
+      console.error("Erro ao sincronizar:", error);
+      toast({ 
+        title: "Erro na sincronização", 
+        description: "Não foi possível conectar ao servidor de resultados. Tente novamente mais tarde.", 
+        variant: "destructive" 
+      });
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   const filteredJogos = jogos.filter((j: any) => 
     j.time_home.toLowerCase().includes(searchTerm.toLowerCase()) || 
     j.time_away.toLowerCase().includes(searchTerm.toLowerCase())
