@@ -27,7 +27,7 @@ const MasterCopaBets = () => {
       .order("data_jogo", { ascending: true });
     const { data: palpitesData } = await supabase
       .from("copa_palpites")
-      .select("*")
+      .select("*, profiles(nome), copa_jogos(time_home, time_away)")
       .order("created_at", { ascending: false });
     
     setJogos(jogosData || []);
@@ -113,20 +113,60 @@ const MasterCopaBets = () => {
             </CardHeader>
             <CardContent className="space-y-3">
               {palpites.filter(p => p.status_pagamento === "pendente").map((p: any) => (
-                <div key={p.id} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg border">
-                  <div>
-                    <p className="text-sm font-bold">{p.profiles?.nome || "Morador"}</p>
-                    <p className="text-[11px] text-muted-foreground uppercase">
-                      {p.tipo === 'placar_exato' ? 'Placar Exato' : p.tipo}
-                    </p>
+                <div key={p.id} className="flex items-center justify-between p-4 bg-muted/30 rounded-xl border border-border/50 shadow-sm transition-all hover:bg-muted/40">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-black text-foreground">{p.profiles?.nome || "Morador"}</p>
+                      <Badge variant="outline" className="text-[9px] font-bold h-4">
+                        R$ {Number(p.valor_pago).toFixed(2)}
+                      </Badge>
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                      <p className="text-[10px] text-muted-foreground font-black uppercase tracking-tight italic">
+                        {p.tipo === 'placar' ? 'Placar Exato' : p.tipo === 'artilheiro' ? 'Artilheiro' : p.tipo === 'campeao' ? 'Campeão' : 'Artilheiro BR'}
+                      </p>
+                      <p className="text-[9px] text-muted-foreground font-medium">
+                        {p.copa_jogos?.time_home} vs {p.copa_jogos?.time_away}
+                      </p>
+                    </div>
                   </div>
-                  <Button size="sm" onClick={() => handleApprovePayment(p.id)} className="bg-success hover:bg-success/90">
+                  <Button 
+                    size="sm" 
+                    onClick={() => handleApprovePayment(p.id)} 
+                    className="bg-success hover:bg-success/90 text-white font-bold rounded-lg shadow-sm"
+                  >
                     Confirmar Pago
                   </Button>
                 </div>
               ))}
               {palpites.filter(p => p.status_pagamento === "pendente").length === 0 && (
                 <p className="text-center text-xs text-muted-foreground py-4">Nenhum pagamento pendente.</p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm font-bold flex items-center gap-2">
+                <CheckCircle2 size={18} className="text-success" /> Pagamentos Confirmados
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {palpites.filter(p => p.status_pagamento === "pago").slice(0, 10).map((p: any) => (
+                <div key={p.id} className="flex items-center justify-between p-3 bg-success/5 rounded-lg border border-success/20 opacity-80">
+                  <div className="space-y-1">
+                    <p className="text-xs font-bold">{p.profiles?.nome || "Morador"}</p>
+                    <p className="text-[9px] text-muted-foreground uppercase font-black italic">
+                      {p.tipo === 'placar' ? 'Placar Exato' : p.tipo} • R$ {Number(p.valor_pago).toFixed(2)}
+                    </p>
+                  </div>
+                  <Badge className="bg-success/20 text-success border-none text-[9px] font-black uppercase">
+                    Aprovado
+                  </Badge>
+                </div>
+              ))}
+              {palpites.filter(p => p.status_pagamento === "pago").length === 0 && (
+                <p className="text-center text-xs text-muted-foreground py-4">Nenhum pagamento confirmado ainda.</p>
               )}
             </CardContent>
           </Card>
