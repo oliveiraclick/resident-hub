@@ -72,6 +72,8 @@ const MoradorHome = () => {
   const [bannerIdx, setBannerIdx] = useState(0);
   const [pendingInvitesCount, setPendingInvitesCount] = useState(0);
   const [activeConvitesCount, setActiveConvitesCount] = useState(0);
+  const [condoNome, setCondoNome] = useState<string>("");
+
 
   useEffect(() => {
     if (!user) return;
@@ -215,6 +217,24 @@ const MoradorHome = () => {
       }
     };
 
+    const fetchCondoNome = async () => {
+      try {
+        const { data: ids } = await supabase.rpc("get_user_condominio_ids", { _user_id: user.id });
+        const firstId = Array.isArray(ids) && ids.length > 0 ? ids[0] : null;
+        if (firstId) {
+          const { data: cond } = await supabase
+            .from("condominios")
+            .select("nome")
+            .eq("id", firstId)
+            .limit(1)
+            .maybeSingle();
+          if (cond?.nome) setCondoNome(cond.nome);
+        }
+      } catch (e) {
+        console.error("fetchCondoNome error", e);
+      }
+    };
+
     fetchPending();
     fetchProdutos();
     fetchServicos();
@@ -224,7 +244,9 @@ const MoradorHome = () => {
     fetchPrestadoresVisiveis();
     fetchPendingInvites();
     fetchActiveConvites();
+    fetchCondoNome();
   }, [user]);
+
 
   // Auto-rotate banners (robust for iOS WebView)
   useEffect(() => {
@@ -326,26 +348,29 @@ const MoradorHome = () => {
                 <Trophy size={180} className="text-white" strokeWidth={1.5} />
               </div>
 
-              {/* Selo oficial */}
-              <div className="absolute top-4 right-4 z-10 flex items-center gap-1.5 bg-black/30 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/20">
-                <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
-                <span className="text-[9px] font-black text-white uppercase tracking-[0.15em]">
-                  Oficial Morador.app
-                </span>
-              </div>
-
               <div className="relative z-10 p-6 pt-5 flex items-center justify-between gap-4">
                 <div className="text-left space-y-2 flex-1 min-w-0">
-                  <span className="inline-block bg-white text-[#002776] px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-[0.2em] shadow-md">
-                    Bolão da Copa 2026
-                  </span>
+                  {/* Selos empilhados */}
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="inline-flex items-center gap-1.5 bg-black/35 backdrop-blur-md px-2 py-0.5 rounded-full border border-white/20">
+                      <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
+                      <span className="text-[9px] font-black text-white uppercase tracking-[0.15em]">
+                        Oficial Morador.app
+                      </span>
+                    </span>
+                    <span className="inline-block bg-white text-[#002776] px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-[0.18em] shadow-md">
+                      Bolão Copa 2026
+                    </span>
+                  </div>
                   <h3 className="text-[28px] leading-none font-black text-white italic tracking-tighter drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
                     COPA O MORADOR
                   </h3>
-                  <p className="text-white/95 text-[13px] font-semibold leading-snug max-w-[240px]">
-                    Dê seu palpite e dispute o prêmio acumulado com moradores de todo o app.
+                  <p className="text-white/95 text-[13px] font-semibold leading-snug max-w-[260px]">
+                    Dê seu palpite e dispute o prêmio acumulado com todos os moradores
+                    {condoNome ? <> aqui do <span className="font-black">{condoNome}</span>.</> : " do seu condomínio."}
                   </p>
                 </div>
+
 
                 <div className="h-14 w-14 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-xl shadow-black/30 group-hover:scale-105 transition-transform">
                   <ArrowRight size={26} className="text-[#002776]" strokeWidth={3} />
