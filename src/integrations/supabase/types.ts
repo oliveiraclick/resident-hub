@@ -755,8 +755,10 @@ export type Database = {
         Row: {
           created_at: string | null
           data_jogo: string
+          estadio: string | null
           id: string
           is_brasil_game: boolean | null
+          local: string | null
           placar_away: number | null
           placar_home: number | null
           rodada: string | null
@@ -767,8 +769,10 @@ export type Database = {
         Insert: {
           created_at?: string | null
           data_jogo: string
+          estadio?: string | null
           id?: string
           is_brasil_game?: boolean | null
+          local?: string | null
           placar_away?: number | null
           placar_home?: number | null
           rodada?: string | null
@@ -779,8 +783,10 @@ export type Database = {
         Update: {
           created_at?: string | null
           data_jogo?: string
+          estadio?: string | null
           id?: string
           is_brasil_game?: boolean | null
+          local?: string | null
           placar_away?: number | null
           placar_home?: number | null
           rodada?: string | null
