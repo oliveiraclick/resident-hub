@@ -52,6 +52,7 @@ const MasterCopaConfig = () => {
         enabled,
         pix_key: pixKey,
         pix_name: pixName,
+        valor_aposta: parseFloat(betValue) || 10,
         start_at: startAt ? new Date(startAt).toISOString() : null,
         end_at: endAt ? new Date(endAt).toISOString() : null,
       }, { onConflict: 'key' });
