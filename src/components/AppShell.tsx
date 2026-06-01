@@ -219,12 +219,12 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
               <div className="flex items-center gap-2.5">
                 <button
                   onClick={onQrPress || (() => navigate("/morador/qr-id"))}
-                  className="w-11 h-11 rounded-2xl flex items-center justify-center bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md ring-1 ring-white/10 transition-all shadow-sm"
+                  className={`w-11 h-11 rounded-2xl flex items-center justify-center active:scale-95 backdrop-blur-md transition-all shadow-md ${isMoradorModule ? "bg-black/40 hover:bg-black/55 ring-1 ring-white/20" : "bg-white/10 hover:bg-white/20 ring-1 ring-white/10"}`}
                 >
                   <QrCode size={20} className="text-white" />
                 </button>
                 <button
-                  className="w-11 h-11 rounded-2xl flex items-center justify-center bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md ring-1 ring-white/10 transition-all shadow-sm"
+                  className={`w-11 h-11 rounded-2xl flex items-center justify-center active:scale-95 backdrop-blur-md transition-all shadow-md ${isMoradorModule ? "bg-black/40 hover:bg-black/55 ring-1 ring-white/20" : "bg-white/10 hover:bg-white/20 ring-1 ring-white/10"}`}
                 >
                   <Bell size={20} className="text-white" />
                 </button>
