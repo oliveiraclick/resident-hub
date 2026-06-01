@@ -190,8 +190,9 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
             }}
           >
             {/* Soft decorative elements */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/4" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/10 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/4" />
+            {isMoradorModule && <div className="absolute inset-0 z-[1] bg-gradient-to-r from-black/45 via-black/15 to-transparent pointer-events-none" />}
+            {!isMoradorModule && <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/4" />}
+            {!isMoradorModule && <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/10 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/4" />}
 
             {/* Top row */}
             <div className="flex justify-between items-center mb-8 relative z-20">
