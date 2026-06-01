@@ -175,6 +175,16 @@ const MasterHome = () => {
         </CardContent>
       </Card>
 
+      <Card className="rounded-[var(--radius-card)] mb-4 cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate("/master/copa/bets")}>
+        <CardContent className="p-4 flex items-center gap-3">
+          <Trophy className="text-success" size={24} />
+          <div>
+            <p className="text-sm font-semibold">Gestão do Bolão</p>
+            <p className="text-muted-foreground text-xs">Validar pagamentos e atualizar resultados</p>
+          </div>
+        </CardContent>
+      </Card>
+
       <Card className="rounded-[var(--radius-card)]">
         <CardHeader className="pb-2">
           <CardTitle className="text-base">Últimos Condomínios</CardTitle>
