@@ -175,24 +175,46 @@ body.native-app {
     --primary-light: 142 76% 50%;
   }
 
-  /* Topo completo no tema da Copa - Verde/Amarelo/Azul */
+  /* Topo completo no tema da Copa - Banner "Em busca do HEXA" */
   body.theme-brasil header {
-    background: linear-gradient(135deg, #009739 0%, #009739 40%, #FEDD00 100%) !important;
+    background: url('/src/assets/copa-banner.png') center right / cover no-repeat, #009739 !important;
     border-bottom: 4px solid #0038A8 !important;
   }
 
   body.theme-brasil .relative.overflow-hidden > div.text-primary-foreground {
-    background: linear-gradient(135deg, #009739 0%, #009739 50%, #FEDD00 100%) !important;
+    background: url('/src/assets/copa-banner.png') center right / cover no-repeat, #009739 !important;
     border-bottom: 4px solid #0038A8 !important;
+    min-height: 220px;
   }
 
-  /* Texto legível sobre verde/amarelo */
+  /* Esconde elementos decorativos (blurs) que poluem o banner */
+  body.theme-brasil .relative.overflow-hidden > div.text-primary-foreground > div.absolute.rounded-full {
+    display: none !important;
+  }
+
+  /* Scrim escuro à esquerda para legibilidade do nome/saudação sobre o verde */
+  body.theme-brasil .relative.overflow-hidden > div.text-primary-foreground::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 45%, rgba(0,0,0,0) 60%);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* Realoca a logo/saudação para a esquerda, dando espaço ao troféu (direita) */
+  body.theme-brasil .relative.overflow-hidden > div.text-primary-foreground > div {
+    max-width: 60%;
+  }
+
+  /* Texto legível sobre o banner */
   body.theme-brasil header h1,
   body.theme-brasil header span,
   body.theme-brasil header p,
   body.theme-brasil .text-primary-foreground h1,
   body.theme-brasil .text-primary-foreground span,
   body.theme-brasil .text-primary-foreground p {
-    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
   }
+
 }
