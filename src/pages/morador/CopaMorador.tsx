@@ -128,19 +128,49 @@ const CopaMorador = () => {
           </Tabs>
         </div>
 
-        {/* BUSCA DE JOGOS */}
-        <div className="relative">
-          <Input 
-            placeholder="Buscar país (Ex: Brasil)..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="rounded-2xl h-12 pl-12 bg-card border-none shadow-sm focus-visible:ring-primary"
-          />
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
-        </div>
+        {/* SPECIAL BETS (Campeão / Artilheiro Brasil) */}
+        {(activeTab === "campeao" || activeTab === "artilheiro_brasil") && (
+          <Card className="rounded-[32px] border-none shadow-lg bg-gradient-to-br from-primary/10 to-primary/5 p-6 border-primary/20 animate-in zoom-in-95 duration-300">
+            <div className="flex flex-col items-center text-center space-y-4">
+              <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center">
+                <Trophy size={32} className="text-primary" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-lg font-black uppercase italic">
+                  Palpite de Longo Prazo
+                </h3>
+                <p className="text-xs text-muted-foreground font-medium">
+                  {activeTab === "campeao" 
+                    ? "Quem levantará a taça em 19 de julho de 2026?" 
+                    : "Quem será o maior goleador da nossa Seleção na Copa?"}
+                </p>
+              </div>
+              <Button 
+                onClick={() => handleBet({ id: 'seasonal', time_home: 'COPA 2026', time_away: 'O MORADOR' })}
+                className="w-full rounded-2xl h-12 bg-primary text-white font-black uppercase italic tracking-widest shadow-xl shadow-primary/20"
+              >
+                DAREI MEU PALPITE AGORA
+              </Button>
+            </div>
+          </Card>
+        )}
 
-        {/* PROXIMO JOGO & TRENDS */}
-        <div className="space-y-4">
+        {/* BUSCA DE JOGOS (Only show for placar/artilheiro per game) */}
+        {(activeTab === "placar" || activeTab === "artilheiro") && (
+          <div className="relative">
+            <Input 
+              placeholder="Buscar país (Ex: Brasil)..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="rounded-2xl h-12 pl-12 bg-card border-none shadow-sm focus-visible:ring-primary"
+            />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
+          </div>
+        )}
+
+        {/* PROXIMO JOGO & TRENDS (Only show for placar/artilheiro per game) */}
+        {(activeTab === "placar" || activeTab === "artilheiro") && (
+          <div className="space-y-4">
           <div className="flex items-center justify-between px-1">
             <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
               {searchTerm ? `Resultados para "${searchTerm}"` : "Próximas Partidas"}
