@@ -21,6 +21,7 @@ const CopaMorador = () => {
   const [stats, setStats] = useState({ home: 85, draw: 10, away: 5 });
   const [selectedJogo, setSelectedJogo] = useState<any>(null);
   const [isBetModalOpen, setIsBetModalOpen] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(6);
 
   useEffect(() => {
     // Theme is applied via useAppTheme hook in App.tsx which adds class to body
