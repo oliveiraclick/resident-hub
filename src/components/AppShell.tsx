@@ -5,6 +5,7 @@ import type { LucideIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 import logoSymbol from "@/assets/logo-symbol.png";
+import copaBanner from "@/assets/copa-banner.png";
 import { useAuth } from "@/hooks/useAuth";
 
 export interface NavItem {
@@ -171,6 +172,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
   };
 
   const firstName = userName?.split(" ")[0] || "Morador";
+  const isMoradorModule = moduleName === "Morador";
 
   return (
     <div data-module={moduleName} className="min-h-screen flex flex-col bg-background mx-auto w-full max-w-full overflow-x-hidden relative">
@@ -181,7 +183,9 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
           <div
             className="text-primary-foreground relative z-10"
             style={{
-              background: "linear-gradient(135deg, hsl(var(--header-bg)) 0%, hsl(var(--header-mid)) 100%)",
+              background: isMoradorModule
+                ? `url(${copaBanner}) center right / cover no-repeat, #009739`
+                : "linear-gradient(135deg, hsl(var(--header-bg)) 0%, hsl(var(--header-mid)) 100%)",
               padding: "40px 20px 60px",
             }}
           >
