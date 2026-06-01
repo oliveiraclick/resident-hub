@@ -28,6 +28,8 @@ const MasterCopaConfig = () => {
 
       if (data) {
         setEnabled((data as any).enabled);
+        setPixKey((data as any).pix_key || "");
+        setPixName((data as any).pix_name || "");
         if ((data as any).start_at) {
           setStartAt(new Date((data as any).start_at).toISOString().slice(0, 16));
         }
