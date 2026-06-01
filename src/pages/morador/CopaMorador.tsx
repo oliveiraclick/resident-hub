@@ -55,8 +55,12 @@ const CopaMorador = () => {
   }, []);
 
   const handleBet = (jogo: any) => {
-    toast.success(`Abrindo palpites para ${jogo.time_home} x ${jogo.time_away}`);
-    // Here we would open the betting modal/flow
+    setSelectedJogo(jogo);
+    setIsBetModalOpen(true);
+  };
+
+  const handleBetSuccess = () => {
+    // Refresh prize pools (could implement actual refresh logic if needed)
   };
 
   const filteredJogos = jogos.filter((j: any) => 
