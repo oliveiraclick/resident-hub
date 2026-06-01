@@ -730,6 +730,140 @@ export type Database = {
           },
         ]
       }
+      copa_config: {
+        Row: {
+          id: string
+          key: string
+          updated_at: string | null
+          value: Json
+        }
+        Insert: {
+          id?: string
+          key: string
+          updated_at?: string | null
+          value: Json
+        }
+        Update: {
+          id?: string
+          key?: string
+          updated_at?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
+      copa_jogos: {
+        Row: {
+          created_at: string | null
+          data_jogo: string
+          id: string
+          is_brasil_game: boolean | null
+          placar_away: number | null
+          placar_home: number | null
+          rodada: string | null
+          status: string | null
+          time_away: string
+          time_home: string
+        }
+        Insert: {
+          created_at?: string | null
+          data_jogo: string
+          id?: string
+          is_brasil_game?: boolean | null
+          placar_away?: number | null
+          placar_home?: number | null
+          rodada?: string | null
+          status?: string | null
+          time_away: string
+          time_home: string
+        }
+        Update: {
+          created_at?: string | null
+          data_jogo?: string
+          id?: string
+          is_brasil_game?: boolean | null
+          placar_away?: number | null
+          placar_home?: number | null
+          rodada?: string | null
+          status?: string | null
+          time_away?: string
+          time_home?: string
+        }
+        Relationships: []
+      }
+      copa_palpites: {
+        Row: {
+          condominio_id: string | null
+          created_at: string | null
+          id: string
+          jogo_id: string | null
+          palpite_valor: Json
+          pontos_ganhos: number | null
+          status_pagamento: string | null
+          tipo: string
+          user_id: string
+          valor_pago: number
+        }
+        Insert: {
+          condominio_id?: string | null
+          created_at?: string | null
+          id?: string
+          jogo_id?: string | null
+          palpite_valor: Json
+          pontos_ganhos?: number | null
+          status_pagamento?: string | null
+          tipo: string
+          user_id: string
+          valor_pago?: number
+        }
+        Update: {
+          condominio_id?: string | null
+          created_at?: string | null
+          id?: string
+          jogo_id?: string | null
+          palpite_valor?: Json
+          pontos_ganhos?: number | null
+          status_pagamento?: string | null
+          tipo?: string
+          user_id?: string
+          valor_pago?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "copa_palpites_jogo_id_fkey"
+            columns: ["jogo_id"]
+            isOneToOne: false
+            referencedRelation: "copa_jogos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      copa_sponsors: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          logo_url: string | null
+          nome: string
+          valor_contribuicao: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          logo_url?: string | null
+          nome: string
+          valor_contribuicao?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          logo_url?: string | null
+          nome?: string
+          valor_contribuicao?: number | null
+        }
+        Relationships: []
+      }
       cupons_prestador: {
         Row: {
           ativo: boolean
