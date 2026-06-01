@@ -174,4 +174,40 @@ body.native-app {
     --header-mid: 222 67% 25%;
     --primary-light: 142 76% 50%;
   }
+
+  .theme-brasil body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #009739 0%, #FEDD00 50%, #009739 100%);
+    z-index: 9999;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .theme-brasil header, 
+  .theme-brasil [role="banner"] {
+    background: linear-gradient(135deg, #0038A8 0%, #002670 100%) !important;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .theme-brasil header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: repeating-linear-gradient(
+      90deg,
+      #FEDD00,
+      #FEDD00 10px,
+      transparent 10px,
+      transparent 20px
+    );
+    opacity: 0.3;
+  }
 }
