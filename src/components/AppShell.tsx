@@ -173,7 +173,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
   const firstName = userName?.split(" ")[0] || "Morador";
 
   return (
-    <div className="min-h-screen flex flex-col bg-background mx-auto w-full max-w-full overflow-x-hidden relative">
+    <div data-module={moduleName} className="min-h-screen flex flex-col bg-background mx-auto w-full max-w-full overflow-x-hidden relative">
       {/* ═══ HERO HEADER ═══ */}
       {isHome && !showBack ? (
         <div className="relative overflow-hidden">
