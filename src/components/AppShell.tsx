@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import logoSymbol from "@/assets/logo-symbol.png";
 import copaBanner from "@/assets/copa-banner.png";
 import { useAuth } from "@/hooks/useAuth";
+import { useAppTheme } from "@/hooks/useAppTheme";
 
 export interface NavItem {
   icon: LucideIcon;
@@ -59,6 +60,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
   const [menuOpen, setMenuOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
+  const { isWorldCupTheme } = useAppTheme();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -183,7 +185,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
           <div
             className="text-primary-foreground relative z-10"
             style={{
-              background: isMoradorModule
+              background: isMoradorModule && isWorldCupTheme
                 ? `url(${copaBanner}) center right / cover no-repeat, #009739`
                 : "linear-gradient(135deg, hsl(var(--header-bg)) 0%, hsl(var(--header-mid)) 100%)",
               padding: "40px 20px 60px",
