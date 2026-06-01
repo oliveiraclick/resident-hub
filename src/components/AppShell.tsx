@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import logoSymbol from "@/assets/logo-symbol.png";
 import copaBanner from "@/assets/copa-banner.png";
 import { useAuth } from "@/hooks/useAuth";
+import { useAppTheme } from "@/hooks/useAppTheme";
 
 export interface NavItem {
   icon: LucideIcon;
