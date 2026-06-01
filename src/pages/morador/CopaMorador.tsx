@@ -48,7 +48,7 @@ const CopaMorador = () => {
         const type = curr.tipo || 'placar';
         acc[type] = (acc[type] || 0) + (Number(curr.valor_pago) * 0.75);
         return acc;
-      }, { placar: 0, artilheiro: 0 });
+      }, { placar: 0, artilheiro: 0, campeao: 0, artilheiro_brasil: 0 });
 
       setPrizes(pools);
     };
