@@ -44,6 +44,39 @@ export type Database = {
         }
         Relationships: []
       }
+      app_configs: {
+        Row: {
+          created_at: string
+          enabled: boolean | null
+          end_at: string | null
+          id: string
+          key: string
+          start_at: string | null
+          updated_at: string
+          value: Json | null
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean | null
+          end_at?: string | null
+          id?: string
+          key: string
+          start_at?: string | null
+          updated_at?: string
+          value?: Json | null
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean | null
+          end_at?: string | null
+          id?: string
+          key?: string
+          start_at?: string | null
+          updated_at?: string
+          value?: Json | null
+        }
+        Relationships: []
+      }
       assinaturas_prestador: {
         Row: {
           condominio_id: string

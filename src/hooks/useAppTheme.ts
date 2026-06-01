@@ -6,18 +6,19 @@ export const useAppTheme = () => {
 
   useEffect(() => {
     const checkTheme = async () => {
+      // Use raw from string to avoid TS generation issues with new table
       const { data, error } = await supabase
-        .from("app_configs")
+        .from("app_configs" as any)
         .select("*")
         .eq("key", "theme_world_cup")
-        .single();
+        .maybeSingle();
 
       if (error || !data) return;
 
       const now = new Date();
-      const isEnabled = data.enabled;
-      const startAt = data.start_at ? new Date(data.start_at) : null;
-      const endAt = data.end_at ? new Date(data.end_at) : null;
+      const isEnabled = (data as any).enabled;
+      const startAt = (data as any).start_at ? new Date((data as any).start_at) : null;
+      const endAt = (data as any).end_at ? new Date((data as any).end_at) : null;
 
       let active = false;
 
