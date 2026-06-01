@@ -21,6 +21,7 @@ const CopaMorador = () => {
   const [stats, setStats] = useState({ home: 85, draw: 10, away: 5 });
   const [selectedJogo, setSelectedJogo] = useState<any>(null);
   const [isBetModalOpen, setIsBetModalOpen] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(6);
 
   useEffect(() => {
     // Theme is applied via useAppTheme hook in App.tsx which adds class to body
@@ -67,6 +68,8 @@ const CopaMorador = () => {
     j.time_home.toLowerCase().includes(searchTerm.toLowerCase()) || 
     j.time_away.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const paginatedJogos = filteredJogos.slice(0, visibleCount);
 
   if (!isCopaActive) {
     return (
@@ -139,54 +142,66 @@ const CopaMorador = () => {
             {!searchTerm && <Badge variant="secondary" className="text-[9px] font-bold bg-primary/10 text-primary border-none">{jogos.length} JOGOS</Badge>}
           </div>
           
-          {filteredJogos.length > 0 ? (
-            filteredJogos.map((jogo: any) => (
-              <Card key={jogo.id} className="rounded-[28px] border-none shadow-md overflow-hidden bg-card transition-all hover:shadow-xl active:scale-[0.98]">
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-center">
-                    <CardTitle className="text-[10px] font-black uppercase text-muted-foreground flex items-center gap-2">
-                      <TrendingUp size={14} className="text-primary" /> {jogo.rodada}
-                    </CardTitle>
-                    <Badge variant="outline" className="text-[9px] font-bold border-muted-foreground/20">
-                      {new Date(jogo.data_jogo).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} • {new Date(jogo.data_jogo).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between text-center gap-4">
-                      <div className="flex-1">
-                        <p className="text-xs font-bold text-foreground truncate">{jogo.time_home}</p>
-                        <div className="h-1.5 w-full bg-muted rounded-full mt-1 overflow-hidden">
-                          <div className="h-full bg-success" style={{ width: `${stats.home}%` }} />
+          {paginatedJogos.length > 0 ? (
+            <>
+              {paginatedJogos.map((jogo: any) => (
+                <Card key={jogo.id} className="rounded-[28px] border-none shadow-md overflow-hidden bg-card transition-all hover:shadow-xl active:scale-[0.98]">
+                  <CardHeader className="pb-2">
+                    <div className="flex justify-between items-center">
+                      <CardTitle className="text-[10px] font-black uppercase text-muted-foreground flex items-center gap-2">
+                        <TrendingUp size={14} className="text-primary" /> {jogo.rodada}
+                      </CardTitle>
+                      <Badge variant="outline" className="text-[9px] font-bold border-muted-foreground/20">
+                        {new Date(jogo.data_jogo).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} • {new Date(jogo.data_jogo).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between text-center gap-4">
+                        <div className="flex-1">
+                          <p className="text-xs font-bold text-foreground truncate">{jogo.time_home}</p>
+                          <div className="h-1.5 w-full bg-muted rounded-full mt-1 overflow-hidden">
+                            <div className="h-full bg-success" style={{ width: `${stats.home}%` }} />
+                          </div>
+                        </div>
+                        <div className="w-10">
+                          <p className="text-[10px] font-bold text-muted-foreground italic">VS</p>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-xs font-bold text-foreground truncate">{jogo.time_away}</p>
+                          <div className="h-1.5 w-full bg-muted rounded-full mt-1 overflow-hidden">
+                            <div className="h-full bg-danger" style={{ width: `${stats.away}%` }} />
+                          </div>
                         </div>
                       </div>
-                      <div className="w-10">
-                        <p className="text-[10px] font-bold text-muted-foreground italic">VS</p>
+                      
+                      <div className="flex flex-col gap-0.5 text-center">
+                        <p className="text-[10px] text-muted-foreground uppercase font-black">{jogo.estadio}</p>
+                        <p className="text-[9px] text-muted-foreground opacity-60 font-medium">{jogo.local}</p>
                       </div>
-                      <div className="flex-1">
-                        <p className="text-xs font-bold text-foreground truncate">{jogo.time_away}</p>
-                        <div className="h-1.5 w-full bg-muted rounded-full mt-1 overflow-hidden">
-                          <div className="h-full bg-danger" style={{ width: `${stats.away}%` }} />
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex flex-col gap-0.5 text-center">
-                      <p className="text-[10px] text-muted-foreground uppercase font-black">{jogo.estadio}</p>
-                      <p className="text-[9px] text-muted-foreground opacity-60 font-medium">{jogo.local}</p>
-                    </div>
 
-                    <Button 
-                      onClick={() => handleBet(jogo)}
-                      className="w-full rounded-2xl h-11 bg-primary hover:bg-primary/90 text-white font-black text-[11px] uppercase tracking-wider shadow-lg shadow-primary/20"
-                    >
-                      APOSTAR NESTE JOGO
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
+                      <Button 
+                        onClick={() => handleBet(jogo)}
+                        className="w-full rounded-2xl h-11 bg-primary hover:bg-primary/90 text-white font-black text-[11px] uppercase tracking-wider shadow-lg shadow-primary/20"
+                      >
+                        APOSTAR NESTE JOGO
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+              
+              {visibleCount < filteredJogos.length && (
+                <Button 
+                  variant="ghost" 
+                  onClick={() => setVisibleCount(prev => prev + 6)}
+                  className="w-full py-8 text-xs font-black uppercase text-muted-foreground hover:text-primary transition-colors border-2 border-dashed border-muted rounded-[28px]"
+                >
+                  Carregar mais jogos (+6)
+                </Button>
+              )}
+            </>
           ) : (
             <div className="py-16 text-center bg-muted/20 rounded-[32px] border-2 border-dashed border-muted">
               <p className="text-sm text-muted-foreground font-medium">Nenhum jogo encontrado para "{searchTerm}".</p>
