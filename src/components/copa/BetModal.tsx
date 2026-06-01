@@ -30,23 +30,36 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
     const fetchPixConfig = async () => {
       const { data } = await supabase
         .from("app_configs" as any)
-        .select("pix_key, pix_name, valor_aposta")
+        .select("pix_key, pix_name, valor_aposta, value")
         .eq("key", "theme_world_cup")
         .maybeSingle();
       
       if (data) {
-        setPixConfig({ 
-          key: (data as any).pix_key || "", 
-          name: (data as any).pix_name || "",
-          value: (data as any).valor_aposta || 10
-        });
+        const d = data as any;
+        const fallback = {
+          key: d.pix_key || "",
+          name: d.pix_name || "",
+          value: Number(d.valor_aposta) || 10,
+        };
+        // Prefer per-bet-type config from JSONB
+        const perType = d.value?.bets?.[betType];
+        if (perType && (perType.pix_key || perType.valor)) {
+          setPixConfig({
+            key: perType.pix_key || fallback.key,
+            name: perType.pix_name || fallback.name,
+            value: Number(perType.valor) || fallback.value,
+          });
+        } else {
+          setPixConfig(fallback);
+        }
       }
     };
     if (isOpen) {
       fetchPixConfig();
       setShowPix(false);
     }
-  }, [isOpen]);
+  }, [isOpen, betType]);
+
 
   if (!jogo) return null;
 
