@@ -175,12 +175,7 @@ body.native-app {
     --primary-light: 142 76% 50%;
   }
 
-  /* Topo completo no tema da Copa - Banner "Em busca do HEXA" */
-  body.theme-brasil header {
-    background: url('/src/assets/copa-banner.png') center right / cover no-repeat, #009739 !important;
-    border-bottom: 4px solid #0038A8 !important;
-  }
-
+  /* Topo completo no tema da Copa - Apenas para a Home do Morador */
   body.theme-brasil [data-module="Morador"] .relative.overflow-hidden > div.text-primary-foreground {
     background: url('/src/assets/copa-banner.png') center right / cover no-repeat, #009739 !important;
     border-bottom: 4px solid #0038A8 !important;
