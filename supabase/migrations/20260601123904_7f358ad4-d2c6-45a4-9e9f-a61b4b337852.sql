@@ -1,0 +1,3 @@
+ALTER TABLE public.copa_jogos 
+ADD COLUMN IF NOT EXISTS local TEXT,
+ADD COLUMN IF NOT EXISTS estadio TEXT;
