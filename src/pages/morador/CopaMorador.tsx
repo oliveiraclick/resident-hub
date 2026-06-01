@@ -14,6 +14,13 @@ const CopaMorador = () => {
   const [totalPrize, setTotalPrize] = useState(0);
   const [stats, setStats] = useState({ home: 85, draw: 10, away: 5 });
 
+  const [isCopaActive, setIsCopaActive] = useState(false);
+
+  useEffect(() => {
+    // Check if theme-brasil is active on body
+    setIsCopaActive(document.body.classList.contains("theme-brasil"));
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       const { data: jogosData } = await supabase.from("copa_jogos").select("*").eq('status', 'agendado').limit(1);
@@ -26,6 +33,23 @@ const CopaMorador = () => {
     };
     fetchData();
   }, []);
+
+  if (!isCopaActive) {
+    return (
+      <AppShell moduleName="Morador" navItems={[]} title="Copa O Morador" showBack>
+        <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
+          <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center">
+            <Trophy size={40} className="text-muted-foreground" />
+          </div>
+          <h2 className="text-xl font-bold">Temporada Encerrada</h2>
+          <p className="text-muted-foreground text-sm max-w-xs">
+            O Bolão Copa O Morador não está ativo no momento.
+          </p>
+          <Button onClick={() => window.history.back()}>Voltar</Button>
+        </div>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell moduleName="Morador" navItems={[]} title="Copa O Morador" showBack>
