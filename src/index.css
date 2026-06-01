@@ -181,19 +181,22 @@ body.native-app {
     border-bottom: 4px solid #0038A8 !important;
   }
 
-  body.theme-brasil .relative.overflow-hidden > div.text-primary-foreground {
+  body.theme-brasil [data-module="Morador"] .relative.overflow-hidden > div.text-primary-foreground,
+  [data-module="Morador"] .relative.overflow-hidden > div.text-primary-foreground {
     background: url('/src/assets/copa-banner.png') center right / cover no-repeat, #009739 !important;
     border-bottom: 4px solid #0038A8 !important;
     min-height: 220px;
   }
 
   /* Esconde elementos decorativos (blurs) que poluem o banner */
-  body.theme-brasil .relative.overflow-hidden > div.text-primary-foreground > div.absolute.rounded-full {
+  body.theme-brasil [data-module="Morador"] .relative.overflow-hidden > div.text-primary-foreground > div.absolute.rounded-full,
+  [data-module="Morador"] .relative.overflow-hidden > div.text-primary-foreground > div.absolute.rounded-full {
     display: none !important;
   }
 
   /* Scrim escuro à esquerda para legibilidade do nome/saudação sobre o verde */
-  body.theme-brasil .relative.overflow-hidden > div.text-primary-foreground::before {
+  body.theme-brasil [data-module="Morador"] .relative.overflow-hidden > div.text-primary-foreground::before,
+  [data-module="Morador"] .relative.overflow-hidden > div.text-primary-foreground::before {
     content: "";
     position: absolute;
     inset: 0;
