@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { formatBRL } from "@/lib/utils";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import {
   Package, ShoppingBag, Repeat, MapPin, ArrowRight, Sparkles, Wrench, UserCheck, CalendarCheck, Trophy
@@ -312,9 +312,9 @@ const MoradorHome = () => {
         {/* ═══ COPA DO MUNDO - BOLÃO ═══ */}
         {document.body.classList.contains("theme-brasil") && (
           <section className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <button
-              onClick={() => navigate("/morador/copa")}
-              className="w-full relative overflow-hidden bg-gradient-to-br from-[#009739] via-[#FEDF00] to-[#002776] p-6 rounded-[32px] group transition-all hover:shadow-2xl hover:shadow-yellow-500/20 active:scale-[0.98]"
+            <Link
+              to="/morador/copa"
+              className="block w-full relative overflow-hidden bg-gradient-to-br from-[#009739] via-[#FEDF00] to-[#002776] p-6 rounded-[32px] group transition-all hover:shadow-2xl hover:shadow-yellow-500/20 active:scale-[0.98] no-underline"
             >
               {/* Decorative elements */}
               <div className="absolute top-0 right-0 p-4 opacity-10 transition-transform group-hover:scale-110 group-hover:rotate-12 duration-500">
@@ -336,7 +336,7 @@ const MoradorHome = () => {
                   <ArrowRight size={24} className="text-white" />
                 </div>
               </div>
-            </button>
+            </Link>
           </section>
         )}
 
