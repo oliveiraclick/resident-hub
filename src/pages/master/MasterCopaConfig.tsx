@@ -6,13 +6,15 @@ import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Trophy, Save } from "lucide-react";
+import { Trophy, Save, QrCode } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const MasterCopaConfig = () => {
   const [enabled, setEnabled] = useState(false);
   const [startAt, setStartAt] = useState("");
   const [endAt, setEndAt] = useState("");
+  const [pixKey, setPixKey] = useState("");
+  const [pixName, setPixName] = useState("");
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -26,6 +28,8 @@ const MasterCopaConfig = () => {
 
       if (data) {
         setEnabled((data as any).enabled);
+        setPixKey((data as any).pix_key || "");
+        setPixName((data as any).pix_name || "");
         if ((data as any).start_at) {
           setStartAt(new Date((data as any).start_at).toISOString().slice(0, 16));
         }
@@ -44,6 +48,8 @@ const MasterCopaConfig = () => {
       .upsert({
         key: "theme_world_cup",
         enabled,
+        pix_key: pixKey,
+        pix_name: pixName,
         start_at: startAt ? new Date(startAt).toISOString() : null,
         end_at: endAt ? new Date(endAt).toISOString() : null,
       }, { onConflict: 'key' });
@@ -99,6 +105,36 @@ const MasterCopaConfig = () => {
               />
               <p className="text-[10px] text-muted-foreground uppercase font-black">
                 Deixe em branco para não desligar automaticamente
+              </p>
+            </div>
+
+            <div className="pt-4 border-t border-border space-y-4">
+              <h3 className="text-sm font-bold flex items-center gap-2">
+                <QrCode size={18} className="text-primary" />
+                Dados para Pagamento (PIX)
+              </h3>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="pixKey">Chave PIX</Label>
+                <Input
+                  id="pixKey"
+                  placeholder="E-mail, CPF, Celular ou Chave Aleatória"
+                  value={pixKey}
+                  onChange={(e) => setPixKey(e.target.value)}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="pixName">Nome do Favorecido</Label>
+                <Input
+                  id="pixName"
+                  placeholder="Nome que aparece no banco"
+                  value={pixName}
+                  onChange={(e) => setPixName(e.target.value)}
+                />
+              </div>
+              <p className="text-[10px] text-muted-foreground uppercase font-black">
+                Estes dados serão usados para gerar o QR Code e o Copia e Cola para os moradores pagarem os palpites.
               </p>
             </div>
           </div>
