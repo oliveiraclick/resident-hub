@@ -153,11 +153,23 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
                     />
                   </div>
                 </div>
-              ) : (
+              ) : betType === 'artilheiro' || betType === 'artilheiro_brasil' ? (
                 <div className="space-y-3">
-                  <Label className="text-xs font-bold uppercase ml-1">Quem fará o primeiro gol?</Label>
+                  <Label className="text-xs font-bold uppercase ml-1">
+                    {betType === 'artilheiro' ? 'Quem fará o primeiro gol?' : 'Quem será o goleador do Brasil?'}
+                  </Label>
                   <Input 
                     placeholder="Nome do Jogador..."
+                    value={artilheiro}
+                    onChange={(e) => setArtilheiro(e.target.value)}
+                    className="h-12 rounded-2xl bg-muted border-none px-4"
+                  />
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <Label className="text-xs font-bold uppercase ml-1">Qual seleção será a campeã?</Label>
+                  <Input 
+                    placeholder="Nome do País..."
                     value={artilheiro}
                     onChange={(e) => setArtilheiro(e.target.value)}
                     className="h-12 rounded-2xl bg-muted border-none px-4"
