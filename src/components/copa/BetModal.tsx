@@ -117,10 +117,10 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Trophy className="text-warning" size={20} />
-                Apostar no {betType === 'placar' ? 'Placar' : 'Artilheiro'}
+                Apostar no {betType === 'placar' ? 'Placar' : betType === 'artilheiro' ? 'Artilheiro' : betType === 'campeao' ? 'Campeão' : 'Artilheiro BR'}
               </DialogTitle>
               <DialogDescription className="text-xs uppercase font-bold tracking-tighter">
-                {jogo.time_home} x {jogo.time_away}
+                {isSeasonal ? 'PALPITE TEMPORADA 2026' : `${jogo.time_home} x ${jogo.time_away}`}
               </DialogDescription>
             </DialogHeader>
 
