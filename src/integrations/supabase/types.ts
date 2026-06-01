@@ -51,6 +51,8 @@ export type Database = {
           end_at: string | null
           id: string
           key: string
+          pix_key: string | null
+          pix_name: string | null
           start_at: string | null
           updated_at: string
           value: Json | null
@@ -61,6 +63,8 @@ export type Database = {
           end_at?: string | null
           id?: string
           key: string
+          pix_key?: string | null
+          pix_name?: string | null
           start_at?: string | null
           updated_at?: string
           value?: Json | null
@@ -71,6 +75,8 @@ export type Database = {
           end_at?: string | null
           id?: string
           key?: string
+          pix_key?: string | null
+          pix_name?: string | null
           start_at?: string | null
           updated_at?: string
           value?: Json | null
