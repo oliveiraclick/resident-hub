@@ -107,6 +107,8 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
     onClose();
   };
 
+  const isSeasonal = jogo?.id === 'seasonal';
+
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px] rounded-[32px] overflow-hidden">
