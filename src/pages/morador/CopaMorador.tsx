@@ -4,36 +4,42 @@ import AppShell from "@/components/AppShell";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, TrendingUp, DollarSign, Target, User, ShieldCheck, Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Trophy, TrendingUp, ShieldCheck, Search } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { Input } from "@/components/ui/input";
 
 const CopaMorador = () => {
   const { user } = useAuth();
   const [jogos, setJogos] = useState([]);
-  const [ranking, setRanking] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isCopaActive, setIsCopaActive] = useState(false);
   const [totalPrize, setTotalPrize] = useState(0);
   const [stats, setStats] = useState({ home: 85, draw: 10, away: 5 });
 
-  const [isCopaActive, setIsCopaActive] = useState(false);
-
   useEffect(() => {
-    // Check if theme-brasil is active on body
     setIsCopaActive(document.body.classList.contains("theme-brasil"));
   }, []);
 
   useEffect(() => {
     const fetchData = async () => {
-      const { data: jogosData } = await supabase.from("copa_jogos").select("*").eq('status', 'agendado').limit(1);
+      const { data: jogosData } = await supabase
+        .from("copa_jogos")
+        .select("*")
+        .eq('status', 'agendado')
+        .order('data_jogo', { ascending: true });
       setJogos(jogosData || []);
       
-      // Calculate prize pool (simulated for now based on paid bets)
       const { data: paidBets } = await supabase.from("copa_palpites").select("valor_pago").eq("status_pagamento", "pago");
       const total = paidBets?.reduce((acc, curr) => acc + Number(curr.valor_pago), 0) || 0;
-      setTotalPrize(total * 0.75); // 75% rule
+      setTotalPrize(total * 0.75);
     };
     fetchData();
   }, []);
+
+  const filteredJogos = jogos.filter((j: any) => 
+    j.time_home.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    j.time_away.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   if (!isCopaActive) {
     return (
