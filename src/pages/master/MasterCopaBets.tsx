@@ -27,7 +27,7 @@ const MasterCopaBets = () => {
       .order("data_jogo", { ascending: true });
     const { data: palpitesData } = await supabase
       .from("copa_palpites")
-      .select("*")
+      .select("*, profiles(nome)")
       .order("created_at", { ascending: false });
     
     setJogos(jogosData || []);
