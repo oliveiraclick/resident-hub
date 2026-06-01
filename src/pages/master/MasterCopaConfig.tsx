@@ -6,13 +6,15 @@ import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Trophy, Save } from "lucide-react";
+import { Trophy, Save, QrCode } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const MasterCopaConfig = () => {
   const [enabled, setEnabled] = useState(false);
   const [startAt, setStartAt] = useState("");
   const [endAt, setEndAt] = useState("");
+  const [pixKey, setPixKey] = useState("");
+  const [pixName, setPixName] = useState("");
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
