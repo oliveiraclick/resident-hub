@@ -16,7 +16,7 @@ const CopaMorador = () => {
   const [jogos, setJogos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isCopaActive, setIsCopaActive] = useState(false);
-  const [prizes, setPrizes] = useState({ placar: 0, artilheiro: 0 });
+  const [prizes, setPrizes] = useState({ placar: 0, artilheiro: 0, campeao: 0, artilheiro_brasil: 0 });
   const [activeTab, setActiveTab] = useState("placar");
   const [stats, setStats] = useState({ home: 85, draw: 10, away: 5 });
   const [selectedJogo, setSelectedJogo] = useState<any>(null);
@@ -48,7 +48,7 @@ const CopaMorador = () => {
         const type = curr.tipo || 'placar';
         acc[type] = (acc[type] || 0) + (Number(curr.valor_pago) * 0.75);
         return acc;
-      }, { placar: 0, artilheiro: 0 });
+      }, { placar: 0, artilheiro: 0, campeao: 0, artilheiro_brasil: 0 });
 
       setPrizes(pools);
     };
@@ -61,7 +61,7 @@ const CopaMorador = () => {
   };
 
   const handleBetSuccess = () => {
-    // Refresh prize pools (could implement actual refresh logic if needed)
+    // Refresh prize pools
   };
 
   const filteredJogos = jogos.filter((j: any) => 
@@ -98,116 +98,152 @@ const CopaMorador = () => {
           </div>
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="relative z-10">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-widest mb-1 opacity-80">Prêmio Acumulado</p>
-                <h2 className="text-4xl font-black">
-                  R$ {prizes[activeTab as keyof typeof prizes].toFixed(2)}
-                </h2>
-              </div>
-              <TabsList className="bg-black/20 border-none h-auto p-1 rounded-xl">
-                <TabsTrigger value="placar" className="data-[state=active]:bg-white data-[state=active]:text-warning text-[9px] font-bold px-3 py-1.5 rounded-lg transition-all">
-                  PLACAR
+            <div className="flex flex-col mb-4">
+              <p className="text-[10px] font-black uppercase tracking-widest mb-1 opacity-80">Prêmio Acumulado</p>
+              <h2 className="text-4xl font-black mb-4">
+                R$ {prizes[activeTab as keyof typeof prizes].toFixed(2)}
+              </h2>
+              
+              <TabsList className="bg-black/20 border-none h-auto p-1 rounded-xl flex flex-wrap gap-1">
+                <TabsTrigger value="placar" className="data-[state=active]:bg-white data-[state=active]:text-warning text-[9px] font-bold px-3 py-1.5 rounded-lg transition-all flex-1">
+                  JOGO
                 </TabsTrigger>
-                <TabsTrigger value="artilheiro" className="data-[state=active]:bg-white data-[state=active]:text-warning text-[9px] font-bold px-3 py-1.5 rounded-lg transition-all">
+                <TabsTrigger value="artilheiro" className="data-[state=active]:bg-white data-[state=active]:text-warning text-[9px] font-bold px-3 py-1.5 rounded-lg transition-all flex-1">
                   ARTILHEIRO
+                </TabsTrigger>
+                <TabsTrigger value="campeao" className="data-[state=active]:bg-white data-[state=active]:text-warning text-[9px] font-bold px-3 py-1.5 rounded-lg transition-all flex-1">
+                  CAMPEÃO
+                </TabsTrigger>
+                <TabsTrigger value="artilheiro_brasil" className="data-[state=active]:bg-white data-[state=active]:text-warning text-[9px] font-bold px-3 py-1.5 rounded-lg transition-all flex-1">
+                  ARTILHEIRO BR
                 </TabsTrigger>
               </TabsList>
             </div>
             
             <div className="mt-4 flex items-center gap-2 bg-black/20 w-fit px-3 py-1 rounded-full text-[10px] font-bold">
               <ShieldCheck size={12} />
-              75% DO VALOR {activeTab.toUpperCase()}
+              75% DO VALOR {activeTab.replace('_', ' ').toUpperCase()}
             </div>
           </Tabs>
         </div>
 
-        {/* BUSCA DE JOGOS */}
-        <div className="relative">
-          <Input 
-            placeholder="Buscar país (Ex: Brasil)..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="rounded-2xl h-12 pl-12 bg-card border-none shadow-sm focus-visible:ring-primary"
-          />
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
-        </div>
-
-        {/* PROXIMO JOGO & TRENDS */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between px-1">
-            <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-              {searchTerm ? `Resultados para "${searchTerm}"` : "Próximas Partidas"}
-            </h3>
-            {!searchTerm && <Badge variant="secondary" className="text-[9px] font-bold bg-primary/10 text-primary border-none">{jogos.length} JOGOS</Badge>}
-          </div>
-          
-          {paginatedJogos.length > 0 ? (
-            <>
-              {paginatedJogos.map((jogo: any) => (
-                <Card key={jogo.id} className="rounded-[28px] border-none shadow-md overflow-hidden bg-card transition-all hover:shadow-xl active:scale-[0.98]">
-                  <CardHeader className="pb-2">
-                    <div className="flex justify-between items-center">
-                      <CardTitle className="text-[10px] font-black uppercase text-muted-foreground flex items-center gap-2">
-                        <TrendingUp size={14} className="text-primary" /> {jogo.rodada}
-                      </CardTitle>
-                      <Badge variant="outline" className="text-[9px] font-bold border-muted-foreground/20">
-                        {new Date(jogo.data_jogo).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} • {new Date(jogo.data_jogo).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between text-center gap-4">
-                        <div className="flex-1">
-                          <p className="text-xs font-bold text-foreground truncate">{jogo.time_home}</p>
-                          <div className="h-1.5 w-full bg-muted rounded-full mt-1 overflow-hidden">
-                            <div className="h-full bg-success" style={{ width: `${stats.home}%` }} />
-                          </div>
-                        </div>
-                        <div className="w-10">
-                          <p className="text-[10px] font-bold text-muted-foreground italic">VS</p>
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-xs font-bold text-foreground truncate">{jogo.time_away}</p>
-                          <div className="h-1.5 w-full bg-muted rounded-full mt-1 overflow-hidden">
-                            <div className="h-full bg-danger" style={{ width: `${stats.away}%` }} />
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="flex flex-col gap-0.5 text-center">
-                        <p className="text-[10px] text-muted-foreground uppercase font-black">{jogo.estadio}</p>
-                        <p className="text-[9px] text-muted-foreground opacity-60 font-medium">{jogo.local}</p>
-                      </div>
-
-                      <Button 
-                        onClick={() => handleBet(jogo)}
-                        className="w-full rounded-2xl h-11 bg-primary hover:bg-primary/90 text-white font-black text-[11px] uppercase tracking-wider shadow-lg shadow-primary/20"
-                      >
-                        APOSTAR NESTE JOGO
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-              
-              {visibleCount < filteredJogos.length && (
-                <Button 
-                  variant="ghost" 
-                  onClick={() => setVisibleCount(prev => prev + 6)}
-                  className="w-full py-8 text-xs font-black uppercase text-muted-foreground hover:text-primary transition-colors border-2 border-dashed border-muted rounded-[28px]"
-                >
-                  Carregar mais jogos (+6)
-                </Button>
-              )}
-            </>
-          ) : (
-            <div className="py-16 text-center bg-muted/20 rounded-[32px] border-2 border-dashed border-muted">
-              <p className="text-sm text-muted-foreground font-medium">Nenhum jogo encontrado para "{searchTerm}".</p>
+        {/* SPECIAL BETS (Campeão / Artilheiro Brasil) */}
+        {(activeTab === "campeao" || activeTab === "artilheiro_brasil") && (
+          <Card className="rounded-[32px] border-none shadow-lg bg-gradient-to-br from-primary/10 to-primary/5 p-6 border border-primary/20 animate-in zoom-in-95 duration-300">
+            <div className="flex flex-col items-center text-center space-y-4">
+              <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center">
+                <Trophy size={32} className="text-primary" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-lg font-black uppercase italic">
+                  Palpite de Longo Prazo
+                </h3>
+                <p className="text-xs text-muted-foreground font-medium">
+                  {activeTab === "campeao" 
+                    ? "Quem levantará a taça em 19 de julho de 2026?" 
+                    : "Quem será o maior goleador da nossa Seleção na Copa?"}
+                </p>
+              </div>
+              <Button 
+                onClick={() => handleBet({ id: 'seasonal', time_home: 'COPA 2026', time_away: 'O MORADOR' })}
+                className="w-full rounded-2xl h-12 bg-primary text-white font-black uppercase italic tracking-widest shadow-xl shadow-primary/20"
+              >
+                DAREI MEU PALPITE AGORA
+              </Button>
             </div>
-          )}
-        </div>
+          </Card>
+        )}
+
+        {/* BUSCA DE JOGOS (Only show for placar/artilheiro per game) */}
+        {(activeTab === "placar" || activeTab === "artilheiro") && (
+          <div className="relative">
+            <Input 
+              placeholder="Buscar país (Ex: Brasil)..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="rounded-2xl h-12 pl-12 bg-card border-none shadow-sm focus-visible:ring-primary"
+            />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
+          </div>
+        )}
+
+        {/* PROXIMO JOGO & TRENDS (Only show for placar/artilheiro per game) */}
+        {(activeTab === "placar" || activeTab === "artilheiro") && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between px-1">
+              <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                {searchTerm ? `Resultados para "${searchTerm}"` : "Próximas Partidas"}
+              </h3>
+              {!searchTerm && <Badge variant="secondary" className="text-[9px] font-bold bg-primary/10 text-primary border-none">{jogos.length} JOGOS</Badge>}
+            </div>
+            
+            {paginatedJogos.length > 0 ? (
+              <>
+                {paginatedJogos.map((jogo: any) => (
+                  <Card key={jogo.id} className="rounded-[28px] border-none shadow-md overflow-hidden bg-card transition-all hover:shadow-xl active:scale-[0.98]">
+                    <CardHeader className="pb-2">
+                      <div className="flex justify-between items-center">
+                        <CardTitle className="text-[10px] font-black uppercase text-muted-foreground flex items-center gap-2">
+                          <TrendingUp size={14} className="text-primary" /> {jogo.rodada}
+                        </CardTitle>
+                        <Badge variant="outline" className="text-[9px] font-bold border-muted-foreground/20">
+                          {new Date(jogo.data_jogo).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} • {new Date(jogo.data_jogo).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between text-center gap-4">
+                          <div className="flex-1">
+                            <p className="text-xs font-bold text-foreground truncate">{jogo.time_home}</p>
+                            <div className="h-1.5 w-full bg-muted rounded-full mt-1 overflow-hidden">
+                              <div className="h-full bg-success" style={{ width: `${stats.home}%` }} />
+                            </div>
+                          </div>
+                          <div className="w-10">
+                            <p className="text-[10px] font-bold text-muted-foreground italic">VS</p>
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-xs font-bold text-foreground truncate">{jogo.time_away}</p>
+                            <div className="h-1.5 w-full bg-muted rounded-full mt-1 overflow-hidden">
+                              <div className="h-full bg-danger" style={{ width: `${stats.away}%` }} />
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex flex-col gap-0.5 text-center">
+                          <p className="text-[10px] text-muted-foreground uppercase font-black">{jogo.estadio}</p>
+                          <p className="text-[9px] text-muted-foreground opacity-60 font-medium">{jogo.local}</p>
+                        </div>
+
+                        <Button 
+                          onClick={() => handleBet(jogo)}
+                          className="w-full rounded-2xl h-11 bg-primary hover:bg-primary/90 text-white font-black text-[11px] uppercase tracking-wider shadow-lg shadow-primary/20"
+                        >
+                          APOSTAR NESTE JOGO
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+                
+                {visibleCount < filteredJogos.length && (
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => setVisibleCount(prev => prev + 6)}
+                    className="w-full py-8 text-xs font-black uppercase text-muted-foreground hover:text-primary transition-colors border-2 border-dashed border-muted rounded-[28px]"
+                  >
+                    Carregar mais jogos (+6)
+                  </Button>
+                )}
+              </>
+            ) : (
+              <div className="py-16 text-center bg-muted/20 rounded-[32px] border-2 border-dashed border-muted">
+                <p className="text-sm text-muted-foreground font-medium">Nenhum jogo encontrado para "{searchTerm}".</p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* RANKING SIMPLIFICADO */}
         <Card className="rounded-[32px] border-none shadow-md bg-card overflow-hidden">
