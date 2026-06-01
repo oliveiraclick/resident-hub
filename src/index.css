@@ -197,4 +197,12 @@ body.native-app {
     z-index: 30;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
+
+  /* Garante que o degradê verde/amarelo se destaque no topo e o texto seja legível */
+  body.theme-brasil .text-primary-foreground,
+  body.theme-brasil header h1,
+  body.theme-brasil header span,
+  body.theme-brasil header p {
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  }
 }
