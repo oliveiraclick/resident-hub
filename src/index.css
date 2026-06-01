@@ -163,4 +163,15 @@ body.native-app {
   .rounded-3xl-plus {
     @apply rounded-[32px];
   }
+
+  /* Tema Copa do Mundo (Cores do Brasil) */
+  .theme-brasil {
+    --primary: 142 76% 36%; /* Verde Bandeira */
+    --primary-hover: 142 76% 30%;
+    --ring: 142 76% 36%;
+    --warning: 48 96% 53%; /* Amarelo Ouro */
+    --header-bg: 222 67% 20%; /* Azul Anil */
+    --header-mid: 222 67% 25%;
+    --primary-light: 142 76% 50%;
+  }
 }
