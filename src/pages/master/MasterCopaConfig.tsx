@@ -136,6 +136,17 @@ const MasterCopaConfig = () => {
                   onChange={(e) => setPixName(e.target.value)}
                 />
               </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="betValue">Valor da Aposta (R$)</Label>
+                <Input
+                  id="betValue"
+                  type="number"
+                  placeholder="10.00"
+                  value={betValue}
+                  onChange={(e) => setBetValue(e.target.value)}
+                />
+              </div>
               <p className="text-[10px] text-muted-foreground uppercase font-black">
                 Estes dados serão usados para gerar o QR Code e o Copia e Cola para os moradores pagarem os palpites.
               </p>
