@@ -24,20 +24,21 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
   const [artilheiro, setArtilheiro] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPix, setShowPix] = useState(false);
-  const [pixConfig, setPixConfig] = useState<{ key: string, name: string } | null>(null);
+  const [pixConfig, setPixConfig] = useState<{ key: string, name: string, value: number } | null>(null);
 
   useEffect(() => {
     const fetchPixConfig = async () => {
       const { data } = await supabase
         .from("app_configs" as any)
-        .select("pix_key, pix_name")
+        .select("pix_key, pix_name, valor_aposta")
         .eq("key", "theme_world_cup")
         .maybeSingle();
       
       if (data) {
         setPixConfig({ 
           key: (data as any).pix_key || "", 
-          name: (data as any).pix_name || "" 
+          name: (data as any).pix_name || "",
+          value: (data as any).valor_aposta || 10
         });
       }
     };
@@ -86,7 +87,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
           tipo: betType,
           palpite_valor: palpite_valor,
           status_pagamento: "pendente",
-          valor_pago: 10, // Valor padrão da aposta
+          valor_pago: pixConfig?.value || 10,
         });
 
       if (error) throw error;
@@ -165,7 +166,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
               <div className="bg-primary/5 p-4 rounded-2xl border border-primary/10">
                 <div className="flex justify-between items-center text-[11px] font-bold">
                   <span className="text-muted-foreground uppercase">Valor da Aposta</span>
-                  <span className="text-primary">R$ 10,00</span>
+                  <span className="text-primary">R$ {(pixConfig?.value || 10).toFixed(2)}</span>
                 </div>
               </div>
 

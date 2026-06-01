@@ -15,6 +15,7 @@ const MasterCopaConfig = () => {
   const [endAt, setEndAt] = useState("");
   const [pixKey, setPixKey] = useState("");
   const [pixName, setPixName] = useState("");
+  const [betValue, setBetValue] = useState("10");
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -30,6 +31,7 @@ const MasterCopaConfig = () => {
         setEnabled((data as any).enabled);
         setPixKey((data as any).pix_key || "");
         setPixName((data as any).pix_name || "");
+        setBetValue(String((data as any).valor_aposta || "10"));
         if ((data as any).start_at) {
           setStartAt(new Date((data as any).start_at).toISOString().slice(0, 16));
         }
@@ -50,6 +52,7 @@ const MasterCopaConfig = () => {
         enabled,
         pix_key: pixKey,
         pix_name: pixName,
+        valor_aposta: parseFloat(betValue) || 10,
         start_at: startAt ? new Date(startAt).toISOString() : null,
         end_at: endAt ? new Date(endAt).toISOString() : null,
       }, { onConflict: 'key' });
@@ -131,6 +134,17 @@ const MasterCopaConfig = () => {
                   placeholder="Nome que aparece no banco"
                   value={pixName}
                   onChange={(e) => setPixName(e.target.value)}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="betValue">Valor da Aposta (R$)</Label>
+                <Input
+                  id="betValue"
+                  type="number"
+                  placeholder="10.00"
+                  value={betValue}
+                  onChange={(e) => setBetValue(e.target.value)}
                 />
               </div>
               <p className="text-[10px] text-muted-foreground uppercase font-black">

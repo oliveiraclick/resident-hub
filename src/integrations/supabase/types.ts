@@ -55,6 +55,7 @@ export type Database = {
           pix_name: string | null
           start_at: string | null
           updated_at: string
+          valor_aposta: number | null
           value: Json | null
         }
         Insert: {
@@ -67,6 +68,7 @@ export type Database = {
           pix_name?: string | null
           start_at?: string | null
           updated_at?: string
+          valor_aposta?: number | null
           value?: Json | null
         }
         Update: {
@@ -79,6 +81,7 @@ export type Database = {
           pix_name?: string | null
           start_at?: string | null
           updated_at?: string
+          valor_aposta?: number | null
           value?: Json | null
         }
         Relationships: []
