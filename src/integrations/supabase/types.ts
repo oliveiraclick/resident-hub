@@ -2348,6 +2348,14 @@ export type Database = {
         Args: { _condominio_id: string; _user_id: string }
         Returns: boolean
       }
+      calcular_pontos_palpite: {
+        Args: {
+          p_palpite_valor: Json
+          p_placar_away_jogo: number
+          p_placar_home_jogo: number
+        }
+        Returns: number
+      }
       check_email_exists: { Args: { _email: string }; Returns: boolean }
       expirar_pre_reservas: { Args: never; Returns: undefined }
       find_morador_by_phone: {
