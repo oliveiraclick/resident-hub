@@ -185,7 +185,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
           <div
             className="text-primary-foreground relative z-10"
             style={{
-              background: isMoradorModule
+              background: isMoradorModule && isWorldCupTheme
                 ? `url(${copaBanner}) center right / cover no-repeat, #009739`
                 : "linear-gradient(135deg, hsl(var(--header-bg)) 0%, hsl(var(--header-mid)) 100%)",
               padding: "40px 20px 60px",
