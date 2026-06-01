@@ -72,6 +72,8 @@ const MoradorHome = () => {
   const [bannerIdx, setBannerIdx] = useState(0);
   const [pendingInvitesCount, setPendingInvitesCount] = useState(0);
   const [activeConvitesCount, setActiveConvitesCount] = useState(0);
+  const [condoNome, setCondoNome] = useState<string>("");
+
 
   useEffect(() => {
     if (!user) return;
