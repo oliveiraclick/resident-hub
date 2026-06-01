@@ -19,6 +19,7 @@ import MoradorLojas from "./MoradorLojas";
 import MoradorLoja from "./MoradorLoja";
 import MoradorMeusPedidos from "./MoradorMeusPedidos";
 import MoradorManual from "./MoradorManual";
+import CopaMorador from "./CopaMorador";
 import { CompletarCadastroGate } from "@/components/morador/CompletarCadastroGate";
 
 const MoradorDashboard = () => {
@@ -45,6 +46,7 @@ const MoradorDashboard = () => {
         <Route path="meus-pedidos" element={<MoradorMeusPedidos />} />
         <Route path="manual" element={<MoradorManual />} />
         <Route path="noticias" element={<MoradorNoticias />} />
+        <Route path="copa" element={<CopaMorador />} />
       </Routes>
     </CompletarCadastroGate>
   );
