@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { Trophy, Send } from "lucide-react";
+import { Trophy, Send, QrCode, Copy, CheckCircle2 } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
 interface BetModalProps {
   isOpen: boolean;
