@@ -18,57 +18,95 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // 1. Fetch data from openfootball (as fallback/primary for schedule)
-    const openFootballUrl = "https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json"
-    const response = await fetch(openFootballUrl)
-    const data = await response.json()
+    console.log("Starting score sync...")
 
-    if (!data.matches) {
-      throw new Error("No matches found in provider data")
+    // 1. Try worldcupjson.net (Real-time scores during the cup)
+    let updatedCount = 0
+    try {
+      const worldCupJsonUrl = "https://worldcupjson.net/matches"
+      const wcResponse = await fetch(worldCupJsonUrl)
+      if (wcResponse.ok) {
+        const wcData = await wcResponse.json()
+        // The API returns matches from 2022 if not updated, but we filter by date
+        const today = new Date().toISOString().split('T')[0]
+        
+        for (const match of wcData) {
+          if (match.status === 'completed' || match.status === 'in_progress') {
+            const matchDate = match.datetime.split('T')[0]
+            
+            // Only update if it's a 2026 match (simple check)
+            if (matchDate.startsWith('2026')) {
+              const { data: dbMatch } = await supabase
+                .from('copa_jogos')
+                .select('id, placar_home, placar_away')
+                .ilike('time_home', `%${match.home_team.name}%`)
+                .ilike('time_away', `%${match.away_team.name}%`)
+                .filter('data_jogo', 'gte', `${matchDate}T00:00:00`)
+                .filter('data_jogo', 'lte', `${matchDate}T23:59:59`)
+                .single()
+
+              if (dbMatch && (dbMatch.placar_home !== match.home_team.goals || dbMatch.placar_away !== match.away_team.goals)) {
+                await supabase
+                  .from('copa_jogos')
+                  .update({
+                    placar_home: match.home_team.goals,
+                    placar_away: match.away_team.goals,
+                    status: match.status === 'completed' ? 'finalizado' : 'em_andamento'
+                  })
+                  .eq('id', dbMatch.id)
+                
+                updatedCount++
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Error fetching from worldcupjson.net:", e)
     }
 
-    let updatedCount = 0
-    
-    // 2. Loop through matches and update scores if they exist
-    for (const match of data.matches) {
-      // openfootball uses score1, score2
-      if (match.score1 !== undefined && match.score2 !== undefined) {
-        // Find match in our DB
-        // Matching by teams (considering translations) and date is tricky, 
-        // but we can try to match by date and team names
-        const matchDate = new Date(match.date).toISOString().split('T')[0]
-        
-        // We need to handle translations or use a standardized name
-        // For now, let's try a fuzzy match or assume the names match (they should if we imported from here)
-        
-        const { data: dbMatch, error: findError } = await supabase
-          .from('copa_jogos')
-          .select('id, placar_home, placar_away')
-          .or(`and(time_home.ilike.%${match.team1}%,time_away.ilike.%${match.team2}%)`)
-          .filter('data_jogo', 'gte', `${matchDate}T00:00:00`)
-          .filter('data_jogo', 'lte', `${matchDate}T23:59:59`)
-          .single()
+    // 2. Fallback to openfootball if no updates from primary
+    if (updatedCount === 0) {
+      const openFootballUrl = "https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json"
+      const ofResponse = await fetch(openFootballUrl)
+      if (ofResponse.ok) {
+        const ofData = await ofResponse.json()
+        for (const match of ofData.matches) {
+          if (match.score1 !== undefined && match.score2 !== undefined) {
+            const matchDate = match.date
+            const { data: dbMatch } = await supabase
+              .from('copa_jogos')
+              .select('id, placar_home, placar_away')
+              .ilike('time_home', `%${match.team1}%`)
+              .ilike('time_away', `%${match.team2}%`)
+              .filter('data_jogo', 'gte', `${matchDate}T00:00:00`)
+              .filter('data_jogo', 'lte', `${matchDate}T23:59:59`)
+              .single()
 
-        if (dbMatch && (dbMatch.placar_home !== match.score1 || dbMatch.placar_away !== match.score2)) {
-          await supabase
-            .from('copa_jogos')
-            .update({
-              placar_home: match.score1,
-              placar_away: match.score2,
-              status: 'finalizado'
-            })
-            .eq('id', dbMatch.id)
-          
-          updatedCount++
+            if (dbMatch && (dbMatch.placar_home !== match.score1 || dbMatch.placar_away !== match.score2)) {
+              await supabase
+                .from('copa_jogos')
+                .update({
+                  placar_home: match.score1,
+                  placar_away: match.score2,
+                  status: 'finalizado'
+                })
+                .eq('id', dbMatch.id)
+              
+              updatedCount++
+            }
+          }
         }
       }
     }
 
-    // 3. Optional: Try worldcupjson.net if matches start
-    // (Implementation omitted for brevity but can be added here)
-
     return new Response(
-      JSON.stringify({ message: `Sync complete. ${updatedCount} matches updated.`, updatedCount }),
+      JSON.stringify({ 
+        message: updatedCount > 0 
+          ? `${updatedCount} jogos atualizados.` 
+          : "Tudo atualizado! Nenhum novo resultado encontrado nas APIs.", 
+        updatedCount 
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     )
 
