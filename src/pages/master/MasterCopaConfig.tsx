@@ -31,6 +31,7 @@ const MasterCopaConfig = () => {
         setEnabled((data as any).enabled);
         setPixKey((data as any).pix_key || "");
         setPixName((data as any).pix_name || "");
+        setBetValue(String((data as any).valor_aposta || "10"));
         if ((data as any).start_at) {
           setStartAt(new Date((data as any).start_at).toISOString().slice(0, 16));
         }
