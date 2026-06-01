@@ -16,7 +16,7 @@ const CopaMorador = () => {
   const [jogos, setJogos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isCopaActive, setIsCopaActive] = useState(false);
-  const [prizes, setPrizes] = useState({ placar: 0, artilheiro: 0 });
+  const [prizes, setPrizes] = useState({ placar: 0, artilheiro: 0, campeao: 0, artilheiro_brasil: 0 });
   const [activeTab, setActiveTab] = useState("placar");
   const [stats, setStats] = useState({ home: 85, draw: 10, away: 5 });
   const [selectedJogo, setSelectedJogo] = useState<any>(null);
