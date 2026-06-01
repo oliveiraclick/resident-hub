@@ -28,7 +28,6 @@ const CopaMorador = () => {
     setIsCopaActive(document.body.classList.contains("theme-brasil"));
   }, []);
 
-  useEffect(() => {
   const fetchData = async () => {
     // Fetch upcoming games
     const { data: jogosData } = await supabase
