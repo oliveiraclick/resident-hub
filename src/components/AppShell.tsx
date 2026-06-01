@@ -5,6 +5,7 @@ import type { LucideIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 import logoSymbol from "@/assets/logo-symbol.png";
+import copaBanner from "@/assets/copa-banner.png";
 import { useAuth } from "@/hooks/useAuth";
 
 export interface NavItem {
@@ -171,6 +172,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
   };
 
   const firstName = userName?.split(" ")[0] || "Morador";
+  const isMoradorModule = moduleName === "Morador";
 
   return (
     <div data-module={moduleName} className="min-h-screen flex flex-col bg-background mx-auto w-full max-w-full overflow-x-hidden relative">
@@ -181,13 +183,16 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
           <div
             className="text-primary-foreground relative z-10"
             style={{
-              background: "linear-gradient(135deg, hsl(var(--header-bg)) 0%, hsl(var(--header-mid)) 100%)",
+              background: isMoradorModule
+                ? `url(${copaBanner}) center right / cover no-repeat, #009739`
+                : "linear-gradient(135deg, hsl(var(--header-bg)) 0%, hsl(var(--header-mid)) 100%)",
               padding: "40px 20px 60px",
             }}
           >
             {/* Soft decorative elements */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/4" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/10 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/4" />
+            {isMoradorModule && <div className="absolute inset-0 z-[1] bg-gradient-to-r from-black/45 via-black/15 to-transparent pointer-events-none" />}
+            {!isMoradorModule && <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/4" />}
+            {!isMoradorModule && <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/10 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/4" />}
 
             {/* Top row */}
             <div className="flex justify-between items-center mb-8 relative z-20">
@@ -241,7 +246,9 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
         <header
           className="sticky top-0 z-30 px-5 pt-4 pb-4 backdrop-blur-xl border-b border-white/5"
           style={{
-            background: "linear-gradient(135deg, hsla(var(--header-bg), 0.95), hsla(var(--header-mid), 0.95))",
+            background: isMoradorModule
+              ? `url(${copaBanner}) center right / cover no-repeat, #009739`
+              : "linear-gradient(135deg, hsla(var(--header-bg), 0.95), hsla(var(--header-mid), 0.95))",
           }}
         >
           <div className="flex items-center justify-between gap-4">
