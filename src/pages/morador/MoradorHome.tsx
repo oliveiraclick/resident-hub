@@ -3,7 +3,7 @@ import { formatBRL } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import {
-  Package, ShoppingBag, Repeat, MapPin, ArrowRight, Sparkles, Wrench, UserCheck, CalendarCheck
+  Package, ShoppingBag, Repeat, MapPin, ArrowRight, Sparkles, Wrench, UserCheck, CalendarCheck, Trophy
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
@@ -307,6 +307,37 @@ const MoradorHome = () => {
               </div>
             )}
           </div>
+        )}
+
+        {/* ═══ COPA DO MUNDO - BOLÃO ═══ */}
+        {document.body.classList.contains("theme-brasil") && (
+          <section className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <button
+              onClick={() => navigate("/morador/copa")}
+              className="w-full relative overflow-hidden bg-gradient-to-br from-[#009739] via-[#FEDF00] to-[#002776] p-6 rounded-[32px] group transition-all hover:shadow-2xl hover:shadow-yellow-500/20 active:scale-[0.98]"
+            >
+              {/* Decorative elements */}
+              <div className="absolute top-0 right-0 p-4 opacity-10 transition-transform group-hover:scale-110 group-hover:rotate-12 duration-500">
+                <Trophy size={100} className="text-white" />
+              </div>
+              
+              <div className="relative z-10 flex items-center justify-between gap-4">
+                <div className="text-left space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-full text-[10px] font-black text-white uppercase tracking-widest border border-white/30">
+                      Temporada de Copa
+                    </span>
+                  </div>
+                  <h3 className="text-2xl font-black text-white italic tracking-tighter drop-shadow-md">COPA O MORADOR</h3>
+                  <p className="text-white/90 text-sm font-bold">Faça sua aposta e concorra ao prêmio do condomínio!</p>
+                </div>
+                
+                <div className="h-12 w-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/40 shadow-inner shrink-0 group-hover:bg-white/30 transition-colors">
+                  <ArrowRight size={24} className="text-white" />
+                </div>
+              </div>
+            </button>
+          </section>
         )}
 
         {/* ═══ ATALHOS RÁPIDOS ═══ */}
