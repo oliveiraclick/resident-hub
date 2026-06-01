@@ -245,9 +245,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
         <header
           className="sticky top-0 z-30 px-5 pt-4 pb-4 backdrop-blur-xl border-b border-white/5"
           style={{
-            background: isMoradorModule
-              ? `url(${copaBanner}) center right / cover no-repeat, #009739`
-              : "linear-gradient(135deg, hsla(var(--header-bg), 0.95), hsla(var(--header-mid), 0.95))",
+            background: "linear-gradient(145deg, hsl(var(--header-bg)) 0%, hsl(var(--header-mid)) 40%, hsl(var(--primary)) 100%)",
           }}
         >
           <div className="flex items-center justify-between gap-4">
