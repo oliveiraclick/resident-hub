@@ -20,10 +20,13 @@ const MasterCopaBets = () => {
 
   const fetchData = async () => {
     setLoading(true);
-    const { data: jogosData } = await supabase.from("copa_jogos").select("*").order("data_jogo", { ascending: true });
+    const { data: jogosData } = await supabase
+      .from("copa_jogos")
+      .select("*")
+      .order("data_jogo", { ascending: true });
     const { data: palpitesData } = await supabase
       .from("copa_palpites")
-      .select("*, profiles:user_id(nome)")
+      .select("*")
       .order("created_at", { ascending: false });
     
     setJogos(jogosData || []);
@@ -118,6 +121,27 @@ const MasterCopaBets = () => {
           {filteredJogos.map((j: any) => (
             <Card key={j.id}>
               <CardContent className="pt-6">
+                <div className="flex items-center justify-between mb-2">
+                  <Badge variant="outline" className="text-[9px] font-bold uppercase">
+                    {j.rodada}
+                  </Badge>
+                  <span className="text-[10px] font-bold text-muted-foreground">
+                    {new Date(j.data_jogo).toLocaleString('pt-BR', { 
+                      day: '2-digit', 
+                      month: '2-digit', 
+                      year: 'numeric',
+                      hour: '2-digit', 
+                      minute: '2-digit' 
+                    })}
+                  </span>
+                </div>
+
+                {(j.estadio || j.local) && (
+                  <div className="text-center mb-3 text-[10px] text-muted-foreground">
+                    📍 {j.estadio} {j.local && `— ${j.local}`}
+                  </div>
+                )}
+
                 <div className="flex items-center justify-between mb-4">
                   <div className="text-center flex-1">
                     <p className="font-bold text-sm">{j.time_home}</p>
