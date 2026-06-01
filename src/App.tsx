@@ -1,8 +1,9 @@
+import { ReactNode } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ModuleSwitcher from "@/components/ModuleSwitcher";
@@ -13,14 +14,17 @@ import { PreReservaPopup } from "@/components/PreReservaPopup";
 import { AnnouncementModal } from "@/components/AnnouncementModal";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import Index from "./pages/Index";
-import Auth from "./pages/Auth";
+import Login from "./pages/Login";
+import AuthPage from "./pages/Auth";
+import MasterCopaConfig from "./pages/master/MasterCopaConfig";
+import MasterCopaBets from "./pages/master/MasterCopaBets";
+import CopaMorador from "./pages/morador/CopaMorador";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import MoradorDashboard from "./pages/morador/MoradorDashboard";
 import PrestadorDashboard from "./pages/prestador/PrestadorDashboard";
 import MasterDashboard from "./pages/master/MasterDashboard";
 import NotFound from "./pages/NotFound";
-import { Navigate } from "react-router-dom";
 import RecuperarSenha from "./pages/auth/RecuperarSenha";
 import ResetarSenha from "./pages/auth/ResetarSenha";
 import CadastroMorador from "./pages/CadastroMorador";
@@ -52,8 +56,8 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Navigate to="/auth" replace />} />
-            <Route path="/auth" element={<Auth />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/auth" element={<AuthPage />} />
             <Route path="/auth/recuperar" element={<RecuperarSenha />} />
             <Route path="/auth/resetar" element={<ResetarSenha />} />
             <Route path="/cadastro/morador" element={<CadastroMorador />} />

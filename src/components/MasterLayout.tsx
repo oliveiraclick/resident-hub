@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import AppShell from "@/components/AppShell";
-import { Home, Building2, Users, DollarSign, User, Wrench, Image, Layout, Tag, FileCheck, Bell, Merge, ScrollText, FlaskConical, BarChart3, Briefcase } from "lucide-react";
+import { Home, Building2, Users, DollarSign, User, Wrench, Image, Layout, Tag, FileCheck, Bell, Merge, ScrollText, FlaskConical, BarChart3, Briefcase, Trophy } from "lucide-react";
 import { useBannerSolicitacaoAlert } from "@/hooks/useBannerSolicitacaoAlert";
 
 interface MasterLayoutProps {
@@ -16,6 +16,8 @@ const navItems = [
 ];
 
 const menuItems = [
+  { icon: Trophy, label: "Configuração Copa", path: "/master/copa" },
+  { icon: Trophy, label: "Gestão Bolão", path: "/master/copa/bets" },
   { icon: Building2, label: "Condomínios", path: "/master/condominios" },
   { icon: Wrench, label: "Categorias", path: "/master/categorias" },
   { icon: Image, label: "Banners", path: "/master/banners" },

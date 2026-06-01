@@ -18,6 +18,7 @@ import MasterSimulacao from "./MasterSimulacao";
 import MasterObservabilidade from "./MasterObservabilidade";
 import MasterPrestadoresAssinaturas from "./MasterPrestadoresAssinaturas";
 import MasterCopaConfig from "./MasterCopaConfig";
+import MasterCopaBets from "./MasterCopaBets";
 
 const MasterDashboard = () => {
   return (
@@ -41,6 +42,7 @@ const MasterDashboard = () => {
       <Route path="/observabilidade" element={<MasterObservabilidade />} />
       <Route path="/prestadores-assinaturas" element={<MasterPrestadoresAssinaturas />} />
       <Route path="/copa" element={<MasterCopaConfig />} />
+      <Route path="/copa/bets" element={<MasterCopaBets />} />
     </Routes>
   );
 };
