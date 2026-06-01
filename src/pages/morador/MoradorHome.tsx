@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { formatBRL } from "@/lib/utils";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import MoradorLayout from "@/components/MoradorLayout";
 import {
   Package, ShoppingBag, Repeat, MapPin, ArrowRight, Sparkles, Wrench, UserCheck, CalendarCheck, Trophy
