@@ -87,7 +87,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
           tipo: betType,
           palpite_valor: palpite_valor,
           status_pagamento: "pendente",
-          valor_pago: 10, // Valor padrão da aposta
+          valor_pago: pixConfig?.value || 10,
         });
 
       if (error) throw error;
