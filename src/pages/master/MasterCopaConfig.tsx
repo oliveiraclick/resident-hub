@@ -48,6 +48,8 @@ const MasterCopaConfig = () => {
       .upsert({
         key: "theme_world_cup",
         enabled,
+        pix_key: pixKey,
+        pix_name: pixName,
         start_at: startAt ? new Date(startAt).toISOString() : null,
         end_at: endAt ? new Date(endAt).toISOString() : null,
       }, { onConflict: 'key' });
