@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trophy, CheckCircle2, Clock, Users, Plus, Trash2, Search } from "lucide-react";
+import { Trophy, CheckCircle2, Clock, Users, Plus, Trash2, Search, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const MasterCopaBets = () => {
@@ -16,6 +16,7 @@ const MasterCopaBets = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [palpites, setPalpites] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
   const { toast } = useToast();
 
   const fetchData = async () => {
