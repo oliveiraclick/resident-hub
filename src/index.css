@@ -175,34 +175,24 @@ body.native-app {
     --primary-light: 142 76% 50%;
   }
 
-  /* Faixa Azul e Ajustes de Degradê para o Topo Completo */
+  /* Topo completo no tema da Copa - Verde/Amarelo/Azul */
   body.theme-brasil header {
+    background: linear-gradient(135deg, #009739 0%, #009739 40%, #FEDD00 100%) !important;
     border-bottom: 4px solid #0038A8 !important;
-    position: relative;
   }
 
-  /* Home Header (Topo da Home) */
-  body.theme-brasil .relative.overflow-hidden > div[style*="--header-bg"] {
-    position: relative;
-  }
-  
-  body.theme-brasil .relative.overflow-hidden > div[style*="--header-bg"]::after {
-    content: '';
-    position: absolute;
-    bottom: 10px; /* Acima da curvatura da home */
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: #0038A8;
-    z-index: 30;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  body.theme-brasil .relative.overflow-hidden > div.text-primary-foreground {
+    background: linear-gradient(135deg, #009739 0%, #009739 50%, #FEDD00 100%) !important;
+    border-bottom: 4px solid #0038A8 !important;
   }
 
-  /* Garante que o degradê verde/amarelo se destaque no topo e o texto seja legível */
-  body.theme-brasil .text-primary-foreground,
+  /* Texto legível sobre verde/amarelo */
   body.theme-brasil header h1,
   body.theme-brasil header span,
-  body.theme-brasil header p {
-    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  body.theme-brasil header p,
+  body.theme-brasil .text-primary-foreground h1,
+  body.theme-brasil .text-primary-foreground span,
+  body.theme-brasil .text-primary-foreground p {
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
   }
 }
