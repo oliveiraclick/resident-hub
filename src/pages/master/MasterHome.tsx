@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import MasterLayout from "@/components/MasterLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2, Users, Package, DollarSign, ShieldOff, Home, Wrench, Newspaper } from "lucide-react";
+import { Building2, Users, Package, DollarSign, ShieldOff, Home, Wrench, Newspaper, Trophy } from "lucide-react";
 
 interface CategoriaCount {
   especialidade: string;
@@ -161,6 +161,16 @@ const MasterHome = () => {
           <div>
             <p className="text-sm font-semibold">Notícias & Interesses</p>
             <p className="text-muted-foreground text-xs">Gerenciar categorias do feed de notícias</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="rounded-[var(--radius-card)] mb-4 cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate("/master/copa")}>
+        <CardContent className="p-4 flex items-center gap-3">
+          <Trophy className="text-warning" size={24} />
+          <div>
+            <p className="text-sm font-semibold">Versão Copa do Mundo</p>
+            <p className="text-muted-foreground text-xs">Agendar cores do Brasil e tema especial</p>
           </div>
         </CardContent>
       </Card>

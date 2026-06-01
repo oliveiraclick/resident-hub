@@ -11,6 +11,7 @@ import ForceUpdateScreen from "@/components/ForceUpdateScreen";
 import AppTrackers from "@/components/AppTrackers";
 import { PreReservaPopup } from "@/components/PreReservaPopup";
 import { AnnouncementModal } from "@/components/AnnouncementModal";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -38,7 +39,9 @@ import LojaPublica from "./pages/LojaPublica";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+  useAppTheme();
+  return (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <TooltipProvider>
@@ -124,6 +127,7 @@ const App = () => (
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
