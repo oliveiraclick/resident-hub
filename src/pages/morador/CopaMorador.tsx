@@ -229,6 +229,14 @@ const CopaMorador = () => {
           </CardContent>
         </Card>
       </div>
+
+      <BetModal 
+        isOpen={isBetModalOpen}
+        onClose={() => setIsBetModalOpen(false)}
+        jogo={selectedJogo}
+        betType={activeTab}
+        onSuccess={handleBetSuccess}
+      />
     </MoradorLayout>
   );
 };
