@@ -60,6 +60,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
   const [menuOpen, setMenuOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
+  const { isWorldCupTheme } = useAppTheme();
 
   const navigate = useNavigate();
   const location = useLocation();
