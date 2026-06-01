@@ -7,12 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trophy, CheckCircle2, Clock, Users, Plus, Trash2 } from "lucide-react";
+import { Trophy, CheckCircle2, Clock, Users, Plus, Trash2, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const MasterCopaBets = () => {
   const [activeTab, setActiveTab] = useState("pagamentos");
   const [jogos, setJogos] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [palpites, setPalpites] = useState([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -62,6 +63,11 @@ const MasterCopaBets = () => {
     }
   };
 
+  const filteredJogos = jogos.filter((j: any) => 
+    j.time_home.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    j.time_away.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <MasterLayout title="Gestão Copa O Morador">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -99,7 +105,17 @@ const MasterCopaBets = () => {
         </TabsContent>
 
         <TabsContent value="jogos" className="space-y-4">
-          {jogos.map((j: any) => (
+          <div className="relative mb-4">
+            <Input 
+              placeholder="Buscar país (Ex: Brasil)..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
+          </div>
+          
+          {filteredJogos.map((j: any) => (
             <Card key={j.id}>
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between mb-4">
