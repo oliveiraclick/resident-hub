@@ -216,7 +216,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2.5 ml-auto shrink-0">
                 <button
                   onClick={onQrPress || (() => navigate("/morador/qr-id"))}
                   className={`w-11 h-11 rounded-2xl flex items-center justify-center active:scale-95 backdrop-blur-md transition-all shadow-md ${isMoradorModule ? "bg-black/40 hover:bg-black/55 ring-1 ring-white/20" : "bg-white/10 hover:bg-white/20 ring-1 ring-white/10"}`}
