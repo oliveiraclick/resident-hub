@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { BetModal } from "@/components/copa/BetModal";
 
 const CopaMorador = () => {
   const { user } = useAuth();
@@ -18,6 +19,8 @@ const CopaMorador = () => {
   const [prizes, setPrizes] = useState({ placar: 0, artilheiro: 0 });
   const [activeTab, setActiveTab] = useState("placar");
   const [stats, setStats] = useState({ home: 85, draw: 10, away: 5 });
+  const [selectedJogo, setSelectedJogo] = useState<any>(null);
+  const [isBetModalOpen, setIsBetModalOpen] = useState(false);
 
   useEffect(() => {
     // Theme is applied via useAppTheme hook in App.tsx which adds class to body
