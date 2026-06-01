@@ -107,6 +107,36 @@ const MasterCopaConfig = () => {
                 Deixe em branco para não desligar automaticamente
               </p>
             </div>
+
+            <div className="pt-4 border-t border-border space-y-4">
+              <h3 className="text-sm font-bold flex items-center gap-2">
+                <QrCode size={18} className="text-primary" />
+                Dados para Pagamento (PIX)
+              </h3>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="pixKey">Chave PIX</Label>
+                <Input
+                  id="pixKey"
+                  placeholder="E-mail, CPF, Celular ou Chave Aleatória"
+                  value={pixKey}
+                  onChange={(e) => setPixKey(e.target.value)}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="pixName">Nome do Favorecido</Label>
+                <Input
+                  id="pixName"
+                  placeholder="Nome que aparece no banco"
+                  value={pixName}
+                  onChange={(e) => setPixName(e.target.value)}
+                />
+              </div>
+              <p className="text-[10px] text-muted-foreground uppercase font-black">
+                Estes dados serão usados para gerar o QR Code e o Copia e Cola para os moradores pagarem os palpites.
+              </p>
+            </div>
           </div>
 
           <div className="pt-4 flex gap-2">
