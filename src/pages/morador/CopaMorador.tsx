@@ -29,29 +29,31 @@ const CopaMorador = () => {
   }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      // Fetch upcoming games
-      const { data: jogosData } = await supabase
-        .from("copa_jogos")
-        .select("*")
-        .eq('status', 'agendado')
-        .order('data_jogo', { ascending: true });
-      setJogos(jogosData || []);
-      
-      // Calculate prize pools by type (taking 75% of paid amounts)
-      const { data: paidBets } = await supabase
-        .from("copa_palpites")
-        .select("valor_pago, tipo")
-        .eq("status_pagamento", "pago");
-      
-      const pools = (paidBets || []).reduce((acc: any, curr: any) => {
-        const type = curr.tipo || 'placar';
-        acc[type] = (acc[type] || 0) + (Number(curr.valor_pago) * 0.75);
-        return acc;
-      }, { placar: 0, artilheiro: 0, campeao: 0, artilheiro_brasil: 0 });
+  const fetchData = async () => {
+    // Fetch upcoming games
+    const { data: jogosData } = await supabase
+      .from("copa_jogos")
+      .select("*")
+      .eq('status', 'agendado')
+      .order('data_jogo', { ascending: true });
+    setJogos(jogosData || []);
+    
+    // Calculate prize pools by type (taking 75% of paid amounts)
+    const { data: paidBets } = await supabase
+      .from("copa_palpites")
+      .select("valor_pago, tipo")
+      .eq("status_pagamento", "pago");
+    
+    const pools = (paidBets || []).reduce((acc: any, curr: any) => {
+      const type = curr.tipo || 'placar';
+      acc[type] = (acc[type] || 0) + (Number(curr.valor_pago) * 0.75);
+      return acc;
+    }, { placar: 0, artilheiro: 0, campeao: 0, artilheiro_brasil: 0 });
 
-      setPrizes(pools);
-    };
+    setPrizes(pools);
+  };
+
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -61,7 +63,7 @@ const CopaMorador = () => {
   };
 
   const handleBetSuccess = () => {
-    // Refresh prize pools
+    fetchData();
   };
 
   const filteredJogos = jogos.filter((j: any) => 
