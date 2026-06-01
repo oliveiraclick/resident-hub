@@ -170,40 +170,23 @@ body.native-app {
     --primary-hover: 142 76% 30%;
     --ring: 142 76% 36%;
     --warning: 48 96% 53%; /* Amarelo Ouro */
-    --header-bg: 222 67% 20%; /* Azul Anil */
-    --header-mid: 222 67% 25%;
+    --header-bg: 142 76% 25%; /* Verde */
+    --header-mid: 48 96% 45%; /* Amarelo */
     --primary-light: 142 76% 50%;
   }
 
-  body.theme-brasil::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 6px;
-    background: linear-gradient(90deg, #009739 0%, #FEDD00 50%, #009739 100%);
-    z-index: 9999;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    pointer-events: none;
+  /* Faixa Azul e Ajustes de Degradê para o Topo Completo */
+  body.theme-brasil [style*="--header-bg"],
+  body.theme-brasil header {
+    border-bottom: 4px solid #0038A8 !important;
+    position: relative;
   }
 
-  body.theme-brasil::after {
-    content: '';
-    position: fixed;
-    top: 6px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: repeating-linear-gradient(
-      90deg,
-      #0038A8,
-      #0038A8 8px,
-      transparent 8px,
-      transparent 16px
-    );
-    z-index: 9998;
-    pointer-events: none;
-    opacity: 0.7;
+  /* Garante que o degradê verde/amarelo se destaque no topo */
+  body.theme-brasil .text-primary-foreground,
+  body.theme-brasil header h1,
+  body.theme-brasil header span,
+  body.theme-brasil header p {
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
   }
 }
