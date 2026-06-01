@@ -133,14 +133,25 @@ const MasterCopaBets = () => {
         </TabsContent>
 
         <TabsContent value="jogos" className="space-y-4">
-          <div className="relative mb-4">
-            <Input 
-              placeholder="Buscar país (Ex: Brasil)..." 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
+          <div className="flex gap-2 mb-4">
+            <div className="relative flex-1">
+              <Input 
+                placeholder="Buscar país (Ex: Brasil)..." 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={handleSyncScores} 
+              disabled={syncing}
+              className="gap-2"
+            >
+              <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
+              Sincronizar
+            </Button>
           </div>
           
           {filteredJogos.map((j: any) => (
