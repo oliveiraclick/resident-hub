@@ -144,6 +144,32 @@ const MasterCopaBets = () => {
               )}
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm font-bold flex items-center gap-2">
+                <CheckCircle2 size={18} className="text-success" /> Pagamentos Confirmados
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {palpites.filter(p => p.status_pagamento === "pago").slice(0, 10).map((p: any) => (
+                <div key={p.id} className="flex items-center justify-between p-3 bg-success/5 rounded-lg border border-success/20 opacity-80">
+                  <div className="space-y-1">
+                    <p className="text-xs font-bold">{p.profiles?.nome || "Morador"}</p>
+                    <p className="text-[9px] text-muted-foreground uppercase font-black italic">
+                      {p.tipo === 'placar' ? 'Placar Exato' : p.tipo} • R$ {Number(p.valor_pago).toFixed(2)}
+                    </p>
+                  </div>
+                  <Badge className="bg-success/20 text-success border-none text-[9px] font-black uppercase">
+                    Aprovado
+                  </Badge>
+                </div>
+              ))}
+              {palpites.filter(p => p.status_pagamento === "pago").length === 0 && (
+                <p className="text-center text-xs text-muted-foreground py-4">Nenhum pagamento confirmado ainda.</p>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="jogos" className="space-y-4">
