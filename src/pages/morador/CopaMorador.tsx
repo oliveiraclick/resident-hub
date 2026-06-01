@@ -97,34 +97,40 @@ const CopaMorador = () => {
             <Trophy size={80} />
           </div>
           
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="relative z-10">
-            <div className="flex flex-col mb-4">
+          <div className="relative z-10 space-y-4">
+            <div className="flex flex-col">
               <p className="text-[10px] font-black uppercase tracking-widest mb-1 opacity-80">Prêmio Acumulado</p>
-              <h2 className="text-4xl font-black mb-4">
+              <h2 className="text-4xl font-black">
                 R$ {prizes[activeTab as keyof typeof prizes].toFixed(2)}
               </h2>
-              
-              <TabsList className="bg-black/20 border-none h-auto p-1 rounded-xl flex flex-wrap gap-1">
-                <TabsTrigger value="placar" className="data-[state=active]:bg-white data-[state=active]:text-warning text-[9px] font-bold px-3 py-1.5 rounded-lg transition-all flex-1">
-                  JOGO
-                </TabsTrigger>
-                <TabsTrigger value="artilheiro" className="data-[state=active]:bg-white data-[state=active]:text-warning text-[9px] font-bold px-3 py-1.5 rounded-lg transition-all flex-1">
-                  ARTILHEIRO
-                </TabsTrigger>
-                <TabsTrigger value="campeao" className="data-[state=active]:bg-white data-[state=active]:text-warning text-[9px] font-bold px-3 py-1.5 rounded-lg transition-all flex-1">
-                  CAMPEÃO
-                </TabsTrigger>
-                <TabsTrigger value="artilheiro_brasil" className="data-[state=active]:bg-white data-[state=active]:text-warning text-[9px] font-bold px-3 py-1.5 rounded-lg transition-all flex-1">
-                  ARTILHEIRO BR
-                </TabsTrigger>
-              </TabsList>
             </div>
             
-            <div className="mt-4 flex items-center gap-2 bg-black/20 w-fit px-3 py-1 rounded-full text-[10px] font-bold">
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { id: 'placar', label: 'JOGO' },
+                { id: 'artilheiro', label: 'ARTILHEIRO' },
+                { id: 'campeao', label: 'CAMPEÃO' },
+                { id: 'artilheiro_brasil', label: 'ARTILHEIRO BR' }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`py-2 px-3 rounded-2xl text-[10px] font-black uppercase transition-all border ${
+                    activeTab === tab.id 
+                      ? 'bg-white text-warning border-white shadow-md' 
+                      : 'bg-black/10 text-white border-white/20 hover:bg-black/20'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-2 bg-black/20 w-fit px-3 py-1 rounded-full text-[10px] font-bold">
               <ShieldCheck size={12} />
               75% DO VALOR {activeTab.replace('_', ' ').toUpperCase()}
             </div>
-          </Tabs>
+          </div>
         </div>
 
         {/* SPECIAL BETS (Campeão / Artilheiro Brasil) */}
