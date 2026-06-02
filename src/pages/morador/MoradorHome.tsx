@@ -525,26 +525,30 @@ const MoradorHome = () => {
               </div>
             </div>
             <div className="flex gap-4 overflow-x-auto pb-4 -mx-1 px-1 scrollbar-hide" style={hs}>
-              {prestadoresVisiveis.map((p) => {
+              {prestadoresVisiveis.map((p, i) => {
                 const mins = Math.max(0, Math.ceil((new Date(p.visivel_ate).getTime() - Date.now()) / 60000));
                 return (
                   <button
                     key={p.id}
                     onClick={() => navigate(`/morador/servicos?q=${encodeURIComponent(p.especialidade)}`)}
-                    className="flex-shrink-0 rounded-[28px] bg-card border border-border/60 p-5 cursor-pointer text-left min-w-[240px] shadow-sm hover:shadow-md hover:border-primary/20 transition-all active:scale-[0.97]"
+                    style={{ animationDelay: `${i * 60}ms` }}
+                    className="group flex-shrink-0 rounded-[28px] bg-card border border-border/60 p-5 cursor-pointer text-left min-w-[240px] shadow-sm hover:shadow-xl hover:shadow-primary/10 hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 active:scale-[0.97] animate-fade-in"
                   >
                     <div className="flex items-center gap-4 mb-4">
-                      <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary to-orange-400 flex items-center justify-center text-xl font-black text-white shadow-lg shadow-primary/10">
+                      <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary to-orange-400 flex items-center justify-center text-xl font-black text-white shadow-lg shadow-primary/20 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
                         {p.nome?.charAt(0)?.toUpperCase() || "P"}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-base font-bold text-foreground truncate">{p.nome}</p>
+                        <p className="text-base font-bold text-foreground truncate group-hover:text-primary transition-colors">{p.nome}</p>
                         <p className="text-xs font-black text-primary uppercase tracking-wider">{p.especialidade}</p>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between bg-muted/50 p-3 rounded-2xl">
+                    <div className="flex items-center justify-between bg-muted/50 group-hover:bg-primary/5 p-3 rounded-2xl transition-colors">
                       <span className="text-[11px] text-muted-foreground font-bold uppercase tracking-wider">Disponibilidade</span>
-                      <span className="text-[11px] text-success font-black uppercase tracking-wider">{mins} MIN</span>
+                      <span className="text-[11px] text-success font-black uppercase tracking-wider flex items-center gap-1.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
+                        {mins} MIN
+                      </span>
                     </div>
                   </button>
                 );
