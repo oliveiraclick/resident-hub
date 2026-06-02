@@ -72,6 +72,7 @@ const MoradorHome = () => {
   const [avisos, setAvisos] = useState<any[]>([]);
   const [prestadoresVisiveis, setPrestadoresVisiveis] = useState<any[]>([]);
   const [bannerIdx, setBannerIdx] = useState(0);
+  const [bannerPreview, setBannerPreview] = useState<any | null>(null);
   const [pendingInvitesCount, setPendingInvitesCount] = useState(0);
   const [activeConvitesCount, setActiveConvitesCount] = useState(0);
   const [condoNome, setCondoNome] = useState<string>("");
