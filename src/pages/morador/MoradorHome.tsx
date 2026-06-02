@@ -41,18 +41,19 @@ const RotatingServicos = ({ categorias, navigate }: { categorias: any[]; navigat
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-      {visible.map((item) => {
+      {visible.map((item, i) => {
         const Icon = getIcon(item.icone);
         return (
           <button
             key={item.id}
             onClick={() => navigate(`/morador/servicos?q=${encodeURIComponent(item.nome)}`)}
-            className="group flex flex-col items-center gap-3 bg-card border border-border/60 p-5 rounded-[24px] cursor-pointer hover:border-primary/30 active:scale-[0.96] transition-all hover:shadow-[0_8px_20px_-8px_rgba(0,0,0,0.08)]"
+            style={{ animationDelay: `${i * 40}ms` }}
+            className="group flex flex-col items-center gap-3 bg-card border border-border/60 p-5 rounded-[24px] cursor-pointer hover:border-primary/40 hover:-translate-y-0.5 active:scale-[0.96] transition-all duration-300 hover:shadow-[0_12px_28px_-12px_hsl(var(--primary)/0.25)] animate-fade-in"
           >
-            <div className="h-12 w-12 rounded-2xl bg-primary/[0.05] group-hover:bg-primary/[0.08] flex items-center justify-center transition-colors">
-              <Icon size={24} className="text-primary" />
+            <div className="h-12 w-12 rounded-2xl bg-primary/[0.06] group-hover:bg-primary/[0.12] flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
+              <Icon size={24} className="text-primary transition-transform duration-300" />
             </div>
-            <span className="text-sm font-bold text-foreground leading-tight text-center">{item.nome}</span>
+            <span className="text-sm font-bold text-foreground leading-tight text-center group-hover:text-primary transition-colors">{item.nome}</span>
           </button>
         );
       })}
