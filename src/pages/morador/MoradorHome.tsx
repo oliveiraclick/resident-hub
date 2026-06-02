@@ -12,6 +12,8 @@ import { useCategorias } from "@/hooks/useCategorias";
 import { getIcon } from "@/lib/iconMap";
 import MissingPhotoModal from "@/components/MissingPhotoModal";
 import EventoConviteFullscreen, { EventoConviteBadge } from "@/components/EventoConviteFullscreen";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { X } from "lucide-react";
 
 import productBolo from "@/assets/product-bolo.jpg";
 import productSabonete from "@/assets/product-sabonete.jpg";
@@ -70,6 +72,7 @@ const MoradorHome = () => {
   const [avisos, setAvisos] = useState<any[]>([]);
   const [prestadoresVisiveis, setPrestadoresVisiveis] = useState<any[]>([]);
   const [bannerIdx, setBannerIdx] = useState(0);
+  const [bannerPreview, setBannerPreview] = useState<any | null>(null);
   const [pendingInvitesCount, setPendingInvitesCount] = useState(0);
   const [activeConvitesCount, setActiveConvitesCount] = useState(0);
   const [condoNome, setCondoNome] = useState<string>("");
@@ -305,7 +308,7 @@ const MoradorHome = () => {
         {/* ═══ BANNER ═══ */}
         {banners.length > 0 && (
           <div
-            onClick={() => { const b = banners[bannerIdx]; if (b?.whatsapp) { window.open(`https://wa.me/${b.whatsapp.replace(/\D/g, "")}`, "_blank"); } else if (b?.link) { window.open(b.link, "_blank"); } }}
+            onClick={() => setBannerPreview(banners[bannerIdx])}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
             className="rounded-[32px] overflow-hidden relative cursor-pointer group shadow-lg shadow-black/5 aspect-[21/9] sm:aspect-[21/7] h-auto"
@@ -330,6 +333,54 @@ const MoradorHome = () => {
             )}
           </div>
         )}
+
+        {/* Banner preview dialog */}
+        <Dialog open={!!bannerPreview} onOpenChange={(o) => !o && setBannerPreview(null)}>
+          <DialogContent className="max-w-3xl p-0 overflow-hidden bg-background border-0 [&>button]:hidden">
+            <button
+              onClick={() => setBannerPreview(null)}
+              className="absolute top-3 right-3 z-10 h-9 w-9 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-colors"
+              aria-label="Fechar"
+            >
+              <X size={18} />
+            </button>
+            {bannerPreview?.imagem_url && (
+              <img
+                src={bannerPreview.imagem_url}
+                alt={bannerPreview.titulo}
+                className="w-full h-auto max-h-[80vh] object-contain bg-black"
+              />
+            )}
+            {(bannerPreview?.titulo || bannerPreview?.subtitulo || bannerPreview?.whatsapp || bannerPreview?.link) && (
+              <div className="p-5 space-y-3">
+                {bannerPreview?.titulo && (
+                  <h3 className="text-xl font-bold text-foreground">{bannerPreview.titulo}</h3>
+                )}
+                {bannerPreview?.subtitulo && (
+                  <p className="text-sm text-muted-foreground whitespace-pre-line">{bannerPreview.subtitulo}</p>
+                )}
+                <div className="flex gap-2 pt-1">
+                  {bannerPreview?.whatsapp && (
+                    <button
+                      onClick={() => { window.open(`https://wa.me/${bannerPreview.whatsapp.replace(/\D/g, "")}`, "_blank"); }}
+                      className="flex-1 h-11 rounded-full bg-[#25D366] text-white font-semibold text-sm hover:opacity-90"
+                    >
+                      Falar no WhatsApp
+                    </button>
+                  )}
+                  {bannerPreview?.link && (
+                    <button
+                      onClick={() => { window.open(bannerPreview.link, "_blank"); }}
+                      className="flex-1 h-11 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90"
+                    >
+                      Saiba mais
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
 
         {/* ═══ COPA DO MUNDO - BOLÃO ═══ */}
         {document.body.classList.contains("theme-brasil") && (
