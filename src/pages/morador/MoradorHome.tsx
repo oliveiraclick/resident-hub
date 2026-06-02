@@ -364,7 +364,7 @@ const MoradorHome = () => {
                   {bannerPreview?.whatsapp && (
                     <button
                       onClick={() => { window.open(`https://wa.me/${bannerPreview.whatsapp.replace(/\D/g, "")}`, "_blank"); }}
-                      className="flex-1 h-11 rounded-full bg-[#25D366] text-white font-semibold text-sm hover:opacity-90"
+                      className="flex-1 h-11 rounded-full bg-[#25D366] text-white font-semibold text-sm hover:brightness-110 hover:shadow-lg hover:shadow-[#25D366]/30 active:scale-[0.97] transition-all duration-200"
                     >
                       Falar no WhatsApp
                     </button>
@@ -372,7 +372,7 @@ const MoradorHome = () => {
                   {bannerPreview?.link && (
                     <button
                       onClick={() => { window.open(bannerPreview.link, "_blank"); }}
-                      className="flex-1 h-11 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90"
+                      className="flex-1 h-11 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary-hover hover:shadow-lg hover:shadow-primary/30 active:scale-[0.97] transition-all duration-200"
                     >
                       Saiba mais
                     </button>
