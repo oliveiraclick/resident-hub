@@ -12,6 +12,8 @@ import { useCategorias } from "@/hooks/useCategorias";
 import { getIcon } from "@/lib/iconMap";
 import MissingPhotoModal from "@/components/MissingPhotoModal";
 import EventoConviteFullscreen, { EventoConviteBadge } from "@/components/EventoConviteFullscreen";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { X } from "lucide-react";
 
 import productBolo from "@/assets/product-bolo.jpg";
 import productSabonete from "@/assets/product-sabonete.jpg";
