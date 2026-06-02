@@ -295,9 +295,9 @@ const MoradorDesapegos = () => {
                         </div>
                       </div>
                       <div className="px-1 pt-1.5">
-                        <p className="text-[13px] font-semibold text-foreground truncate">{d.titulo}</p>
+                        <p className="text-[13px] font-semibold text-foreground line-clamp-2">{d.titulo}</p>
                         {d.descricao && (
-                          <p className="text-[11px] text-muted-foreground truncate mt-0.5">{d.descricao}</p>
+                          <p className="text-[11px] text-muted-foreground line-clamp-2 mt-0.5">{d.descricao}</p>
                         )}
                         {d.preco ? (
                           <p className="text-[14px] font-bold text-primary mt-1">R$ {formatBRL(d.preco)}</p>
