@@ -312,22 +312,22 @@ const MoradorHome = () => {
             onClick={() => setBannerPreview(banners[bannerIdx])}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
-            className="rounded-[32px] overflow-hidden relative cursor-pointer group shadow-lg shadow-black/5 aspect-[21/9] sm:aspect-[21/7] h-auto"
+            className="rounded-[32px] overflow-hidden relative cursor-pointer group shadow-lg shadow-black/5 ring-1 ring-border/40 hover:ring-primary/30 hover:shadow-xl hover:shadow-primary/10 transition-all duration-500 aspect-[21/9] sm:aspect-[21/7] h-auto animate-fade-in"
           >
             {banners[bannerIdx]?.imagem_url ? (
-              <img src={banners[bannerIdx].imagem_url} alt={banners[bannerIdx].titulo} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <img src={banners[bannerIdx].imagem_url} alt={banners[bannerIdx].titulo} className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]" />
             ) : (
               <div className="absolute inset-0 bg-gradient-to-br from-header-bg to-primary" />
             )}
             
             {/* Overlay gradient for text readability if title exists */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
 
             {banners.length > 1 && (
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1] flex gap-2">
                 {banners.map((_, i) => (
                   <button key={i} onClick={(e) => { e.stopPropagation(); setBannerIdx(i); }}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${i === bannerIdx ? 'w-6 bg-white' : 'w-1.5 bg-white/40 hover:bg-white/60'}`}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${i === bannerIdx ? 'w-6 bg-white' : 'w-1.5 bg-white/40 hover:bg-white/70 hover:w-3'}`}
                   />
                 ))}
               </div>
