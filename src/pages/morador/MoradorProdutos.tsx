@@ -120,7 +120,7 @@ const MoradorProdutos = () => {
                         </div>
                       </div>
                       <CardContent className="p-5 flex flex-col gap-2">
-                        <p className="text-[15px] font-black text-foreground truncate leading-tight group-hover:text-primary transition-colors">{item.titulo}</p>
+                        <p className="text-[15px] font-black text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors">{item.titulo}</p>
                         <div className="flex items-center justify-between mt-1">
                           {item.preco != null ? (
                             <p className="text-lg font-black text-foreground tracking-tighter">
