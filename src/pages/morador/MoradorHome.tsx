@@ -41,18 +41,19 @@ const RotatingServicos = ({ categorias, navigate }: { categorias: any[]; navigat
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-      {visible.map((item) => {
+      {visible.map((item, i) => {
         const Icon = getIcon(item.icone);
         return (
           <button
             key={item.id}
             onClick={() => navigate(`/morador/servicos?q=${encodeURIComponent(item.nome)}`)}
-            className="group flex flex-col items-center gap-3 bg-card border border-border/60 p-5 rounded-[24px] cursor-pointer hover:border-primary/30 active:scale-[0.96] transition-all hover:shadow-[0_8px_20px_-8px_rgba(0,0,0,0.08)]"
+            style={{ animationDelay: `${i * 40}ms` }}
+            className="group flex flex-col items-center gap-3 bg-card border border-border/60 p-5 rounded-[24px] cursor-pointer hover:border-primary/40 hover:-translate-y-0.5 active:scale-[0.96] transition-all duration-300 hover:shadow-[0_12px_28px_-12px_hsl(var(--primary)/0.25)] animate-fade-in"
           >
-            <div className="h-12 w-12 rounded-2xl bg-primary/[0.05] group-hover:bg-primary/[0.08] flex items-center justify-center transition-colors">
-              <Icon size={24} className="text-primary" />
+            <div className="h-12 w-12 rounded-2xl bg-primary/[0.06] group-hover:bg-primary/[0.12] flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
+              <Icon size={24} className="text-primary transition-transform duration-300" />
             </div>
-            <span className="text-sm font-bold text-foreground leading-tight text-center">{item.nome}</span>
+            <span className="text-sm font-bold text-foreground leading-tight text-center group-hover:text-primary transition-colors">{item.nome}</span>
           </button>
         );
       })}
@@ -311,22 +312,22 @@ const MoradorHome = () => {
             onClick={() => setBannerPreview(banners[bannerIdx])}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
-            className="rounded-[32px] overflow-hidden relative cursor-pointer group shadow-lg shadow-black/5 aspect-[21/9] sm:aspect-[21/7] h-auto"
+            className="rounded-[32px] overflow-hidden relative cursor-pointer group shadow-lg shadow-black/5 ring-1 ring-border/40 hover:ring-primary/30 hover:shadow-xl hover:shadow-primary/10 transition-all duration-500 aspect-[21/9] sm:aspect-[21/7] h-auto animate-fade-in"
           >
             {banners[bannerIdx]?.imagem_url ? (
-              <img src={banners[bannerIdx].imagem_url} alt={banners[bannerIdx].titulo} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <img src={banners[bannerIdx].imagem_url} alt={banners[bannerIdx].titulo} className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]" />
             ) : (
               <div className="absolute inset-0 bg-gradient-to-br from-header-bg to-primary" />
             )}
             
             {/* Overlay gradient for text readability if title exists */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
 
             {banners.length > 1 && (
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1] flex gap-2">
                 {banners.map((_, i) => (
                   <button key={i} onClick={(e) => { e.stopPropagation(); setBannerIdx(i); }}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${i === bannerIdx ? 'w-6 bg-white' : 'w-1.5 bg-white/40 hover:bg-white/60'}`}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${i === bannerIdx ? 'w-6 bg-white' : 'w-1.5 bg-white/40 hover:bg-white/70 hover:w-3'}`}
                   />
                 ))}
               </div>
@@ -363,7 +364,7 @@ const MoradorHome = () => {
                   {bannerPreview?.whatsapp && (
                     <button
                       onClick={() => { window.open(`https://wa.me/${bannerPreview.whatsapp.replace(/\D/g, "")}`, "_blank"); }}
-                      className="flex-1 h-11 rounded-full bg-[#25D366] text-white font-semibold text-sm hover:opacity-90"
+                      className="flex-1 h-11 rounded-full bg-[#25D366] text-white font-semibold text-sm hover:brightness-110 hover:shadow-lg hover:shadow-[#25D366]/30 active:scale-[0.97] transition-all duration-200"
                     >
                       Falar no WhatsApp
                     </button>
@@ -371,7 +372,7 @@ const MoradorHome = () => {
                   {bannerPreview?.link && (
                     <button
                       onClick={() => { window.open(bannerPreview.link, "_blank"); }}
-                      className="flex-1 h-11 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90"
+                      className="flex-1 h-11 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary-hover hover:shadow-lg hover:shadow-primary/30 active:scale-[0.97] transition-all duration-200"
                     >
                       Saiba mais
                     </button>
@@ -496,7 +497,7 @@ const MoradorHome = () => {
         )}
 
         {/* ═══ SERVIÇOS ═══ */}
-        <section>
+        <section className="animate-fade-in">
           <div className="flex justify-between items-end mb-5 px-1">
             <div className="space-y-1">
               <h2 className="text-2xl font-black tracking-tight text-foreground">Serviços</h2>
@@ -504,9 +505,9 @@ const MoradorHome = () => {
             </div>
             <button 
               onClick={() => navigate("/morador/servicos/categorias")} 
-              className="text-[13px] font-bold text-primary hover:opacity-80 transition-opacity flex items-center gap-1"
+              className="group text-[13px] font-bold text-primary hover:text-primary-hover transition-colors flex items-center gap-1"
             >
-              Ver Tudo <ArrowRight size={14} />
+              Ver Tudo <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
             </button>
           </div>
           <RotatingServicos categorias={allCategorias} navigate={navigate} />
@@ -524,26 +525,30 @@ const MoradorHome = () => {
               </div>
             </div>
             <div className="flex gap-4 overflow-x-auto pb-4 -mx-1 px-1 scrollbar-hide" style={hs}>
-              {prestadoresVisiveis.map((p) => {
+              {prestadoresVisiveis.map((p, i) => {
                 const mins = Math.max(0, Math.ceil((new Date(p.visivel_ate).getTime() - Date.now()) / 60000));
                 return (
                   <button
                     key={p.id}
                     onClick={() => navigate(`/morador/servicos?q=${encodeURIComponent(p.especialidade)}`)}
-                    className="flex-shrink-0 rounded-[28px] bg-card border border-border/60 p-5 cursor-pointer text-left min-w-[240px] shadow-sm hover:shadow-md hover:border-primary/20 transition-all active:scale-[0.97]"
+                    style={{ animationDelay: `${i * 60}ms` }}
+                    className="group flex-shrink-0 rounded-[28px] bg-card border border-border/60 p-5 cursor-pointer text-left min-w-[240px] shadow-sm hover:shadow-xl hover:shadow-primary/10 hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 active:scale-[0.97] animate-fade-in"
                   >
                     <div className="flex items-center gap-4 mb-4">
-                      <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary to-orange-400 flex items-center justify-center text-xl font-black text-white shadow-lg shadow-primary/10">
+                      <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary to-orange-400 flex items-center justify-center text-xl font-black text-white shadow-lg shadow-primary/20 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
                         {p.nome?.charAt(0)?.toUpperCase() || "P"}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-base font-bold text-foreground truncate">{p.nome}</p>
+                        <p className="text-base font-bold text-foreground truncate group-hover:text-primary transition-colors">{p.nome}</p>
                         <p className="text-xs font-black text-primary uppercase tracking-wider">{p.especialidade}</p>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between bg-muted/50 p-3 rounded-2xl">
+                    <div className="flex items-center justify-between bg-muted/50 group-hover:bg-primary/5 p-3 rounded-2xl transition-colors">
                       <span className="text-[11px] text-muted-foreground font-bold uppercase tracking-wider">Disponibilidade</span>
-                      <span className="text-[11px] text-success font-black uppercase tracking-wider">{mins} MIN</span>
+                      <span className="text-[11px] text-success font-black uppercase tracking-wider flex items-center gap-1.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
+                        {mins} MIN
+                      </span>
                     </div>
                   </button>
                 );
@@ -583,15 +588,15 @@ const MoradorHome = () => {
 
 
         {/* ═══ VITRINE E-SHOP ═══ */}
-        <div>
+        <div className="animate-fade-in">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-2">
               <div className="w-1 h-5 rounded-sm bg-primary" />
               <ShoppingBag size={18} className="text-primary" />
               <h2 className="text-[20px] font-bold text-foreground m-0">Vitrine E-shop</h2>
             </div>
-            <button onClick={() => navigate("/morador/produtos")} className="text-[13px] font-semibold text-primary bg-transparent border-none cursor-pointer flex items-center gap-1">
-              Ver tudo <ArrowRight size={14} />
+            <button onClick={() => navigate("/morador/produtos")} className="group text-[13px] font-semibold text-primary hover:text-primary-hover bg-transparent border-none cursor-pointer flex items-center gap-1 transition-colors">
+              Ver tudo <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
             </button>
           </div>
           <p className="text-[11px] text-muted-foreground font-medium mb-3">De prestadores do seu condomínio</p>
@@ -600,15 +605,16 @@ const MoradorHome = () => {
               <button
                 key={product.id}
                 onClick={() => product.id.startsWith("mock") ? navigate("/morador/produtos") : navigate(`/morador/produtos/${product.id}`)}
-                className="bg-transparent border-none cursor-pointer p-0 text-left active:scale-95 transition-transform"
+                style={{ animationDelay: `${idx * 70}ms` }}
+                className="group bg-transparent border-none cursor-pointer p-0 text-left active:scale-95 transition-transform animate-fade-in"
               >
-                <div className="rounded-[20px] overflow-hidden bg-card border border-border" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
+                <div className="rounded-[20px] overflow-hidden bg-card border border-border group-hover:border-primary/30 group-hover:-translate-y-1 group-hover:shadow-[0_14px_28px_-12px_hsl(var(--primary)/0.25)] transition-all duration-300" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
                   <div className="h-[130px] overflow-hidden relative">
-                    <img src={product.imagem_url || fallbackShopImages[idx % fallbackShopImages.length]} alt={product.titulo} className="w-full h-full object-cover" />
+                    <img src={product.imagem_url || fallbackShopImages[idx % fallbackShopImages.length]} alt={product.titulo} className="w-full h-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-110" />
                     <div className="absolute bottom-0 left-0 right-0 h-10" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.3), transparent)" }} />
                   </div>
                   <div className="p-3 pt-3 pb-4">
-                    <p className="text-[14px] font-semibold text-foreground m-0 truncate leading-snug">{product.titulo}</p>
+                    <p className="text-[14px] font-semibold text-foreground m-0 truncate leading-snug group-hover:text-primary transition-colors">{product.titulo}</p>
                     {product.preco != null && (
                       <p className="text-[18px] font-extrabold text-primary mt-1.5 m-0 tracking-tight">
                         R$ {formatBRL(product.preco)}
@@ -622,15 +628,15 @@ const MoradorHome = () => {
         </div>
 
         {/* ═══ DESAPEGO ═══ */}
-        <div>
+        <div className="animate-fade-in">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-2">
               <div className="w-1 h-5 rounded-sm bg-warning" />
               <Repeat size={18} className="text-warning" />
               <h2 className="text-[20px] font-bold text-foreground m-0">Desapego</h2>
             </div>
-            <button onClick={() => navigate("/morador/desapegos")} className="text-[13px] font-semibold text-primary bg-transparent border-none cursor-pointer flex items-center gap-1">
-              Ver tudo <ArrowRight size={14} />
+            <button onClick={() => navigate("/morador/desapegos")} className="group text-[13px] font-semibold text-primary hover:text-primary-hover bg-transparent border-none cursor-pointer flex items-center gap-1 transition-colors">
+              Ver tudo <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
             </button>
           </div>
           <p className="text-[11px] text-muted-foreground font-medium mb-3">Entre vizinhos do condomínio</p>
@@ -639,20 +645,21 @@ const MoradorHome = () => {
               <button
                 key={item.id}
                 onClick={() => item.id.startsWith("mock") ? navigate("/morador/desapegos") : navigate(`/morador/desapegos/${item.id}`)}
-                className="bg-transparent border-none cursor-pointer p-0 text-left active:scale-95 transition-transform"
+                style={{ animationDelay: `${idx * 70}ms` }}
+                className="group bg-transparent border-none cursor-pointer p-0 text-left active:scale-95 transition-transform animate-fade-in"
               >
-                <div className="rounded-[20px] overflow-hidden bg-card border border-border" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
+                <div className="rounded-[20px] overflow-hidden bg-card border border-border group-hover:border-warning/40 group-hover:-translate-y-1 group-hover:shadow-[0_14px_28px_-12px_hsl(var(--warning)/0.35)] transition-all duration-300" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
                   <div className="aspect-[4/5] overflow-hidden relative">
                     {item.imagem_url ? (
-                      <img src={item.imagem_url} alt={item.titulo} className="w-full h-full object-cover" />
+                      <img src={item.imagem_url} alt={item.titulo} className="w-full h-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-110" />
                     ) : (
-                      <img src={desapegoPlaceholder} alt="Sem foto" className="w-full h-full object-cover" />
+                      <img src={desapegoPlaceholder} alt="Sem foto" className="w-full h-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-110" />
                     )}
-                    <span className="absolute top-2.5 left-2.5 text-[9px] font-bold text-white bg-warning px-2.5 py-1 rounded-lg uppercase tracking-wider">Desapego</span>
+                    <span className="absolute top-2.5 left-2.5 text-[9px] font-bold text-white bg-warning px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-md">Desapego</span>
                   </div>
                 </div>
                 <div className="px-1 pt-1.5 pb-2">
-                  <p className="text-[14px] font-semibold text-foreground m-0 truncate leading-snug">{item.titulo}</p>
+                  <p className="text-[14px] font-semibold text-foreground m-0 truncate leading-snug group-hover:text-warning transition-colors">{item.titulo}</p>
                   {item.preco != null && (
                     <p className="text-[18px] font-extrabold text-primary mt-1 m-0 tracking-tight">
                       R$ {formatBRL(item.preco)}
