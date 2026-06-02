@@ -390,7 +390,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
       )}
 
       {/* Scrollable content */}
-      <main className="px-5 pt-6 pb-[100px] flex-1">{children}</main>
+      <main className="px-5 pt-6 pb-[140px] flex-1">{children}</main>
 
       {/* ═══ BOTTOM NAV — Modern Pill Style ═══ */}
       <nav
