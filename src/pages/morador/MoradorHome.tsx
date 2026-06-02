@@ -497,7 +497,7 @@ const MoradorHome = () => {
         )}
 
         {/* ═══ SERVIÇOS ═══ */}
-        <section>
+        <section className="animate-fade-in">
           <div className="flex justify-between items-end mb-5 px-1">
             <div className="space-y-1">
               <h2 className="text-2xl font-black tracking-tight text-foreground">Serviços</h2>
@@ -505,9 +505,9 @@ const MoradorHome = () => {
             </div>
             <button 
               onClick={() => navigate("/morador/servicos/categorias")} 
-              className="text-[13px] font-bold text-primary hover:opacity-80 transition-opacity flex items-center gap-1"
+              className="group text-[13px] font-bold text-primary hover:text-primary-hover transition-colors flex items-center gap-1"
             >
-              Ver Tudo <ArrowRight size={14} />
+              Ver Tudo <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
             </button>
           </div>
           <RotatingServicos categorias={allCategorias} navigate={navigate} />
