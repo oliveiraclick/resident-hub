@@ -588,15 +588,15 @@ const MoradorHome = () => {
 
 
         {/* ═══ VITRINE E-SHOP ═══ */}
-        <div>
+        <div className="animate-fade-in">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-2">
               <div className="w-1 h-5 rounded-sm bg-primary" />
               <ShoppingBag size={18} className="text-primary" />
               <h2 className="text-[20px] font-bold text-foreground m-0">Vitrine E-shop</h2>
             </div>
-            <button onClick={() => navigate("/morador/produtos")} className="text-[13px] font-semibold text-primary bg-transparent border-none cursor-pointer flex items-center gap-1">
-              Ver tudo <ArrowRight size={14} />
+            <button onClick={() => navigate("/morador/produtos")} className="group text-[13px] font-semibold text-primary hover:text-primary-hover bg-transparent border-none cursor-pointer flex items-center gap-1 transition-colors">
+              Ver tudo <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
             </button>
           </div>
           <p className="text-[11px] text-muted-foreground font-medium mb-3">De prestadores do seu condomínio</p>
@@ -605,15 +605,16 @@ const MoradorHome = () => {
               <button
                 key={product.id}
                 onClick={() => product.id.startsWith("mock") ? navigate("/morador/produtos") : navigate(`/morador/produtos/${product.id}`)}
-                className="bg-transparent border-none cursor-pointer p-0 text-left active:scale-95 transition-transform"
+                style={{ animationDelay: `${idx * 70}ms` }}
+                className="group bg-transparent border-none cursor-pointer p-0 text-left active:scale-95 transition-transform animate-fade-in"
               >
-                <div className="rounded-[20px] overflow-hidden bg-card border border-border" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
+                <div className="rounded-[20px] overflow-hidden bg-card border border-border group-hover:border-primary/30 group-hover:-translate-y-1 group-hover:shadow-[0_14px_28px_-12px_hsl(var(--primary)/0.25)] transition-all duration-300" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
                   <div className="h-[130px] overflow-hidden relative">
-                    <img src={product.imagem_url || fallbackShopImages[idx % fallbackShopImages.length]} alt={product.titulo} className="w-full h-full object-cover" />
+                    <img src={product.imagem_url || fallbackShopImages[idx % fallbackShopImages.length]} alt={product.titulo} className="w-full h-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-110" />
                     <div className="absolute bottom-0 left-0 right-0 h-10" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.3), transparent)" }} />
                   </div>
                   <div className="p-3 pt-3 pb-4">
-                    <p className="text-[14px] font-semibold text-foreground m-0 truncate leading-snug">{product.titulo}</p>
+                    <p className="text-[14px] font-semibold text-foreground m-0 truncate leading-snug group-hover:text-primary transition-colors">{product.titulo}</p>
                     {product.preco != null && (
                       <p className="text-[18px] font-extrabold text-primary mt-1.5 m-0 tracking-tight">
                         R$ {formatBRL(product.preco)}
@@ -627,15 +628,15 @@ const MoradorHome = () => {
         </div>
 
         {/* ═══ DESAPEGO ═══ */}
-        <div>
+        <div className="animate-fade-in">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-2">
               <div className="w-1 h-5 rounded-sm bg-warning" />
               <Repeat size={18} className="text-warning" />
               <h2 className="text-[20px] font-bold text-foreground m-0">Desapego</h2>
             </div>
-            <button onClick={() => navigate("/morador/desapegos")} className="text-[13px] font-semibold text-primary bg-transparent border-none cursor-pointer flex items-center gap-1">
-              Ver tudo <ArrowRight size={14} />
+            <button onClick={() => navigate("/morador/desapegos")} className="group text-[13px] font-semibold text-primary hover:text-primary-hover bg-transparent border-none cursor-pointer flex items-center gap-1 transition-colors">
+              Ver tudo <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
             </button>
           </div>
           <p className="text-[11px] text-muted-foreground font-medium mb-3">Entre vizinhos do condomínio</p>
@@ -644,20 +645,21 @@ const MoradorHome = () => {
               <button
                 key={item.id}
                 onClick={() => item.id.startsWith("mock") ? navigate("/morador/desapegos") : navigate(`/morador/desapegos/${item.id}`)}
-                className="bg-transparent border-none cursor-pointer p-0 text-left active:scale-95 transition-transform"
+                style={{ animationDelay: `${idx * 70}ms` }}
+                className="group bg-transparent border-none cursor-pointer p-0 text-left active:scale-95 transition-transform animate-fade-in"
               >
-                <div className="rounded-[20px] overflow-hidden bg-card border border-border" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
+                <div className="rounded-[20px] overflow-hidden bg-card border border-border group-hover:border-warning/40 group-hover:-translate-y-1 group-hover:shadow-[0_14px_28px_-12px_hsl(var(--warning)/0.35)] transition-all duration-300" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
                   <div className="aspect-[4/5] overflow-hidden relative">
                     {item.imagem_url ? (
-                      <img src={item.imagem_url} alt={item.titulo} className="w-full h-full object-cover" />
+                      <img src={item.imagem_url} alt={item.titulo} className="w-full h-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-110" />
                     ) : (
-                      <img src={desapegoPlaceholder} alt="Sem foto" className="w-full h-full object-cover" />
+                      <img src={desapegoPlaceholder} alt="Sem foto" className="w-full h-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-110" />
                     )}
-                    <span className="absolute top-2.5 left-2.5 text-[9px] font-bold text-white bg-warning px-2.5 py-1 rounded-lg uppercase tracking-wider">Desapego</span>
+                    <span className="absolute top-2.5 left-2.5 text-[9px] font-bold text-white bg-warning px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-md">Desapego</span>
                   </div>
                 </div>
                 <div className="px-1 pt-1.5 pb-2">
-                  <p className="text-[14px] font-semibold text-foreground m-0 truncate leading-snug">{item.titulo}</p>
+                  <p className="text-[14px] font-semibold text-foreground m-0 truncate leading-snug group-hover:text-warning transition-colors">{item.titulo}</p>
                   {item.preco != null && (
                     <p className="text-[18px] font-extrabold text-primary mt-1 m-0 tracking-tight">
                       R$ {formatBRL(item.preco)}
