@@ -205,6 +205,14 @@ const CopaMorador = () => {
                 <h3 className="text-lg font-black uppercase italic">
                   {activeTab === "campeao" ? "Palpite de Longo Prazo" : "Bolão O Morador"}
                 </h3>
+                <div className="flex flex-col gap-2 mb-2">
+                  <div className="flex flex-wrap justify-center gap-2">
+                    <Badge variant="secondary" className="bg-primary/20 text-primary border-none text-[10px] font-black">PLACA EXATO: 5 PTS</Badge>
+                    <Badge variant="secondary" className="bg-primary/20 text-primary border-none text-[10px] font-black">VENCEDOR: 3 PTS</Badge>
+                    <Badge variant="secondary" className="bg-primary/20 text-primary border-none text-[10px] font-black">EMPATE: 3 PTS</Badge>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground font-black uppercase italic">Ganhas quem faz mais pontos no final do campeonato</p>
+                </div>
                 <p className="text-xs text-muted-foreground font-medium">
                   {activeTab === "campeao" 
                     ? "Quem levantará a taça em 19 de julho de 2026?" 
@@ -246,53 +254,67 @@ const CopaMorador = () => {
             
             {paginatedJogos.length > 0 ? (
               <>
-                {paginatedJogos.map((jogo: any) => (
-                  <Card key={jogo.id} className="rounded-[28px] border-none shadow-md overflow-hidden bg-card transition-all hover:shadow-xl active:scale-[0.98]">
-                    <CardHeader className="pb-2">
-                      <div className="flex justify-between items-center">
-                        <CardTitle className="text-[10px] font-black uppercase text-muted-foreground flex items-center gap-2">
-                          <TrendingUp size={14} className="text-primary" /> {jogo.rodada}
-                        </CardTitle>
-                        <Badge variant="outline" className="text-[9px] font-bold border-muted-foreground/20">
-                          {new Date(jogo.data_jogo).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} • {new Date(jogo.data_jogo).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between text-center gap-4">
-                          <div className="flex-1">
-                            <p className="text-xs font-bold text-foreground truncate">{jogo.time_home}</p>
-                            <div className="h-1.5 w-full bg-muted rounded-full mt-1 overflow-hidden">
-                              <div className="h-full bg-success" style={{ width: `${stats.home}%` }} />
-                            </div>
-                          </div>
-                          <div className="w-10">
-                            <p className="text-[10px] font-bold text-muted-foreground italic">VS</p>
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-xs font-bold text-foreground truncate">{jogo.time_away}</p>
-                            <div className="h-1.5 w-full bg-muted rounded-full mt-1 overflow-hidden">
-                              <div className="h-full bg-danger" style={{ width: `${stats.away}%` }} />
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div className="flex flex-col gap-0.5 text-center">
-                          <p className="text-[10px] text-muted-foreground uppercase font-black">{jogo.estadio}</p>
-                          <p className="text-[9px] text-muted-foreground opacity-60 font-medium">{jogo.local}</p>
-                        </div>
+                {paginatedJogos.map((jogo: any) => {
+                  const dataJogo = new Date(jogo.data_jogo);
+                  const now = new Date();
+                  const diffMinutes = (dataJogo.getTime() - now.getTime()) / (1000 * 60);
+                  const canBet = diffMinutes > 20;
 
-                        <Button 
-                          onClick={() => handleBet(jogo)}
-                          className="w-full rounded-2xl h-11 bg-primary hover:bg-primary/90 text-white font-black text-[11px] uppercase tracking-wider shadow-lg shadow-primary/20"
-                        >
-                          APOSTAR NESTE JOGO
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                  return (
+                    <Card key={jogo.id} className="rounded-[28px] border-none shadow-md overflow-hidden bg-card transition-all hover:shadow-xl active:scale-[0.98]">
+                      <CardHeader className="pb-2">
+                        <div className="flex justify-between items-center">
+                          <CardTitle className="text-[10px] font-black uppercase text-muted-foreground flex items-center gap-2">
+                            <TrendingUp size={14} className="text-primary" /> {jogo.rodada}
+                          </CardTitle>
+                          <Badge variant="outline" className={`text-[9px] font-bold ${!canBet ? 'bg-danger/10 text-danger border-danger/20' : 'border-muted-foreground/20'}`}>
+                            {dataJogo.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} • {dataJogo.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                            {!canBet && " • ENCERRADO"}
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between text-center gap-4">
+                            <div className="flex-1">
+                              <p className="text-xs font-bold text-foreground truncate">{jogo.time_home}</p>
+                              <div className="h-1.5 w-full bg-muted rounded-full mt-1 overflow-hidden">
+                                <div className="h-full bg-success" style={{ width: `${stats.home}%` }} />
+                              </div>
+                            </div>
+                            <div className="w-10">
+                              <p className="text-[10px] font-bold text-muted-foreground italic">VS</p>
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-xs font-bold text-foreground truncate">{jogo.time_away}</p>
+                              <div className="h-1.5 w-full bg-muted rounded-full mt-1 overflow-hidden">
+                                <div className="h-full bg-danger" style={{ width: `${stats.away}%` }} />
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex flex-col gap-0.5 text-center">
+                            <p className="text-[10px] text-muted-foreground uppercase font-black">{jogo.estadio}</p>
+                            <p className="text-[9px] text-muted-foreground opacity-60 font-medium">{jogo.local}</p>
+                          </div>
+
+                          {canBet ? (
+                            <Button 
+                              onClick={() => handleBet(jogo)}
+                              className="w-full rounded-2xl h-11 bg-primary hover:bg-primary/90 text-white font-black text-[11px] uppercase tracking-wider shadow-lg shadow-primary/20"
+                            >
+                              APOSTAR NESTE JOGO
+                            </Button>
+                          ) : (
+                            <div className="w-full py-2 bg-muted/30 rounded-2xl text-center">
+                              <p className="text-[9px] font-black uppercase text-muted-foreground opacity-70">Apostas encerradas para este jogo</p>
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
                 
                 {visibleCount < filteredJogos.length && (
                   <Button 
