@@ -110,8 +110,9 @@ const CopaMorador = () => {
     fetchData();
   }, []);
 
-  const handleBet = (jogo: any) => {
+  const handleBet = (jogo: any, type?: string) => {
     setSelectedJogo(jogo);
+    if (type) setActiveTab(type);
     setIsBetModalOpen(true);
   };
 
