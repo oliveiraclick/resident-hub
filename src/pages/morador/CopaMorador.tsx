@@ -173,7 +173,7 @@ const CopaMorador = () => {
             
             <div className="grid grid-cols-3 gap-2">
               {[
-                { id: 'placar', label: 'JOGO' },
+                { id: 'placar', label: 'JOGOS BRASIL' },
                 { id: 'campeao', label: 'CAMPEÃO' },
                 { id: 'bolao', label: 'BOLÃO' }
               ].map((tab) => (
