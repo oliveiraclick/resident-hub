@@ -23,6 +23,8 @@ const CopaMorador = () => {
   const [isBetModalOpen, setIsBetModalOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(6);
 
+  const [ranking, setRanking] = useState([]);
+
   useEffect(() => {
     // Theme is applied via useAppTheme hook in App.tsx which adds class to body
     setIsCopaActive(document.body.classList.contains("theme-brasil"));
@@ -50,6 +52,40 @@ const CopaMorador = () => {
     }, { placar: 0, artilheiro: 0, campeao: 0, artilheiro_brasil: 0 });
 
     setPrizes(pools);
+
+    // Fetch ranking data
+    const { data: rankingData } = await supabase
+      .from("copa_palpites")
+      .select(`
+        user_id,
+        profiles (
+          nome,
+          rua,
+          numero_casa
+        ),
+        pontos
+      `)
+      .order('pontos', { ascending: false });
+
+    // Group by user and sum points
+    const userRanking = (rankingData || []).reduce((acc: any, curr: any) => {
+      const userId = curr.user_id;
+      if (!acc[userId]) {
+        acc[userId] = {
+          nome: curr.profiles?.nome || "Morador",
+          localizacao: curr.profiles?.rua ? `${curr.profiles.rua}${curr.profiles.numero_casa ? `, ${curr.profiles.numero_casa}` : ''}` : "Condomínio",
+          pontos: 0
+        };
+      }
+      acc[userId].pontos += curr.pontos || 0;
+      return acc;
+    }, {});
+
+    const sortedRanking = Object.values(userRanking)
+      .sort((a: any, b: any) => b.pontos - a.pontos)
+      .slice(0, 3);
+
+    setRanking(sortedRanking);
   };
 
   useEffect(() => {
@@ -260,24 +296,33 @@ const CopaMorador = () => {
             </div>
           </CardHeader>
           <CardContent className="space-y-3 pt-4">
-            {[1, 2, 3].map((pos) => (
-              <div key={pos} className="flex items-center justify-between p-4 bg-muted/20 hover:bg-muted/30 transition-colors rounded-2xl border border-transparent hover:border-primary/10">
-                <div className="flex items-center gap-3">
-                  <span className={`w-8 h-8 rounded-full flex items-center justify-center text-[12px] font-black shadow-sm ${pos === 1 ? 'bg-warning text-white' : pos === 2 ? 'bg-slate-300 text-slate-700' : 'bg-orange-300 text-orange-800'}`}>
-                    {pos}º
-                  </span>
-                  <div>
-                    <p className="text-xs font-bold">Vizinho {pos}</p>
-                    <p className="text-[9px] text-muted-foreground uppercase font-bold tracking-tighter">Bloco A • Ap 10{pos}</p>
+            {ranking.length > 0 ? (
+              ranking.map((player: any, index) => {
+                const pos = index + 1;
+                return (
+                  <div key={index} className="flex items-center justify-between p-4 bg-muted/20 hover:bg-muted/30 transition-colors rounded-2xl border border-transparent hover:border-primary/10">
+                    <div className="flex items-center gap-3">
+                      <span className={`w-8 h-8 rounded-full flex items-center justify-center text-[12px] font-black shadow-sm ${pos === 1 ? 'bg-warning text-white' : pos === 2 ? 'bg-slate-300 text-slate-700' : 'bg-orange-300 text-orange-800'}`}>
+                        {pos}º
+                      </span>
+                      <div>
+                        <p className="text-xs font-bold">{player.nome}</p>
+                        <p className="text-[9px] text-muted-foreground uppercase font-bold tracking-tighter">{player.localizacao}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <Badge variant="outline" className="text-[11px] font-black border-primary/20 bg-primary/5 text-primary">
+                        {player.pontos} PTS
+                      </Badge>
+                    </div>
                   </div>
-                </div>
-                <div className="text-right">
-                  <Badge variant="outline" className="text-[11px] font-black border-primary/20 bg-primary/5 text-primary">
-                    {40 - (pos * 5)} PTS
-                  </Badge>
-                </div>
+                );
+              })
+            ) : (
+              <div className="py-8 text-center bg-muted/10 rounded-2xl border border-dashed border-muted">
+                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Nenhuma aposta realizada ainda</p>
               </div>
-            ))}
+            )}
             <Button variant="ghost" className="w-full text-[10px] font-black uppercase text-muted-foreground hover:text-primary transition-colors">
               Ver Ranking Completo
             </Button>
