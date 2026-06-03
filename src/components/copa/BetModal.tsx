@@ -90,7 +90,9 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
     try {
       const palpite_valor = betType === 'placar' 
         ? { h: parseInt(hScore), a: parseInt(aScore) }
-        : { jogador: artilheiro };
+        : betType === 'bolao'
+        ? { bolao: true }
+        : { campeao: artilheiro };
 
       // Fetch condominio_id
       const { data: condoIds } = await supabase.rpc("get_user_condominio_ids", { _user_id: user.id });
