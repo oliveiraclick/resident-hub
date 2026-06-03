@@ -16,7 +16,8 @@ const CopaMorador = () => {
   const [jogos, setJogos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isCopaActive, setIsCopaActive] = useState(false);
-  const [prizes, setPrizes] = useState({ placar: 0, artilheiro: 0, campeao: 0, artilheiro_brasil: 0 });
+   const [prizes, setPrizes] = useState({ placar: 0, artilheiro: 0, campeao: 0, artilheiro_brasil: 0 });
+  const [betCounts, setBetCounts] = useState({ placar: 0, artilheiro: 0, campeao: 0, artilheiro_brasil: 0 });
   const [activeTab, setActiveTab] = useState("placar");
   const [stats, setStats] = useState({ home: 85, draw: 10, away: 5 });
   const [selectedJogo, setSelectedJogo] = useState<any>(null);
@@ -42,16 +43,34 @@ const CopaMorador = () => {
     // Calculate prize pools by type (taking 75% of paid amounts)
     const { data: paidBets } = await supabase
       .from("copa_palpites")
-      .select("valor_pago, tipo")
+      .select("valor_pago, tipo, user_id")
       .eq("status_pagamento", "pago");
     
-    const pools = (paidBets || []).reduce((acc: any, curr: any) => {
+    const pools = { placar: 0, artilheiro: 0, campeao: 0, artilheiro_brasil: 0 };
+    const counts = { placar: 0, artilheiro: 0, campeao: 0, artilheiro_brasil: 0 };
+    const uniqueUsersByType: Record<string, Set<string>> = {
+      placar: new Set(),
+      artilheiro: new Set(),
+      campeao: new Set(),
+      artilheiro_brasil: new Set()
+    };
+
+    (paidBets || []).forEach((curr: any) => {
       const type = curr.tipo || 'placar';
-      acc[type] = (acc[type] || 0) + (Number(curr.valor_pago) * 0.75);
-      return acc;
-    }, { placar: 0, artilheiro: 0, campeao: 0, artilheiro_brasil: 0 });
+      if (pools.hasOwnProperty(type)) {
+        pools[type as keyof typeof pools] += (Number(curr.valor_pago) * 0.75);
+        if (curr.user_id) {
+          uniqueUsersByType[type].add(curr.user_id);
+        }
+      }
+    });
+
+    Object.keys(uniqueUsersByType).forEach(type => {
+      counts[type as keyof typeof counts] = uniqueUsersByType[type].size;
+    });
 
     setPrizes(pools);
+    setBetCounts(counts);
 
     // Fetch ranking data
     const { data: rankingData } = await supabase
@@ -138,9 +157,15 @@ const CopaMorador = () => {
           <div className="relative z-10 space-y-4">
             <div className="flex flex-col">
               <p className="text-[10px] font-black uppercase tracking-widest mb-1 opacity-80">Prêmio Acumulado</p>
-              <h2 className="text-4xl font-black">
-                R$ {prizes[activeTab as keyof typeof prizes].toFixed(2)}
-              </h2>
+              <div className="flex items-baseline gap-3">
+                <h2 className="text-4xl font-black">
+                  R$ {prizes[activeTab as keyof typeof prizes].toFixed(2)}
+                </h2>
+                <div className="flex items-center gap-1 bg-white/20 px-2 py-0.5 rounded-lg">
+                  <Users size={12} className="text-white" />
+                  <span className="text-xs font-black">{betCounts[activeTab as keyof typeof betCounts]}</span>
+                </div>
+              </div>
             </div>
             
             <div className="grid grid-cols-2 gap-2">
