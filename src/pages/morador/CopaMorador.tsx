@@ -180,7 +180,7 @@ const CopaMorador = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-between px-1">
               <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                {searchTerm ? `Resultados para "${searchTerm}"` : "Próximas Partidas"}
+                {searchTerm ? `Resultados para "${searchTerm}"` : "Jogos do Brasil - 1ª Fase"}
               </h3>
               {!searchTerm && <Badge variant="secondary" className="text-[9px] font-bold bg-primary/10 text-primary border-none">{jogos.length} JOGOS</Badge>}
             </div>
