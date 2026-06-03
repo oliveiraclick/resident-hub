@@ -161,9 +161,9 @@ const CopaMorador = () => {
                 <h2 className="text-4xl font-black">
                   R$ {prizes[activeTab as keyof typeof prizes].toFixed(2)}
                 </h2>
-                <div className="flex items-center gap-1 bg-white/20 px-2 py-0.5 rounded-lg">
-                  <Users size={12} className="text-white" />
-                  <span className="text-xs font-black">{betCounts[activeTab as keyof typeof betCounts]}</span>
+                <div className="flex items-center gap-2 bg-white text-warning px-3 py-1 rounded-xl shadow-sm">
+                  <Users size={16} className="font-bold" />
+                  <span className="text-sm font-black">{betCounts[activeTab as keyof typeof betCounts]} {betCounts[activeTab as keyof typeof betCounts] === 1 ? 'Pessoa' : 'Pessoas'}</span>
                 </div>
               </div>
             </div>
