@@ -221,7 +221,7 @@ const CopaMorador = () => {
                 </p>
               </div>
               <Button 
-                onClick={() => handleBet({ id: 'seasonal', time_home: 'COPA 2026', time_away: 'O MORADOR' })}
+                onClick={() => handleBet({ id: 'seasonal', time_home: 'COPA 2026', time_away: 'O MORADOR' }, activeTab)}
                 className="w-full rounded-2xl h-12 bg-primary text-white font-black uppercase italic tracking-widest shadow-xl shadow-primary/20"
               >
                 DAREI MEU PALPITE AGORA
