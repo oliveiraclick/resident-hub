@@ -301,7 +301,7 @@ const CopaMorador = () => {
 
                           {canBet ? (
                             <Button 
-                              onClick={() => handleBet(jogo)}
+                              onClick={() => handleBet(jogo, activeTab)}
                               className="w-full rounded-2xl h-11 bg-primary hover:bg-primary/90 text-white font-black text-[11px] uppercase tracking-wider shadow-lg shadow-primary/20"
                             >
                               APOSTAR NESTE JOGO
