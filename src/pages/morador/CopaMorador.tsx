@@ -66,8 +66,9 @@ const CopaMorador = () => {
   };
 
   const filteredJogos = jogos.filter((j: any) => 
-    j.time_home.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    j.time_away.toLowerCase().includes(searchTerm.toLowerCase())
+    (j.time_home.toLowerCase() === "brasil" || j.time_away.toLowerCase() === "brasil") &&
+    (j.time_home.toLowerCase().includes(searchTerm.toLowerCase()) || 
+     j.time_away.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const paginatedJogos = filteredJogos.slice(0, visibleCount);
