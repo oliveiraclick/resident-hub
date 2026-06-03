@@ -81,8 +81,8 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
       return;
     }
 
-    if (betType === 'artilheiro' && !artilheiro.trim()) {
-      toast.error("Informe o nome do artilheiro.");
+    if (betType === 'campeao' && !artilheiro.trim()) {
+      toast.error("Informe a seleção campeã.");
       return;
     }
 
@@ -90,7 +90,9 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
     try {
       const palpite_valor = betType === 'placar' 
         ? { h: parseInt(hScore), a: parseInt(aScore) }
-        : { jogador: artilheiro };
+        : betType === 'bolao'
+        ? { bolao: true }
+        : { campeao: artilheiro };
 
       // Fetch condominio_id
       const { data: condoIds } = await supabase.rpc("get_user_condominio_ids", { _user_id: user.id });
@@ -125,7 +127,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
     onClose();
   };
 
-  const isSeasonal = jogo?.id === 'seasonal';
+  const isSeasonal = jogo?.id === 'seasonal' || betType === 'bolao' || betType === 'campeao';
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -135,7 +137,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Trophy className="text-warning" size={20} />
-                Apostar no {betType === 'placar' ? 'Placar' : betType === 'artilheiro' ? 'Artilheiro' : betType === 'campeao' ? 'Campeão' : 'Artilheiro BR'}
+                Apostar no {betType === 'placar' ? 'Placar' : betType === 'campeao' ? 'Campeão' : 'Bolão'}
               </DialogTitle>
               <DialogDescription className="text-xs uppercase font-bold tracking-tighter">
                 {isSeasonal ? 'PALPITE TEMPORADA 2026' : `${jogo.time_home} x ${jogo.time_away}`}
@@ -171,17 +173,22 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
                     />
                   </div>
                 </div>
-              ) : betType === 'artilheiro' || betType === 'artilheiro_brasil' ? (
-                <div className="space-y-3">
-                  <Label className="text-xs font-bold uppercase ml-1">
-                    {betType === 'artilheiro' ? 'Quem fará o primeiro gol?' : 'Quem será o goleador do Brasil?'}
-                  </Label>
-                  <Input 
-                    placeholder="Nome do Jogador..."
-                    value={artilheiro}
-                    onChange={(e) => setArtilheiro(e.target.value)}
-                    className="h-12 rounded-2xl bg-muted border-none px-4"
-                  />
+              ) : betType === 'bolao' ? (
+                <div className="space-y-4">
+                  <div className="flex flex-col gap-2 p-3 bg-primary/5 rounded-2xl border border-primary/10">
+                    <p className="text-[10px] font-black uppercase text-primary italic">Regras do Bolão:</p>
+                    <ul className="text-[10px] font-bold text-muted-foreground uppercase space-y-1">
+                      <li>• Placar Exato: 5 Pontos</li>
+                      <li>• Vencedor: 3 Pontos</li>
+                      <li>• Empate: 3 Pontos</li>
+                    </ul>
+                  </div>
+                  <div className="space-y-3">
+                    <Label className="text-xs font-bold uppercase ml-1">Confirme seu interesse no bolão geral:</Label>
+                    <p className="text-[11px] text-muted-foreground font-medium bg-muted/30 p-4 rounded-2xl">
+                      Você está participando do ranking geral de todos os jogos da Copa. Seus pontos serão calculados automaticamente baseados em seus palpites de placar.
+                    </p>
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-3">

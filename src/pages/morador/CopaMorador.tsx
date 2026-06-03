@@ -110,8 +110,9 @@ const CopaMorador = () => {
     fetchData();
   }, []);
 
-  const handleBet = (jogo: any) => {
+  const handleBet = (jogo: any, type?: string) => {
     setSelectedJogo(jogo);
+    if (type) setActiveTab(type);
     setIsBetModalOpen(true);
   };
 
@@ -220,7 +221,7 @@ const CopaMorador = () => {
                 </p>
               </div>
               <Button 
-                onClick={() => handleBet({ id: 'seasonal', time_home: 'COPA 2026', time_away: 'O MORADOR' })}
+                onClick={() => handleBet({ id: 'seasonal', time_home: 'COPA 2026', time_away: 'O MORADOR' }, activeTab)}
                 className="w-full rounded-2xl h-12 bg-primary text-white font-black uppercase italic tracking-widest shadow-xl shadow-primary/20"
               >
                 DAREI MEU PALPITE AGORA
@@ -300,7 +301,7 @@ const CopaMorador = () => {
 
                           {canBet ? (
                             <Button 
-                              onClick={() => handleBet(jogo)}
+                              onClick={() => handleBet(jogo, activeTab)}
                               className="w-full rounded-2xl h-11 bg-primary hover:bg-primary/90 text-white font-black text-[11px] uppercase tracking-wider shadow-lg shadow-primary/20"
                             >
                               APOSTAR NESTE JOGO
