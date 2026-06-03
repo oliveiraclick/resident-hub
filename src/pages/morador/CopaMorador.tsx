@@ -119,11 +119,15 @@ const CopaMorador = () => {
     fetchData();
   };
 
-  const filteredJogos = jogos.filter((j: any) => 
-    (j.time_home.toLowerCase() === "brasil" || j.time_away.toLowerCase() === "brasil") &&
-    (j.time_home.toLowerCase().includes(searchTerm.toLowerCase()) || 
-     j.time_away.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filteredJogos = jogos.filter((j: any) => {
+    const matchesSearch = j.time_home.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                         j.time_away.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    if (activeTab === "bolao") return matchesSearch;
+    
+    const isBrazilGame = j.time_home.toLowerCase() === "brasil" || j.time_away.toLowerCase() === "brasil";
+    return isBrazilGame && matchesSearch;
+  });
 
   const paginatedJogos = filteredJogos.slice(0, visibleCount);
 
@@ -217,8 +221,8 @@ const CopaMorador = () => {
           </Card>
         )}
 
-        {/* BUSCA DE JOGOS (Only show for placar) */}
-        {(activeTab === "placar") && (
+        {/* BUSCA DE JOGOS (Show for placar and bolao) */}
+        {(activeTab === "placar" || activeTab === "bolao") && (
           <div className="relative">
             <Input 
               placeholder="Buscar país (Ex: Brasil)..." 
@@ -230,12 +234,12 @@ const CopaMorador = () => {
           </div>
         )}
 
-        {/* PROXIMO JOGO & TRENDS (Only show for placar) */}
-        {(activeTab === "placar") && (
+        {/* PROXIMO JOGO & TRENDS (Show for placar and bolao) */}
+        {(activeTab === "placar" || activeTab === "bolao") && (
           <div className="space-y-4">
             <div className="flex items-center justify-between px-1">
               <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                {searchTerm ? `Resultados para "${searchTerm}"` : "Jogos do Brasil - 1ª Fase"}
+                {searchTerm ? `Resultados para "${searchTerm}"` : activeTab === "bolao" ? "Todos os Jogos da Copa" : "Jogos do Brasil - 1ª Fase"}
               </h3>
               {!searchTerm && <Badge variant="secondary" className="text-[9px] font-bold bg-primary/10 text-primary border-none">{jogos.length} JOGOS</Badge>}
             </div>
