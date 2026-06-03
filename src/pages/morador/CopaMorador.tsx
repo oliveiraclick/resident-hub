@@ -161,9 +161,9 @@ const CopaMorador = () => {
             <div className="flex flex-col">
               <div className="flex items-center justify-between mb-1">
                 <p className="text-[10px] font-black uppercase tracking-widest opacity-80">Prêmio Acumulado</p>
-                <div className="flex items-center gap-2 bg-white text-warning px-3 py-1 rounded-xl shadow-sm">
-                  <Users size={16} className="font-bold" />
-                  <span className="text-sm font-black">{betCounts[activeTab as keyof typeof betCounts]} {betCounts[activeTab as keyof typeof betCounts] === 1 ? 'Pessoa' : 'Pessoas'}</span>
+                <div className="flex items-center gap-1.5 bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full border border-white/30">
+                  <Users size={14} className="opacity-90" />
+                  <span className="text-[11px] font-black">{betCounts[activeTab as keyof typeof betCounts]} {betCounts[activeTab as keyof typeof betCounts] === 1 ? 'Pessoa' : 'Pessoas'}</span>
                 </div>
               </div>
               <h2 className="text-4xl font-black">
