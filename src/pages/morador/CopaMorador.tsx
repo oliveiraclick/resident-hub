@@ -16,8 +16,8 @@ const CopaMorador = () => {
   const [jogos, setJogos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isCopaActive, setIsCopaActive] = useState(false);
-   const [prizes, setPrizes] = useState({ placar: 0, artilheiro: 0, campeao: 0, artilheiro_brasil: 0 });
-  const [betCounts, setBetCounts] = useState({ placar: 0, artilheiro: 0, campeao: 0, artilheiro_brasil: 0 });
+   const [prizes, setPrizes] = useState({ placar: 0, campeao: 0, bolao: 0 });
+  const [betCounts, setBetCounts] = useState({ placar: 0, campeao: 0, bolao: 0 });
   const [activeTab, setActiveTab] = useState("placar");
   const [stats, setStats] = useState({ home: 85, draw: 10, away: 5 });
   const [selectedJogo, setSelectedJogo] = useState<any>(null);
@@ -46,13 +46,12 @@ const CopaMorador = () => {
       .select("valor_pago, tipo, user_id")
       .eq("status_pagamento", "pago");
     
-    const pools = { placar: 0, artilheiro: 0, campeao: 0, artilheiro_brasil: 0 };
-    const counts = { placar: 0, artilheiro: 0, campeao: 0, artilheiro_brasil: 0 };
+    const pools = { placar: 0, campeao: 0, bolao: 0 };
+    const counts = { placar: 0, campeao: 0, bolao: 0 };
     const uniqueUsersByType: Record<string, Set<string>> = {
       placar: new Set(),
-      artilheiro: new Set(),
       campeao: new Set(),
-      artilheiro_brasil: new Set()
+      bolao: new Set()
     };
 
     (paidBets || []).forEach((curr: any) => {
@@ -168,12 +167,11 @@ const CopaMorador = () => {
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 gap-2">
               {[
                 { id: 'placar', label: 'JOGO' },
-                { id: 'artilheiro', label: 'ARTILHEIRO' },
                 { id: 'campeao', label: 'CAMPEÃO' },
-                { id: 'artilheiro_brasil', label: 'ARTILHEIRO BR' }
+                { id: 'bolao', label: 'BOLÃO' }
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -192,8 +190,8 @@ const CopaMorador = () => {
           </div>
         </div>
 
-        {/* SPECIAL BETS (Campeão / Artilheiro Brasil) */}
-        {(activeTab === "campeao" || activeTab === "artilheiro_brasil") && (
+        {/* SPECIAL BETS (Campeão / Bolão) */}
+        {(activeTab === "campeao" || activeTab === "bolao") && (
           <Card className="rounded-[32px] border-none shadow-lg bg-gradient-to-br from-primary/10 to-primary/5 p-6 border border-primary/20 animate-in zoom-in-95 duration-300">
             <div className="flex flex-col items-center text-center space-y-4">
               <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center">
@@ -201,12 +199,12 @@ const CopaMorador = () => {
               </div>
               <div className="space-y-1">
                 <h3 className="text-lg font-black uppercase italic">
-                  Palpite de Longo Prazo
+                  {activeTab === "campeao" ? "Palpite de Longo Prazo" : "Bolão O Morador"}
                 </h3>
                 <p className="text-xs text-muted-foreground font-medium">
                   {activeTab === "campeao" 
                     ? "Quem levantará a taça em 19 de julho de 2026?" 
-                    : "Quem será o maior goleador da nossa Seleção na Copa?"}
+                    : "Participe do nosso bolão exclusivo e concorra ao prêmio acumulado!"}
                 </p>
               </div>
               <Button 
@@ -219,8 +217,8 @@ const CopaMorador = () => {
           </Card>
         )}
 
-        {/* BUSCA DE JOGOS (Only show for placar/artilheiro per game) */}
-        {(activeTab === "placar" || activeTab === "artilheiro") && (
+        {/* BUSCA DE JOGOS (Only show for placar) */}
+        {(activeTab === "placar") && (
           <div className="relative">
             <Input 
               placeholder="Buscar país (Ex: Brasil)..." 
@@ -232,8 +230,8 @@ const CopaMorador = () => {
           </div>
         )}
 
-        {/* PROXIMO JOGO & TRENDS (Only show for placar/artilheiro per game) */}
-        {(activeTab === "placar" || activeTab === "artilheiro") && (
+        {/* PROXIMO JOGO & TRENDS (Only show for placar) */}
+        {(activeTab === "placar") && (
           <div className="space-y-4">
             <div className="flex items-center justify-between px-1">
               <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
