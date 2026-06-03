@@ -23,6 +23,8 @@ const CopaMorador = () => {
   const [isBetModalOpen, setIsBetModalOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(6);
 
+  const [ranking, setRanking] = useState([]);
+
   useEffect(() => {
     // Theme is applied via useAppTheme hook in App.tsx which adds class to body
     setIsCopaActive(document.body.classList.contains("theme-brasil"));
@@ -50,6 +52,40 @@ const CopaMorador = () => {
     }, { placar: 0, artilheiro: 0, campeao: 0, artilheiro_brasil: 0 });
 
     setPrizes(pools);
+
+    // Fetch ranking data
+    const { data: rankingData } = await supabase
+      .from("copa_palpites")
+      .select(`
+        user_id,
+        profiles (
+          nome,
+          rua,
+          numero_casa
+        ),
+        pontos
+      `)
+      .order('pontos', { ascending: false });
+
+    // Group by user and sum points
+    const userRanking = (rankingData || []).reduce((acc: any, curr: any) => {
+      const userId = curr.user_id;
+      if (!acc[userId]) {
+        acc[userId] = {
+          nome: curr.profiles?.nome || "Morador",
+          localizacao: curr.profiles?.rua ? `${curr.profiles.rua}${curr.profiles.numero_casa ? `, ${curr.profiles.numero_casa}` : ''}` : "Condomínio",
+          pontos: 0
+        };
+      }
+      acc[userId].pontos += curr.pontos || 0;
+      return acc;
+    }, {});
+
+    const sortedRanking = Object.values(userRanking)
+      .sort((a: any, b: any) => b.pontos - a.pontos)
+      .slice(0, 3);
+
+    setRanking(sortedRanking);
   };
 
   useEffect(() => {
