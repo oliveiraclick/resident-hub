@@ -81,8 +81,8 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
       return;
     }
 
-    if (betType === 'artilheiro' && !artilheiro.trim()) {
-      toast.error("Informe o nome do artilheiro.");
+    if (betType === 'campeao' && !artilheiro.trim()) {
+      toast.error("Informe a seleção campeã.");
       return;
     }
 
