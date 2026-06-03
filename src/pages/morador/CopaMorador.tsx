@@ -128,10 +128,6 @@ const CopaMorador = () => {
               ))}
             </div>
 
-            <div className="flex items-center gap-2 bg-black/20 w-fit px-3 py-1 rounded-full text-[10px] font-bold">
-              <ShieldCheck size={12} />
-              75% DO VALOR {activeTab.replace('_', ' ').toUpperCase()}
-            </div>
           </div>
         </div>
 
