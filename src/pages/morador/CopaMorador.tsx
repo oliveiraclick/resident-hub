@@ -193,11 +193,7 @@ const CopaMorador = () => {
         const canBet = diffMinutes > 20;
         
         const userBetsForGame = meusPalpites.filter(p => p.jogo_id === jogo.id && p.tipo === activeTab);
-        const meuPalpite = userBetsForGame.sort((a, b) => {
-          const order = { pago: 0, pendente: 1 };
-          return (order[a.status_pagamento as keyof typeof order] ?? 2) - (order[b.status_pagamento as keyof typeof order] ?? 2);
-        })[0];
-        const hasBet = !!meuPalpite;
+        const hasBet = userBetsForGame.length > 0;
 
         return (
           <div key={jogo.id} className="bg-[#1a2e25] rounded-[32px] border border-white/5 overflow-hidden shadow-xl transition-all hover:border-primary/20">
@@ -237,31 +233,33 @@ const CopaMorador = () => {
                   </div>
                   <span className="text-[12px] font-black uppercase tracking-tight text-white leading-none">{jogo.time_away}</span>
                 </div>
-          </div>
+              </div>
 
-              {hasBet ? (
-                <div className="w-full p-4 bg-primary/10 rounded-[24px] border border-primary/20 flex flex-col items-center gap-2">
+              {userBetsForGame.map((palpite, idx) => (
+                <div key={palpite.id} className="w-full p-4 bg-primary/10 rounded-[24px] border border-primary/20 flex flex-col items-center gap-2 mb-3 last:mb-0">
                   <p className="text-[10px] font-black uppercase text-primary italic tracking-widest flex items-center gap-2">
-                    <ShieldCheck size={14} /> Seu Palpite Enviado
+                    <ShieldCheck size={14} /> Seu Palpite {userBetsForGame.length > 1 ? `#${idx + 1}` : 'Enviado'}
                   </p>
                   <div className="flex items-center gap-4">
                     <div className="text-xl font-black text-white">
-                      {meuPalpite.tipo === 'placar' ? (meuPalpite.palpite_valor?.h ?? '-') : meuPalpite.tipo === 'campeao' ? (meuPalpite.palpite_valor?.campeao ?? '-') : '-'}
+                      {palpite.tipo === 'placar' ? (palpite.palpite_valor?.h ?? '-') : palpite.tipo === 'campeao' ? (palpite.palpite_valor?.campeao ?? '-') : '-'}
                     </div>
-                    {meuPalpite.tipo === 'placar' && (
+                    {palpite.tipo === 'placar' && (
                       <>
                         <div className="text-[10px] font-black text-muted-foreground italic">X</div>
-                        <div className="text-xl font-black text-white">{meuPalpite.palpite_valor?.a ?? '-'}</div>
+                        <div className="text-xl font-black text-white">{palpite.palpite_valor?.a ?? '-'}</div>
                       </>
                     )}
                   </div>
-                  {meuPalpite.status_pagamento === 'pendente' ? (
+                  {palpite.status_pagamento === 'pendente' ? (
                     <Badge variant="outline" className="text-[8px] border-yellow-500/50 text-yellow-500 bg-yellow-500/5 uppercase font-black italic">AGUARDANDO VALIDAÇÃO</Badge>
-                  ) : meuPalpite.status_pagamento === 'pago' ? (
+                  ) : palpite.status_pagamento === 'pago' ? (
                     <Badge className="text-[8px] bg-success/20 text-success border-success/30 uppercase font-black italic">PALPITE VALIDADO</Badge>
                   ) : null}
                 </div>
-              ) : canBet ? (
+              ))}
+
+              {!hasBet && canBet && (
                 <div className="flex flex-col gap-3">
                   <Button 
                     onClick={() => handleBet(jogo, activeTab)}
@@ -270,7 +268,9 @@ const CopaMorador = () => {
                     Enviar Meu Palpite <ChevronRight size={18} />
                   </Button>
                 </div>
-              ) : (
+              )}
+
+              {!hasBet && !canBet && (
                 <div className="w-full py-4 bg-white/[0.02] rounded-3xl text-center border border-white/5">
                   <p className="text-[10px] font-black uppercase text-muted-foreground/30 italic tracking-widest">Apostas encerradas</p>
                 </div>
