@@ -318,74 +318,96 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-4">
-                <div className="bg-card p-5 rounded-[32px] border border-white/5 space-y-4 shadow-lg">
-                  <div className="flex justify-between items-center px-1">
-                    <span className="text-[10px] font-black uppercase text-primary tracking-widest">Pacote Bronze</span>
-                    <span className="text-lg font-black italic">R$ 60</span>
+              <div className="grid grid-cols-1 gap-6">
+                {/* Pacote 60 */}
+                <div className="bg-white/5 rounded-[32px] border border-white/10 p-4 space-y-4">
+                  <div className="flex justify-between items-center px-2">
+                    <span className="text-[11px] font-black uppercase text-primary tracking-widest">Pacote Bronze</span>
+                    <span className="text-xl font-black italic">R$ 60</span>
                   </div>
-                  <div className="bg-white p-6 rounded-3xl flex flex-col items-center gap-3">
-                    <img 
-                      ref={imgRef60} 
-                      src="/pix-60.png" 
-                      alt="PIX 60" 
-                      className="w-56 h-56 mx-auto block bg-white p-2 rounded-xl object-contain" 
-                      onLoad={() => { if(imgRef60.current) imgRef60.current.style.opacity = '1'; }} 
-                      onError={(e) => {
-                        const img = e.currentTarget;
-                        img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=224x224&data=' + encodeURIComponent("00020126810014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0234Bolão Copa do Mundo O Moraror R$60520400005303986540560.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO621405102R7kwQAjSC6304588E");
-                      }}
-                    />
-                    <div className="bg-muted/50 p-4 rounded-2xl space-y-2 w-full">
+                  
+                  <div className="bg-white rounded-2xl p-4 flex flex-col items-center gap-4">
+                    <div className="relative">
+                      <img 
+                        ref={imgRef60} 
+                        src="/pix-60.png" 
+                        alt="PIX 60" 
+                        className="w-44 h-44 block bg-white object-contain" 
+                        onError={(e) => {
+                          const img = e.currentTarget;
+                          img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent("00020126810014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0234Bolão Copa do Mundo O Moraror R$60520400005303986540560.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO621405102R7kwQAjSC6304588E");
+                        }}
+                      />
+                    </div>
+
+                    <div className="w-full space-y-2">
                       <p className="text-[9px] font-black uppercase text-muted-foreground tracking-widest text-center">Copia e Cola (R$ 60)</p>
-                      <div className="flex items-center gap-2 bg-background p-3 rounded-xl border border-border">
-                        <p className="text-[10px] font-bold truncate flex-1">00020126810014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0234Bolão Copa do Mundo O Moraror R$60520400005303986540560.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO621405102R7kwQAjSC6304588E</p>
-                        <Button size="icon" variant="ghost" className="h-8 w-8 hover:bg-primary/10 transition-colors" onClick={() => copyPix("00020126810014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0234Bolão Copa do Mundo O Moraror R$60520400005303986540560.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO621405102R7kwQAjSC6304588E")}>
+                      <div className="flex items-center gap-2 bg-slate-100 p-2 rounded-xl border border-slate-200">
+                        <p className="text-[10px] font-bold truncate flex-1 text-slate-900">00020126810014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0234Bolão Copa do Mundo O Moraror R$60520400005303986540560.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO621405102R7kwQAjSC6304588E</p>
+                        <Button 
+                          size="icon" 
+                          variant="ghost" 
+                          className="h-8 w-8 hover:bg-primary/10 transition-colors shrink-0" 
+                          onClick={() => copyPix("00020126810014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0234Bolão Copa do Mundo O Moraror R$60520400005303986540560.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO621405102R7kwQAjSC6304588E")}
+                        >
                           <Copy size={16} className="text-primary" />
                         </Button>
                       </div>
                     </div>
+
                     <Button 
                       onClick={() => handleMultiPixSelect(60)}
-                      className="w-full h-10 rounded-xl bg-foreground text-background font-black text-[10px] uppercase tracking-widest"
+                      className="w-full h-11 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-black text-[11px] uppercase tracking-widest transition-all active:scale-[0.98]"
                     >
-                      Já paguei R$ 60 <ChevronRight size={14} />
+                      Já paguei R$ 60 <ChevronRight size={14} className="ml-1" />
                     </Button>
                   </div>
                 </div>
 
-                <div className="bg-card p-5 rounded-[32px] border-2 border-primary/20 space-y-4 relative overflow-hidden group shadow-lg">
+                {/* Pacote 100 */}
+                <div className="bg-primary/5 rounded-[32px] border-2 border-primary/20 p-4 space-y-4 relative overflow-hidden shadow-[0_0_20px_rgba(34,197,94,0.1)]">
                   <div className="absolute top-0 right-0 p-2">
-                    <Zap size={16} className="text-primary animate-pulse" />
+                    <Zap size={14} className="text-primary animate-pulse" />
                   </div>
-                  <div className="flex justify-between items-center px-1">
-                    <span className="text-[10px] font-black uppercase text-primary tracking-widest">Pacote Ouro</span>
-                    <span className="text-lg font-black italic">R$ 100</span>
+                  <div className="flex justify-between items-center px-2">
+                    <span className="text-[11px] font-black uppercase text-primary tracking-widest">Pacote Ouro</span>
+                    <span className="text-xl font-black italic">R$ 100</span>
                   </div>
-                  <div className="bg-white p-6 rounded-3xl flex flex-col items-center gap-3">
-                    <img 
-                      src="/pix-100.png" 
-                      alt="PIX 100" 
-                      className="w-56 h-56 mx-auto block bg-white p-2 rounded-xl object-contain" 
-                      onError={(e) => {
-                        const img = e.currentTarget;
-                        img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=224x224&data=' + encodeURIComponent("00020126820014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0235Bolão Copa do Mundo O Morador R$1005204000053039865406100.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO62140510OiJEMerkG0630404B8");
-                      }}
-                    />
-                    <div className="bg-muted/50 p-4 rounded-2xl space-y-2 w-full text-center">
-                      <p className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">Copia e Cola (R$ 100)</p>
-                      <div className="flex items-center gap-2 bg-background p-3 rounded-xl border border-border">
-                        <p className="text-[10px] font-bold truncate flex-1">00020126820014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0235Bolão Copa do Mundo O Morador R$1005204000053039865406100.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO62140510OiJEMerkG0630404B8</p>
-                        <Button size="icon" variant="ghost" className="h-8 w-8 hover:bg-primary/10 transition-colors" onClick={() => copyPix("00020126820014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0235Bolão Copa do Mundo O Morador R$1005204000053039865406100.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO62140510OiJEMerkG0630404B8")}>
+                  
+                  <div className="bg-white rounded-2xl p-4 flex flex-col items-center gap-4">
+                    <div className="relative">
+                      <img 
+                        ref={imgRef100} 
+                        src="/pix-100.png" 
+                        alt="PIX 100" 
+                        className="w-44 h-44 block bg-white object-contain" 
+                        onError={(e) => {
+                          const img = e.currentTarget;
+                          img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent("00020126820014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0235Bolão Copa do Mundo O Morador R$1005204000053039865406100.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO62140510OiJEMerkG0630404B8");
+                        }}
+                      />
+                    </div>
+
+                    <div className="w-full space-y-2">
+                      <p className="text-[9px] font-black uppercase text-muted-foreground tracking-widest text-center">Copia e Cola (R$ 100)</p>
+                      <div className="flex items-center gap-2 bg-slate-100 p-2 rounded-xl border border-slate-200">
+                        <p className="text-[10px] font-bold truncate flex-1 text-slate-900">00020126820014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0235Bolão Copa do Mundo O Morador R$1005204000053039865406100.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO62140510OiJEMerkG0630404B8</p>
+                        <Button 
+                          size="icon" 
+                          variant="ghost" 
+                          className="h-8 w-8 hover:bg-primary/10 transition-colors shrink-0" 
+                          onClick={() => copyPix("00020126820014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0235Bolão Copa do Mundo O Morador R$1005204000053039865406100.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO62140510OiJEMerkG0630404B8")}
+                        >
                           <Copy size={16} className="text-primary" />
                         </Button>
                       </div>
                     </div>
+
                     <Button 
                       onClick={() => handleMultiPixSelect(100)}
-                      className="w-full h-10 rounded-xl bg-primary text-white font-black text-[10px] uppercase tracking-widest"
+                      className="w-full h-11 rounded-xl bg-primary hover:bg-primary/90 text-white font-black text-[11px] uppercase tracking-widest transition-all active:scale-[0.98]"
                     >
-                      Já paguei R$ 100 <ChevronRight size={14} />
+                      Já paguei R$ 100 <ChevronRight size={14} className="ml-1" />
                     </Button>
                   </div>
                 </div>
@@ -402,7 +424,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
               onClick={handleClose}
               className="w-full h-12 rounded-2xl bg-muted text-foreground font-black uppercase tracking-widest text-[11px]"
             >
-              Já realizei o pagamento
+              FECHAR E VER MEUS PALPITES
             </Button>
           </div>
         )}
