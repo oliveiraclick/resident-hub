@@ -268,7 +268,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
         )}
 
         {showPix && (
-          <div className="p-6 text-center space-y-6 max-h-[85vh] overflow-y-auto no-scrollbar">
+          <div className="p-6 text-center space-y-6 overflow-y-auto no-scrollbar flex-1">
             <div className="flex flex-col items-center gap-2">
               <div className="h-16 w-16 bg-success/10 rounded-full flex items-center justify-center mb-2">
                 <CheckCircle2 size={32} className="text-success" />
