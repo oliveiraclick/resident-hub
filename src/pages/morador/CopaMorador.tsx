@@ -34,7 +34,21 @@ const CopaMorador = () => {
     setIsCopaActive(document.body.classList.contains("theme-brasil"));
   }, []);
 
+  const fetchSelecoes = async () => {
+    setIsLoadingSelecoes(true);
+    const { data, error } = await supabase
+      .from("copa_selecoes")
+      .select("*")
+      .order("nome");
+    
+    if (!error && data) {
+      setSelecoesCopa(data);
+    }
+    setIsLoadingSelecoes(false);
+  };
+
   const fetchData = async () => {
+    fetchSelecoes();
     if (user) {
       const { data: profile } = await supabase
         .from("profiles")
