@@ -163,6 +163,73 @@ const CopaMorador = () => {
     return isBrazilGame && matchesSearch;
   });
 
+  const GameList = ({ items }: { items: any[] }) => (
+    <div className="space-y-5">
+      {items.map((jogo: any) => {
+        const dataJogo = new Date(jogo.data_jogo);
+        const now = new Date();
+        const diffMinutes = (dataJogo.getTime() - now.getTime()) / (1000 * 60);
+        const canBet = diffMinutes > 20;
+
+        return (
+          <div key={jogo.id} className="bg-[#1a2e25] rounded-[32px] border border-white/5 overflow-hidden shadow-xl transition-all hover:border-primary/20">
+            <div className="p-6 space-y-5">
+              <div className="flex justify-between items-center text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest">
+                <span className="flex items-center gap-2 italic">
+                  <TrendingUp size={12} className="text-primary" /> {jogo.rodada}
+                </span>
+                <span className="bg-white/5 px-2.5 py-1 rounded-lg">
+                  {dataJogo.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} • {dataJogo.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between px-1">
+                <div className="flex flex-col items-center gap-3 flex-1">
+                  <div className="w-16 h-12 bg-white/5 rounded-xl flex items-center justify-center overflow-hidden border border-white/10 shadow-inner">
+                    <span className="text-xl font-black opacity-30">{jogo.time_home.substring(0, 2).toUpperCase()}</span>
+                  </div>
+                  <span className="text-[12px] font-black uppercase tracking-tight text-white leading-none">{jogo.time_home}</span>
+                </div>
+
+                <div className="flex flex-col items-center gap-1 px-4">
+                  <span className="text-[10px] font-black text-muted-foreground/30 italic tracking-tighter">VS</span>
+                </div>
+
+                <div className="flex flex-col items-center gap-3 flex-1">
+                  <div className="w-16 h-12 bg-white/5 rounded-xl flex items-center justify-center overflow-hidden border border-white/10 shadow-inner">
+                    <span className="text-xl font-black opacity-30">{jogo.time_away.substring(0, 2).toUpperCase()}</span>
+                  </div>
+                  <span className="text-[12px] font-black uppercase tracking-tight text-white leading-none">{jogo.time_away}</span>
+                </div>
+
+                <div className="flex flex-col items-center justify-center ml-4 pl-4 border-l border-white/5 min-w-[70px]">
+                  <p className="text-[8px] font-black text-muted-foreground/40 uppercase mb-1.5 tracking-widest">Status</p>
+                  <div className={`w-11 h-11 rounded-2xl flex items-center justify-center ${canBet ? 'bg-white/5 border border-white/10 shadow-lg' : 'bg-primary/20 border border-primary/30 shadow-lg shadow-primary/10'}`}>
+                    {canBet ? <div className="w-2 h-2 rounded-full bg-muted-foreground/20" /> : <ShieldCheck size={20} className="text-primary" />}
+                  </div>
+                  <p className="text-[8px] font-black mt-2 uppercase text-muted-foreground/40 tracking-tight">{canBet ? 'Aberto' : 'Encerrado'}</p>
+                </div>
+              </div>
+
+              {canBet ? (
+                <Button 
+                  onClick={() => handleBet(jogo, activeTab)}
+                  className="w-full rounded-2xl h-14 bg-primary hover:bg-primary/90 text-white font-black text-[12px] uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center justify-center gap-3 active:scale-[0.98] transition-all"
+                >
+                  Enviar Meu Palpite <ChevronRight size={18} />
+                </Button>
+              ) : (
+                <div className="w-full py-4 bg-white/[0.02] rounded-3xl text-center border border-white/5">
+                  <p className="text-[10px] font-black uppercase text-muted-foreground/30 italic tracking-widest">Apostas encerradas</p>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+
   const paginatedJogos = filteredJogos.slice(0, visibleCount);
 
   if (!isCopaActive) {
