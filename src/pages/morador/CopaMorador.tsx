@@ -365,6 +365,7 @@ const CopaMorador = () => {
         {/* RANKING GLOBAL */}
         {activeTab === "bolao" && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex items-center justify-between px-1">
               <h3 className="text-[11px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                 <Trophy size={16} className="text-warning" /> Bolão Geral
