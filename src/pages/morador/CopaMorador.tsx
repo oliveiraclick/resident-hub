@@ -203,11 +203,40 @@ const CopaMorador = () => {
         </div>
 
 
-        {/* FILTRO DE STATUS */}
-        <div className="flex items-center justify-center gap-4 bg-[#1a2e25] p-1.5 rounded-2xl border border-white/5">
-          <button className="flex-1 py-3 text-[11px] font-black uppercase bg-primary/20 text-primary rounded-[14px]">Próximos</button>
-          <button className="flex-1 py-3 text-[11px] font-black uppercase text-muted-foreground hover:text-white transition-colors">Finalizados</button>
-        </div>
+        {/* LISTAGEM DE SELEÇÕES (CAMPEÃO) */}
+        {activeTab === "campeao" && (
+          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="flex flex-col gap-1 px-1">
+              <h3 className="text-[11px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                <Trophy size={14} className="text-primary" /> Escolha seu Campeão
+              </h3>
+              <p className="text-[9px] text-muted-foreground/60 uppercase font-bold italic">Selecione o país que levantará a taça</p>
+            </div>
+            
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {SELECOES_COPA.map((selecao) => (
+                <button
+                  key={selecao}
+                  onClick={() => handleSelectCampeao(selecao)}
+                  className="bg-[#1a2e25] border border-white/5 rounded-3xl p-4 flex flex-col items-center justify-center gap-3 transition-all hover:border-primary/40 hover:scale-[1.02] active:scale-[0.98] group shadow-lg"
+                >
+                  <div className="w-12 h-8 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden border border-white/10 group-hover:bg-primary/10 transition-colors">
+                    <span className="text-sm font-black opacity-30 group-hover:opacity-70">{selecao.substring(0, 2).toUpperCase()}</span>
+                  </div>
+                  <span className="text-[11px] font-black uppercase tracking-tight text-white group-hover:text-primary transition-colors">{selecao}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* FILTRO DE STATUS (Apenas para JOGOS) */}
+        {activeTab === "placar" && (
+          <div className="flex items-center justify-center gap-4 bg-[#1a2e25] p-1.5 rounded-2xl border border-white/5">
+            <button className="flex-1 py-3 text-[11px] font-black uppercase bg-primary/20 text-primary rounded-[14px]">Próximos</button>
+            <button className="flex-1 py-3 text-[11px] font-black uppercase text-muted-foreground hover:text-white transition-colors">Finalizados</button>
+          </div>
+        )}
 
         {/* SELETOR DE MODALIDADE */}
         <div className="grid grid-cols-3 gap-2.5">
