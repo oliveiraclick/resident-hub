@@ -152,33 +152,63 @@ const CopaMorador = () => {
           <p className="text-xs text-muted-foreground font-medium">Faça seus palpites e responda perguntas</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-[#1a2e25] border border-primary/20 rounded-3xl p-4 flex flex-col justify-between min-h-[100px] shadow-lg shadow-black/20">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-primary/80">Prêmio Acumulado</p>
-              <h2 className="text-2xl font-black text-white mt-1">
-                R$ {prizes[activeTab as keyof typeof prizes].toFixed(2)}
-              </h2>
-            </div>
-            <div className="flex items-center gap-1.5 text-primary/60">
-              <Users size={12} />
-              <span className="text-[10px] font-black">{betCounts[activeTab as keyof typeof betCounts]} {betCounts[activeTab as keyof typeof betCounts] === 1 ? 'Pessoa' : 'Pessoas'}</span>
-            </div>
+        {/* BIG PRIZE COUNTER - SEPARATED BY BET TYPE */}
+        <div className="relative overflow-hidden bg-gradient-to-br from-warning to-warning/70 rounded-[32px] p-6 text-white shadow-lg">
+          <div className="absolute top-0 right-0 p-4 opacity-20">
+            <Trophy size={80} />
           </div>
-
-          <div className="bg-[#1a2e25] border border-primary/20 rounded-3xl p-4 flex flex-col justify-between min-h-[100px] shadow-lg shadow-black/20">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-primary/80">Meu Saldo</p>
-              <h2 className="text-2xl font-black text-white mt-1">
-                R$ {saldo.toFixed(2)}
-              </h2>
+          
+          <div className="relative z-10 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex flex-col">
+                <p className="text-[10px] font-black uppercase tracking-widest opacity-80">Prêmio Acumulado</p>
+                <h2 className="text-4xl font-black">
+                  R$ {prizes[activeTab as keyof typeof prizes].toFixed(2)}
+                </h2>
+              </div>
+              <div className="text-right">
+                <p className="text-[10px] font-black uppercase tracking-widest opacity-80">Meu Saldo</p>
+                <div className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-xl border border-white/30">
+                  <span className="text-xl font-black">R$ {saldo.toFixed(2)}</span>
+                </div>
+              </div>
             </div>
-            <button 
-              onClick={() => toast.info("Para adicionar saldo, entre em contato com o administrador.")}
-              className="text-[10px] font-black text-primary hover:text-primary/80 flex items-center gap-1 transition-colors"
-            >
-              + RECARREGAR
-            </button>
+            
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-1.5 bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full border border-white/30">
+                <Users size={14} className="opacity-90" />
+                <span className="text-[11px] font-black">{betCounts[activeTab as keyof typeof betCounts]} {betCounts[activeTab as keyof typeof betCounts] === 1 ? 'Pessoa' : 'Pessoas'}</span>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="h-8 rounded-xl bg-white text-warning border-none font-black text-[10px] uppercase shadow-sm"
+                onClick={() => toast.info("Para adicionar saldo, entre em contato com o administrador.")}
+              >
+                + ADICIONAR CRÉDITO
+              </Button>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { id: 'placar', label: 'JOGOS BRASIL' },
+                { id: 'campeao', label: 'CAMPEÃO' },
+                { id: 'bolao', label: 'BOLÃO' }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`py-2 px-3 rounded-2xl text-[10px] font-black uppercase transition-all border ${
+                    activeTab === tab.id 
+                      ? 'bg-white text-warning border-white shadow-md' 
+                      : 'bg-black/10 text-white border-white/20 hover:bg-black/20'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
           </div>
         </div>
 
