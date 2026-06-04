@@ -42,6 +42,8 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
       fetchPixConfig();
       setShowPix(false);
       setShowOptions(false);
+      setHScore("");
+      setAScore("");
       if (forceShowMultiplas) {
         setBetOption('multiplas');
         setShowPix(true);

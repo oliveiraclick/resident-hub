@@ -250,17 +250,30 @@ const CopaMorador = () => {
                   )}
                 </div>
               ) : canBet ? (
-                <Button 
-                  onClick={() => handleBet(jogo, activeTab)}
-                  className="w-full rounded-2xl h-14 bg-primary hover:bg-primary/90 text-white font-black text-[12px] uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center justify-center gap-3 active:scale-[0.98] transition-all"
-                >
-                  Enviar Meu Palpite <ChevronRight size={18} />
-                </Button>
+                <div className="flex flex-col gap-3">
+                  <Button 
+                    onClick={() => handleBet(jogo, activeTab)}
+                    className="w-full rounded-2xl h-14 bg-primary hover:bg-primary/90 text-white font-black text-[12px] uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center justify-center gap-3 active:scale-[0.98] transition-all"
+                  >
+                    Enviar Meu Palpite <ChevronRight size={18} />
+                  </Button>
+                </div>
               ) : (
                 <div className="w-full py-4 bg-white/[0.02] rounded-3xl text-center border border-white/5">
                   <p className="text-[10px] font-black uppercase text-muted-foreground/30 italic tracking-widest">Apostas encerradas</p>
                 </div>
-              )}
+              )
+            }
+
+            {hasBet && canBet && (
+              <Button 
+                variant="ghost"
+                onClick={() => handleBet(jogo, activeTab)}
+                className="w-full h-12 text-[10px] font-black uppercase tracking-widest text-primary/60 hover:text-primary hover:bg-primary/5 rounded-2xl border border-dashed border-primary/20 mt-4"
+              >
+                Enviar palpite de novo
+              </Button>
+            )}
             </div>
           </div>
         );
