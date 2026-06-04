@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Trophy, Send, QrCode, Copy, CheckCircle2 } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
+
 
 interface BetModalProps {
   isOpen: boolean;
