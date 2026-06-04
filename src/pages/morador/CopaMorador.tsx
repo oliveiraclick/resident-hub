@@ -18,6 +18,7 @@ interface SelecaoCopa {
 const CopaMorador = () => {
   const { user } = useAuth();
   const [jogos, setJogos] = useState([]);
+  const [meusPalpites, setMeusPalpites] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isCopaActive, setIsCopaActive] = useState(false);
   const [prizes, setPrizes] = useState({ placar: 0, campeao: 0, bolao: 0 });
@@ -58,6 +59,13 @@ const CopaMorador = () => {
         .eq("id", user.id)
         .single();
       if (profile) setSaldo(Number(profile.saldo) || 0);
+
+      const { data: userBets } = await supabase
+        .from("copa_palpites")
+        .select("*")
+        .eq("user_id", user.id);
+      
+      if (userBets) setMeusPalpites(userBets);
     }
 
     const { data: jogosData } = await supabase
@@ -181,6 +189,9 @@ const CopaMorador = () => {
         const now = new Date();
         const diffMinutes = (dataJogo.getTime() - now.getTime()) / (1000 * 60);
         const canBet = diffMinutes > 20;
+        
+        const meuPalpite = meusPalpites.find(p => p.jogo_id === jogo.id && p.tipo === activeTab);
+        const hasBet = !!meuPalpite;
 
         return (
           <div key={jogo.id} className="bg-[#1a2e25] rounded-[32px] border border-white/5 overflow-hidden shadow-xl transition-all hover:border-primary/20">
@@ -222,7 +233,21 @@ const CopaMorador = () => {
                 </div>
           </div>
 
-              {canBet ? (
+              {hasBet ? (
+                <div className="w-full p-4 bg-primary/10 rounded-[24px] border border-primary/20 flex flex-col items-center gap-2">
+                  <p className="text-[10px] font-black uppercase text-primary italic tracking-widest flex items-center gap-2">
+                    <ShieldCheck size={14} /> Seu Palpite Enviado
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <div className="text-xl font-black text-white">{meuPalpite.palpite_valor?.h ?? '-'}</div>
+                    <div className="text-[10px] font-black text-muted-foreground italic">X</div>
+                    <div className="text-xl font-black text-white">{meuPalpite.palpite_valor?.a ?? '-'}</div>
+                  </div>
+                  {meuPalpite.status_pagamento === 'pendente' && (
+                    <Badge variant="outline" className="text-[8px] border-yellow-500/50 text-yellow-500 bg-yellow-500/5">AGUARDANDO VALIDAÇÃO</Badge>
+                  )}
+                </div>
+              ) : canBet ? (
                 <Button 
                   onClick={() => handleBet(jogo, activeTab)}
                   className="w-full rounded-2xl h-14 bg-primary hover:bg-primary/90 text-white font-black text-[12px] uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center justify-center gap-3 active:scale-[0.98] transition-all"
