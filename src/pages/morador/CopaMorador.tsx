@@ -241,9 +241,15 @@ const CopaMorador = () => {
                     <ShieldCheck size={14} /> Seu Palpite Enviado
                   </p>
                   <div className="flex items-center gap-4">
-                    <div className="text-xl font-black text-white">{meuPalpite.palpite_valor?.h ?? '-'}</div>
-                    <div className="text-[10px] font-black text-muted-foreground italic">X</div>
-                    <div className="text-xl font-black text-white">{meuPalpite.palpite_valor?.a ?? '-'}</div>
+                    <div className="text-xl font-black text-white">
+                      {meuPalpite.tipo === 'placar' ? (meuPalpite.palpite_valor?.h ?? '-') : meuPalpite.tipo === 'campeao' ? (meuPalpite.palpite_valor?.campeao ?? '-') : '-'}
+                    </div>
+                    {meuPalpite.tipo === 'placar' && (
+                      <>
+                        <div className="text-[10px] font-black text-muted-foreground italic">X</div>
+                        <div className="text-xl font-black text-white">{meuPalpite.palpite_valor?.a ?? '-'}</div>
+                      </>
+                    )}
                   </div>
                   {meuPalpite.status_pagamento === 'pendente' ? (
                     <Badge variant="outline" className="text-[8px] border-yellow-500/50 text-yellow-500 bg-yellow-500/5 uppercase font-black italic">AGUARDANDO VALIDAÇÃO</Badge>

@@ -196,9 +196,9 @@ const MasterCopaBets = () => {
                                 <span className="text-[10px] font-black text-primary uppercase italic">Palpite:</span>
                                 <div className="bg-white/5 px-2 py-0.5 rounded text-[10px] font-bold text-white">
                                   {tipo === 'placar' 
-                                    ? `${p.palpite_valor.h} x ${p.palpite_valor.a}` 
+                                    ? (p.palpite_valor?.h !== undefined ? `${p.palpite_valor.h} x ${p.palpite_valor.a}` : 'Pendente')
                                     : tipo === 'campeao' 
-                                    ? p.palpite_valor.campeao 
+                                    ? (typeof p.palpite_valor?.campeao === 'string' ? p.palpite_valor.campeao : 'Não definido')
                                     : tipo === 'bolao'
                                     ? "Participando do Bolão"
                                     : JSON.stringify(p.palpite_valor)}
