@@ -129,6 +129,12 @@ const CopaMorador = () => {
     setIsBetModalOpen(true);
   };
 
+  const handleSelectCampeao = (selecao: string) => {
+    setSelectedJogo({ id: 'campeao_seasonal', time_home: selecao, time_away: 'O MORADOR' });
+    setActiveTab('campeao');
+    setIsBetModalOpen(true);
+  };
+
   const handleBetSuccess = () => {
     fetchData();
   };
