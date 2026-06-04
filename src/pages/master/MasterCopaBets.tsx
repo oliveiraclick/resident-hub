@@ -53,6 +53,22 @@ const MasterCopaBets = () => {
     }
   };
 
+  const handleDeleteBet = async (betId: string) => {
+    if (!confirm("Tem certeza que deseja excluir este palpite permanentemente?")) return;
+
+    const { error } = await supabase
+      .from("copa_palpites")
+      .delete()
+      .eq("id", betId);
+
+    if (error) {
+      toast({ title: "Erro ao excluir", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Palpite excluído com sucesso!" });
+      fetchData();
+    }
+  };
+
   const handleUpdateResult = async (jogoId: string, h: number, a: number) => {
     const { error } = await supabase
       .from("copa_jogos")
@@ -113,30 +129,43 @@ const MasterCopaBets = () => {
             </CardHeader>
             <CardContent className="space-y-3">
               {palpites.filter(p => p.status_pagamento === "pendente").map((p: any) => (
-                <div key={p.id} className="flex items-center justify-between p-4 bg-muted/30 rounded-xl border border-border/50 shadow-sm transition-all hover:bg-muted/40">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-black text-foreground">{p.profiles?.nome || "Morador"}</p>
-                      <Badge variant="outline" className="text-[9px] font-bold h-4">
-                        R$ {Number(p.valor_pago).toFixed(2)}
-                      </Badge>
-                    </div>
-                    <div className="flex flex-col gap-0.5">
-                      <p className="text-[10px] text-muted-foreground font-black uppercase tracking-tight italic">
-                        {p.tipo === 'placar' ? 'Placar Exato' : p.tipo === 'artilheiro' ? 'Artilheiro' : p.tipo === 'campeao' ? 'Campeão' : 'Artilheiro BR'}
-                      </p>
-                      <p className="text-[9px] text-muted-foreground font-medium">
-                        {p.copa_jogos?.time_home} vs {p.copa_jogos?.time_away}
-                      </p>
+                <div key={p.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-muted/30 rounded-[24px] border border-border/50 shadow-sm transition-all hover:bg-muted/40 gap-4">
+                  <div className="flex flex-1 items-center gap-4 min-w-0 w-full">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="text-sm font-black text-foreground truncate">{p.profiles?.nome || "Morador"}</p>
+                        <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-black h-5 px-2 rounded-lg shrink-0">
+                          R$ {Number(p.valor_pago).toFixed(2)}
+                        </Badge>
+                      </div>
+                      <div className="flex flex-col gap-0.5">
+                        <p className="text-[10px] text-primary font-black uppercase tracking-tight italic">
+                          {p.tipo === 'placar' ? 'Placar Exato' : p.tipo === 'artilheiro' ? 'Artilheiro' : p.tipo === 'campeao' ? 'Campeão' : 'Artilheiro BR'}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest truncate">
+                          {p.copa_jogos?.time_home} vs {p.copa_jogos?.time_away}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                  <Button 
-                    size="sm" 
-                    onClick={() => handleApprovePayment(p.id)} 
-                    className="bg-success hover:bg-success/90 text-white font-bold rounded-lg shadow-sm"
-                  >
-                    Confirmar Pago
-                  </Button>
+                  
+                  <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
+                    <Button 
+                      size="sm" 
+                      onClick={() => handleApprovePayment(p.id)} 
+                      className="flex-1 sm:flex-initial bg-success hover:bg-success/90 text-white font-black text-[10px] uppercase h-9 px-4 rounded-xl shadow-lg shadow-success/20"
+                    >
+                      Confirmar
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="ghost"
+                      onClick={() => handleDeleteBet(p.id)} 
+                      className="flex-1 sm:flex-initial text-destructive hover:text-destructive hover:bg-destructive/10 font-black text-[10px] uppercase h-9 px-4 rounded-xl"
+                    >
+                      Excluir
+                    </Button>
+                  </div>
                 </div>
               ))}
               {palpites.filter(p => p.status_pagamento === "pendente").length === 0 && (
