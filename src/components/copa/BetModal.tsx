@@ -20,6 +20,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
   const { user } = useAuth();
   const [hScore, setHScore] = useState<string>("");
   const [aScore, setAScore] = useState<string>("");
+  const [vencedor, setVencedor] = useState<string | null>(null);
   const [artilheiro, setArtilheiro] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPix, setShowPix] = useState(false);
@@ -44,6 +45,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
       setShowOptions(false);
       setHScore("");
       setAScore("");
+      setVencedor(null);
       if (forceShowMultiplas) {
         setBetOption('multiplas');
         setShowPix(true);
@@ -68,10 +70,8 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
     if (!user) return;
     setLoading(true);
     try {
-      const palpite_valor = betType === 'placar' 
-        ? { h: parseInt(hScore), a: parseInt(aScore) }
-        : betType === 'bolao'
-        ? { bolao: true }
+      const palpite_valor = (betType === 'placar' || betType === 'bolao')
+        ? { h: parseInt(hScore), a: parseInt(aScore), vencedor: vencedor }
         : { campeao: jogo.time_home };
 
       const { data: condoIds } = await supabase.rpc("get_user_condominio_ids", { _user_id: user.id });
@@ -124,8 +124,13 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
       return;
     }
 
-    if (betType === 'placar' && (hScore === "" || aScore === "")) {
+    if ((betType === 'placar' || betType === 'bolao') && (hScore === "" || aScore === "")) {
       toast.error("Preencha o placar do jogo.");
+      return;
+    }
+
+    if (betType === 'bolao' && !vencedor) {
+      toast.error("Escolha quem vence ou se dará empate.");
       return;
     }
 
@@ -161,49 +166,80 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
             </DialogHeader>
 
             <div className="space-y-6">
-              {betType === 'placar' ? (
-                <div className="flex items-center justify-center gap-6">
-                  <div className="text-center flex-1 space-y-2">
-                    <Label className="text-[10px] font-black uppercase text-muted-foreground truncate block">
-                      {jogo.time_home}
-                    </Label>
-                    <Input 
-                      type="number" 
-                      value={hScore}
-                      onChange={(e) => setHScore(e.target.value)}
-                      className="h-16 text-2xl font-black text-center rounded-2xl bg-muted border-none"
-                      placeholder="0"
-                    />
+              {(betType === 'placar' || betType === 'bolao') ? (
+                <div className="space-y-6">
+                  {betType === 'bolao' && (
+                    <div className="flex flex-col gap-2 p-3 bg-primary/5 rounded-2xl border border-primary/10">
+                      <p className="text-[10px] font-black uppercase text-primary italic">Regras de Pontuação Bolão:</p>
+                      <ul className="text-[10px] font-bold text-muted-foreground uppercase space-y-1">
+                        <li>• Placar Exato: 5 Pontos</li>
+                        <li>• Acertar Vencedor ou Empate: 3 Pontos</li>
+                      </ul>
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center justify-center gap-6">
+                    <div className="text-center flex-1 space-y-2">
+                      <Label className="text-[10px] font-black uppercase text-muted-foreground truncate block">
+                        {jogo.time_home}
+                      </Label>
+                      <Input 
+                        type="number" 
+                        value={hScore}
+                        onChange={(e) => setHScore(e.target.value)}
+                        className="h-16 text-2xl font-black text-center rounded-2xl bg-muted border-none"
+                        placeholder="0"
+                      />
+                    </div>
+                    <span className="text-xl font-black italic text-muted-foreground pt-6">X</span>
+                    <div className="text-center flex-1 space-y-2">
+                      <Label className="text-[10px] font-black uppercase text-muted-foreground truncate block">
+                        {jogo.time_away}
+                      </Label>
+                      <Input 
+                        type="number" 
+                        value={aScore}
+                        onChange={(e) => setAScore(e.target.value)}
+                        className="h-16 text-2xl font-black text-center rounded-2xl bg-muted border-none"
+                        placeholder="0"
+                      />
+                    </div>
                   </div>
-                  <span className="text-xl font-black italic text-muted-foreground pt-6">X</span>
-                  <div className="text-center flex-1 space-y-2">
-                    <Label className="text-[10px] font-black uppercase text-muted-foreground truncate block">
-                      {jogo.time_away}
-                    </Label>
-                    <Input 
-                      type="number" 
-                      value={aScore}
-                      onChange={(e) => setAScore(e.target.value)}
-                      className="h-16 text-2xl font-black text-center rounded-2xl bg-muted border-none"
-                      placeholder="0"
-                    />
-                  </div>
+
+                  {betType === 'bolao' && (
+                    <div className="space-y-3">
+                      <Label className="text-[10px] font-black uppercase text-muted-foreground block text-center">
+                        Quem vence o jogo?
+                      </Label>
+                      <div className="grid grid-cols-3 gap-2">
+                        <Button
+                          variant={vencedor === 'home' ? 'default' : 'outline'}
+                          className={`text-[10px] font-black uppercase h-10 rounded-xl ${vencedor === 'home' ? 'bg-primary' : 'bg-transparent border-white/10'}`}
+                          onClick={() => setVencedor('home')}
+                        >
+                          {jogo.time_home}
+                        </Button>
+                        <Button
+                          variant={vencedor === 'draw' ? 'default' : 'outline'}
+                          className={`text-[10px] font-black uppercase h-10 rounded-xl ${vencedor === 'draw' ? 'bg-primary' : 'bg-transparent border-white/10'}`}
+                          onClick={() => setVencedor('draw')}
+                        >
+                          Empate
+                        </Button>
+                        <Button
+                          variant={vencedor === 'away' ? 'default' : 'outline'}
+                          className={`text-[10px] font-black uppercase h-10 rounded-xl ${vencedor === 'away' ? 'bg-primary' : 'bg-transparent border-white/10'}`}
+                          onClick={() => setVencedor('away')}
+                        >
+                          {jogo.time_away}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              ) : betType === 'bolao' ? (
+              ) : betType === 'bolao_legacy' ? (
                 <div className="space-y-4">
-                  <div className="flex flex-col gap-2 p-3 bg-primary/5 rounded-2xl border border-primary/10">
-                    <p className="text-[10px] font-black uppercase text-primary italic">Regras de Pontuação:</p>
-                    <ul className="text-[10px] font-bold text-muted-foreground uppercase space-y-1">
-                      <li>• Placar Exato: 10 Pontos</li>
-                      <li>• Acertar Vencedor ou Empate: 5 Pontos</li>
-                    </ul>
-                  </div>
-                  <div className="space-y-3">
-                    <Label className="text-xs font-bold uppercase ml-1">Confirme seu interesse no bolão geral:</Label>
-                    <p className="text-[11px] text-muted-foreground font-medium bg-muted/30 p-4 rounded-2xl">
-                      Você está participando do ranking geral de todos os jogos da Copa. Seus pontos serão calculados automaticamente baseados em seus palpites de placar.
-                    </p>
-                  </div>
+                  {/* ... legacy content ... */}
                 </div>
               ) : (
                 <div className="space-y-4">
