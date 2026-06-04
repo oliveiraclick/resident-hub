@@ -922,6 +922,13 @@ export type Database = {
             referencedRelation: "copa_jogos"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "copa_palpites_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       copa_selecoes: {
