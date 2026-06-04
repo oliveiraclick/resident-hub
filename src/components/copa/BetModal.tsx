@@ -289,8 +289,16 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
 
             {betOption === 'unica' ? (
               <div className="space-y-6">
-                <div className="flex flex-col items-center justify-center p-6 bg-white rounded-[32px] border-4 border-muted/50 shadow-2xl">
-                  <img src="/pix-qrcode.jpeg" alt="PIX QR Code" style={{ width: '180px', height: '180px', display: 'block', margin: '0 auto', backgroundColor: 'white', padding: '4px' }} />
+                <div className="flex flex-col items-center justify-center p-6 bg-white rounded-[32px] border-4 border-muted/50 shadow-2xl overflow-hidden min-h-[220px]">
+                  <img 
+                    src="/pix-qrcode.jpeg" 
+                    alt="PIX QR Code" 
+                    className="w-[200px] h-[200px] object-contain block mx-auto bg-white p-2 rounded-xl"
+                    onError={(e) => {
+                      const img = e.currentTarget;
+                      img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(pixConfig?.key || '');
+                    }}
+                  />
                 </div>
                 
                 <div className="bg-muted/30 p-4 rounded-2xl space-y-2">
@@ -311,7 +319,17 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
                     <span className="text-lg font-black italic">R$ 60</span>
                   </div>
                   <div className="bg-white p-6 rounded-3xl flex flex-col items-center gap-3">
-                    <img ref={imgRef60} src="/pix-60.png" alt="PIX 60" className="w-56 h-56 mx-auto block bg-white p-2 rounded-xl" onLoad={() => { if(imgRef60.current) imgRef60.current.style.opacity = '1'; }} />
+                    <img 
+                      ref={imgRef60} 
+                      src="/pix-60.png" 
+                      alt="PIX 60" 
+                      className="w-56 h-56 mx-auto block bg-white p-2 rounded-xl object-contain" 
+                      onLoad={() => { if(imgRef60.current) imgRef60.current.style.opacity = '1'; }} 
+                      onError={(e) => {
+                        const img = e.currentTarget;
+                        img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=224x224&data=' + encodeURIComponent("00020126810014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0234Bolão Copa do Mundo O Moraror R$60520400005303986540560.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO621405102R7kwQAjSC6304588E");
+                      }}
+                    />
                     <div className="bg-muted/50 p-4 rounded-2xl space-y-2 w-full">
                       <p className="text-[9px] font-black uppercase text-muted-foreground tracking-widest text-center">Copia e Cola (R$ 60)</p>
                       <div className="flex items-center gap-2 bg-background p-3 rounded-xl border border-border">
@@ -339,7 +357,15 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
                     <span className="text-lg font-black italic">R$ 100</span>
                   </div>
                   <div className="bg-white p-6 rounded-3xl flex flex-col items-center gap-3">
-                    <img src="/pix-100.png" alt="PIX 100" className="w-56 h-56 mx-auto block bg-white p-2 rounded-xl" />
+                    <img 
+                      src="/pix-100.png" 
+                      alt="PIX 100" 
+                      className="w-56 h-56 mx-auto block bg-white p-2 rounded-xl object-contain" 
+                      onError={(e) => {
+                        const img = e.currentTarget;
+                        img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=224x224&data=' + encodeURIComponent("00020126820014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0235Bolão Copa do Mundo O Morador R$1005204000053039865406100.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO62140510OiJEMerkG0630404B8");
+                      }}
+                    />
                     <div className="bg-muted/50 p-4 rounded-2xl space-y-2 w-full text-center">
                       <p className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">Copia e Cola (R$ 100)</p>
                       <div className="flex items-center gap-2 bg-background p-3 rounded-xl border border-border">
