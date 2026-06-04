@@ -28,31 +28,11 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
 
   useEffect(() => {
     const fetchPixConfig = async () => {
-      const { data } = await supabase
-        .from("app_configs" as any)
-        .select("pix_key, pix_name, valor_aposta, value")
-        .eq("key", "theme_world_cup")
-        .maybeSingle();
-      
-      if (data) {
-        const d = data as any;
-        const fallback = {
-          key: d.pix_key || "",
-          name: d.pix_name || "",
-          value: Number(d.valor_aposta) || 10,
-        };
-        // Prefer per-bet-type config from JSONB
-        const perType = d.value?.bets?.[betType];
-        if (perType && (perType.pix_key || perType.valor)) {
-          setPixConfig({
-            key: perType.pix_key || fallback.key,
-            name: perType.pix_name || fallback.name,
-            value: Number(perType.valor) || fallback.value,
-          });
-        } else {
-          setPixConfig(fallback);
-        }
-      }
+      setPixConfig({
+        key: "00020126690014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0222Bola da Copa O Morador520400005303986540520.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO61080540900062240520TFXo0xaIlTmUa0H2sgb8630495CA",
+        name: "Oswaldino Ferreira Guimarães",
+        value: 20
+      });
     };
     if (isOpen) {
       fetchPixConfig();
