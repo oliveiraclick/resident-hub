@@ -43,6 +43,7 @@ const CopaMorador = () => {
       .order('data_jogo', { ascending: true });
     setJogos(jogosData || []);
     
+    // Calculate prize pools by type (taking 75% of paid amounts) - ONLY VALIDATED BETS
     const { data: paidBets } = await supabase
       .from("copa_palpites")
       .select("valor_pago, tipo, user_id")
