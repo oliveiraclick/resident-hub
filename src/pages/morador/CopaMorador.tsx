@@ -38,10 +38,16 @@ const CopaMorador = () => {
 
     const { data: jogosData } = await supabase
       .from("copa_jogos")
-      .select("*")
+      .select("*, copa_palpites(count)")
       .eq('status', 'agendado')
+      .eq('copa_palpites.status_pagamento', 'pago')
       .order('data_jogo', { ascending: true });
-    setJogos(jogosData || []);
+    
+    const processedJogos = (jogosData || []).map((j: any) => ({
+      ...j,
+      palpites_count: j.copa_palpites?.[0]?.count || 0
+    }));
+    setJogos(processedJogos);
     
     // Calculate prize pools by type (taking 75% of paid amounts) - ONLY VALIDATED BETS
     const { data: paidBets } = await supabase
