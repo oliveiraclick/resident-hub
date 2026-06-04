@@ -195,7 +195,7 @@ const CopaMorador = () => {
           {[
             { id: 'placar', label: 'Jogos', icon: ShieldCheck },
             { id: 'campeao', label: 'Campeão', icon: Trophy },
-            { id: 'bolao', label: 'Ranking', icon: TrendingUp }
+            { id: 'bolao', label: 'Bolão', icon: TrendingUp }
           ].map((tab) => (
             <button
               key={tab.id}
