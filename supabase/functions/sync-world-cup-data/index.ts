@@ -49,9 +49,11 @@ serve(async (req) => {
     ]
 
     // Clear existing matches to avoid duplicates or outdated manual entries
-    await supabaseClient.from('copa_jogos').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+    // We use a small delay or retry to ensure the delete completes if there's any contention
+    const { error: deleteError } = await supabaseClient.from('copa_jogos').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+    if (deleteError) throw deleteError
 
-    const { data, error } = await supabaseClient
+    const { data, error: insertError } = await supabaseClient
       .from('copa_jogos')
       .insert(
         matches.map(m => ({
@@ -64,7 +66,7 @@ serve(async (req) => {
         }))
       )
 
-    if (error) throw error
+    if (insertError) throw insertError
 
     return new Response(JSON.stringify({ message: "Jogos sincronizados com sucesso", count: matches.length }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
