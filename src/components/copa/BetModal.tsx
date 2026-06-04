@@ -186,7 +186,18 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
                       <Input 
                         type="number" 
                         value={hScore}
-                        onChange={(e) => setHScore(e.target.value)}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setHScore(val);
+                          // Auto-select winner if both scores are present
+                          if (val !== "" && aScore !== "") {
+                            const h = parseInt(val);
+                            const a = parseInt(aScore);
+                            if (h > a) setVencedor('home');
+                            else if (a > h) setVencedor('away');
+                            else setVencedor('draw');
+                          }
+                        }}
                         className="h-16 text-2xl font-black text-center rounded-2xl bg-muted border-none"
                         placeholder="0"
                       />
@@ -199,7 +210,18 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
                       <Input 
                         type="number" 
                         value={aScore}
-                        onChange={(e) => setAScore(e.target.value)}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setAScore(val);
+                          // Auto-select winner if both scores are present
+                          if (hScore !== "" && val !== "") {
+                            const h = parseInt(hScore);
+                            const a = parseInt(val);
+                            if (h > a) setVencedor('home');
+                            else if (a > h) setVencedor('away');
+                            else setVencedor('draw');
+                          }
+                        }}
                         className="h-16 text-2xl font-black text-center rounded-2xl bg-muted border-none"
                         placeholder="0"
                       />
@@ -214,21 +236,21 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
                       <div className="grid grid-cols-3 gap-2">
                         <Button
                           variant={vencedor === 'home' ? 'default' : 'outline'}
-                          className={`text-[10px] font-black uppercase h-10 rounded-xl ${vencedor === 'home' ? 'bg-primary' : 'bg-transparent border-white/10'}`}
+                          className={`text-[10px] font-black uppercase h-10 rounded-xl transition-all ${vencedor === 'home' ? 'bg-primary scale-105 shadow-lg' : 'bg-transparent border-white/10 opacity-50 hover:opacity-100'}`}
                           onClick={() => setVencedor('home')}
                         >
                           {jogo.time_home}
                         </Button>
                         <Button
                           variant={vencedor === 'draw' ? 'default' : 'outline'}
-                          className={`text-[10px] font-black uppercase h-10 rounded-xl ${vencedor === 'draw' ? 'bg-primary' : 'bg-transparent border-white/10'}`}
+                          className={`text-[10px] font-black uppercase h-10 rounded-xl transition-all ${vencedor === 'draw' ? 'bg-primary scale-105 shadow-lg' : 'bg-transparent border-white/10 opacity-50 hover:opacity-100'}`}
                           onClick={() => setVencedor('draw')}
                         >
                           Empate
                         </Button>
                         <Button
                           variant={vencedor === 'away' ? 'default' : 'outline'}
-                          className={`text-[10px] font-black uppercase h-10 rounded-xl ${vencedor === 'away' ? 'bg-primary' : 'bg-transparent border-white/10'}`}
+                          className={`text-[10px] font-black uppercase h-10 rounded-xl transition-all ${vencedor === 'away' ? 'bg-primary scale-105 shadow-lg' : 'bg-transparent border-white/10 opacity-50 hover:opacity-100'}`}
                           onClick={() => setVencedor('away')}
                         >
                           {jogo.time_away}
