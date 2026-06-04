@@ -3,16 +3,16 @@ import { supabase } from "@/integrations/supabase/client";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, TrendingUp, ShieldCheck, Users, ChevronRight } from "lucide-react";
+import { Trophy, TrendingUp, ShieldCheck, Users, ChevronRight, RefreshCw } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { BetModal } from "@/components/copa/BetModal";
 
-const SELECOES_COPA = [
-  "Argentina", "França", "Brasil", "Inglaterra", "Bélgica", "Espanha", "Portugal", "Holanda",
-  "Itália", "Alemanha", "Uruguai", "Croácia", "EUA", "México", "Marrocos", "Senegal",
-  "Japão", "Coréia do Sul", "Austrália", "Canadá", "Colômbia", "Equador", "Suíça", "Dinamarca"
-].sort();
+interface SelecaoCopa {
+  id: string;
+  nome: string;
+  status: string;
+}
 
 const CopaMorador = () => {
   const { user } = useAuth();
