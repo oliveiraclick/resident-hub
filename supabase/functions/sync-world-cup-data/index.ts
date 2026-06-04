@@ -6,6 +6,57 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+const teamFlags: Record<string, string> = {
+  "México": "https://flagcdn.com/w160/mx.png",
+  "África do Sul": "https://flagcdn.com/w160/za.png",
+  "Coreia do Sul": "https://flagcdn.com/w160/kr.png",
+  "Tchéquia": "https://flagcdn.com/w160/cz.png",
+  "Canadá": "https://flagcdn.com/w160/ca.png",
+  "Bósnia": "https://flagcdn.com/w160/ba.png",
+  "Estados Unidos": "https://flagcdn.com/w160/us.png",
+  "Paraguai": "https://flagcdn.com/w160/py.png",
+  "Austrália": "https://flagcdn.com/w160/au.png",
+  "Turquia": "https://flagcdn.com/w160/tr.png",
+  "Catar": "https://flagcdn.com/w160/qa.png",
+  "Suíça": "https://flagcdn.com/w160/ch.png",
+  "Brasil": "https://flagcdn.com/w160/br.png",
+  "Marrocos": "https://flagcdn.com/w160/ma.png",
+  "Haiti": "https://flagcdn.com/w160/ht.png",
+  "Escócia": "https://flagcdn.com/w160/gb-sct.png",
+  "Alemanha": "https://flagcdn.com/w160/de.png",
+  "Curaçao": "https://flagcdn.com/w160/cw.png",
+  "Holanda": "https://flagcdn.com/w160/nl.png",
+  "Japão": "https://flagcdn.com/w160/jp.png",
+  "Costa do Marfim": "https://flagcdn.com/w160/ci.png",
+  "Equador": "https://flagcdn.com/w160/ec.png",
+  "Suécia": "https://flagcdn.com/w160/se.png",
+  "Tunísia": "https://flagcdn.com/w160/tn.png",
+  "Espanha": "https://flagcdn.com/w160/es.png",
+  "Cabo Verde": "https://flagcdn.com/w160/cv.png",
+  "Bélgica": "https://flagcdn.com/w160/be.png",
+  "Egito": "https://flagcdn.com/w160/eg.png",
+  "Arábia Saudita": "https://flagcdn.com/w160/sa.png",
+  "Uruguai": "https://flagcdn.com/w160/uy.png",
+  "Irã": "https://flagcdn.com/w160/ir.png",
+  "Nova Zelândia": "https://flagcdn.com/w160/nz.png",
+  "França": "https://flagcdn.com/w160/fr.png",
+  "Senegal": "https://flagcdn.com/w160/sn.png",
+  "Iraque": "https://flagcdn.com/w160/iq.png",
+  "Noruega": "https://flagcdn.com/w160/no.png",
+  "Argentina": "https://flagcdn.com/w160/ar.png",
+  "Argélia": "https://flagcdn.com/w160/dz.png",
+  "Áustria": "https://flagcdn.com/w160/at.png",
+  "Jordânia": "https://flagcdn.com/w160/jo.png",
+  "Portugal": "https://flagcdn.com/w160/pt.png",
+  "RD Congo": "https://flagcdn.com/w160/cd.png",
+  "Inglaterra": "https://flagcdn.com/w160/gb-eng.png",
+  "Croácia": "https://flagcdn.com/w160/hr.png",
+  "Gana": "https://flagcdn.com/w160/gh.png",
+  "Panamá": "https://flagcdn.com/w160/pa.png",
+  "Uzbequistão": "https://flagcdn.com/w160/uz.png",
+  "Colômbia": "https://flagcdn.com/w160/co.png"
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
@@ -17,8 +68,6 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Data extracted from https://tabelacopa2026.api.br/
-    // This site has a full (predicted/likely) schedule for the 2026 World Cup
     const matches = [
       { date: "2026-06-11T16:00:00", home: "México", away: "África do Sul", round: "Grupo A" },
       { date: "2026-06-11T23:00:00", home: "Coreia do Sul", away: "Tchéquia", round: "Grupo A" },
@@ -48,12 +97,9 @@ serve(async (req) => {
       { date: "2026-06-24T16:00:00", home: "Escócia", away: "Brasil", round: "Grupo C" }
     ]
 
-    // Clear existing matches to avoid duplicates or outdated manual entries
-    // We use a small delay or retry to ensure the delete completes if there's any contention
-    const { error: deleteError } = await supabaseClient.from('copa_jogos').delete().neq('id', '00000000-0000-0000-0000-000000000000')
-    if (deleteError) throw deleteError
+    await supabaseClient.from('copa_jogos').delete().neq('id', '00000000-0000-0000-0000-000000000000')
 
-    const { data, error: insertError } = await supabaseClient
+    const { error: insertError } = await supabaseClient
       .from('copa_jogos')
       .insert(
         matches.map(m => ({
@@ -62,13 +108,15 @@ serve(async (req) => {
           data_jogo: m.date,
           rodada: m.round,
           status: 'agendado',
-          is_brasil_game: m.home === 'Brasil' || m.away === 'Brasil'
+          is_brasil_game: m.home === 'Brasil' || m.away === 'Brasil',
+          time_home_logo_url: teamFlags[m.home] || null,
+          time_away_logo_url: teamFlags[m.away] || null
         }))
       )
 
     if (insertError) throw insertError
 
-    return new Response(JSON.stringify({ message: "Jogos sincronizados com sucesso", count: matches.length }), {
+    return new Response(JSON.stringify({ message: "Jogos e bandeiras sincronizados", count: matches.length }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     })

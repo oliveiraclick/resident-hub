@@ -187,7 +187,11 @@ const CopaMorador = () => {
               <div className="flex items-center justify-between px-1">
                 <div className="flex flex-col items-center gap-3 flex-1">
                   <div className="w-16 h-12 bg-white/5 rounded-xl flex items-center justify-center overflow-hidden border border-white/10 shadow-inner">
-                    <span className="text-xl font-black opacity-30">{jogo.time_home.substring(0, 2).toUpperCase()}</span>
+                    {jogo.time_home_logo_url ? (
+                      <img src={jogo.time_home_logo_url} alt={jogo.time_home} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-xl font-black opacity-30">{jogo.time_home.substring(0, 2).toUpperCase()}</span>
+                    )}
                   </div>
                   <span className="text-[12px] font-black uppercase tracking-tight text-white leading-none">{jogo.time_home}</span>
                 </div>
@@ -198,10 +202,14 @@ const CopaMorador = () => {
 
                 <div className="flex flex-col items-center gap-3 flex-1">
                   <div className="w-16 h-12 bg-white/5 rounded-xl flex items-center justify-center overflow-hidden border border-white/10 shadow-inner">
-                <span className="text-xl font-black opacity-30">{jogo.time_away.substring(0, 2).toUpperCase()}</span>
-              </div>
-              <span className="text-[12px] font-black uppercase tracking-tight text-white leading-none">{jogo.time_away}</span>
-            </div>
+                    {jogo.time_away_logo_url ? (
+                      <img src={jogo.time_away_logo_url} alt={jogo.time_away} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-xl font-black opacity-30">{jogo.time_away.substring(0, 2).toUpperCase()}</span>
+                    )}
+                  </div>
+                  <span className="text-[12px] font-black uppercase tracking-tight text-white leading-none">{jogo.time_away}</span>
+                </div>
           </div>
 
               {canBet ? (
