@@ -8,6 +8,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { BetModal } from "@/components/copa/BetModal";
 
+const SELECOES_COPA = [
+  "Argentina", "França", "Brasil", "Inglaterra", "Bélgica", "Espanha", "Portugal", "Holanda",
+  "Itália", "Alemanha", "Uruguai", "Croácia", "EUA", "México", "Marrocos", "Senegal",
+  "Japão", "Coréia do Sul", "Austrália", "Canadá", "Colômbia", "Equador", "Suíça", "Dinamarca"
+].sort();
+
 const CopaMorador = () => {
   const { user } = useAuth();
   const [jogos, setJogos] = useState([]);
