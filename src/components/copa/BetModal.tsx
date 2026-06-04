@@ -65,7 +65,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
         ? { h: parseInt(hScore), a: parseInt(aScore) }
         : betType === 'bolao'
         ? { bolao: true }
-        : { campeao: artilheiro };
+        : { campeao: jogo.time_home };
 
       const { data: condoIds } = await supabase.rpc("get_user_condominio_ids", { _user_id: user.id });
       const condominio_id = Array.isArray(condoIds) && condoIds.length > 0 ? condoIds[0] : null;
