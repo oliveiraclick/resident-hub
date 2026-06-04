@@ -159,7 +159,8 @@ const CopaMorador = () => {
                          j.time_away.toLowerCase().includes(searchTerm.toLowerCase());
     
     if (activeTab === "bolao") return matchesSearch;
-    const isBrazilGame = j.time_home.toLowerCase() === "brasil" || j.time_away.toLowerCase() === "brasil";
+    // Em "Jogos", mostramos apenas os jogos do Brasil
+    const isBrazilGame = j.time_home.toLowerCase().trim() === "brasil" || j.time_away.toLowerCase().trim() === "brasil";
     return isBrazilGame && matchesSearch;
   });
 
