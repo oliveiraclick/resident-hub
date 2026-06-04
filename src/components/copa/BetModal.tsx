@@ -16,7 +16,7 @@ interface BetModalProps {
   onSuccess: () => void;
 }
 
-export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModalProps) => {
+export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowMultiplas }: BetModalProps & { forceShowMultiplas?: boolean }) => {
   const { user } = useAuth();
   const [hScore, setHScore] = useState<string>("");
   const [aScore, setAScore] = useState<string>("");
@@ -42,9 +42,14 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
       fetchPixConfig();
       setShowPix(false);
       setShowOptions(false);
-      setBetOption(null);
+      if (forceShowMultiplas) {
+        setBetOption('multiplas');
+        setShowPix(true);
+      } else {
+        setBetOption(null);
+      }
     }
-  }, [isOpen, betType]);
+  }, [isOpen, betType, forceShowMultiplas]);
 
 
   if (!jogo) return null;
