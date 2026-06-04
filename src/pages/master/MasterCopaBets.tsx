@@ -232,9 +232,8 @@ const MasterCopaBets = () => {
               <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">Nenhum pagamento pendente</p>
             </div>
           )}
-        </TabsContent>
 
-          <Card>
+          <Card className="mt-8">
             <CardHeader>
               <CardTitle className="text-sm font-bold flex items-center gap-2">
                 <CheckCircle2 size={18} className="text-success" /> Pagamentos Confirmados
