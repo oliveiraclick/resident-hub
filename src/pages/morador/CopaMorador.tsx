@@ -163,7 +163,9 @@ const CopaMorador = () => {
   };
 
   const handleSelectCampeao = (selecao: string) => {
-    setSelectedJogo({ id: '00000000-0000-0000-0000-000000000000', time_home: selecao, time_away: 'O MORADOR' });
+    // Usamos um dos IDs reais da tabela copa_jogos para evitar erro de foreign key
+    const realJogoId = jogos.length > 0 ? jogos[0].id : '454edfae-a20b-4c84-8cf7-c478af856c2d';
+    setSelectedJogo({ id: realJogoId, time_home: selecao, time_away: 'O MORADOR' });
     setActiveTab('campeao');
     setIsBetModalOpen(true);
   };
