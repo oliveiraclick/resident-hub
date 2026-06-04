@@ -55,7 +55,6 @@ const CopaMorador = () => {
     }));
     setJogos(processedJogos);
     
-    // Calculate prize pools by type (taking 75% of paid amounts) - ONLY VALIDATED BETS
     const { data: paidBets } = await supabase
       .from("copa_palpites")
       .select("valor_pago, tipo, user_id")
@@ -171,7 +170,6 @@ const CopaMorador = () => {
           <p className="text-xs text-muted-foreground font-medium">Faça seus palpites e responda perguntas</p>
         </div>
 
-        {/* SALDO E ACUMULADO */}
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-[#1a2e25] border border-primary/20 rounded-3xl p-5 flex flex-col justify-between min-h-[110px] shadow-lg shadow-black/20">
             <div>
@@ -202,8 +200,27 @@ const CopaMorador = () => {
           </div>
         </div>
 
+        <div className="grid grid-cols-3 gap-2.5">
+          {[
+            { id: 'placar', label: 'Jogos', icon: ShieldCheck },
+            { id: 'campeao', label: 'Campeão', icon: Trophy },
+            { id: 'bolao', label: 'Bolão', icon: TrendingUp }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`py-4 px-2 rounded-2xl text-[11px] font-black uppercase transition-all border flex flex-col items-center justify-center gap-2 ${
+                activeTab === tab.id 
+                  ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' 
+                  : 'bg-[#1a2e25] text-muted-foreground border-white/5 hover:bg-white/5'
+              }`}
+            >
+              <tab.icon size={18} className={activeTab === tab.id ? 'text-white' : 'text-muted-foreground/40'} />
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-        {/* LISTAGEM DE SELEÇÕES (CAMPEÃO) */}
         {activeTab === "campeao" && (
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex flex-col gap-1 px-1">
@@ -230,39 +247,13 @@ const CopaMorador = () => {
           </div>
         )}
 
-        {/* FILTRO DE STATUS (Apenas para JOGOS) */}
-        {activeTab === "placar" && (
-          <div className="flex items-center justify-center gap-4 bg-[#1a2e25] p-1.5 rounded-2xl border border-white/5">
-            <button className="flex-1 py-3 text-[11px] font-black uppercase bg-primary/20 text-primary rounded-[14px]">Próximos</button>
-            <button className="flex-1 py-3 text-[11px] font-black uppercase text-muted-foreground hover:text-white transition-colors">Finalizados</button>
-          </div>
-        )}
-
-        {/* SELETOR DE MODALIDADE */}
-        <div className="grid grid-cols-3 gap-2.5">
-          {[
-            { id: 'placar', label: 'Jogos', icon: ShieldCheck },
-            { id: 'campeao', label: 'Campeão', icon: Trophy },
-            { id: 'bolao', label: 'Bolão', icon: TrendingUp }
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`py-4 px-2 rounded-2xl text-[11px] font-black uppercase transition-all border flex flex-col items-center justify-center gap-2 ${
-                activeTab === tab.id 
-                  ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' 
-                  : 'bg-[#1a2e25] text-muted-foreground border-white/5 hover:bg-white/5'
-              }`}
-            >
-              <tab.icon size={18} className={activeTab === tab.id ? 'text-white' : 'text-muted-foreground/40'} />
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* LISTAGEM DE JOGOS */}
         {activeTab === "placar" && (
           <div className="space-y-5">
+            <div className="flex items-center justify-center gap-4 bg-[#1a2e25] p-1.5 rounded-2xl border border-white/5 mb-2">
+              <button className="flex-1 py-3 text-[11px] font-black uppercase bg-primary/20 text-primary rounded-[14px]">Próximos</button>
+              <button className="flex-1 py-3 text-[11px] font-black uppercase text-muted-foreground hover:text-white transition-colors">Finalizados</button>
+            </div>
+
             <div className="flex items-center justify-between px-1">
               <h3 className="text-[11px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                 <ShieldCheck size={14} className="text-primary" /> 11 de Junho
@@ -348,7 +339,7 @@ const CopaMorador = () => {
                   <Button 
                     variant="ghost" 
                     onClick={() => setVisibleCount(prev => prev + 6)}
-                    className="w-full py-10 text-[11px] font-black uppercase text-muted-foreground/40 hover:text-primary transition-all border-2 border-dashed border-white/5 rounded-[36px] bg-[#1a2e25]/50"
+                    className="w-full py-10 text-[11px] font-black uppercase text-muted-foreground/40 hover:text-primary transition-all border-2 border-dashed border-white/5 rounded-[32px] bg-[#1a2e25]/50"
                   >
                     Carregar mais jogos
                   </Button>
@@ -362,9 +353,7 @@ const CopaMorador = () => {
           </div>
         )}
 
-        {/* RANKING GLOBAL */}
         {activeTab === "bolao" && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex items-center justify-between px-1">
               <h3 className="text-[11px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
