@@ -242,36 +242,35 @@ const CopaMorador = () => {
     <MoradorLayout title="Palpites" showBack>
       <div className="space-y-6 pb-20 no-scrollbar">
         <div className="flex flex-col gap-1 px-1">
-          <p className="text-xs text-muted-foreground font-medium">Faça seus palpites e responda perguntas</p>
+          <p className="text-xs text-muted-foreground font-medium">Faça seus palpites e acompanhe os resultados reais</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3">
           <div className="bg-[#1a2e25] border border-primary/20 rounded-3xl p-5 flex flex-col justify-between min-h-[110px] shadow-lg shadow-black/20">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-primary/80">Prêmio Acumulado</p>
-              <h2 className="text-2xl font-black text-white mt-1.5 leading-none">
-                R$ {prizes[activeTab as keyof typeof prizes].toFixed(2)}
-              </h2>
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-primary/80">Prêmio Acumulado</p>
+                <h2 className="text-3xl font-black text-white mt-1.5 leading-none">
+                  R$ {prizes[activeTab as keyof typeof prizes].toFixed(2)}
+                </h2>
+              </div>
+              <div className="bg-primary/10 px-3 py-1 rounded-xl flex items-center gap-1.5 text-primary">
+                <Users size={12} />
+                <span className="text-[10px] font-black">{betCounts[activeTab as keyof typeof betCounts]} {betCounts[activeTab as keyof typeof betCounts] === 1 ? 'Pessoa' : 'Pessoas'}</span>
+              </div>
             </div>
-            <div className="flex items-center gap-1.5 text-primary/60 mt-2">
-              <Users size={12} />
-              <span className="text-[10px] font-black">{betCounts[activeTab as keyof typeof betCounts]} {betCounts[activeTab as keyof typeof betCounts] === 1 ? 'Pessoa' : 'Pessoas'}</span>
+            <div className="flex items-center justify-between mt-4">
+              <div className="flex flex-col">
+                <p className="text-[10px] font-black uppercase tracking-widest text-primary/80">Meu Saldo</p>
+                <p className="text-xl font-black text-white">R$ {saldo.toFixed(2)}</p>
+              </div>
+              <button 
+                onClick={() => toast.info("Para adicionar saldo, entre em contato com o administrador.")}
+                className="bg-primary text-white px-4 py-2 rounded-2xl text-[10px] font-black uppercase hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
+              >
+                + RECARREGAR
+              </button>
             </div>
-          </div>
-
-          <div className="bg-[#1a2e25] border border-primary/20 rounded-3xl p-5 flex flex-col justify-between min-h-[110px] shadow-lg shadow-black/20">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-primary/80">Meu Saldo</p>
-              <h2 className="text-2xl font-black text-white mt-1.5 leading-none">
-                R$ {saldo.toFixed(2)}
-              </h2>
-            </div>
-            <button 
-              onClick={() => toast.info("Para adicionar saldo, entre em contato com o administrador.")}
-              className="text-[10px] font-black text-primary hover:text-primary/80 flex items-center gap-1 transition-colors mt-2"
-            >
-              + RECARREGAR
-            </button>
           </div>
         </div>
 

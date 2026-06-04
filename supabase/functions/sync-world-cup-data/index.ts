@@ -17,35 +17,39 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Fetch fixtures from TheSportsDB (using a free endpoint for demonstration)
-    // In a production app, you'd use a specific 2026 World Cup endpoint
-    const response = await fetch('https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=4429')
+    // Using a more reliable source for 2026 World Cup data (GitHub OpenFootball as fallback)
+    const response = await fetch('https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json')
     const data = await response.json()
 
-    if (data && data.events) {
-      for (const event of data.events) {
-        // Map API data to our copa_jogos table
-        const { error: upsertError } = await supabaseClient
-          .from('copa_jogos')
-          .upsert({
-            time_home: event.strHomeTeam,
-            time_away: event.strAwayTeam,
-            data_jogo: event.strTimestamp || `${event.dateEvent}T${event.strTime}`,
-            rodada: event.strRound || 'Fase de Grupos',
-            status: 'agendado'
-          }, { onConflict: 'time_home,time_away,data_jogo' })
+    let syncCount = 0
 
-        if (upsertError) console.error('Error upserting game:', upsertError)
+    if (data && data.rounds) {
+      for (const round of data.rounds) {
+        if (round.matches) {
+          for (const match of round.matches) {
+            const { error: upsertError } = await supabaseClient
+              .from('copa_jogos')
+              .upsert({
+                time_home: match.team1,
+                time_away: match.team2,
+                data_jogo: `${match.date}T${match.time || '12:00:00'}`,
+                rodada: round.name || 'Fase de Grupos',
+                status: 'agendado'
+              }, { onConflict: 'time_home,time_away,data_jogo' })
+
+            if (!upsertError) syncCount++
+          }
+        }
       }
 
       await supabaseClient.from('copa_api_logs').insert({
         event_type: 'sync',
         status: 'success',
-        payload: { count: data.events.length }
+        payload: { count: syncCount }
       })
     }
 
-    return new Response(JSON.stringify({ message: "Sync complete", count: data.events?.length || 0 }), {
+    return new Response(JSON.stringify({ message: "Sync complete", count: syncCount }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     })
