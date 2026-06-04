@@ -27,6 +27,9 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
   const [betOption, setBetOption] = useState<'unica' | 'multiplas' | null>(null);
   const [pixConfig, setPixConfig] = useState<{ key: string, name: string, value: number } | null>(null);
 
+  const imgRef60 = useRef<HTMLImageElement>(null);
+  const imgRef100 = useRef<HTMLImageElement>(null);
+
   useEffect(() => {
     const fetchPixConfig = async () => {
       setPixConfig({
