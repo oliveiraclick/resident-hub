@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Trophy, Send, QrCode, Copy, CheckCircle2 } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
+
 
 interface BetModalProps {
   isOpen: boolean;
@@ -28,31 +28,11 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
 
   useEffect(() => {
     const fetchPixConfig = async () => {
-      const { data } = await supabase
-        .from("app_configs" as any)
-        .select("pix_key, pix_name, valor_aposta, value")
-        .eq("key", "theme_world_cup")
-        .maybeSingle();
-      
-      if (data) {
-        const d = data as any;
-        const fallback = {
-          key: d.pix_key || "",
-          name: d.pix_name || "",
-          value: Number(d.valor_aposta) || 10,
-        };
-        // Prefer per-bet-type config from JSONB
-        const perType = d.value?.bets?.[betType];
-        if (perType && (perType.pix_key || perType.valor)) {
-          setPixConfig({
-            key: perType.pix_key || fallback.key,
-            name: perType.pix_name || fallback.name,
-            value: Number(perType.valor) || fallback.value,
-          });
-        } else {
-          setPixConfig(fallback);
-        }
-      }
+      setPixConfig({
+        key: "00020126690014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0222Bola da Copa O Morador520400005303986540520.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO61080540900062240520TFXo0xaIlTmUa0H2sgb8630495CA",
+        name: "Oswaldino Ferreira Guimarães",
+        value: 20
+      });
     };
     if (isOpen) {
       fetchPixConfig();
@@ -107,7 +87,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
           tipo: betType,
           palpite_valor: palpite_valor,
           status_pagamento: "pendente",
-          valor_pago: pixConfig?.value || 10,
+          valor_pago: 20,
         });
 
       if (error) throw error;
@@ -131,7 +111,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px] rounded-[32px] overflow-hidden">
+      <DialogContent className="sm:max-w-[425px] rounded-[32px] overflow-hidden bg-background text-foreground border-none">
         {!showPix ? (
           <>
             <DialogHeader>
@@ -205,7 +185,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
               <div className="bg-primary/5 p-4 rounded-2xl border border-primary/10">
                 <div className="flex justify-between items-center text-[11px] font-bold">
                   <span className="text-muted-foreground uppercase">Valor da Aposta</span>
-                  <span className="text-primary">R$ {(pixConfig?.value || 10).toFixed(2)}</span>
+                  <span className="text-primary font-black">R$ 20.00</span>
                 </div>
               </div>
 
@@ -236,11 +216,10 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
             </div>
 
             <div className="flex flex-col items-center justify-center p-6 bg-white rounded-[32px] border-4 border-muted/50">
-              <QRCodeSVG 
-                value={pixConfig?.key || "PIX_KEY_NOT_SET"} 
-                size={180}
-                level="H"
-                includeMargin={false}
+              <img 
+                src="/pix-qrcode.jpeg" 
+                alt="PIX QR Code" 
+                className="w-[180px] h-[180px] object-contain"
               />
             </div>
 
