@@ -159,61 +159,81 @@ const MasterCopaBets = () => {
           <TabsTrigger value="jogos">Resultados Jogos</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="pagamentos" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm font-bold flex items-center gap-2">
-                <Users size={18} /> Pendentes de Aprovação
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {palpites.filter(p => p.status_pagamento === "pendente").map((p: any) => (
-                <div key={p.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-muted/30 rounded-[24px] border border-border/50 shadow-sm transition-all hover:bg-muted/40 gap-4">
-                  <div className="flex flex-1 items-center gap-4 min-w-0 w-full">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <p className="text-sm font-black text-foreground truncate">{p.profiles?.nome || "Morador"}</p>
-                        <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-black h-5 px-2 rounded-lg shrink-0">
-                          R$ {Number(p.valor_pago).toFixed(2)}
-                        </Badge>
+        <TabsContent value="pagamentos" className="space-y-6">
+          {["placar", "campeao", "bolao"].map((tipo) => {
+            const palpitesDoTipo = palpites.filter(p => p.status_pagamento === "pendente" && p.tipo === tipo);
+            if (palpitesDoTipo.length === 0) return null;
+
+            return (
+              <div key={tipo} className="space-y-3">
+                <div className="flex items-center gap-2 px-1">
+                  <div className="w-1 h-4 bg-primary rounded-full" />
+                  <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground">
+                    {tipo === 'placar' ? 'Placar Exato' : tipo === 'campeao' ? 'Campeão' : 'Bolão Geral'}
+                  </h3>
+                  <Badge variant="outline" className="text-[10px] font-bold ml-auto">
+                    {palpitesDoTipo.length}
+                  </Badge>
+                </div>
+
+                <div className="space-y-3">
+                  {palpitesDoTipo.map((p: any) => (
+                    <div key={p.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-[#1a2e25] rounded-[24px] border border-white/5 shadow-xl transition-all hover:border-primary/20 gap-4">
+                      <div className="flex flex-1 items-center gap-4 min-w-0 w-full">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="text-sm font-black text-white truncate">{p.profiles?.nome || "Morador"}</p>
+                            <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px] font-black h-5 px-2 rounded-lg shrink-0">
+                              R$ {Number(p.valor_pago).toFixed(2)}
+                            </Badge>
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest truncate">
+                              {p.copa_jogos?.time_home} vs {p.copa_jogos?.time_away}
+                            </p>
+                            {p.palpite_valor && (
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className="text-[10px] font-black text-primary uppercase italic">Palpite:</span>
+                                <div className="bg-white/5 px-2 py-0.5 rounded text-[10px] font-bold text-white">
+                                  {tipo === 'placar' ? `${p.palpite_valor.h} x ${p.palpite_valor.a}` : p.palpite_valor}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex flex-col gap-0.5">
-                        <p className="text-[10px] text-primary font-black uppercase tracking-tight italic">
-                          {p.tipo === 'placar' ? 'Placar Exato' : p.tipo === 'artilheiro' ? 'Artilheiro' : p.tipo === 'campeao' ? 'Campeão' : 'Artilheiro BR'}
-                        </p>
-                        <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest truncate">
-                          {p.copa_jogos?.time_home} vs {p.copa_jogos?.time_away}
-                        </p>
+                      
+                      <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
+                        <Button 
+                          size="sm" 
+                          onClick={() => handleApprovePayment(p.id)} 
+                          className="flex-1 sm:flex-initial bg-primary hover:bg-primary/90 text-white font-black text-[10px] uppercase h-10 px-6 rounded-xl shadow-lg shadow-primary/20"
+                        >
+                          Confirmar
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => handleDeleteBet(p.id)} 
+                          className="flex-1 sm:flex-initial text-red-500 hover:text-red-400 hover:bg-red-500/10 font-black text-[10px] uppercase h-10 px-4 rounded-xl"
+                        >
+                          Excluir
+                        </Button>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
-                    <Button 
-                      size="sm" 
-                      onClick={() => handleApprovePayment(p.id)} 
-                      className="flex-1 sm:flex-initial bg-success hover:bg-success/90 text-white font-black text-[10px] uppercase h-9 px-4 rounded-xl shadow-lg shadow-success/20"
-                    >
-                      Confirmar
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="ghost"
-                      onClick={() => handleDeleteBet(p.id)} 
-                      className="flex-1 sm:flex-initial text-destructive hover:text-destructive hover:bg-destructive/10 font-black text-[10px] uppercase h-9 px-4 rounded-xl"
-                    >
-                      Excluir
-                    </Button>
-                  </div>
+                  ))}
                 </div>
-              ))}
-              {palpites.filter(p => p.status_pagamento === "pendente").length === 0 && (
-                <p className="text-center text-xs text-muted-foreground py-4">Nenhum pagamento pendente.</p>
-              )}
-            </CardContent>
-          </Card>
+              </div>
+            );
+          })}
 
-          <Card>
+          {palpites.filter(p => p.status_pagamento === "pendente").length === 0 && (
+            <div className="text-center py-12 bg-muted/10 rounded-[32px] border-2 border-dashed border-muted/20">
+              <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">Nenhum pagamento pendente</p>
+            </div>
+          )}
+
+          <Card className="mt-8">
             <CardHeader>
               <CardTitle className="text-sm font-bold flex items-center gap-2">
                 <CheckCircle2 size={18} className="text-success" /> Pagamentos Confirmados
