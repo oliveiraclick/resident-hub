@@ -95,11 +95,10 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
 
   const handleSelectOption = (option: 'unica' | 'multiplas') => {
     setBetOption(option);
+    setShowOptions(false);
     if (option === 'unica') {
-      setShowOptions(false);
       processAposta(20, 'pix_direto');
     } else {
-      setShowOptions(false);
       setShowPix(true);
     }
   };
