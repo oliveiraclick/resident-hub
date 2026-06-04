@@ -40,16 +40,55 @@ const MasterCopaBets = () => {
   }, []);
 
   const handleApprovePayment = async (betId: string) => {
-    const { error } = await supabase
-      .from("copa_palpites")
-      .update({ status_pagamento: "pago" })
-      .eq("id", betId);
+    try {
+      // 1. Get the bet details first to know the amount and user
+      const { data: bet, error: fetchError } = await supabase
+        .from("copa_palpites")
+        .select("valor_pago, user_id, status_pagamento")
+        .eq("id", betId)
+        .single();
 
-    if (error) {
-      toast({ title: "Erro ao aprovar", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Pagamento aprovado!" });
+      if (fetchError || !bet) throw new Error("Aposta não encontrada");
+      
+      // If already paid, don't repeat the credit addition
+      if (bet.status_pagamento === "pago") {
+        toast({ title: "Informação", description: "Este pagamento já foi aprovado." });
+        return;
+      }
+
+      // 2. Update the bet status
+      const { error: updateError } = await supabase
+        .from("copa_palpites")
+        .update({ status_pagamento: "pago", pago: true })
+        .eq("id", betId);
+
+      if (updateError) throw updateError;
+
+      // 3. Add credit to user's profile saldo
+      const valorAprovado = Number(bet.valor_pago) || 0;
+      
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("saldo")
+        .eq("user_id", bet.user_id)
+        .single();
+
+      if (profileError) throw profileError;
+
+      const novoSaldo = (Number(profile.saldo) || 0) + valorAprovado;
+
+      const { error: walletError } = await supabase
+        .from("profiles")
+        .update({ saldo: novoSaldo })
+        .eq("user_id", bet.user_id);
+
+      if (walletError) throw walletError;
+      
+      toast({ title: "Pagamento aprovado!", description: `R$ ${valorAprovado.toFixed(2)} adicionado ao saldo do morador.` });
       fetchData();
+    } catch (error: any) {
+      toast({ title: "Erro ao aprovar", description: error.message, variant: "destructive" });
+      console.error(error);
     }
   };
 
