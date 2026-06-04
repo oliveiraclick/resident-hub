@@ -13,7 +13,7 @@ html, body {
 
 /* iOS safe areas — only for web (Capacitor handles it natively via contentInset) */
 html {
-  background-color: hsl(240 29% 14%);
+    background-color: hsl(var(--background));
 }
 
 body:not(.native-app) {
