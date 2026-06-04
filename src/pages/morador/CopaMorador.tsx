@@ -12,6 +12,7 @@ interface SelecaoCopa {
   id: string;
   nome: string;
   status: string;
+  logo_url: string | null;
 }
 
 const CopaMorador = () => {
@@ -344,7 +345,11 @@ const CopaMorador = () => {
                       </div>
                     )}
                     <div className="w-12 h-8 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden border border-white/10 group-hover:bg-primary/10 transition-colors">
-                      <span className="text-sm font-black opacity-30 group-hover:opacity-70">{selecao.nome.substring(0, 2).toUpperCase()}</span>
+                      {selecao.logo_url ? (
+                        <img src={selecao.logo_url} alt={selecao.nome} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-sm font-black opacity-30 group-hover:opacity-70">{selecao.nome.substring(0, 2).toUpperCase()}</span>
+                      )}
                     </div>
                     <span className={`text-[11px] font-black uppercase tracking-tight transition-colors ${isEliminated ? 'text-muted-foreground' : 'text-white group-hover:text-primary'}`}>{selecao.nome}</span>
                   </button>
