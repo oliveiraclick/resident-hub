@@ -183,16 +183,6 @@ const CopaMorador = () => {
           </div>
         </div>
 
-        {/* TABS DE DATAS */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 -mx-4 px-4 no-scrollbar">
-          {['QUI. 11', 'SEX. 12', 'SÁB. 13', 'DOM. 14', 'SEG. 15', 'TER. 16', 'QUA. 17'].map((day, i) => (
-            <div key={i} className={`flex-shrink-0 flex flex-col items-center justify-center w-15 h-18 rounded-[20px] border transition-all ${i === 0 ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20' : 'bg-[#1a2e25] border-white/5 text-muted-foreground'}`}>
-              <span className="text-[9px] font-black uppercase opacity-60 mb-1.5">{day.split(' ')[0]}</span>
-              <span className="text-base font-black">{day.split(' ')[1]}</span>
-              <div className={`w-1.5 h-1.5 rounded-full mt-1.5 ${i === 0 ? 'bg-white' : 'bg-white/10'}`} />
-            </div>
-          ))}
-        </div>
 
         {/* FILTRO DE STATUS */}
         <div className="flex items-center justify-center gap-4 bg-[#1a2e25] p-1.5 rounded-2xl border border-white/5">
