@@ -197,9 +197,9 @@ const AdminFinanceiro = () => {
                         {p.palpite_valor && (
                           <p className="text-[10px] font-black text-foreground/70 mt-0.5">
                             {p.tipo === 'placar' 
-                              ? `Palpite: ${p.palpite_valor.h} x ${p.palpite_valor.a}` 
+                              ? `Palpite: ${p.palpite_valor?.h ?? 0} x ${p.palpite_valor?.a ?? 0}` 
                               : p.tipo === 'campeao' 
-                              ? `Escolha: ${p.palpite_valor.campeao}` 
+                              ? `Escolha: ${typeof p.palpite_valor?.campeao === 'string' ? p.palpite_valor.campeao : 'Indefinida'}` 
                               : ''}
                           </p>
                         )}
