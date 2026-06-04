@@ -6,8 +6,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { Trophy, Send, QrCode, Copy, CheckCircle2 } from "lucide-react";
-
+import { Trophy, Send, QrCode, Copy, CheckCircle2, Layers, Zap, ChevronRight } from "lucide-react";
 
 interface BetModalProps {
   isOpen: boolean;
@@ -24,6 +23,8 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
   const [artilheiro, setArtilheiro] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPix, setShowPix] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
+  const [betOption, setBetOption] = useState<'unica' | 'multiplas' | null>(null);
   const [pixConfig, setPixConfig] = useState<{ key: string, name: string, value: number } | null>(null);
 
   useEffect(() => {
@@ -37,17 +38,72 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
     if (isOpen) {
       fetchPixConfig();
       setShowPix(false);
+      setShowOptions(false);
+      setBetOption(null);
     }
   }, [isOpen, betType]);
 
 
   if (!jogo) return null;
 
-  const copyPix = () => {
-    if (pixConfig?.key) {
-      navigator.clipboard.writeText(pixConfig.key);
-      toast.success("Chave PIX copiada!");
+  const copyPix = (text?: string) => {
+    const toCopy = text || pixConfig?.key;
+    if (toCopy) {
+      navigator.clipboard.writeText(toCopy);
+      toast.success("Copiado!");
     }
+  };
+
+  const processAposta = async (valor: number, method: 'pix_direto' | 'carteira') => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const palpite_valor = betType === 'placar' 
+        ? { h: parseInt(hScore), a: parseInt(aScore) }
+        : betType === 'bolao'
+        ? { bolao: true }
+        : { campeao: artilheiro };
+
+      const { data: condoIds } = await supabase.rpc("get_user_condominio_ids", { _user_id: user.id });
+      const condominio_id = Array.isArray(condoIds) && condoIds.length > 0 ? condoIds[0] : null;
+
+      const { error } = await supabase
+        .from("copa_palpites")
+        .insert({
+          user_id: user.id,
+          condominio_id: condominio_id,
+          jogo_id: jogo.id,
+          tipo: betType,
+          palpite_valor: palpite_valor,
+          status_pagamento: "pendente",
+          valor_pago: valor,
+          pago: false,
+          metodo_pagamento: method
+        });
+
+      if (error) throw error;
+
+      toast.success(method === 'carteira' ? "Pré-aposta registrada! O saldo será liberado após o OK do ADM." : "Palpite registrado! Realize o pagamento para validar.");
+      onSuccess();
+      setShowPix(true);
+    } catch (error: any) {
+      toast.error("Erro ao enviar palpite: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSelectOption = (option: 'unica' | 'multiplas') => {
+    setBetOption(option);
+    setShowOptions(false);
+    if (option === 'unica') {
+      processAposta(20, 'pix_direto');
+    }
+    // No caso de múltiplas, só mostramos a tela de QR codes (setShowPix(true) acontece no final de processAposta se fosse automática, mas aqui o usuário ainda vai escolher o valor)
+  };
+
+  const handleMultiPixSelect = (valor: number) => {
+    processAposta(valor, 'carteira');
   };
 
   const handleSubmit = async () => {
@@ -66,44 +122,12 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
       return;
     }
 
-    setLoading(true);
-    try {
-      const palpite_valor = betType === 'placar' 
-        ? { h: parseInt(hScore), a: parseInt(aScore) }
-        : betType === 'bolao'
-        ? { bolao: true }
-        : { campeao: artilheiro };
-
-      // Fetch condominio_id
-      const { data: condoIds } = await supabase.rpc("get_user_condominio_ids", { _user_id: user.id });
-      const condominio_id = Array.isArray(condoIds) && condoIds.length > 0 ? condoIds[0] : null;
-
-      const { error } = await supabase
-        .from("copa_palpites")
-        .insert({
-          user_id: user.id,
-          condominio_id: condominio_id,
-          jogo_id: jogo.id,
-          tipo: betType,
-          palpite_valor: palpite_valor,
-          status_pagamento: "pendente",
-          valor_pago: 20,
-        });
-
-      if (error) throw error;
-
-      toast.success("Palpite registrado! Realize o pagamento para validar sua participação.");
-      onSuccess();
-      setShowPix(true);
-    } catch (error: any) {
-      toast.error("Erro ao enviar palpite: " + error.message);
-    } finally {
-      setLoading(false);
-    }
+    setShowOptions(true);
   };
 
   const handleClose = () => {
     setShowPix(false);
+    setShowOptions(false);
     onClose();
   };
 
@@ -111,10 +135,10 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px] rounded-[32px] overflow-hidden bg-background text-foreground border-none">
-        {!showPix ? (
-          <>
-            <DialogHeader>
+      <DialogContent className="sm:max-w-[425px] rounded-[32px] overflow-hidden bg-background text-foreground border-none p-0">
+        {!showPix && !showOptions && (
+          <div className="p-6">
+            <DialogHeader className="mb-6">
               <DialogTitle className="flex items-center gap-2">
                 <Trophy className="text-warning" size={20} />
                 Apostar no {betType === 'placar' ? 'Placar' : betType === 'campeao' ? 'Campeão' : 'Bolão'}
@@ -124,7 +148,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
               </DialogDescription>
             </DialogHeader>
 
-            <div className="py-6 space-y-6">
+            <div className="space-y-6">
               {betType === 'placar' ? (
                 <div className="flex items-center justify-center gap-6">
                   <div className="text-center flex-1 space-y-2">
@@ -197,61 +221,130 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
                 {loading ? "Processando..." : "Confirmar Aposta"}
                 <Send className="ml-2 w-4 h-4" />
               </Button>
-              
-              <p className="text-[9px] text-center text-muted-foreground uppercase font-medium px-4">
-                Ao confirmar, você receberá os dados do PIX para pagamento imediato.
-              </p>
             </div>
-          </>
-        ) : (
-          <div className="py-4 space-y-6 text-center">
+          </div>
+        )}
+
+        {showOptions && (
+          <div className="p-8 text-center space-y-6">
+            <div className="space-y-2">
+              <h2 className="text-xl font-black uppercase tracking-tight">Tipo de Aposta</h2>
+              <p className="text-xs text-muted-foreground font-medium">Como você deseja participar?</p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4">
+              <button
+                onClick={() => handleSelectOption('unica')}
+                className="flex items-center gap-4 p-5 rounded-[24px] bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-left group"
+              >
+                <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                  <Zap size={24} />
+                </div>
+                <div className="flex-1">
+                  <p className="text-[14px] font-black uppercase tracking-tight">Aposta Única</p>
+                  <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Pague apenas este jogo (R$ 20)</p>
+                </div>
+              </button>
+
+              <button
+                onClick={() => handleSelectOption('multiplas')}
+                className="flex items-center gap-4 p-5 rounded-[24px] bg-primary/5 border-2 border-primary/20 hover:bg-primary/10 transition-all text-left group"
+              >
+                <div className="h-12 w-12 rounded-2xl bg-primary flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+                  <Layers size={24} />
+                </div>
+                <div className="flex-1">
+                  <p className="text-[14px] font-black uppercase tracking-tight text-primary">Múltiplas Apostas</p>
+                  <p className="text-[10px] text-primary/60 font-bold uppercase tracking-widest">Comprar créditos para a conta</p>
+                </div>
+              </button>
+            </div>
+
+            <Button variant="ghost" onClick={() => setShowOptions(false)} className="text-[10px] font-black uppercase tracking-widest opacity-40">
+              Voltar e editar palpite
+            </Button>
+          </div>
+        )}
+
+        {showPix && (
+          <div className="p-6 text-center space-y-6 max-h-[85vh] overflow-y-auto no-scrollbar">
             <div className="flex flex-col items-center gap-2">
               <div className="h-16 w-16 bg-success/10 rounded-full flex items-center justify-center mb-2">
                 <CheckCircle2 size={32} className="text-success" />
               </div>
-              <h2 className="text-xl font-black uppercase">Palpite Registrado!</h2>
-              <p className="text-xs text-muted-foreground font-bold uppercase tracking-tight">
-                Pague agora para validar sua participação
+              <h2 className="text-xl font-black uppercase italic">Palpite Registrado!</h2>
+              <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">
+                {betOption === 'multiplas' ? 'Escolha o valor do crédito para pagar' : 'Pague agora para validar sua participação'}
               </p>
             </div>
 
-            <div className="flex flex-col items-center justify-center p-6 bg-white rounded-[32px] border-4 border-muted/50">
-              <img 
-                src="/pix-qrcode.jpeg" 
-                alt="PIX QR Code" 
-                className="w-[180px] h-[180px] object-contain"
-              />
-            </div>
-
-            <div className="space-y-4">
-              <div className="bg-muted/30 p-4 rounded-2xl space-y-2">
-                <p className="text-[10px] font-black uppercase text-muted-foreground">Copia e Cola (Chave PIX)</p>
-                <div className="flex items-center gap-2 bg-background p-3 rounded-xl border border-border">
-                  <p className="text-xs font-bold truncate flex-1">{pixConfig?.key || "Chave não configurada"}</p>
-                  <Button size="icon" variant="ghost" className="h-8 w-8" onClick={copyPix}>
-                    <Copy size={14} />
-                  </Button>
+            {betOption === 'unica' ? (
+              <div className="space-y-6">
+                <div className="flex flex-col items-center justify-center p-6 bg-white rounded-[32px] border-4 border-muted/50 shadow-2xl">
+                  <img src="/pix-qrcode.jpeg" alt="PIX QR Code" className="w-[180px] h-[180px] object-contain" />
                 </div>
-                {pixConfig?.name && (
-                  <p className="text-[9px] font-bold text-muted-foreground uppercase">
-                    Favorecido: {pixConfig.name}
-                  </p>
-                )}
+                
+                <div className="bg-muted/30 p-4 rounded-2xl space-y-2">
+                  <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Copia e Cola (R$ 20)</p>
+                  <div className="flex items-center gap-2 bg-background p-3 rounded-xl border border-border">
+                    <p className="text-[10px] font-bold truncate flex-1">{pixConfig?.key}</p>
+                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => copyPix()}>
+                      <Copy size={14} />
+                    </Button>
+                  </div>
+                </div>
               </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4">
+                <div className="bg-muted/30 p-5 rounded-[32px] border border-white/5 space-y-4">
+                  <div className="flex justify-between items-center px-1">
+                    <span className="text-[10px] font-black uppercase text-primary tracking-widest">Pacote Bronze</span>
+                    <span className="text-lg font-black italic">R$ 60</span>
+                  </div>
+                  <div className="bg-white p-4 rounded-2xl flex flex-col items-center gap-3">
+                    <img src="/pix-qrcode.jpeg" alt="PIX 60" className="w-32 h-32 object-contain opacity-40 grayscale" />
+                    <Button 
+                      onClick={() => handleMultiPixSelect(60)}
+                      className="w-full h-10 rounded-xl bg-foreground text-background font-black text-[10px] uppercase tracking-widest"
+                    >
+                      Pagar R$ 60 <ChevronRight size={14} />
+                    </Button>
+                  </div>
+                </div>
 
-              <div className="bg-warning/10 p-4 rounded-2xl border border-warning/20">
-                <p className="text-[10px] font-bold text-warning uppercase leading-tight">
-                  Sua aposta será validada pelo administrador em até 24h após o pagamento.
-                </p>
+                <div className="bg-primary/5 p-5 rounded-[32px] border-2 border-primary/20 space-y-4 relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-2">
+                    <Zap size={16} className="text-primary animate-pulse" />
+                  </div>
+                  <div className="flex justify-between items-center px-1">
+                    <span className="text-[10px] font-black uppercase text-primary tracking-widest">Pacote Ouro</span>
+                    <span className="text-lg font-black italic">R$ 100</span>
+                  </div>
+                  <div className="bg-white p-4 rounded-2xl flex flex-col items-center gap-3">
+                    <img src="/pix-qrcode.jpeg" alt="PIX 100" className="w-32 h-32 object-contain" />
+                    <Button 
+                      onClick={() => handleMultiPixSelect(100)}
+                      className="w-full h-10 rounded-xl bg-primary text-white font-black text-[10px] uppercase tracking-widest"
+                    >
+                      Pagar R$ 100 <ChevronRight size={14} />
+                    </Button>
+                  </div>
+                </div>
               </div>
+            )}
 
-              <Button 
-                onClick={handleClose}
-                className="w-full h-12 rounded-2xl bg-foreground text-background font-black uppercase tracking-widest"
-              >
-                Já realizei o pagamento
-              </Button>
+            <div className="bg-warning/10 p-4 rounded-2xl border border-warning/20">
+              <p className="text-[9px] font-bold text-warning uppercase leading-tight tracking-widest italic">
+                Sua participação será validada pelo administrador em até 24h após o pagamento.
+              </p>
             </div>
+
+            <Button 
+              onClick={handleClose}
+              className="w-full h-12 rounded-2xl bg-muted text-foreground font-black uppercase tracking-widest text-[11px]"
+            >
+              Já realizei o pagamento
+            </Button>
           </div>
         )}
       </DialogContent>
