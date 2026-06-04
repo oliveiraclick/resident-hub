@@ -227,7 +227,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
         )}
 
         {showOptions && (
-          <div className="p-8 text-center space-y-6">
+          <div className="p-8 text-center space-y-6 overflow-y-auto no-scrollbar">
             <div className="space-y-2">
               <h2 className="text-xl font-black uppercase tracking-tight">Tipo de Aposta</h2>
               <p className="text-xs text-muted-foreground font-medium">Como você deseja participar?</p>
