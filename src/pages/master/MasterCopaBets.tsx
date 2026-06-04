@@ -200,7 +200,7 @@ const MasterCopaBets = () => {
                                     : tipo === 'campeao' 
                                     ? (typeof p.palpite_valor?.campeao === 'string' ? p.palpite_valor.campeao : 'Não definido')
                                     : tipo === 'bolao'
-                                    ? "Participando do Bolão"
+                                    ? "Participando do Bolão Geral"
                                     : JSON.stringify(p.palpite_valor)}
                                 </div>
                               </div>
