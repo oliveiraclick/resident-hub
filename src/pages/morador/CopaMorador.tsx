@@ -212,15 +212,40 @@ const CopaMorador = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 -mx-4 px-4 no-scrollbar">
-          {['QUI. 11', 'SEX. 12', 'SÁB. 13', 'DOM. 14', 'SEG. 15', 'TER. 16', 'QUA. 17'].map((day, i) => (
-            <div key={i} className={`flex-shrink-0 flex flex-col items-center justify-center w-14 h-16 rounded-2xl border transition-all ${i === 0 ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20' : 'bg-[#1a2e25] border-white/5 text-muted-foreground'}`}>
-              <span className="text-[8px] font-black uppercase opacity-60 mb-1">{day.split(' ')[0]}</span>
-              <span className="text-sm font-black">{day.split(' ')[1]}</span>
-              <div className={`w-1 h-1 rounded-full mt-1 ${i === 0 ? 'bg-white' : 'bg-white/20'}`} />
+        {/* SPECIAL BETS (Campeão / Bolão) */}
+        {(activeTab === "campeao" || activeTab === "bolao") && (
+          <div className="rounded-[32px] border-none shadow-lg bg-gradient-to-br from-primary/10 to-primary/5 p-6 border border-primary/20 animate-in zoom-in-95 duration-300">
+            <div className="flex flex-col items-center text-center space-y-4">
+              <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center">
+                <Trophy size={32} className="text-primary" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-lg font-black uppercase italic">
+                  {activeTab === "campeao" ? "Palpite de Longo Prazo" : "Bolão O Morador"}
+                </h3>
+                <div className="flex flex-col gap-2 mb-2">
+                  <div className="flex flex-wrap justify-center gap-2">
+                    <Badge variant="secondary" className="bg-primary/20 text-primary border-none text-[10px] font-black">PLACA EXATO: 5 PTS</Badge>
+                    <Badge variant="secondary" className="bg-primary/20 text-primary border-none text-[10px] font-black">VENCEDOR: 3 PTS</Badge>
+                    <Badge variant="secondary" className="bg-primary/20 text-primary border-none text-[10px] font-black">EMPATE: 3 PTS</Badge>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground font-black uppercase italic">Ganhas quem faz mais pontos no final do campeonato</p>
+                </div>
+                <p className="text-xs text-muted-foreground font-medium">
+                  {activeTab === "campeao" 
+                    ? "Quem levantará a taça em 19 de julho de 2026?" 
+                    : "Participe do nosso bolão exclusivo e concorra ao prêmio acumulado!"}
+                </p>
+              </div>
+              <Button 
+                onClick={() => handleBet({ id: 'seasonal', time_home: 'COPA 2026', time_away: 'O MORADOR' }, activeTab)}
+                className="w-full rounded-2xl h-12 bg-primary text-white font-black uppercase italic tracking-widest shadow-xl shadow-primary/20"
+              >
+                DAREI MEU PALPITE AGORA
+              </Button>
             </div>
-          ))}
-        </div>
+          </div>
+        )}
 
         <div className="flex items-center justify-center gap-4 bg-[#1a2e25] p-1.5 rounded-2xl border border-white/5">
           <button className="flex-1 py-2 text-[10px] font-black uppercase bg-primary/20 text-primary rounded-xl">Próximos</button>
