@@ -127,32 +127,23 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
         ? { bolao: true }
         : { campeao: artilheiro };
 
-      // Fetch condominio_id
-      const { data: condoIds } = await supabase.rpc("get_user_condominio_ids", { _user_id: user.id });
-      const condominio_id = Array.isArray(condoIds) && condoIds.length > 0 ? condoIds[0] : null;
-
-      const { error } = await supabase
-        .from("copa_palpites")
-        .insert({
-          user_id: user.id,
-          condominio_id: condominio_id,
-          jogo_id: jogo.id,
-          tipo: betType,
-          palpite_valor: palpite_valor,
-          status_pagamento: "pendente",
-          valor_pago: 20,
-        });
-
-      if (error) throw error;
-
-      toast.success("Palpite registrado! Realize o pagamento para validar sua participação.");
-      onSuccess();
-      setShowPix(true);
-    } catch (error: any) {
-      toast.error("Erro ao enviar palpite: " + error.message);
-    } finally {
-      setLoading(false);
+  const handleSubmit = async () => {
+    if (!user) {
+      toast.error("Você precisa estar logado para apostar.");
+      return;
     }
+
+    if (betType === 'placar' && (hScore === "" || aScore === "")) {
+      toast.error("Preencha o placar do jogo.");
+      return;
+    }
+
+    if (betType === 'campeao' && !artilheiro.trim()) {
+      toast.error("Informe a seleção campeã.");
+      return;
+    }
+
+    setShowOptions(true);
   };
 
   const handleClose = () => {
