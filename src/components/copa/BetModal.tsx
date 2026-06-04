@@ -65,7 +65,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
         ? { h: parseInt(hScore), a: parseInt(aScore) }
         : betType === 'bolao'
         ? { bolao: true }
-        : { campeao: artilheiro };
+        : { campeao: jogo.time_home };
 
       const { data: condoIds } = await supabase.rpc("get_user_condominio_ids", { _user_id: user.id });
       const condominio_id = Array.isArray(condoIds) && condoIds.length > 0 ? condoIds[0] : null;
@@ -121,8 +121,8 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
       return;
     }
 
-    if (betType === 'campeao' && !artilheiro.trim()) {
-      toast.error("Informe a seleção campeã.");
+    if (betType === 'campeao' && !jogo.time_home) {
+      toast.error("Seleção não identificada.");
       return;
     }
 
@@ -199,14 +199,19 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
                   </div>
                 </div>
               ) : (
-                <div className="space-y-3">
-                  <Label className="text-xs font-bold uppercase ml-1">Qual seleção será a campeã?</Label>
-                  <Input 
-                    placeholder="Nome do País..."
-                    value={artilheiro}
-                    onChange={(e) => setArtilheiro(e.target.value)}
-                    className="h-12 rounded-2xl bg-muted border-none px-4"
-                  />
+                <div className="space-y-4">
+                  <div className="bg-primary/10 p-5 rounded-3xl border border-primary/20 flex flex-col items-center text-center gap-3">
+                    <div className="w-16 h-10 bg-white/10 rounded-xl flex items-center justify-center border border-white/20">
+                       <span className="text-xl font-black">{jogo.time_home.substring(0, 2).toUpperCase()}</span>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Sua Escolha</p>
+                      <h3 className="text-xl font-black uppercase text-primary italic">{jogo.time_home}</h3>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground font-medium bg-muted/30 p-4 rounded-2xl text-center">
+                    Você está apostando que a seleção da <strong>{jogo.time_home}</strong> será a grande campeã da Copa 2026.
+                  </p>
                 </div>
               )}
 

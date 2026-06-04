@@ -8,6 +8,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { BetModal } from "@/components/copa/BetModal";
 
+const SELECOES_COPA = [
+  "Argentina", "França", "Brasil", "Inglaterra", "Bélgica", "Espanha", "Portugal", "Holanda",
+  "Itália", "Alemanha", "Uruguai", "Croácia", "EUA", "México", "Marrocos", "Senegal",
+  "Japão", "Coréia do Sul", "Austrália", "Canadá", "Colômbia", "Equador", "Suíça", "Dinamarca"
+].sort();
+
 const CopaMorador = () => {
   const { user } = useAuth();
   const [jogos, setJogos] = useState([]);
@@ -49,7 +55,6 @@ const CopaMorador = () => {
     }));
     setJogos(processedJogos);
     
-    // Calculate prize pools by type (taking 75% of paid amounts) - ONLY VALIDATED BETS
     const { data: paidBets } = await supabase
       .from("copa_palpites")
       .select("valor_pago, tipo, user_id")
@@ -123,6 +128,12 @@ const CopaMorador = () => {
     setIsBetModalOpen(true);
   };
 
+  const handleSelectCampeao = (selecao: string) => {
+    setSelectedJogo({ id: 'campeao_seasonal', time_home: selecao, time_away: 'O MORADOR' });
+    setActiveTab('campeao');
+    setIsBetModalOpen(true);
+  };
+
   const handleBetSuccess = () => {
     fetchData();
   };
@@ -159,7 +170,6 @@ const CopaMorador = () => {
           <p className="text-xs text-muted-foreground font-medium">Faça seus palpites e responda perguntas</p>
         </div>
 
-        {/* SALDO E ACUMULADO */}
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-[#1a2e25] border border-primary/20 rounded-3xl p-5 flex flex-col justify-between min-h-[110px] shadow-lg shadow-black/20">
             <div>
@@ -190,14 +200,6 @@ const CopaMorador = () => {
           </div>
         </div>
 
-
-        {/* FILTRO DE STATUS */}
-        <div className="flex items-center justify-center gap-4 bg-[#1a2e25] p-1.5 rounded-2xl border border-white/5">
-          <button className="flex-1 py-3 text-[11px] font-black uppercase bg-primary/20 text-primary rounded-[14px]">Próximos</button>
-          <button className="flex-1 py-3 text-[11px] font-black uppercase text-muted-foreground hover:text-white transition-colors">Finalizados</button>
-        </div>
-
-        {/* SELETOR DE MODALIDADE */}
         <div className="grid grid-cols-3 gap-2.5">
           {[
             { id: 'placar', label: 'Jogos', icon: ShieldCheck },
@@ -219,9 +221,39 @@ const CopaMorador = () => {
           ))}
         </div>
 
-        {/* LISTAGEM DE JOGOS */}
-        {(activeTab === "placar" || activeTab === "bolao") && (
+        {activeTab === "campeao" && (
+          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="flex flex-col gap-1 px-1">
+              <h3 className="text-[11px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                <Trophy size={14} className="text-primary" /> Escolha seu Campeão
+              </h3>
+              <p className="text-[9px] text-muted-foreground/60 uppercase font-bold italic">Selecione o país que levantará a taça</p>
+            </div>
+            
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {SELECOES_COPA.map((selecao) => (
+                <button
+                  key={selecao}
+                  onClick={() => handleSelectCampeao(selecao)}
+                  className="bg-[#1a2e25] border border-white/5 rounded-3xl p-4 flex flex-col items-center justify-center gap-3 transition-all hover:border-primary/40 hover:scale-[1.02] active:scale-[0.98] group shadow-lg"
+                >
+                  <div className="w-12 h-8 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden border border-white/10 group-hover:bg-primary/10 transition-colors">
+                    <span className="text-sm font-black opacity-30 group-hover:opacity-70">{selecao.substring(0, 2).toUpperCase()}</span>
+                  </div>
+                  <span className="text-[11px] font-black uppercase tracking-tight text-white group-hover:text-primary transition-colors">{selecao}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {activeTab === "placar" && (
           <div className="space-y-5">
+            <div className="flex items-center justify-center gap-4 bg-[#1a2e25] p-1.5 rounded-2xl border border-white/5 mb-2">
+              <button className="flex-1 py-3 text-[11px] font-black uppercase bg-primary/20 text-primary rounded-[14px]">Próximos</button>
+              <button className="flex-1 py-3 text-[11px] font-black uppercase text-muted-foreground hover:text-white transition-colors">Finalizados</button>
+            </div>
+
             <div className="flex items-center justify-between px-1">
               <h3 className="text-[11px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                 <ShieldCheck size={14} className="text-primary" /> 11 de Junho
@@ -307,7 +339,7 @@ const CopaMorador = () => {
                   <Button 
                     variant="ghost" 
                     onClick={() => setVisibleCount(prev => prev + 6)}
-                    className="w-full py-10 text-[11px] font-black uppercase text-muted-foreground/40 hover:text-primary transition-all border-2 border-dashed border-white/5 rounded-[36px] bg-[#1a2e25]/50"
+                    className="w-full py-10 text-[11px] font-black uppercase text-muted-foreground/40 hover:text-primary transition-all border-2 border-dashed border-white/5 rounded-[32px] bg-[#1a2e25]/50"
                   >
                     Carregar mais jogos
                   </Button>
@@ -321,7 +353,6 @@ const CopaMorador = () => {
           </div>
         )}
 
-        {/* RANKING GLOBAL */}
         {activeTab === "bolao" && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex items-center justify-between px-1">
