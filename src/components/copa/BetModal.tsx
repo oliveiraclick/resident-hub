@@ -297,7 +297,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-4">
-                <div className="bg-muted/30 p-5 rounded-[32px] border border-white/5 space-y-4">
+                <div className="bg-card p-5 rounded-[32px] border border-white/5 space-y-4 shadow-lg">
                   <div className="flex justify-between items-center px-1">
                     <span className="text-[10px] font-black uppercase text-primary tracking-widest">Pacote Bronze</span>
                     <span className="text-lg font-black italic">R$ 60</span>
