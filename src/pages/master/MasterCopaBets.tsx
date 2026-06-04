@@ -245,18 +245,34 @@ const MasterCopaBets = () => {
                 <CheckCircle2 size={18} className="text-success" /> Pagamentos Confirmados
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              {palpites.filter(p => p.status_pagamento === "pago").slice(0, 10).map((p: any) => (
-                <div key={p.id} className="flex items-center justify-between p-3 bg-success/5 rounded-lg border border-success/20 opacity-80">
-                  <div className="space-y-1">
-                    <p className="text-xs font-bold">{p.profiles?.nome || "Morador"}</p>
-                    <p className="text-[9px] text-muted-foreground uppercase font-black italic">
-                      {p.tipo === 'placar' ? 'Placar Exato' : p.tipo} • R$ {Number(p.valor_pago).toFixed(2)}
-                    </p>
+            <CardContent className="space-y-3 p-4">
+              {palpites.filter(p => p.status_pagamento === "pago").map((p: any) => (
+                <div key={p.id} className="flex flex-col p-4 bg-[#1a2e25] rounded-[24px] border border-white/5 opacity-80 gap-2">
+                  <div className="flex justify-between items-start">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-black text-white truncate">{p.profiles?.nome || "Morador"}</p>
+                      <p className="text-[10px] text-muted-foreground uppercase font-black italic mt-1">
+                        {p.tipo === 'placar' ? 'Placar Exato' : p.tipo === 'campeao' ? 'Campeão' : 'Bolão Geral'} • R$ {Number(p.valor_pago).toFixed(2)}
+                      </p>
+                      {p.palpite_valor && (
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="text-[9px] font-black text-primary uppercase italic">Palpite:</span>
+                          <div className="bg-white/5 px-2 py-0.5 rounded text-[9px] font-bold text-white">
+                            {p.tipo === 'placar' 
+                              ? (p.palpite_valor?.h !== undefined ? `${p.palpite_valor.h} x ${p.palpite_valor.a}` : 'Pendente')
+                              : p.tipo === 'campeao' 
+                              ? (typeof p.palpite_valor?.campeao === 'string' ? p.palpite_valor.campeao : 'Não definido')
+                              : p.tipo === 'bolao'
+                              ? "Participando do Bolão Geral"
+                              : JSON.stringify(p.palpite_valor)}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <Badge className="bg-success/20 text-success border-none text-[9px] font-black uppercase shrink-0">
+                      Aprovado
+                    </Badge>
                   </div>
-                  <Badge className="bg-success/20 text-success border-none text-[9px] font-black uppercase">
-                    Aprovado
-                  </Badge>
                 </div>
               ))}
               {palpites.filter(p => p.status_pagamento === "pago").length === 0 && (
