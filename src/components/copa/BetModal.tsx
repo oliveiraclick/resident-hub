@@ -141,7 +141,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
     onClose();
   };
 
-  const isSeasonal = jogo?.id === 'seasonal' || betType === 'bolao' || betType === 'campeao';
+  const isSeasonal = jogo?.id === '00000000-0000-0000-0000-000000000000' || betType === 'bolao' || betType === 'campeao';
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -154,7 +154,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
                 Apostar no {betType === 'placar' ? 'Placar' : betType === 'campeao' ? 'Campeão' : 'Bolão'}
               </DialogTitle>
               <DialogDescription className="text-xs uppercase font-bold tracking-tighter">
-                {isSeasonal ? 'PALPITE TEMPORADA 2026' : `${jogo.time_home} x ${jogo.time_away}`}
+                {jogo.id === '00000000-0000-0000-0000-000000000000' ? 'PALPITE TEMPORADA 2026' : `${jogo.time_home} x ${jogo.time_away}`}
               </DialogDescription>
             </DialogHeader>
 
