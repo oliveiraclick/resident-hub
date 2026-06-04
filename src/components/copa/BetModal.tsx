@@ -236,11 +236,10 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
             </div>
 
             <div className="flex flex-col items-center justify-center p-6 bg-white rounded-[32px] border-4 border-muted/50">
-              <QRCodeSVG 
-                value={pixConfig?.key || "PIX_KEY_NOT_SET"} 
-                size={180}
-                level="H"
-                includeMargin={false}
+              <img 
+                src="/pix-qrcode.jpeg" 
+                alt="PIX QR Code" 
+                className="w-[180px] h-[180px] object-contain"
               />
             </div>
 
