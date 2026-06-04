@@ -282,7 +282,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
             {betOption === 'unica' ? (
               <div className="space-y-6">
                 <div className="flex flex-col items-center justify-center p-6 bg-white rounded-[32px] border-4 border-muted/50 shadow-2xl">
-                  <img src="/pix-qrcode.jpeg" alt="PIX QR Code" className="w-[180px] h-[180px] object-contain" />
+                  <img src="/pix-qrcode.jpeg?v=1" alt="PIX QR Code" className="w-[180px] h-[180px] object-contain block bg-white" />
                 </div>
                 
                 <div className="bg-muted/30 p-4 rounded-2xl space-y-2">
