@@ -891,6 +891,30 @@ export type Database = {
           },
         ]
       }
+      copa_selecoes: {
+        Row: {
+          created_at: string | null
+          id: string
+          nome: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          nome: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          nome?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       copa_sponsors: {
         Row: {
           created_at: string | null

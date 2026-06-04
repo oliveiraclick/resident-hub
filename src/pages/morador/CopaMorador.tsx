@@ -3,16 +3,16 @@ import { supabase } from "@/integrations/supabase/client";
 import MoradorLayout from "@/components/MoradorLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, TrendingUp, ShieldCheck, Users, ChevronRight } from "lucide-react";
+import { Trophy, TrendingUp, ShieldCheck, Users, ChevronRight, RefreshCw } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { BetModal } from "@/components/copa/BetModal";
 
-const SELECOES_COPA = [
-  "Argentina", "França", "Brasil", "Inglaterra", "Bélgica", "Espanha", "Portugal", "Holanda",
-  "Itália", "Alemanha", "Uruguai", "Croácia", "EUA", "México", "Marrocos", "Senegal",
-  "Japão", "Coréia do Sul", "Austrália", "Canadá", "Colômbia", "Equador", "Suíça", "Dinamarca"
-].sort();
+interface SelecaoCopa {
+  id: string;
+  nome: string;
+  status: string;
+}
 
 const CopaMorador = () => {
   const { user } = useAuth();
@@ -27,12 +27,28 @@ const CopaMorador = () => {
   const [visibleCount, setVisibleCount] = useState(6);
   const [saldo, setSaldo] = useState(0);
   const [ranking, setRanking] = useState([]);
+  const [selecoesCopa, setSelecoesCopa] = useState<SelecaoCopa[]>([]);
+  const [isLoadingSelecoes, setIsLoadingSelecoes] = useState(false);
 
   useEffect(() => {
     setIsCopaActive(document.body.classList.contains("theme-brasil"));
   }, []);
 
+  const fetchSelecoes = async () => {
+    setIsLoadingSelecoes(true);
+    const { data, error } = await supabase
+      .from("copa_selecoes")
+      .select("*")
+      .order("nome");
+    
+    if (!error && data) {
+      setSelecoesCopa(data);
+    }
+    setIsLoadingSelecoes(false);
+  };
+
   const fetchData = async () => {
+    fetchSelecoes();
     if (user) {
       const { data: profile } = await supabase
         .from("profiles")
@@ -223,26 +239,50 @@ const CopaMorador = () => {
 
         {activeTab === "campeao" && (
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="flex flex-col gap-1 px-1">
-              <h3 className="text-[11px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                <Trophy size={14} className="text-primary" /> Escolha seu Campeão
-              </h3>
-              <p className="text-[9px] text-muted-foreground/60 uppercase font-bold italic">Selecione o país que levantará a taça</p>
+            <div className="flex items-center justify-between px-1">
+              <div className="flex flex-col gap-1">
+                <h3 className="text-[11px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                  <Trophy size={14} className="text-primary" /> Escolha seu Campeão
+                </h3>
+                <p className="text-[9px] text-muted-foreground/60 uppercase font-bold italic">Selecione o país que levantará a taça</p>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={fetchSelecoes}
+                disabled={isLoadingSelecoes}
+                className="h-8 w-8 rounded-full bg-[#1a2e25] text-primary hover:text-primary/80 border border-primary/20"
+              >
+                <RefreshCw size={14} className={isLoadingSelecoes ? "animate-spin" : ""} />
+              </Button>
             </div>
             
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {SELECOES_COPA.map((selecao) => (
-                <button
-                  key={selecao}
-                  onClick={() => handleSelectCampeao(selecao)}
-                  className="bg-[#1a2e25] border border-white/5 rounded-3xl p-4 flex flex-col items-center justify-center gap-3 transition-all hover:border-primary/40 hover:scale-[1.02] active:scale-[0.98] group shadow-lg"
-                >
-                  <div className="w-12 h-8 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden border border-white/10 group-hover:bg-primary/10 transition-colors">
-                    <span className="text-sm font-black opacity-30 group-hover:opacity-70">{selecao.substring(0, 2).toUpperCase()}</span>
-                  </div>
-                  <span className="text-[11px] font-black uppercase tracking-tight text-white group-hover:text-primary transition-colors">{selecao}</span>
-                </button>
-              ))}
+              {selecoesCopa.map((selecao) => {
+                const isEliminated = selecao.status === 'eliminado';
+                return (
+                  <button
+                    key={selecao.id}
+                    disabled={isEliminated}
+                    onClick={() => handleSelectCampeao(selecao.nome)}
+                    className={`bg-[#1a2e25] border border-white/5 rounded-3xl p-4 flex flex-col items-center justify-center gap-3 transition-all shadow-lg relative overflow-hidden group ${
+                      isEliminated 
+                        ? 'opacity-40 grayscale cursor-not-allowed border-red-500/20' 
+                        : 'hover:border-primary/40 hover:scale-[1.02] active:scale-[0.98]'
+                    }`}
+                  >
+                    {isEliminated && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-10">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-red-500 bg-black/80 px-2 py-0.5 rounded rotate-[-15deg] border border-red-500/40 shadow-lg shadow-black">Eliminado</span>
+                      </div>
+                    )}
+                    <div className="w-12 h-8 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden border border-white/10 group-hover:bg-primary/10 transition-colors">
+                      <span className="text-sm font-black opacity-30 group-hover:opacity-70">{selecao.nome.substring(0, 2).toUpperCase()}</span>
+                    </div>
+                    <span className={`text-[11px] font-black uppercase tracking-tight transition-colors ${isEliminated ? 'text-muted-foreground' : 'text-white group-hover:text-primary'}`}>{selecao.nome}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
