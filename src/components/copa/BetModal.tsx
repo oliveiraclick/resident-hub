@@ -303,11 +303,20 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
                   </div>
                   <div className="bg-white p-4 rounded-2xl flex flex-col items-center gap-3">
                     <img src="/pix-60.png" alt="PIX 60" className="w-32 h-32 object-contain" />
+                    <div className="bg-muted/30 p-3 rounded-xl space-y-1.5 w-full">
+                      <p className="text-[8px] font-black uppercase text-muted-foreground tracking-widest">Copia e Cola (R$ 60)</p>
+                      <div className="flex items-center gap-2 bg-background p-2 rounded-lg border border-border">
+                        <p className="text-[8px] font-bold truncate flex-1">00020126810014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0234Bolão Copa do Mundo O Moraror R$60520400005303986540560.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO621405102R7kwQAjSC6304588E</p>
+                        <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => copyPix("00020126810014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0234Bolão Copa do Mundo O Moraror R$60520400005303986540560.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO621405102R7kwQAjSC6304588E")}>
+                          <Copy size={12} />
+                        </Button>
+                      </div>
+                    </div>
                     <Button 
                       onClick={() => handleMultiPixSelect(60)}
                       className="w-full h-10 rounded-xl bg-foreground text-background font-black text-[10px] uppercase tracking-widest"
                     >
-                      Pagar R$ 60 <ChevronRight size={14} />
+                      Já paguei R$ 60 <ChevronRight size={14} />
                     </Button>
                   </div>
                 </div>
