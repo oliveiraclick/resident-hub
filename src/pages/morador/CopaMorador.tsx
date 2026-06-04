@@ -244,15 +244,20 @@ const CopaMorador = () => {
                       </p>
                       <div className="flex items-center gap-2">
                         <div className="text-lg font-black text-white">
-                          {palpite.tipo === 'placar' ? (palpite.palpite_valor?.h ?? '-') : palpite.tipo === 'campeao' ? (palpite.palpite_valor?.campeao ?? '-') : '-'}
+                          {(palpite.tipo === 'placar' || palpite.tipo === 'bolao') ? (palpite.palpite_valor?.h ?? '-') : palpite.tipo === 'campeao' ? (palpite.palpite_valor?.campeao ?? '-') : '-'}
                         </div>
-                        {palpite.tipo === 'placar' && (
+                        {(palpite.tipo === 'placar' || palpite.tipo === 'bolao') && (
                           <>
                             <div className="text-[9px] font-black text-muted-foreground italic">X</div>
                             <div className="text-lg font-black text-white">{palpite.palpite_valor?.a ?? '-'}</div>
                           </>
                         )}
                       </div>
+                      {palpite.tipo === 'bolao' && palpite.palpite_valor?.vencedor && (
+                        <p className="text-[7px] font-black uppercase text-muted-foreground bg-white/5 px-1.5 py-0.5 rounded">
+                          Venc: {palpite.palpite_valor.vencedor === 'home' ? jogo.time_home : palpite.palpite_valor.vencedor === 'away' ? jogo.time_away : 'Empate'}
+                        </p>
+                      )}
                       {palpite.status_pagamento === 'pendente' ? (
                         <Badge variant="outline" className="text-[7px] border-yellow-500/50 text-yellow-500 bg-yellow-500/5 uppercase font-black italic px-1.5 h-4">PENDENTE</Badge>
                       ) : palpite.status_pagamento === 'pago' ? (
