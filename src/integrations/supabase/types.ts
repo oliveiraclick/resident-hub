@@ -769,6 +769,33 @@ export type Database = {
           },
         ]
       }
+      copa_api_logs: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          event_type: string
+          id: string
+          payload: Json | null
+          status: string
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          event_type: string
+          id?: string
+          payload?: Json | null
+          status: string
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json | null
+          status?: string
+        }
+        Relationships: []
+      }
       copa_config: {
         Row: {
           id: string
