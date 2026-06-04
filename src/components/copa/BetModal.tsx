@@ -306,7 +306,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
                     <span className="text-lg font-black italic">R$ 60</span>
                   </div>
                   <div className="bg-white p-6 rounded-3xl flex flex-col items-center gap-3">
-                    <img src="/pix-60.png" alt="PIX 60" className="w-56 h-56 mx-auto block bg-white p-2 rounded-xl" />
+                    <img ref={imgRef60} src="/pix-60.png" alt="PIX 60" className="w-56 h-56 mx-auto block bg-white p-2 rounded-xl" onLoad={() => { if(imgRef60.current) imgRef60.current.style.opacity = '1'; }} />
                     <div className="bg-muted/50 p-4 rounded-2xl space-y-2 w-full">
                       <p className="text-[9px] font-black uppercase text-muted-foreground tracking-widest text-center">Copia e Cola (R$ 60)</p>
                       <div className="flex items-center gap-2 bg-background p-3 rounded-xl border border-border">
