@@ -363,84 +363,14 @@ const CopaMorador = () => {
 
             <div className="flex items-center justify-between px-1">
               <h3 className="text-[11px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                <ShieldCheck size={14} className="text-primary" /> 11 de Junho
+                <ShieldCheck size={14} className="text-primary" /> Jogos do Brasil
               </h3>
-              <Badge variant="secondary" className="text-[9px] font-bold bg-white/5 text-muted-foreground/40 border-none px-3 py-1">2 JOGOS</Badge>
+              <Badge variant="secondary" className="text-[9px] font-bold bg-white/5 text-muted-foreground/40 border-none px-3 py-1">{filteredJogos.length} JOGOS</Badge>
             </div>
             
             {paginatedJogos.length > 0 ? (
               <div className="space-y-5">
-                {paginatedJogos.map((jogo: any) => {
-                  const dataJogo = new Date(jogo.data_jogo);
-                  const now = new Date();
-                  const diffMinutes = (dataJogo.getTime() - now.getTime()) / (1000 * 60);
-                  const canBet = diffMinutes > 20;
-
-                  return (
-                    <div key={jogo.id} className="bg-[#1a2e25] rounded-[32px] border border-white/5 overflow-hidden shadow-xl transition-all hover:border-primary/20">
-                      <div className="p-6 space-y-5">
-                        <div className="flex justify-between items-center text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest">
-                          <span className="flex items-center gap-2 italic">
-                            <TrendingUp size={12} className="text-primary" /> {jogo.rodada}
-                          </span>
-                          <span className="bg-white/5 px-2.5 py-1 rounded-lg">
-                            {dataJogo.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} • EM {Math.floor(diffMinutes / 60)}H
-                          </span>
-                        </div>
-
-                        <div className="flex items-center justify-between px-1">
-                          <div className="flex flex-col items-center gap-3 flex-1">
-                            <div className="w-16 h-12 bg-white/5 rounded-xl flex items-center justify-center overflow-hidden border border-white/10 shadow-inner">
-                              <span className="text-xl font-black opacity-30">BR</span>
-                            </div>
-                            <span className="text-[12px] font-black uppercase tracking-tight text-white leading-none">{jogo.time_home}</span>
-                          </div>
-
-                          <div className="flex flex-col items-center gap-1 px-4">
-                            <span className="text-[10px] font-black text-muted-foreground/30 italic tracking-tighter">VS</span>
-                          </div>
-
-                          <div className="flex flex-col items-center gap-3 flex-1">
-                            <div className="w-16 h-12 bg-white/5 rounded-xl flex items-center justify-center overflow-hidden border border-white/10 shadow-inner">
-                              <span className="text-xl font-black opacity-30">SA</span>
-                            </div>
-                            <span className="text-[12px] font-black uppercase tracking-tight text-white leading-none">{jogo.time_away}</span>
-                          </div>
-
-                          <div className="flex flex-col items-center justify-center ml-4 pl-4 border-l border-white/5 min-w-[70px]">
-                            <p className="text-[8px] font-black text-muted-foreground/40 uppercase mb-1.5 tracking-widest">Status</p>
-                            <div className={`w-11 h-11 rounded-2xl flex items-center justify-center ${canBet ? 'bg-white/5 border border-white/10 shadow-lg' : 'bg-primary/20 border border-primary/30 shadow-lg shadow-primary/10'}`}>
-                              {canBet ? <div className="w-2 h-2 rounded-full bg-muted-foreground/20" /> : <ShieldCheck size={20} className="text-primary" />}
-                            </div>
-                            <p className="text-[8px] font-black mt-2 uppercase text-muted-foreground/40 tracking-tight">{canBet ? 'Sem palpite' : 'Feito'}</p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center justify-between gap-4 pt-1">
-                          <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground/40 uppercase tracking-tight">
-                            <Users size={12} className="opacity-40" /> {jogo.palpites_count || 0} palpites
-                          </div>
-                          <div className="bg-white/[0.03] px-3 py-1.5 rounded-2xl border border-white/5 text-[11px] font-bold text-muted-foreground/60 flex items-center gap-2">
-                            SEU PALPITE: <span className="text-primary font-black italic">2 - 1</span>
-                          </div>
-                        </div>
-
-                        {canBet ? (
-                          <Button 
-                            onClick={() => handleBet(jogo, activeTab)}
-                            className="w-full rounded-2xl h-14 bg-primary hover:bg-primary/90 text-white font-black text-[12px] uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center justify-center gap-3 active:scale-[0.98] transition-all"
-                          >
-                            Enviar Meu Palpite <ChevronRight size={18} />
-                          </Button>
-                        ) : (
-                          <div className="w-full py-4 bg-white/[0.02] rounded-3xl text-center border border-white/5">
-                            <p className="text-[10px] font-black uppercase text-muted-foreground/30 italic tracking-widest">Apostas encerradas</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
+                <GameList items={paginatedJogos} />
                 
                 {visibleCount < filteredJogos.length && (
                   <Button 
@@ -461,43 +391,72 @@ const CopaMorador = () => {
         )}
 
         {activeTab === "bolao" && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="space-y-5">
             <div className="flex items-center justify-between px-1">
               <h3 className="text-[11px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                <Trophy size={16} className="text-warning" /> Bolão Geral
+                <TrendingUp size={14} className="text-primary" /> Bolão (Todos os Jogos)
               </h3>
+              <Badge variant="secondary" className="text-[9px] font-bold bg-white/5 text-muted-foreground/40 border-none px-3 py-1">{filteredJogos.length} JOGOS</Badge>
             </div>
             
-            <div className="bg-[#1a2e25] rounded-[40px] border border-white/5 p-3 overflow-hidden shadow-2xl">
-              {ranking.length > 0 ? (
-                ranking.map((player: any, index) => {
-                  const pos = index + 1;
-                  return (
-                    <div key={index} className="flex items-center justify-between p-5 hover:bg-white/[0.03] transition-all rounded-3xl border border-transparent">
-                      <div className="flex items-center gap-5">
-                        <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-[14px] font-black shadow-lg ${pos === 1 ? 'bg-warning text-white rotate-6' : pos === 2 ? 'bg-slate-400 text-white' : 'bg-orange-400 text-white'}`}>
-                          {pos}º
+            {paginatedJogos.length > 0 ? (
+              <div className="space-y-5">
+                <GameList items={paginatedJogos} />
+                
+                {visibleCount < filteredJogos.length && (
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => setVisibleCount(prev => prev + 6)}
+                    className="w-full py-10 text-[11px] font-black uppercase text-muted-foreground/40 hover:text-primary transition-all border-2 border-dashed border-white/5 rounded-[32px] bg-[#1a2e25]/50"
+                  >
+                    Carregar mais jogos
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <div className="py-20 text-center bg-[#1a2e25] rounded-[44px] border border-dashed border-white/10 shadow-inner">
+                <p className="text-xs text-muted-foreground/40 font-black uppercase tracking-[0.2em]">Nenhum confronto encontrado</p>
+              </div>
+            )}
+
+            <div className="pt-8 space-y-6">
+              <div className="flex items-center justify-between px-1">
+                <h3 className="text-[11px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                  <Trophy size={16} className="text-warning" /> Ranking Geral
+                </h3>
+              </div>
+              
+              <div className="bg-[#1a2e25] rounded-[40px] border border-white/5 p-3 overflow-hidden shadow-2xl">
+                {ranking.length > 0 ? (
+                  ranking.map((player: any, index) => {
+                    const pos = index + 1;
+                    return (
+                      <div key={index} className="flex items-center justify-between p-5 hover:bg-white/[0.03] transition-all rounded-3xl border border-transparent">
+                        <div className="flex items-center gap-5">
+                          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-[14px] font-black shadow-lg ${pos === 1 ? 'bg-warning text-white rotate-6' : pos === 2 ? 'bg-slate-400 text-white' : 'bg-orange-400 text-white'}`}>
+                            {pos}º
+                          </div>
+                          <div>
+                            <p className="text-[13px] font-black text-white uppercase tracking-tight">{player.nome}</p>
+                            <p className="text-[10px] text-muted-foreground/40 uppercase font-black tracking-tighter mt-0.5">{player.localizacao}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-[13px] font-black text-white uppercase tracking-tight">{player.nome}</p>
-                          <p className="text-[10px] text-muted-foreground/40 uppercase font-black tracking-tighter mt-0.5">{player.localizacao}</p>
+                        <div className="text-right">
+                          <div className="bg-primary/20 px-4 py-2 rounded-2xl border border-primary/20">
+                            <span className="text-[12px] font-black text-primary">
+                              {player.pontos} <span className="text-[9px] opacity-50 ml-0.5">PTS</span>
+                            </span>
+                          </div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="bg-primary/20 px-4 py-2 rounded-2xl border border-primary/20">
-                          <span className="text-[12px] font-black text-primary">
-                            {player.pontos} <span className="text-[9px] opacity-50 ml-0.5">PTS</span>
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="py-16 text-center">
-                  <p className="text-[10px] text-muted-foreground/30 font-black uppercase tracking-[0.2em] italic">O ranking será atualizado em breve</p>
-                </div>
-              )}
+                    );
+                  })
+                ) : (
+                  <div className="py-16 text-center">
+                    <p className="text-[10px] text-muted-foreground/30 font-black uppercase tracking-[0.2em] italic">O ranking será atualizado em breve</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
