@@ -54,19 +54,22 @@ const AdminFinanceiro = () => {
     fetchData();
   }, [condominioId]);
 
-  const handleApprovePayment = async (betId: string) => {
+  const handleDeleteBet = async (betId: string) => {
+    if (!confirm("Tem certeza que deseja excluir este palpite permanentemente?")) return;
+
     try {
       const { error } = await supabase
         .from("copa_palpites")
-        .update({ status_pagamento: "pago", pago: true })
+        .delete()
         .eq("id", betId);
 
       if (error) throw error;
       
-      toast.success("Pagamento aprovado!");
+      toast.success("Palpite excluído com sucesso!");
       fetchData();
     } catch (error: any) {
-      toast.error("Erro ao aprovar pagamento");
+      toast.error("Erro ao excluir palpite");
+      console.error(error);
     }
   };
 
@@ -145,13 +148,23 @@ const AdminFinanceiro = () => {
                         )}
                       </div>
                     </div>
-                    <Button 
-                      size="sm" 
-                      onClick={() => handleApprovePayment(p.id)}
-                      className="rounded-xl bg-primary hover:bg-primary/90 text-white font-black text-[10px] uppercase px-4 shadow-lg shadow-primary/20 ml-4 shrink-0"
-                    >
-                      Aprovar
-                    </Button>
+                    <div className="flex flex-col gap-2 ml-4 shrink-0">
+                      <Button 
+                        size="sm" 
+                        onClick={() => handleApprovePayment(p.id)}
+                        className="rounded-xl bg-primary hover:bg-primary/90 text-white font-black text-[10px] uppercase px-4 shadow-lg shadow-primary/20"
+                      >
+                        Aprovar
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="ghost"
+                        onClick={() => handleDeleteBet(p.id)}
+                        className="rounded-xl text-destructive hover:text-destructive hover:bg-destructive/10 font-black text-[10px] uppercase px-4"
+                      >
+                        Excluir
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               ))
