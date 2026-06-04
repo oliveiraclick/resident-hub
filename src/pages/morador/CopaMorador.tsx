@@ -147,7 +147,7 @@ const CopaMorador = () => {
 
   return (
     <MoradorLayout title="Palpites" showBack>
-      <div className="space-y-6 pb-20">
+      <div className="space-y-6 pb-20 no-scrollbar">
         <div className="flex flex-col gap-1 px-1">
           <p className="text-xs text-muted-foreground font-medium">Faça seus palpites e responda perguntas</p>
         </div>
