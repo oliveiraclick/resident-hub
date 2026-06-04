@@ -136,9 +136,9 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px] rounded-[32px] overflow-hidden bg-background text-foreground border-none p-0">
+      <DialogContent className="sm:max-w-[425px] w-[95vw] rounded-[32px] overflow-hidden bg-background text-foreground border-none p-0 max-h-[90vh] flex flex-col">
         {!showPix && !showOptions && (
-          <div className="p-6">
+          <div className="p-6 overflow-y-auto no-scrollbar">
             <DialogHeader className="mb-6">
               <DialogTitle className="flex items-center gap-2">
                 <Trophy className="text-warning" size={20} />
@@ -227,7 +227,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
         )}
 
         {showOptions && (
-          <div className="p-8 text-center space-y-6">
+          <div className="p-8 text-center space-y-6 overflow-y-auto no-scrollbar">
             <div className="space-y-2">
               <h2 className="text-xl font-black uppercase tracking-tight">Tipo de Aposta</h2>
               <p className="text-xs text-muted-foreground font-medium">Como você deseja participar?</p>
@@ -268,7 +268,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
         )}
 
         {showPix && (
-          <div className="p-6 text-center space-y-6 max-h-[85vh] overflow-y-auto no-scrollbar">
+          <div className="p-6 text-center space-y-6 overflow-y-auto no-scrollbar flex-1">
             <div className="flex flex-col items-center gap-2">
               <div className="h-16 w-16 bg-success/10 rounded-full flex items-center justify-center mb-2">
                 <CheckCircle2 size={32} className="text-success" />
@@ -303,7 +303,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
                     <span className="text-lg font-black italic">R$ 60</span>
                   </div>
                   <div className="bg-white p-4 rounded-2xl flex flex-col items-center gap-3">
-                    <img src="/pix-60.png" alt="PIX 60" className="w-32 h-32 object-contain" />
+                    <img src="/pix-60.png" alt="PIX 60" className="w-40 h-40 object-contain mx-auto" />
                     <div className="bg-muted/30 p-3 rounded-xl space-y-1.5 w-full">
                       <p className="text-[8px] font-black uppercase text-muted-foreground tracking-widest">Copia e Cola (R$ 60)</p>
                       <div className="flex items-center gap-2 bg-background p-2 rounded-lg border border-border">
@@ -331,7 +331,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
                     <span className="text-lg font-black italic">R$ 100</span>
                   </div>
                   <div className="bg-white p-4 rounded-2xl flex flex-col items-center gap-3">
-                    <img src="/pix-100.png" alt="PIX 100" className="w-32 h-32 object-contain" />
+                    <img src="/pix-100.png" alt="PIX 100" className="w-40 h-40 object-contain mx-auto" />
                     <div className="bg-muted/30 p-3 rounded-xl space-y-1.5 w-full text-center">
                       <p className="text-[8px] font-black uppercase text-muted-foreground tracking-widest">Copia e Cola (R$ 100)</p>
                       <div className="flex items-center gap-2 bg-background p-2 rounded-lg border border-border">
