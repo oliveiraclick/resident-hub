@@ -145,7 +145,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px] w-[95vw] rounded-[32px] overflow-hidden bg-[#0a140f] text-foreground border-none p-0 max-h-[92vh] flex flex-col shadow-2xl">
+      <DialogContent className="sm:max-w-[425px] w-[95vw] rounded-[32px] overflow-hidden bg-[#0a140f] text-foreground border-none p-0 max-h-[90vh] flex flex-col shadow-2xl overflow-y-auto no-scrollbar">
         {!showPix && !showOptions && (
           <div className="p-6 overflow-y-auto no-scrollbar">
             <DialogHeader className="mb-6">
@@ -282,7 +282,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
         )}
 
         {showPix && (
-          <div className="p-6 text-center space-y-6 overflow-y-auto no-scrollbar flex-1">
+          <div className="p-6 text-center space-y-6 flex-1">
             <div className="flex flex-col items-center gap-2">
               <div className="h-16 w-16 bg-success/10 rounded-full flex items-center justify-center mb-2">
                 <CheckCircle2 size={32} className="text-success" />
