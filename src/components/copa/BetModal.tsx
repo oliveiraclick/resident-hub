@@ -121,8 +121,8 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
       return;
     }
 
-    if (betType === 'campeao' && !artilheiro.trim()) {
-      toast.error("Informe a seleção campeã.");
+    if (betType === 'campeao' && !jogo.time_home) {
+      toast.error("Seleção não identificada.");
       return;
     }
 
