@@ -330,12 +330,21 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
                     <span className="text-lg font-black italic">R$ 100</span>
                   </div>
                   <div className="bg-white p-4 rounded-2xl flex flex-col items-center gap-3">
-                    <img src="/pix-qrcode.jpeg" alt="PIX 100" className="w-32 h-32 object-contain" />
+                    <img src="/pix-100.png" alt="PIX 100" className="w-32 h-32 object-contain" />
+                    <div className="bg-muted/30 p-3 rounded-xl space-y-1.5 w-full text-center">
+                      <p className="text-[8px] font-black uppercase text-muted-foreground tracking-widest">Copia e Cola (R$ 100)</p>
+                      <div className="flex items-center gap-2 bg-background p-2 rounded-lg border border-border">
+                        <p className="text-[8px] font-bold truncate flex-1">00020126820014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0235Bolão Copa do Mundo O Morador R$1005204000053039865406100.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO62140510OiJEMerkG0630404B8</p>
+                        <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => copyPix("00020126820014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0235Bolão Copa do Mundo O Morador R$1005204000053039865406100.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO62140510OiJEMerkG0630404B8")}>
+                          <Copy size={12} />
+                        </Button>
+                      </div>
+                    </div>
                     <Button 
                       onClick={() => handleMultiPixSelect(100)}
                       className="w-full h-10 rounded-xl bg-primary text-white font-black text-[10px] uppercase tracking-widest"
                     >
-                      Pagar R$ 100 <ChevronRight size={14} />
+                      Já paguei R$ 100 <ChevronRight size={14} />
                     </Button>
                   </div>
                 </div>
