@@ -54,6 +54,23 @@ const AdminFinanceiro = () => {
     fetchData();
   }, [condominioId]);
 
+  const handleApprovePayment = async (betId: string) => {
+    try {
+      const { error } = await supabase
+        .from("copa_palpites")
+        .update({ status_pagamento: "pago", pago: true })
+        .eq("id", betId);
+
+      if (error) throw error;
+      
+      toast.success("Pagamento aprovado!");
+      fetchData();
+    } catch (error: any) {
+      toast.error("Erro ao aprovar pagamento");
+      console.error(error);
+    }
+  };
+
   const handleDeleteBet = async (betId: string) => {
     if (!confirm("Tem certeza que deseja excluir este palpite permanentemente?")) return;
 
