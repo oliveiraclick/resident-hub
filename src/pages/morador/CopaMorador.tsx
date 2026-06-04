@@ -25,6 +25,7 @@ const CopaMorador = () => {
   const [activeTab, setActiveTab] = useState("placar");
   const [selectedJogo, setSelectedJogo] = useState<any>(null);
   const [isBetModalOpen, setIsBetModalOpen] = useState(false);
+  const [forceShowMultiplas, setForceShowMultiplas] = useState(false);
   const [visibleCount, setVisibleCount] = useState(6);
   const [saldo, setSaldo] = useState(0);
   const [ranking, setRanking] = useState([]);
@@ -142,6 +143,14 @@ const CopaMorador = () => {
   const handleBet = (jogo: any, type?: string) => {
     setSelectedJogo(jogo);
     if (type) setActiveTab(type);
+    setIsBetModalOpen(true);
+    setForceShowMultiplas(false);
+  };
+
+  const handleRecarregar = () => {
+    setSelectedJogo({ id: 'recharge', time_home: 'SISTEMA', time_away: 'RECARGA' });
+    setActiveTab('placar'); // Just to avoid issues with betType
+    setForceShowMultiplas(true);
     setIsBetModalOpen(true);
   };
 
@@ -275,7 +284,7 @@ const CopaMorador = () => {
                 <p className="text-xl font-black text-white">R$ {saldo.toFixed(2)}</p>
               </div>
               <button 
-                onClick={() => toast.info("Para adicionar saldo, entre em contato com o administrador.")}
+                onClick={handleRecarregar}
                 className="bg-primary text-white px-4 py-2 rounded-2xl text-[10px] font-black uppercase hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
               >
                 + RECARREGAR
@@ -469,10 +478,14 @@ const CopaMorador = () => {
 
       <BetModal 
         isOpen={isBetModalOpen}
-        onClose={() => setIsBetModalOpen(false)}
+        onClose={() => {
+          setIsBetModalOpen(false);
+          setForceShowMultiplas(false);
+        }}
         jogo={selectedJogo}
         betType={activeTab}
         onSuccess={handleBetSuccess}
+        forceShowMultiplas={forceShowMultiplas}
       />
     </MoradorLayout>
   );
