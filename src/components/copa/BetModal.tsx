@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +26,9 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
   const [showOptions, setShowOptions] = useState(false);
   const [betOption, setBetOption] = useState<'unica' | 'multiplas' | null>(null);
   const [pixConfig, setPixConfig] = useState<{ key: string, name: string, value: number } | null>(null);
+
+  const imgRef60 = useRef<HTMLImageElement>(null);
+  const imgRef100 = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     const fetchPixConfig = async () => {
@@ -136,7 +139,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px] w-[95vw] rounded-[32px] overflow-hidden bg-background text-foreground border-none p-0 max-h-[92vh] flex flex-col shadow-2xl">
+      <DialogContent className="sm:max-w-[425px] w-[95vw] rounded-[32px] overflow-hidden bg-[#0a140f] text-foreground border-none p-0 max-h-[92vh] flex flex-col shadow-2xl">
         {!showPix && !showOptions && (
           <div className="p-6 overflow-y-auto no-scrollbar">
             <DialogHeader className="mb-6">
@@ -282,7 +285,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
             {betOption === 'unica' ? (
               <div className="space-y-6">
                 <div className="flex flex-col items-center justify-center p-6 bg-white rounded-[32px] border-4 border-muted/50 shadow-2xl">
-                  <img src="/pix-qrcode.jpeg" alt="PIX QR Code" className="w-[180px] h-[180px] object-contain" />
+                  <img src="/pix-qrcode.jpeg" alt="PIX QR Code" style={{ width: '180px', height: '180px', display: 'block', margin: '0 auto', backgroundColor: 'white', padding: '4px' }} />
                 </div>
                 
                 <div className="bg-muted/30 p-4 rounded-2xl space-y-2">
@@ -303,7 +306,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
                     <span className="text-lg font-black italic">R$ 60</span>
                   </div>
                   <div className="bg-white p-6 rounded-3xl flex flex-col items-center gap-3">
-                    <img src="/pix-60.png" alt="PIX 60" className="w-48 h-48 object-contain mx-auto" />
+                    <img ref={imgRef60} src="/pix-60.png" alt="PIX 60" className="w-56 h-56 mx-auto block bg-white p-2 rounded-xl" onLoad={() => { if(imgRef60.current) imgRef60.current.style.opacity = '1'; }} />
                     <div className="bg-muted/50 p-4 rounded-2xl space-y-2 w-full">
                       <p className="text-[9px] font-black uppercase text-muted-foreground tracking-widest text-center">Copia e Cola (R$ 60)</p>
                       <div className="flex items-center gap-2 bg-background p-3 rounded-xl border border-border">
@@ -331,7 +334,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
                     <span className="text-lg font-black italic">R$ 100</span>
                   </div>
                   <div className="bg-white p-6 rounded-3xl flex flex-col items-center gap-3">
-                    <img src="/pix-100.png" alt="PIX 100" className="w-48 h-48 object-contain mx-auto" />
+                    <img src="/pix-100.png" alt="PIX 100" className="w-56 h-56 mx-auto block bg-white p-2 rounded-xl" />
                     <div className="bg-muted/50 p-4 rounded-2xl space-y-2 w-full text-center">
                       <p className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">Copia e Cola (R$ 100)</p>
                       <div className="flex items-center gap-2 bg-background p-3 rounded-xl border border-border">
