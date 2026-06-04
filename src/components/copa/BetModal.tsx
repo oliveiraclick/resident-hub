@@ -185,7 +185,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
               <div className="bg-primary/5 p-4 rounded-2xl border border-primary/10">
                 <div className="flex justify-between items-center text-[11px] font-bold">
                   <span className="text-muted-foreground uppercase">Valor da Aposta</span>
-                  <span className="text-primary">R$ {(pixConfig?.value || 10).toFixed(2)}</span>
+                  <span className="text-primary font-black">R$ 20.00</span>
                 </div>
               </div>
 
