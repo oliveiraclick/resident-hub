@@ -245,9 +245,11 @@ const CopaMorador = () => {
                     <div className="text-[10px] font-black text-muted-foreground italic">X</div>
                     <div className="text-xl font-black text-white">{meuPalpite.palpite_valor?.a ?? '-'}</div>
                   </div>
-                  {meuPalpite.status_pagamento === 'pendente' && (
-                    <Badge variant="outline" className="text-[8px] border-yellow-500/50 text-yellow-500 bg-yellow-500/5">AGUARDANDO VALIDAÇÃO</Badge>
-                  )}
+                  {meuPalpite.status_pagamento === 'pendente' ? (
+                    <Badge variant="outline" className="text-[8px] border-yellow-500/50 text-yellow-500 bg-yellow-500/5 uppercase font-black italic">AGUARDANDO VALIDAÇÃO</Badge>
+                  ) : meuPalpite.status_pagamento === 'pago' ? (
+                    <Badge className="text-[8px] bg-success/20 text-success border-success/30 uppercase font-black italic">PALPITE VALIDADO</Badge>
+                  ) : null}
                 </div>
               ) : canBet ? (
                 <div className="flex flex-col gap-3">
