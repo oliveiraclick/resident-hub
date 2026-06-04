@@ -247,33 +247,108 @@ const CopaMorador = () => {
           </div>
         )}
 
-        <div className="flex items-center justify-center gap-4 bg-[#1a2e25] p-1.5 rounded-2xl border border-white/5">
-          <button className="flex-1 py-2 text-[10px] font-black uppercase bg-primary/20 text-primary rounded-xl">Próximos</button>
-          <button className="flex-1 py-2 text-[10px] font-black uppercase text-muted-foreground hover:text-white transition-colors">Finalizados</button>
-        </div>
+        {/* BUSCA DE JOGOS (Show for placar and bolao) */}
+        {(activeTab === "placar" || activeTab === "bolao") && (
+          <div className="relative">
+            <input 
+              placeholder="Buscar país (Ex: Brasil)..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="rounded-2xl h-12 pl-12 bg-card border-none shadow-sm focus-visible:ring-primary w-full"
+            />
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5">
+              <ShieldCheck size={20} />
+            </div>
+          </div>
+        )}
 
-        <div className="grid grid-cols-3 gap-2">
-          {[
-            { id: 'placar', label: 'Jogos' },
-            { id: 'campeao', label: 'Campeão' },
-            { id: 'bolao', label: 'Ranking' }
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`py-3 px-3 rounded-2xl text-[10px] font-black uppercase transition-all border flex items-center justify-center gap-2 ${
-                activeTab === tab.id 
-                  ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' 
-                  : 'bg-[#1a2e25] text-muted-foreground border-white/5 hover:bg-white/5'
-              }`}
-            >
-              {tab.id === 'placar' && <ShieldCheck size={12} />}
-              {tab.id === 'campeao' && <Trophy size={12} />}
-              {tab.id === 'bolao' && <TrendingUp size={12} />}
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        {/* PROXIMO JOGO & TRENDS (Show for placar and bolao) */}
+        {(activeTab === "placar" || activeTab === "bolao") && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between px-1">
+              <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                {searchTerm ? `Resultados para "${searchTerm}"` : activeTab === "bolao" ? "Todos os Jogos da Copa" : "Jogos do Brasil - 1ª Fase"}
+              </h3>
+              {!searchTerm && <Badge variant="secondary" className="text-[9px] font-bold bg-primary/10 text-primary border-none">{jogos.length} JOGOS</Badge>}
+            </div>
+            
+            {paginatedJogos.length > 0 ? (
+              <>
+                {paginatedJogos.map((jogo: any) => {
+                  const dataJogo = new Date(jogo.data_jogo);
+                  const now = new Date();
+                  const diffMinutes = (dataJogo.getTime() - now.getTime()) / (1000 * 60);
+                  const canBet = diffMinutes > 20;
+
+                  return (
+                    <div key={jogo.id} className="rounded-[28px] border-none shadow-md overflow-hidden bg-card transition-all hover:shadow-xl active:scale-[0.98] p-6">
+                        <div className="flex justify-between items-center mb-4">
+                          <div className="text-[10px] font-black uppercase text-muted-foreground flex items-center gap-2">
+                            <TrendingUp size={14} className="text-primary" /> {jogo.rodada}
+                          </div>
+                          <Badge variant="outline" className={`text-[9px] font-bold ${!canBet ? 'bg-danger/10 text-danger border-danger/20' : 'border-muted-foreground/20'}`}>
+                            {dataJogo.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} • {dataJogo.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                            {!canBet && " • ENCERRADO"}
+                          </Badge>
+                        </div>
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between text-center gap-4">
+                            <div className="flex-1">
+                              <p className="text-xs font-bold text-foreground truncate">{jogo.time_home}</p>
+                              <div className="h-1.5 w-full bg-muted rounded-full mt-1 overflow-hidden">
+                                <div className="h-full bg-success" style={{ width: `85%` }} />
+                              </div>
+                            </div>
+                            <div className="w-10">
+                              <p className="text-[10px] font-bold text-muted-foreground italic">VS</p>
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-xs font-bold text-foreground truncate">{jogo.time_away}</p>
+                              <div className="h-1.5 w-full bg-muted rounded-full mt-1 overflow-hidden">
+                                <div className="h-full bg-danger" style={{ width: `5%` }} />
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex flex-col gap-0.5 text-center">
+                            <p className="text-[10px] text-muted-foreground uppercase font-black">{jogo.estadio}</p>
+                            <p className="text-[9px] text-muted-foreground opacity-60 font-medium">{jogo.local}</p>
+                          </div>
+
+                          {canBet ? (
+                            <Button 
+                              onClick={() => handleBet(jogo, activeTab)}
+                              className="w-full rounded-2xl h-11 bg-primary hover:bg-primary/90 text-white font-black text-[11px] uppercase tracking-wider shadow-lg shadow-primary/20"
+                            >
+                              APOSTAR NESTE JOGO
+                            </Button>
+                          ) : (
+                            <div className="w-full py-2 bg-muted/30 rounded-2xl text-center">
+                              <p className="text-[9px] font-black uppercase text-muted-foreground opacity-70">Apostas encerradas para este jogo</p>
+                            </div>
+                          )}
+                        </div>
+                    </div>
+                  );
+                })}
+                
+                {visibleCount < filteredJogos.length && (
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => setVisibleCount(prev => prev + 6)}
+                    className="w-full py-8 text-xs font-black uppercase text-muted-foreground hover:text-primary transition-colors border-2 border-dashed border-muted rounded-[28px]"
+                  >
+                    Carregar mais jogos (+6)
+                  </Button>
+                )}
+              </>
+            ) : (
+              <div className="py-16 text-center bg-muted/20 rounded-[32px] border-2 border-dashed border-muted">
+                <p className="text-sm text-muted-foreground font-medium">Nenhum jogo encontrado para "{searchTerm}".</p>
+              </div>
+            )}
+          </div>
+        )}
 
         {(activeTab === "placar" || activeTab === "bolao") && (
           <div className="space-y-4">
