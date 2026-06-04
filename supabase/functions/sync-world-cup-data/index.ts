@@ -43,7 +43,9 @@ serve(async (req) => {
       { date: "2026-06-17T13:00:00", home: "Portugal", away: "RD Congo", round: "Grupo J" },
       { date: "2026-06-17T16:00:00", home: "Inglaterra", away: "Croácia", round: "Grupo J" },
       { date: "2026-06-17T19:00:00", home: "Gana", away: "Panamá", round: "Grupo L" },
-      { date: "2026-06-17T22:00:00", home: "Uzbequistão", away: "Colômbia", round: "Grupo L" }
+      { date: "2026-06-17T22:00:00", home: "Uzbequistão", away: "Colômbia", round: "Grupo L" },
+      { date: "2026-06-19T19:00:00", home: "Brasil", away: "Haiti", round: "Grupo C" },
+      { date: "2026-06-24T16:00:00", home: "Escócia", away: "Brasil", round: "Grupo C" }
     ]
 
     // Clear existing matches to avoid duplicates or outdated manual entries
