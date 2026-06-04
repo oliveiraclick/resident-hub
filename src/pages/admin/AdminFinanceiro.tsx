@@ -115,12 +115,19 @@ const AdminFinanceiro = () => {
                         </Badge>
                       </div>
                       <div className="flex flex-col gap-0.5">
-                        <p className="text-[9px] text-muted-foreground font-black uppercase tracking-tight italic">
+                        <p className="text-[10px] text-primary font-black uppercase tracking-tight italic">
                           {p.tipo === 'placar' ? 'Placar Exato' : p.tipo === 'campeao' ? 'Campeão' : p.tipo === 'bolao' ? 'Bolão Geral' : p.tipo}
                         </p>
-                        <p className="text-[9px] text-muted-foreground/60 truncate">
-                          {p.copa_jogos?.time_home} vs {p.copa_jogos?.time_away}
-                        </p>
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <span className="text-[10px] font-bold bg-muted/50 px-2 py-0.5 rounded text-muted-foreground uppercase">
+                            Jogo: {p.copa_jogos?.time_home} x {p.copa_jogos?.time_away}
+                          </span>
+                        </div>
+                        {p.palpite_valor && p.tipo === 'placar' && (
+                          <p className="text-[10px] font-black text-foreground mt-1">
+                            Palpite: {p.palpite_valor.h} x {p.palpite_valor.a}
+                          </p>
+                        )}
                       </div>
                     </div>
                     <Button 
