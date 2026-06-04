@@ -71,9 +71,10 @@ const MasterCopaBets = () => {
         .from("profiles")
         .select("saldo")
         .eq("user_id", bet.user_id)
-        .single();
+        .maybeSingle();
 
       if (profileError) throw profileError;
+      if (!profile) throw new Error("Perfil do morador não encontrado");
 
       const novoSaldo = (Number(profile.saldo) || 0) + valorAprovado;
 
