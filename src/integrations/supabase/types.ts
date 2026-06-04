@@ -558,6 +558,36 @@ export type Database = {
           },
         ]
       }
+      carteira_transacoes: {
+        Row: {
+          created_at: string
+          descricao: string | null
+          id: string
+          status: string | null
+          tipo: string
+          user_id: string
+          valor: number
+        }
+        Insert: {
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          status?: string | null
+          tipo: string
+          user_id: string
+          valor: number
+        }
+        Update: {
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          status?: string | null
+          tipo?: string
+          user_id?: string
+          valor?: number
+        }
+        Relationships: []
+      }
       categoria_capas: {
         Row: {
           categoria: string
@@ -811,11 +841,14 @@ export type Database = {
           created_at: string | null
           id: string
           jogo_id: string | null
+          metodo_pagamento: string | null
+          pago: boolean | null
           palpite_valor: Json
           pontos_ganhos: number | null
           status_pagamento: string | null
           tipo: string
           user_id: string
+          valor_aposta: number | null
           valor_pago: number
         }
         Insert: {
@@ -823,11 +856,14 @@ export type Database = {
           created_at?: string | null
           id?: string
           jogo_id?: string | null
+          metodo_pagamento?: string | null
+          pago?: boolean | null
           palpite_valor: Json
           pontos_ganhos?: number | null
           status_pagamento?: string | null
           tipo: string
           user_id: string
+          valor_aposta?: number | null
           valor_pago?: number
         }
         Update: {
@@ -835,11 +871,14 @@ export type Database = {
           created_at?: string | null
           id?: string
           jogo_id?: string | null
+          metodo_pagamento?: string | null
+          pago?: boolean | null
           palpite_valor?: Json
           pontos_ganhos?: number | null
           status_pagamento?: string | null
           tipo?: string
           user_id?: string
+          valor_aposta?: number | null
           valor_pago?: number
         }
         Relationships: [
@@ -2091,6 +2130,7 @@ export type Database = {
           nome: string
           numero_casa: string | null
           rua: string | null
+          saldo: number | null
           telefone: string | null
           termos_aceitos_em: string | null
           updated_at: string | null
@@ -2107,6 +2147,7 @@ export type Database = {
           nome?: string
           numero_casa?: string | null
           rua?: string | null
+          saldo?: number | null
           telefone?: string | null
           termos_aceitos_em?: string | null
           updated_at?: string | null
@@ -2123,6 +2164,7 @@ export type Database = {
           nome?: string
           numero_casa?: string | null
           rua?: string | null
+          saldo?: number | null
           telefone?: string | null
           termos_aceitos_em?: string | null
           updated_at?: string | null
@@ -2366,6 +2408,10 @@ export type Database = {
         Returns: number
       }
       check_email_exists: { Args: { _email: string }; Returns: boolean }
+      deduct_user_balance: {
+        Args: { _amount: number; _description: string; _user_id: string }
+        Returns: undefined
+      }
       expirar_pre_reservas: { Args: never; Returns: undefined }
       find_morador_by_phone: {
         Args: { _condominio_id: string; _telefone: string }
