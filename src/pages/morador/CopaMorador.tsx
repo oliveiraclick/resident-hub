@@ -56,8 +56,8 @@ const CopaMorador = () => {
       const { data: profile } = await supabase
         .from("profiles")
         .select("saldo")
-        .eq("id", user.id)
-        .single();
+        .eq("user_id", user.id)
+        .maybeSingle();
       if (profile) setSaldo(Number(profile.saldo) || 0);
 
       const { data: userBets } = await supabase
@@ -97,7 +97,7 @@ const CopaMorador = () => {
     (paidBets || []).forEach((curr: any) => {
       const type = curr.tipo || 'placar';
       if (pools.hasOwnProperty(type)) {
-        pools[type as keyof typeof pools] += (Number(curr.valor_pago) * 0.75);
+        pools[type as keyof typeof pools] += Number(curr.valor_pago);
         if (curr.user_id) {
           uniqueUsersByType[type].add(curr.user_id);
         }
