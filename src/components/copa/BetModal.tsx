@@ -24,7 +24,9 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
   const [artilheiro, setArtilheiro] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPix, setShowPix] = useState(false);
-  const [pixConfig, setPixConfig] = useState<{ key: string, name: string, value: number } | null>(null);
+  const [showOptions, setShowOptions] = useState(false);
+  const [betCount, setBetCount] = useState<'unica' | 'multiplas' | null>(null);
+  const [pixConfig, setPixConfig] = useState<{ key: string, name: string, value: number, isMulti?: boolean } | null>(null);
 
   useEffect(() => {
     const fetchPixConfig = async () => {
