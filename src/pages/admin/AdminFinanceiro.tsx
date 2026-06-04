@@ -18,9 +18,15 @@ const AdminFinanceiro = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
+      console.log("Fetching financeiro data for condominioId:", condominioId);
+      
       let query = supabase
         .from("copa_palpites")
-        .select("*, profiles(nome), copa_jogos(time_home, time_away)")
+        .select(`
+          *,
+          profiles:user_id (nome),
+          copa_jogos:jogo_id (time_home, time_away)
+        `)
         .order("created_at", { ascending: false });
 
       if (condominioId) {
@@ -29,7 +35,12 @@ const AdminFinanceiro = () => {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching palpites:", error);
+        throw error;
+      }
+      
+      console.log("Fetched palpites:", data?.length);
       setPalpites(data || []);
     } catch (error: any) {
       toast.error("Erro ao carregar dados financeiros");
