@@ -39,8 +39,59 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
     if (isOpen) {
       fetchPixConfig();
       setShowPix(false);
+      setShowOptions(false);
+      setBetCount(null);
     }
   }, [isOpen, betType]);
+
+  const processAposta = async (valor: number, isMulti: boolean = false) => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const palpite_valor = betType === 'placar' 
+        ? { h: parseInt(hScore), a: parseInt(aScore) }
+        : betType === 'bolao'
+        ? { bolao: true }
+        : { campeao: artilheiro };
+
+      const { data: condoIds } = await supabase.rpc("get_user_condominio_ids", { _user_id: user.id });
+      const condominio_id = Array.isArray(condoIds) && condoIds.length > 0 ? condoIds[0] : null;
+
+      const { error } = await supabase
+        .from("copa_palpites")
+        .insert({
+          user_id: user.id,
+          condominio_id: condominio_id,
+          jogo_id: jogo.id,
+          tipo: betType,
+          palpite_valor: palpite_valor,
+          status_pagamento: "pendente",
+          valor_pago: valor,
+          pago: false, // Só o ADM valida
+        });
+
+      if (error) throw error;
+
+      toast.success(isMulti ? "Pré-aposta registrada! O saldo será liberado após o OK do ADM." : "Palpite registrado! Realize o pagamento para validar.");
+      onSuccess();
+      setShowPix(true);
+    } catch (error: any) {
+      toast.error("Erro ao enviar palpite: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSelectOption = (option: 'unica' | 'multiplas') => {
+    setBetCount(option);
+    setShowOptions(false);
+    if (option === 'unica') {
+      processAposta(20, false);
+    } else {
+      // No caso de múltiplas, registramos a intenção/pre-aposta (usando 20 como base ou 0? vou usar 20 pra indicar o valor da aposta atual)
+      processAposta(20, true);
+    }
+  };
 
 
   if (!jogo) return null;
