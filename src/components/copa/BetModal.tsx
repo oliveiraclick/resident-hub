@@ -322,7 +322,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
                   </div>
                 </div>
 
-                <div className="bg-primary/5 p-5 rounded-[32px] border-2 border-primary/20 space-y-4 relative overflow-hidden group">
+                <div className="bg-card p-5 rounded-[32px] border-2 border-primary/20 space-y-4 relative overflow-hidden group shadow-lg">
                   <div className="absolute top-0 right-0 p-2">
                     <Zap size={16} className="text-primary animate-pulse" />
                   </div>
