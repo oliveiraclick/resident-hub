@@ -302,7 +302,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
                     <span className="text-[10px] font-black uppercase text-primary tracking-widest">Pacote Bronze</span>
                     <span className="text-lg font-black italic">R$ 60</span>
                   </div>
-                  <div className="bg-white p-4 rounded-2xl flex flex-col items-center gap-3">
+                  <div className="bg-white p-6 rounded-3xl flex flex-col items-center gap-3">
                     <img src="/pix-60.png" alt="PIX 60" className="w-48 h-48 object-contain mx-auto" />
                     <div className="bg-muted/30 p-3 rounded-xl space-y-1.5 w-full">
                       <p className="text-[8px] font-black uppercase text-muted-foreground tracking-widest">Copia e Cola (R$ 60)</p>
