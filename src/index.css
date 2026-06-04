@@ -166,6 +166,13 @@ body.native-app {
 
   /* Tema Copa do Mundo (Cores do Brasil) */
   .theme-brasil {
+    --background: 210 20% 98%;
+    --foreground: 224 71.4% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
+    --border: 220 13% 91%;
     --primary: 142 76% 36%; /* Verde Bandeira */
     --primary-hover: 142 76% 30%;
     --ring: 142 76% 36%;
