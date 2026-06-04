@@ -177,45 +177,45 @@ const AdminFinanceiro = () => {
             ) : pendentes.length > 0 ? (
               pendentes.map((p) => (
                 <Card key={p.id} className="rounded-[24px] border-border/50 shadow-soft overflow-hidden">
-                  <CardContent className="p-5 flex items-center justify-between">
-                    <div className="space-y-1.5 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <p className="text-sm font-black truncate">{p.profiles?.nome || "Morador"}</p>
-                        <Badge variant="outline" className="text-[9px] font-bold border-primary/20 bg-primary/5 text-primary">
-                          R$ {Number(p.valor_pago).toFixed(2)}
-                        </Badge>
+                  <CardContent className="p-4 flex items-center justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="text-sm font-black text-foreground truncate">{p.profiles?.nome || "Morador"}</p>
+                        <div className="bg-primary/10 px-2 py-0.5 rounded-lg border border-primary/20">
+                          <p className="text-[11px] font-black text-primary leading-none">
+                            R$ {Number(p.valor_pago).toFixed(2)}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex flex-col gap-0.5">
-                        <p className="text-[10px] text-primary font-black uppercase tracking-tight italic">
+                      <div className="flex flex-col">
+                        <p className="text-[9px] text-primary font-black uppercase tracking-tight italic opacity-80">
                           {p.tipo === 'placar' ? 'Placar Exato' : p.tipo === 'campeao' ? 'Campeão' : p.tipo === 'bolao' ? 'Bolão Geral' : p.tipo}
                         </p>
-                        <div className="flex items-center gap-1.5 mt-1">
-                          <span className="text-[10px] font-bold bg-muted/50 px-2 py-0.5 rounded text-muted-foreground uppercase">
-                            Jogo: {p.copa_jogos?.time_home} x {p.copa_jogos?.time_away}
-                          </span>
-                        </div>
+                        <p className="text-[10px] font-bold text-muted-foreground truncate mt-0.5">
+                          Jogo: {p.copa_jogos?.time_home} x {p.copa_jogos?.time_away}
+                        </p>
                         {p.palpite_valor && p.tipo === 'placar' && (
-                          <p className="text-[10px] font-black text-foreground mt-1">
+                          <p className="text-[10px] font-black text-foreground/70 mt-0.5">
                             Palpite: {p.palpite_valor.h} x {p.palpite_valor.a}
                           </p>
                         )}
                       </div>
                     </div>
-                    <div className="flex flex-col gap-2 ml-4 shrink-0">
+                    <div className="flex items-center gap-1.5 shrink-0">
                       <Button 
                         size="sm" 
                         onClick={() => handleApprovePayment(p.id)}
-                        className="rounded-xl bg-primary hover:bg-primary/90 text-white font-black text-[10px] uppercase px-4 shadow-lg shadow-primary/20"
+                        className="h-8 rounded-xl bg-success hover:bg-success/90 text-white font-black text-[9px] uppercase px-3 shadow-md shadow-success/10"
                       >
-                        Aprovar
+                        Confirmar
                       </Button>
                       <Button 
-                        size="sm" 
+                        size="icon" 
                         variant="ghost"
                         onClick={() => handleDeleteBet(p.id)}
-                        className="rounded-xl text-destructive hover:text-destructive hover:bg-destructive/10 font-black text-[10px] uppercase px-4"
+                        className="h-8 w-8 rounded-xl text-destructive hover:text-destructive hover:bg-destructive/10"
                       >
-                        Excluir
+                        <Trash2 size={14} />
                       </Button>
                     </div>
                   </CardContent>
