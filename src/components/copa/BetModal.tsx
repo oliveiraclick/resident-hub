@@ -95,11 +95,13 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
 
   const handleSelectOption = (option: 'unica' | 'multiplas') => {
     setBetOption(option);
-    setShowOptions(false);
     if (option === 'unica') {
+      setShowOptions(false);
       processAposta(20, 'pix_direto');
+    } else {
+      setShowOptions(false);
+      setShowPix(true);
     }
-    // No caso de múltiplas, só mostramos a tela de QR codes (setShowPix(true) acontece no final de processAposta se fosse automática, mas aqui o usuário ainda vai escolher o valor)
   };
 
   const handleMultiPixSelect = (valor: number) => {
