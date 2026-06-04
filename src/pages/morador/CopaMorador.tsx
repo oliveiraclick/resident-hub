@@ -31,7 +31,7 @@ const CopaMorador = () => {
   const [isLoadingSelecoes, setIsLoadingSelecoes] = useState(false);
 
   useEffect(() => {
-    setIsCopaActive(document.body.classList.contains("theme-brasil"));
+    setIsCopaActive(true);
   }, []);
 
   const fetchSelecoes = async () => {
