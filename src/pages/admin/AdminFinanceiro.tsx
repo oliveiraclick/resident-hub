@@ -16,14 +16,18 @@ const AdminFinanceiro = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
-    if (!condominioId) return;
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from("copa_palpites")
         .select("*, profiles(nome), copa_jogos(time_home, time_away)")
-        .eq("condominio_id", condominioId)
         .order("created_at", { ascending: false });
+
+      if (condominioId) {
+        query = query.eq("condominio_id", condominioId);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       setPalpites(data || []);
