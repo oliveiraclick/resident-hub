@@ -332,12 +332,12 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
                   </div>
                   <div className="bg-white p-6 rounded-3xl flex flex-col items-center gap-3">
                     <img src="/pix-100.png" alt="PIX 100" className="w-48 h-48 object-contain mx-auto" />
-                    <div className="bg-muted/30 p-3 rounded-xl space-y-1.5 w-full text-center">
-                      <p className="text-[8px] font-black uppercase text-muted-foreground tracking-widest">Copia e Cola (R$ 100)</p>
-                      <div className="flex items-center gap-2 bg-background p-2 rounded-lg border border-border">
-                        <p className="text-[8px] font-bold truncate flex-1">00020126820014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0235Bolão Copa do Mundo O Morador R$1005204000053039865406100.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO62140510OiJEMerkG0630404B8</p>
-                        <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => copyPix("00020126820014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0235Bolão Copa do Mundo O Morador R$1005204000053039865406100.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO62140510OiJEMerkG0630404B8")}>
-                          <Copy size={12} />
+                    <div className="bg-muted/50 p-4 rounded-2xl space-y-2 w-full text-center">
+                      <p className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">Copia e Cola (R$ 100)</p>
+                      <div className="flex items-center gap-2 bg-background p-3 rounded-xl border border-border">
+                        <p className="text-[10px] font-bold truncate flex-1">00020126820014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0235Bolão Copa do Mundo O Morador R$1005204000053039865406100.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO62140510OiJEMerkG0630404B8</p>
+                        <Button size="icon" variant="ghost" className="h-8 w-8 hover:bg-primary/10 transition-colors" onClick={() => copyPix("00020126820014BR.GOV.BCB.PIX0121oswaldinofj@gmail.com0235Bolão Copa do Mundo O Morador R$1005204000053039865406100.005802BR5925Oswaldino Ferreira Guimar6009SAO PAULO62140510OiJEMerkG0630404B8")}>
+                          <Copy size={16} className="text-primary" />
                         </Button>
                       </div>
                     </div>
