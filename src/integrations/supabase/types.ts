@@ -830,7 +830,9 @@ export type Database = {
           rodada: string | null
           status: string | null
           time_away: string
+          time_away_logo_url: string | null
           time_home: string
+          time_home_logo_url: string | null
         }
         Insert: {
           created_at?: string | null
@@ -844,7 +846,9 @@ export type Database = {
           rodada?: string | null
           status?: string | null
           time_away: string
+          time_away_logo_url?: string | null
           time_home: string
+          time_home_logo_url?: string | null
         }
         Update: {
           created_at?: string | null
@@ -858,7 +862,9 @@ export type Database = {
           rodada?: string | null
           status?: string | null
           time_away?: string
+          time_away_logo_url?: string | null
           time_home?: string
+          time_home_logo_url?: string | null
         }
         Relationships: []
       }
