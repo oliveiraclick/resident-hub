@@ -197,19 +197,11 @@ const CopaMorador = () => {
 
                 <div className="flex flex-col items-center gap-3 flex-1">
                   <div className="w-16 h-12 bg-white/5 rounded-xl flex items-center justify-center overflow-hidden border border-white/10 shadow-inner">
-                    <span className="text-xl font-black opacity-30">{jogo.time_away.substring(0, 2).toUpperCase()}</span>
-                  </div>
-                  <span className="text-[12px] font-black uppercase tracking-tight text-white leading-none">{jogo.time_away}</span>
-                </div>
-
-                <div className="flex flex-col items-center justify-center ml-4 pl-4 border-l border-white/5 min-w-[70px]">
-                  <p className="text-[8px] font-black text-muted-foreground/40 uppercase mb-1.5 tracking-widest">Status</p>
-                  <div className={`w-11 h-11 rounded-2xl flex items-center justify-center ${canBet ? 'bg-white/5 border border-white/10 shadow-lg' : 'bg-primary/20 border border-primary/30 shadow-lg shadow-primary/10'}`}>
-                    {canBet ? <div className="w-2 h-2 rounded-full bg-muted-foreground/20" /> : <ShieldCheck size={20} className="text-primary" />}
-                  </div>
-                  <p className="text-[8px] font-black mt-2 uppercase text-muted-foreground/40 tracking-tight">{canBet ? 'Aberto' : 'Encerrado'}</p>
-                </div>
+                <span className="text-xl font-black opacity-30">{jogo.time_away.substring(0, 2).toUpperCase()}</span>
               </div>
+              <span className="text-[12px] font-black uppercase tracking-tight text-white leading-none">{jogo.time_away}</span>
+            </div>
+          </div>
 
               {canBet ? (
                 <Button 
