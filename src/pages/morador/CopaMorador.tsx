@@ -27,6 +27,8 @@ const CopaMorador = () => {
   const [visibleCount, setVisibleCount] = useState(6);
   const [saldo, setSaldo] = useState(0);
   const [ranking, setRanking] = useState([]);
+  const [selecoesCopa, setSelecoesCopa] = useState<SelecaoCopa[]>([]);
+  const [isLoadingSelecoes, setIsLoadingSelecoes] = useState(false);
 
   useEffect(() => {
     setIsCopaActive(document.body.classList.contains("theme-brasil"));
