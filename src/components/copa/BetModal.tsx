@@ -302,7 +302,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
                     <span className="text-lg font-black italic">R$ 60</span>
                   </div>
                   <div className="bg-white p-4 rounded-2xl flex flex-col items-center gap-3">
-                    <img src="/pix-qrcode.jpeg" alt="PIX 60" className="w-32 h-32 object-contain opacity-40 grayscale" />
+                    <img src="/pix-60.png" alt="PIX 60" className="w-32 h-32 object-contain" />
                     <Button 
                       onClick={() => handleMultiPixSelect(60)}
                       className="w-full h-10 rounded-xl bg-foreground text-background font-black text-[10px] uppercase tracking-widest"
