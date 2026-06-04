@@ -235,29 +235,33 @@ const CopaMorador = () => {
                 </div>
               </div>
 
-              {userBetsForGame.map((palpite, idx) => (
-                <div key={palpite.id} className="w-full p-4 bg-primary/10 rounded-[24px] border border-primary/20 flex flex-col items-center gap-2 mb-3 last:mb-0">
-                  <p className="text-[10px] font-black uppercase text-primary italic tracking-widest flex items-center gap-2">
-                    <ShieldCheck size={14} /> Seu Palpite {userBetsForGame.length > 1 ? `#${idx + 1}` : 'Enviado'}
-                  </p>
-                  <div className="flex items-center gap-4">
-                    <div className="text-xl font-black text-white">
-                      {palpite.tipo === 'placar' ? (palpite.palpite_valor?.h ?? '-') : palpite.tipo === 'campeao' ? (palpite.palpite_valor?.campeao ?? '-') : '-'}
+              {userBetsForGame.length > 0 && (
+                <div className={`grid gap-3 ${userBetsForGame.length > 1 ? 'grid-cols-2' : 'grid-cols-1'}`}>
+                  {userBetsForGame.map((palpite, idx) => (
+                    <div key={palpite.id} className={`w-full p-4 bg-primary/10 rounded-[24px] border border-primary/20 flex flex-col items-center gap-2 ${userBetsForGame.length > 1 ? 'min-h-[120px] justify-center' : ''}`}>
+                      <p className="text-[9px] font-black uppercase text-primary italic tracking-tight flex items-center gap-1">
+                        <ShieldCheck size={12} /> {userBetsForGame.length > 1 ? `#${idx + 1}` : 'Seu Palpite'}
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <div className="text-lg font-black text-white">
+                          {palpite.tipo === 'placar' ? (palpite.palpite_valor?.h ?? '-') : palpite.tipo === 'campeao' ? (palpite.palpite_valor?.campeao ?? '-') : '-'}
+                        </div>
+                        {palpite.tipo === 'placar' && (
+                          <>
+                            <div className="text-[9px] font-black text-muted-foreground italic">X</div>
+                            <div className="text-lg font-black text-white">{palpite.palpite_valor?.a ?? '-'}</div>
+                          </>
+                        )}
+                      </div>
+                      {palpite.status_pagamento === 'pendente' ? (
+                        <Badge variant="outline" className="text-[7px] border-yellow-500/50 text-yellow-500 bg-yellow-500/5 uppercase font-black italic px-1.5 h-4">PENDENTE</Badge>
+                      ) : palpite.status_pagamento === 'pago' ? (
+                        <Badge className="text-[7px] bg-success/20 text-success border-success/30 uppercase font-black italic px-1.5 h-4">VALIDADO</Badge>
+                      ) : null}
                     </div>
-                    {palpite.tipo === 'placar' && (
-                      <>
-                        <div className="text-[10px] font-black text-muted-foreground italic">X</div>
-                        <div className="text-xl font-black text-white">{palpite.palpite_valor?.a ?? '-'}</div>
-                      </>
-                    )}
-                  </div>
-                  {palpite.status_pagamento === 'pendente' ? (
-                    <Badge variant="outline" className="text-[8px] border-yellow-500/50 text-yellow-500 bg-yellow-500/5 uppercase font-black italic">AGUARDANDO VALIDAÇÃO</Badge>
-                  ) : palpite.status_pagamento === 'pago' ? (
-                    <Badge className="text-[8px] bg-success/20 text-success border-success/30 uppercase font-black italic">PALPITE VALIDADO</Badge>
-                  ) : null}
+                  ))}
                 </div>
-              ))}
+              )}
 
               {!hasBet && canBet && (
                 <div className="flex flex-col gap-3">
