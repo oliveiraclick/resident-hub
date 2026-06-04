@@ -247,7 +247,9 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
         <header
           className="sticky top-0 z-30 px-5 pt-4 pb-4 backdrop-blur-xl border-b border-white/5"
           style={{
-            background: "linear-gradient(145deg, hsl(var(--header-bg)) 0%, hsl(var(--header-mid)) 40%, hsl(var(--primary)) 100%)",
+            background: isMoradorModule && isWorldCupTheme 
+              ? "hsl(var(--background))" 
+              : "linear-gradient(145deg, hsl(var(--header-bg)) 0%, hsl(var(--header-mid)) 40%, hsl(var(--primary)) 100%)",
           }}
         >
           <div className="flex items-center justify-between gap-4">
