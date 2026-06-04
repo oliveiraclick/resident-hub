@@ -192,7 +192,11 @@ const CopaMorador = () => {
         const diffMinutes = (dataJogo.getTime() - now.getTime()) / (1000 * 60);
         const canBet = diffMinutes > 20;
         
-        const meuPalpite = meusPalpites.find(p => p.jogo_id === jogo.id && p.tipo === activeTab);
+        const userBetsForGame = meusPalpites.filter(p => p.jogo_id === jogo.id && p.tipo === activeTab);
+        const meuPalpite = userBetsForGame.sort((a, b) => {
+          const order = { pago: 0, pendente: 1 };
+          return (order[a.status_pagamento as keyof typeof order] ?? 2) - (order[b.status_pagamento as keyof typeof order] ?? 2);
+        })[0];
         const hasBet = !!meuPalpite;
 
         return (
