@@ -116,7 +116,19 @@ serve(async (req) => {
 
     if (insertError) throw insertError
 
-    return new Response(JSON.stringify({ message: "Jogos e bandeiras sincronizados", count: matches.length }), {
+    // Also update flags for teams in the 'copa_selecoes' table
+    const uniqueTeams = Array.from(new Set(matches.flatMap(m => [m.home, m.away])));
+    for (const team of uniqueTeams) {
+      const flagUrl = teamFlags[team];
+      if (flagUrl) {
+        await supabaseClient
+          .from('copa_selecoes')
+          .update({ logo_url: flagUrl })
+          .eq('nome', team);
+      }
+    }
+
+    return new Response(JSON.stringify({ message: "Jogos, seleções e bandeiras sincronizados", count: matches.length }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     })
