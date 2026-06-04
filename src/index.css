@@ -13,7 +13,7 @@ html, body {
 
 /* iOS safe areas — only for web (Capacitor handles it natively via contentInset) */
 html {
-  background-color: hsl(240 29% 14%);
+    background-color: hsl(var(--background));
 }
 
 body:not(.native-app) {
@@ -164,21 +164,21 @@ body.native-app {
     @apply rounded-[32px];
   }
 
-  /* Tema Copa do Mundo (Cores do Brasil) */
+  /* Tema Copa do Mundo (Cores do Brasil) - Dark Mode Premium */
   .theme-brasil {
-    --background: 210 20% 98%;
-    --foreground: 224 71.4% 4.1%;
-    --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
-    --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.9% 46.1%;
-    --border: 220 13% 91%;
+    --background: 142 76% 4%; /* Fundo quase preto esmeralda */
+    --foreground: 0 0% 100%;
+    --card: 142 76% 7%;
+    --card-foreground: 0 0% 100%;
+    --muted: 142 76% 10%;
+    --muted-foreground: 142 20% 75%;
+    --border: 142 76% 12%;
     --primary: 142 76% 36%; /* Verde Bandeira */
     --primary-hover: 142 76% 30%;
     --ring: 142 76% 36%;
     --warning: 48 96% 53%; /* Amarelo Ouro */
-    --header-bg: 142 76% 25%; /* Verde */
-    --header-mid: 48 96% 45%; /* Amarelo */
+    --header-bg: 142 76% 4%; 
+    --header-mid: 142 76% 6%;
     --primary-light: 142 76% 50%;
   }
 
