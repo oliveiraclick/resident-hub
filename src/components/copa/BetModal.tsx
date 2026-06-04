@@ -111,7 +111,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess }: BetModal
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px] rounded-[32px] overflow-hidden">
+      <DialogContent className="sm:max-w-[425px] rounded-[32px] overflow-hidden bg-background text-foreground border-none">
         {!showPix ? (
           <>
             <DialogHeader>
