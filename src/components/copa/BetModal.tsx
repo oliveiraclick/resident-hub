@@ -195,9 +195,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
                     <p className="text-[10px] font-black uppercase text-primary italic">Regras de Pontuação:</p>
                     <ul className="text-[10px] font-bold text-muted-foreground uppercase space-y-1">
                       <li>• Placar Exato: 10 Pontos</li>
-                      <li>• Acertar Vencedor + Gols de um time: 7 Pontos</li>
-                      <li>• Acertar apenas o Vencedor/Empate: 5 Pontos</li>
-                      <li>• Acertar apenas Gols de um time: 2 Pontos</li>
+                      <li>• Acertar Vencedor ou Empate: 5 Pontos</li>
                     </ul>
                   </div>
                   <div className="space-y-3">
