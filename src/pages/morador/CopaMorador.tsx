@@ -261,7 +261,7 @@ const CopaMorador = () => {
         </div>
 
         {/* LISTAGEM DE JOGOS */}
-        {(activeTab === "placar" || activeTab === "bolao") && (
+        {activeTab === "placar" && (
           <div className="space-y-5">
             <div className="flex items-center justify-between px-1">
               <h3 className="text-[11px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
