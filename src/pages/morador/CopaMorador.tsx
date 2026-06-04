@@ -38,11 +38,18 @@ const CopaMorador = () => {
 
     const { data: jogosData } = await supabase
       .from("copa_jogos")
-      .select("*")
+      .select("*, copa_palpites(count)")
       .eq('status', 'agendado')
+      .eq('copa_palpites.status_pagamento', 'pago')
       .order('data_jogo', { ascending: true });
-    setJogos(jogosData || []);
     
+    const processedJogos = (jogosData || []).map((j: any) => ({
+      ...j,
+      palpites_count: j.copa_palpites?.[0]?.count || 0
+    }));
+    setJogos(processedJogos);
+    
+    // Calculate prize pools by type (taking 75% of paid amounts) - ONLY VALIDATED BETS
     const { data: paidBets } = await supabase
       .from("copa_palpites")
       .select("valor_pago, tipo, user_id")
@@ -272,7 +279,7 @@ const CopaMorador = () => {
 
                         <div className="flex items-center justify-between gap-4 pt-1">
                           <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground/40 uppercase tracking-tight">
-                            <Users size={12} className="opacity-40" /> {Math.floor(Math.random() * 50) + 10} palpites
+                            <Users size={12} className="opacity-40" /> {jogo.palpites_count || 0} palpites
                           </div>
                           <div className="bg-white/[0.03] px-3 py-1.5 rounded-2xl border border-white/5 text-[11px] font-bold text-muted-foreground/60 flex items-center gap-2">
                             SEU PALPITE: <span className="text-primary font-black italic">2 - 1</span>
