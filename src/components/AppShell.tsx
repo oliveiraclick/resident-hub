@@ -1,6 +1,6 @@
 import { ReactNode, useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, Bell, QrCode, Search, Wrench, X, Sparkles, Menu, Trophy } from "lucide-react";
+import { ArrowLeft, Bell, QrCode, Search, Wrench, X, Sparkles, Menu, Trophy, RefreshCw } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -23,6 +23,7 @@ interface AppShellProps {
   userName?: string;
   showSearch?: boolean;
   onQrPress?: () => void;
+  onRefresh?: () => void;
   condominioName?: string | null;
   condominioLogo?: string | null;
   aprovado?: boolean;
@@ -52,7 +53,7 @@ const normalizeSearchText = (value: string) =>
     .toLowerCase()
     .trim();
 
-const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSearch = false, onQrPress, condominioName, condominioLogo, aprovado = true, title, showBack = false }: AppShellProps) => {
+const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSearch = false, onQrPress, onRefresh, condominioName, condominioLogo, aprovado = true, title, showBack = false }: AppShellProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searchIndex, setSearchIndex] = useState<PrestadorSearchItem[]>([]);
@@ -225,6 +226,12 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
                   <QrCode size={20} className="text-white" />
                 </button>
                 <button
+                  onClick={onRefresh}
+                  className={`w-11 h-11 rounded-2xl flex items-center justify-center active:scale-95 backdrop-blur-md transition-all shadow-md ${isMoradorModule ? "bg-black/40 hover:bg-black/55 ring-1 ring-white/20" : "bg-white/10 hover:bg-white/20 ring-1 ring-white/10"} ${!onRefresh && 'hidden'}`}
+                >
+                  <RefreshCw size={20} className="text-white" />
+                </button>
+                <button
                   className={`w-11 h-11 rounded-2xl flex items-center justify-center active:scale-95 backdrop-blur-md transition-all shadow-md ${isMoradorModule ? "bg-black/40 hover:bg-black/55 ring-1 ring-white/20" : "bg-white/10 hover:bg-white/20 ring-1 ring-white/10"}`}
                 >
                   <Bell size={20} className="text-white" />
@@ -281,6 +288,12 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
                 className="h-10 w-10 rounded-2xl flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all"
               >
                 <QrCode size={18} className="text-white" />
+              </button>
+              <button
+                onClick={onRefresh}
+                className={`h-10 w-10 rounded-2xl flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all ${!onRefresh && 'hidden'}`}
+              >
+                <RefreshCw size={18} className="text-white" />
               </button>
               <button
                 className="h-10 w-10 rounded-2xl flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all"

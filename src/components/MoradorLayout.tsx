@@ -10,6 +10,7 @@ interface MoradorLayoutProps {
   showBack?: boolean;
   showNav?: boolean;
   showSearch?: boolean;
+  onRefresh?: () => void;
 }
 
 const navItems = [
@@ -20,7 +21,7 @@ const navItems = [
   { icon: User, label: "Perfil", path: "/morador/perfil" },
 ];
 
-const MoradorLayout = ({ children, showSearch = false, title, showBack = false }: MoradorLayoutProps) => {
+const MoradorLayout = ({ children, showSearch = false, title, showBack = false, onRefresh }: MoradorLayoutProps) => {
   const { user } = useAuth();
   const [profileName, setProfileName] = useState<string | null>(null);
   const [condominioName, setCondominioName] = useState<string | null>(null);
@@ -77,6 +78,7 @@ const MoradorLayout = ({ children, showSearch = false, title, showBack = false }
       aprovado={aprovado}
       title={title}
       showBack={showBack}
+      onRefresh={onRefresh}
     >
       {children}
     </AppShell>
