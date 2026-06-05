@@ -219,7 +219,8 @@ const CopaMorador = () => {
         const dataJogo = new Date(jogo.data_jogo);
         const now = new Date();
         const diffMinutes = (dataJogo.getTime() - now.getTime()) / (1000 * 60);
-        const canBet = diffMinutes > 20;
+        // Rule: Can bet/change until 1 minute before start
+        const canBet = diffMinutes > 1;
         
         const userBetsForGame = meusPalpites.filter(p => p.jogo_id === jogo.id && p.tipo === activeTab);
         const hasBet = userBetsForGame.length > 0;
