@@ -58,6 +58,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searchIndex, setSearchIndex] = useState<PrestadorSearchItem[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
