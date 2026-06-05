@@ -23,6 +23,7 @@ interface AppShellProps {
   userName?: string;
   showSearch?: boolean;
   onQrPress?: () => void;
+  onRefresh?: () => void;
   condominioName?: string | null;
   condominioLogo?: string | null;
   aprovado?: boolean;
