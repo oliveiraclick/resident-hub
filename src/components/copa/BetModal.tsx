@@ -82,8 +82,10 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
         .insert({
           user_id: user.id,
           condominio_id: condominio_id,
-          jogo_id: jogo.id,
-          tipo: betType,
+          jogo_id: (jogo.id === 'recharge' || !jogo.id || jogo.id === '00000000-0000-0000-0000-000000000000') 
+            ? '00000000-0000-0000-0000-000000000000' 
+            : jogo.id,
+          tipo: jogo.id === 'recharge' ? 'recharge' : betType,
           palpite_valor: palpite_valor,
           status_pagamento: "pendente",
           valor_pago: valor,
