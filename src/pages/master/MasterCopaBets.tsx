@@ -155,8 +155,9 @@ const MasterCopaBets = () => {
   return (
     <MasterLayout title="Gestão Copa O Morador">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-6">
-          <TabsTrigger value="pagamentos">Pagamentos</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsTrigger value="pagamentos">Pagamentos Pendentes</TabsTrigger>
+          <TabsTrigger value="confirmados">Pagamentos Confirmados</TabsTrigger>
           <TabsTrigger value="jogos">Resultados Jogos</TabsTrigger>
         </TabsList>
 
