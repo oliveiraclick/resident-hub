@@ -199,13 +199,15 @@ const CopaMorador = () => {
 
   useEffect(() => {
     fetchData();
-    console.log("CopaMorador mounted, fetching data...");
-    
+    console.log("CopaMorador data fetch triggered by user or focusedJogoId change");
+  }, [user, focusedJogoId, activeTab]);
+
+  useEffect(() => {
     const interval = setInterval(() => {
       fetchData();
     }, 15000); // 15 seconds
     return () => clearInterval(interval);
-  }, [user]);
+  }, [user, focusedJogoId, activeTab]);
 
   const handleBet = (jogo: any, type?: string) => {
     setSelectedJogo(jogo);
@@ -258,13 +260,10 @@ const CopaMorador = () => {
         return (
           <div 
             key={jogo.id} 
-            onClick={() => {
+            onClick={(e) => {
               if (activeTab === 'placar') {
                 setFocusedJogoId(jogo.id);
-                // Trigger a re-calculation of the prizes state immediately if needed, 
-                // but since it's in the next render cycle of fetchData, we can just wait or manually trigger.
-                // For better UX, we'll let the fetchData interval or a manual call handle it.
-                fetchData();
+                // The useEffect with focusedJogoId will trigger fetchData immediately
               }
             }}
             className={`bg-[#1a2e25] rounded-[32px] border overflow-hidden shadow-xl transition-all cursor-pointer ${
