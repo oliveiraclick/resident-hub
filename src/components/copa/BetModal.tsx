@@ -189,8 +189,32 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
         .maybeSingle();
 
       if (alreadyPaid) {
-        // Se já pagou o bolão, usamos o fluxo de saldo mas a função SQL já não descontará nada
-        handlePayWithBalance();
+        // Já pagou o bolão, procedemos com p_valor 0 na chamada RPC
+        setLoading(true);
+        try {
+          const palpite_valor = { h: parseInt(hScore), a: parseInt(aScore), vencedor: vencedor };
+          const { data: condoIds } = await supabase.rpc("get_user_condominio_ids", { _user_id: user.id });
+          const condominio_id = Array.isArray(condoIds) && condoIds.length > 0 ? condoIds[0] : null;
+
+          const { error } = await supabase.rpc("process_palpite_with_balance", {
+            p_user_id: user.id,
+            p_condominio_id: condominio_id,
+            p_jogo_id: jogo.id,
+            p_tipo: 'bolao',
+            p_palpite_valor: palpite_valor,
+            p_valor: 0 // Valor 0 para quem já pagou
+          });
+
+          if (error) throw error;
+
+          toast.success("Palpite do bolão atualizado com sucesso!");
+          onSuccess();
+          handleClose();
+        } catch (error: any) {
+          toast.error("Erro ao atualizar bolão: " + error.message);
+        } finally {
+          setLoading(false);
+        }
         return;
       }
     }
