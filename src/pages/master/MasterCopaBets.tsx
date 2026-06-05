@@ -74,6 +74,7 @@ const MasterCopaBets = () => {
 
       const novoSaldo = (Number(profile.saldo) || 0) + valorAprovado;
 
+      // Update the user's main balance in profiles
       const { error: walletError } = await supabase
         .from("profiles")
         .update({ saldo: novoSaldo })
