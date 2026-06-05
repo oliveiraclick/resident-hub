@@ -25,6 +25,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
   const [loading, setLoading] = useState(false);
   const [showPix, setShowPix] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+  const [showPaymentChoice, setShowPaymentChoice] = useState(false);
   const [betOption, setBetOption] = useState<'unica' | 'multiplas' | null>(null);
   const [pixConfig, setPixConfig] = useState<{ key: string, name: string, value: number } | null>(null);
 
@@ -43,6 +44,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
       fetchPixConfig();
       setShowPix(false);
       setShowOptions(false);
+      setShowPaymentChoice(false);
       setHScore("");
       setAScore("");
       setVencedor(null);
@@ -106,6 +108,40 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
     }
   };
 
+  const handlePayWithBalance = async () => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const palpite_valor = (betType === 'placar' || betType === 'bolao')
+        ? { h: parseInt(hScore), a: parseInt(aScore), vencedor: vencedor }
+        : { campeao: jogo.time_home };
+
+      const { data: condoIds } = await supabase.rpc("get_user_condominio_ids", { _user_id: user.id });
+      const condominio_id = Array.isArray(condoIds) && condoIds.length > 0 ? condoIds[0] : null;
+
+      const { error } = await supabase.rpc("process_palpite_with_balance", {
+        p_user_id: user.id,
+        p_condominio_id: condominio_id,
+        p_jogo_id: (jogo.id === 'recharge' || !jogo.id || jogo.id === '00000000-0000-0000-0000-000000000000') 
+          ? '00000000-0000-0000-0000-000000000000' 
+          : jogo.id,
+        p_tipo: jogo.id === 'recharge' ? 'recharge' : betType,
+        p_palpite_valor: palpite_valor,
+        p_valor: 20
+      });
+
+      if (error) throw error;
+
+      toast.success("Aposta paga com saldo e validada com sucesso!");
+      onSuccess();
+      handleClose();
+    } catch (error: any) {
+      toast.error("Erro ao pagar com saldo: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSelectOption = (option: 'unica' | 'multiplas') => {
     setBetOption(option);
     setShowOptions(false);
@@ -156,14 +192,10 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
       .eq("status_pagamento", "pendente");
     
     const saldoReal = Number(profile?.saldo || 0);
-    const saldoPendente = (pendencias || []).reduce((acc, curr) => acc + Number(curr.valor_pago), 0);
-    const saldoTotal = saldoReal + saldoPendente;
-
-    if (saldoTotal >= 20) {
-      // If user has enough total balance, they can use 'carteira'
-      processAposta(20, 'carteira');
+    
+    if (saldoReal >= 20) {
+      setShowPaymentChoice(true);
     } else {
-      // Otherwise, they must choose how to pay/recharge
       setShowOptions(true);
     }
   };
@@ -171,6 +203,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
   const handleClose = () => {
     setShowPix(false);
     setShowOptions(false);
+    setShowPaymentChoice(false);
     onClose();
   };
 
@@ -179,7 +212,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px] w-[95vw] rounded-[32px] overflow-hidden bg-[#0a140f] text-foreground border-none p-0 max-h-[90vh] flex flex-col shadow-2xl overflow-y-auto no-scrollbar">
-        {!showPix && !showOptions && (
+        {!showPix && !showOptions && !showPaymentChoice && (
           <div className="p-6 overflow-y-auto no-scrollbar">
             <DialogHeader className="mb-6">
               <DialogTitle className="flex items-center gap-2">
@@ -361,6 +394,51 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
             </div>
 
             <Button variant="ghost" onClick={() => setShowOptions(false)} className="text-[10px] font-black uppercase tracking-widest opacity-40">
+              Voltar e editar palpite
+            </Button>
+          </div>
+        )}
+
+        {showPaymentChoice && (
+          <div className="p-8 text-center space-y-6 overflow-y-auto no-scrollbar">
+            <div className="space-y-2">
+              <h2 className="text-xl font-black uppercase tracking-tight">Forma de Pagamento</h2>
+              <p className="text-xs text-muted-foreground font-medium">Você possui saldo em conta! Como deseja pagar?</p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4">
+              <button
+                onClick={handlePayWithBalance}
+                disabled={loading}
+                className="flex items-center gap-4 p-5 rounded-[24px] bg-primary/10 border-2 border-primary/20 hover:bg-primary/20 transition-all text-left group"
+              >
+                <div className="h-12 w-12 rounded-2xl bg-primary flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+                  <CheckCircle2 size={24} />
+                </div>
+                <div className="flex-1">
+                  <p className="text-[14px] font-black uppercase tracking-tight text-primary">Saldo em Conta</p>
+                  <p className="text-[10px] text-primary/60 font-bold uppercase tracking-widest">Descontar R$ 20,00 e validar agora</p>
+                </div>
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowPaymentChoice(false);
+                  setShowOptions(true);
+                }}
+                className="flex items-center gap-4 p-5 rounded-[24px] bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-left group"
+              >
+                <div className="h-12 w-12 rounded-2xl bg-success/10 flex items-center justify-center text-success group-hover:scale-110 transition-transform">
+                  <QrCode size={24} />
+                </div>
+                <div className="flex-1">
+                  <p className="text-[14px] font-black uppercase tracking-tight">Pagar via PIX</p>
+                  <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Gerar QR Code para pagamento</p>
+                </div>
+              </button>
+            </div>
+
+            <Button variant="ghost" onClick={() => setShowPaymentChoice(false)} className="text-[10px] font-black uppercase tracking-widest opacity-40">
               Voltar e editar palpite
             </Button>
           </div>

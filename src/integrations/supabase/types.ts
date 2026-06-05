@@ -2580,6 +2580,17 @@ export type Database = {
       }
       is_platform_admin: { Args: { p_user_id: string }; Returns: boolean }
       is_trial_eligible: { Args: { _user_id: string }; Returns: boolean }
+      process_palpite_with_balance: {
+        Args: {
+          p_condominio_id: string
+          p_jogo_id: string
+          p_palpite_valor: Json
+          p_tipo: string
+          p_user_id: string
+          p_valor: number
+        }
+        Returns: undefined
+      }
       search_prestadores_by_especialidade: {
         Args: { _condominio_id: string; _term: string }
         Returns: {
