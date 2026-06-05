@@ -189,10 +189,10 @@ const AdminFinanceiro = () => {
                       </div>
                       <div className="flex flex-col">
                         <p className="text-[9px] text-primary font-black uppercase tracking-tight italic opacity-80">
-                          {p.tipo === 'placar' ? 'Placar Exato' : p.tipo === 'campeao' ? 'Campeão' : p.tipo === 'bolao' ? 'Bolão Geral' : p.tipo}
+                          {p.tipo === 'placar' ? 'Placar Exato' : p.tipo === 'campeao' ? 'Campeão' : p.tipo === 'bolao' ? 'Bolão Geral' : p.tipo === 'recharge' ? 'Recarga de Saldo' : p.tipo}
                         </p>
                         <p className="text-[10px] font-bold text-muted-foreground truncate mt-0.5">
-                          Jogo: {p.copa_jogos?.time_home} x {p.copa_jogos?.time_away}
+                          {p.tipo === 'recharge' ? 'Créditos para conta' : `Jogo: ${p.copa_jogos?.time_home || 'Indefinido'} x ${p.copa_jogos?.time_away || 'Indefinido'}`}
                         </p>
                         {p.palpite_valor && (
                           <p className="text-[10px] font-black text-foreground/70 mt-0.5">
