@@ -41,7 +41,6 @@ const MasterCopaBets = () => {
 
   const handleApprovePayment = async (betId: string) => {
     try {
-      // 1. Get the bet details first to know the amount and user
       const { data: bet, error: fetchError } = await supabase
         .from("copa_palpites")
         .select("valor_pago, user_id, status_pagamento")
@@ -50,13 +49,11 @@ const MasterCopaBets = () => {
 
       if (fetchError || !bet) throw new Error("Aposta não encontrada");
       
-      // If already paid, don't repeat the credit addition
       if (bet.status_pagamento === "pago") {
         toast({ title: "Informação", description: "Este pagamento já foi aprovado." });
         return;
       }
 
-      // 2. Update the bet status
       const { error: updateError } = await supabase
         .from("copa_palpites")
         .update({ status_pagamento: "pago", pago: true })
@@ -64,7 +61,6 @@ const MasterCopaBets = () => {
 
       if (updateError) throw updateError;
 
-      // 3. Add credit to user's profile saldo
       const valorAprovado = Number(bet.valor_pago) || 0;
       
       const { data: profile, error: profileError } = await supabase
@@ -127,21 +123,12 @@ const MasterCopaBets = () => {
     setSyncing(true);
     try {
       const { data, error } = await supabase.functions.invoke('sync-copa-results');
-      
       if (error) throw error;
-      
-      toast({ 
-        title: "Sincronização concluída", 
-        description: data.message || "Resultados atualizados com sucesso." 
-      });
+      toast({ title: "Sincronização concluída", description: data.message || "Resultados atualizados com sucesso." });
       fetchData();
     } catch (error: any) {
       console.error("Erro ao sincronizar:", error);
-      toast({ 
-        title: "Erro na sincronização", 
-        description: "Não foi possível conectar ao servidor de resultados. Tente novamente mais tarde.", 
-        variant: "destructive" 
-      });
+      toast({ title: "Erro na sincronização", description: "Não foi possível conectar ao servidor de resultados.", variant: "destructive" });
     } finally {
       setSyncing(false);
     }
@@ -155,13 +142,14 @@ const MasterCopaBets = () => {
   return (
     <MasterLayout title="Gestão Copa O Morador">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-6">
-          <TabsTrigger value="pagamentos">Pagamentos</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsTrigger value="pagamentos">Pagamentos Pendentes</TabsTrigger>
+          <TabsTrigger value="confirmados">Pagamentos Confirmados</TabsTrigger>
           <TabsTrigger value="jogos">Resultados Jogos</TabsTrigger>
         </TabsList>
 
         <TabsContent value="pagamentos" className="space-y-6">
-          {["placar", "campeao", "bolao"].map((tipo) => {
+          {["placar", "campeao", "bolao", "recharge"].map((tipo) => {
             const palpitesDoTipo = palpites.filter(p => p.status_pagamento === "pendente" && p.tipo === tipo);
             if (palpitesDoTipo.length === 0) return null;
 
@@ -170,7 +158,7 @@ const MasterCopaBets = () => {
                 <div className="flex items-center gap-2 px-1">
                   <div className="w-1 h-4 bg-primary rounded-full" />
                   <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground">
-                    {tipo === 'placar' ? 'Placar Exato' : tipo === 'campeao' ? 'Campeão' : 'Bolão Geral'}
+                    {tipo === 'placar' ? 'Placar Exato' : tipo === 'campeao' ? 'Campeão' : tipo === 'bolao' ? 'Bolão Geral' : 'Recarga de Saldo'}
                   </h3>
                   <Badge variant="outline" className="text-[10px] font-bold ml-auto">
                     {palpitesDoTipo.length}
@@ -190,7 +178,7 @@ const MasterCopaBets = () => {
                           </div>
                           <div className="flex flex-col gap-1">
                             <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest truncate">
-                              {p.copa_jogos?.time_home} vs {p.copa_jogos?.time_away}
+                              {tipo === 'recharge' ? 'Créditos para conta' : `${p.copa_jogos?.time_home} vs ${p.copa_jogos?.time_away}`}
                             </p>
                             {p.palpite_valor && (
                               <div className="flex items-center gap-2 mt-1">
@@ -202,6 +190,8 @@ const MasterCopaBets = () => {
                                     ? (typeof p.palpite_valor?.campeao === 'string' ? p.palpite_valor.campeao : 'Não definido')
                                     : tipo === 'bolao'
                                     ? "Participando do Bolão Geral"
+                                    : tipo === 'recharge'
+                                    ? "Recarga de Saldo"
                                     : JSON.stringify(p.palpite_valor)}
                                 </div>
                               </div>
@@ -239,21 +229,17 @@ const MasterCopaBets = () => {
               <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">Nenhum pagamento pendente</p>
             </div>
           )}
+        </TabsContent>
 
-          <Card className="mt-8">
-            <CardHeader>
-              <CardTitle className="text-sm font-bold flex items-center gap-2">
-                <CheckCircle2 size={18} className="text-success" /> Pagamentos Confirmados
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 p-4">
-              {palpites.filter(p => p.status_pagamento === "pago").map((p: any) => (
+        <TabsContent value="confirmados" className="space-y-4">
+          <div className="space-y-3 p-0">
+            {palpites.filter(p => p.status_pagamento === "pago").map((p: any) => (
                 <div key={p.id} className="flex flex-col p-4 bg-[#1a2e25] rounded-[24px] border border-white/5 opacity-80 gap-2">
                   <div className="flex justify-between items-start">
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-black text-white truncate">{p.profiles?.nome || "Morador"}</p>
                       <p className="text-[10px] text-muted-foreground uppercase font-black italic mt-1">
-                        {p.tipo === 'placar' ? 'Placar Exato' : p.tipo === 'campeao' ? 'Campeão' : 'Bolão Geral'} • R$ {Number(p.valor_pago).toFixed(2)}
+                        {p.tipo === 'placar' ? 'Placar Exato' : p.tipo === 'campeao' ? 'Campeão' : p.tipo === 'bolao' ? 'Bolão Geral' : p.tipo === 'recharge' ? 'Recarga de Saldo' : p.tipo} • R$ {Number(p.valor_pago).toFixed(2)}
                       </p>
                       {p.palpite_valor && (
                         <div className="flex items-center gap-2 mt-2">
@@ -279,8 +265,7 @@ const MasterCopaBets = () => {
               {palpites.filter(p => p.status_pagamento === "pago").length === 0 && (
                 <p className="text-center text-xs text-muted-foreground py-4">Nenhum pagamento confirmado ainda.</p>
               )}
-            </CardContent>
-          </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="jogos" className="space-y-4">
@@ -294,12 +279,7 @@ const MasterCopaBets = () => {
               />
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
             </div>
-            <Button 
-              variant="outline" 
-              onClick={handleSyncScores} 
-              disabled={syncing}
-              className="gap-2"
-            >
+            <Button variant="outline" onClick={handleSyncScores} disabled={syncing} className="gap-2">
               <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
               Sincronizar
             </Button>
@@ -309,56 +289,25 @@ const MasterCopaBets = () => {
             <Card key={j.id}>
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between mb-2">
-                  <Badge variant="outline" className="text-[9px] font-bold uppercase">
-                    {j.rodada}
-                  </Badge>
+                  <Badge variant="outline" className="text-[9px] font-bold uppercase">{j.rodada}</Badge>
                   <span className="text-[10px] font-bold text-muted-foreground">
-                    {new Date(j.data_jogo).toLocaleString('pt-BR', { 
-                      day: '2-digit', 
-                      month: '2-digit', 
-                      year: 'numeric',
-                      hour: '2-digit', 
-                      minute: '2-digit' 
-                    })}
+                    {new Date(j.data_jogo).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
-
-                {(j.estadio || j.local) && (
-                  <div className="text-center mb-3 text-[10px] text-muted-foreground">
-                    📍 {j.estadio} {j.local && `— ${j.local}`}
-                  </div>
-                )}
-
                 <div className="flex items-center justify-between mb-4">
-                  <div className="text-center flex-1">
-                    <p className="font-bold text-sm">{j.time_home}</p>
-                  </div>
+                  <div className="text-center flex-1"><p className="font-bold text-sm">{j.time_home}</p></div>
                   <div className="flex items-center gap-2 px-4">
-                    <Input 
-                      className="w-12 text-center h-8" 
-                      defaultValue={j.placar_home ?? ""} 
-                      id={`h-${j.id}`}
-                    />
+                    <Input className="w-12 text-center h-8" defaultValue={j.placar_home ?? ""} id={`h-${j.id}`} />
                     <span className="font-bold">x</span>
-                    <Input 
-                      className="w-12 text-center h-8" 
-                      defaultValue={j.placar_away ?? ""} 
-                      id={`a-${j.id}`}
-                    />
+                    <Input className="w-12 text-center h-8" defaultValue={j.placar_away ?? ""} id={`a-${j.id}`} />
                   </div>
-                  <div className="text-center flex-1">
-                    <p className="font-bold text-sm">{j.time_away}</p>
-                  </div>
+                  <div className="text-center flex-1"><p className="font-bold text-sm">{j.time_away}</p></div>
                 </div>
-                <Button 
-                  size="sm" 
-                  className="w-full" 
-                  onClick={() => {
-                    const h = parseInt((document.getElementById(`h-${j.id}`) as HTMLInputElement).value);
-                    const a = parseInt((document.getElementById(`a-${j.id}`) as HTMLInputElement).value);
-                    handleUpdateResult(j.id, h, a);
-                  }}
-                >
+                <Button size="sm" className="w-full" onClick={() => {
+                  const h = parseInt((document.getElementById(`h-${j.id}`) as HTMLInputElement).value);
+                  const a = parseInt((document.getElementById(`a-${j.id}`) as HTMLInputElement).value);
+                  handleUpdateResult(j.id, h, a);
+                }}>
                   Salvar Resultado
                 </Button>
               </CardContent>
