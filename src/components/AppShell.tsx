@@ -53,7 +53,7 @@ const normalizeSearchText = (value: string) =>
     .toLowerCase()
     .trim();
 
-const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSearch = false, onQrPress, condominioName, condominioLogo, aprovado = true, title, showBack = false }: AppShellProps) => {
+const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSearch = false, onQrPress, onRefresh, condominioName, condominioLogo, aprovado = true, title, showBack = false }: AppShellProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searchIndex, setSearchIndex] = useState<PrestadorSearchItem[]>([]);
