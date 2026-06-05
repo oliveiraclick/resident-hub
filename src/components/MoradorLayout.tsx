@@ -10,6 +10,7 @@ interface MoradorLayoutProps {
   showBack?: boolean;
   showNav?: boolean;
   showSearch?: boolean;
+  onRefresh?: () => void;
 }
 
 const navItems = [
