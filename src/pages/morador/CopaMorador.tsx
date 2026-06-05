@@ -83,7 +83,7 @@ const CopaMorador = () => {
       .from("copa_jogos")
       .select("*, copa_palpites(count)")
       .eq('status', 'agendado')
-      .eq('copa_palpites.status_pagamento', 'pago')
+      // Removed the filter that required a paid bet to show the game
       .order('data_jogo', { ascending: true });
     
     const processedJogos = (jogosData || []).map((j: any) => ({
@@ -157,7 +157,11 @@ const CopaMorador = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+    
+    // Auto-refresh every 30 seconds to keep sync
+    const interval = setInterval(fetchData, 30000);
+    return () => clearInterval(interval);
+  }, [user]);
 
   const handleBet = (jogo: any, type?: string) => {
     setSelectedJogo(jogo);

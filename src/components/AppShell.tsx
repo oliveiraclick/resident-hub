@@ -229,10 +229,9 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log("Refresh clicked");
                     onRefresh?.();
                   }}
-                  className={`w-11 h-11 rounded-2xl flex items-center justify-center active:scale-95 backdrop-blur-md transition-all shadow-md ${isMoradorModule ? "bg-black/40 hover:bg-black/55 ring-1 ring-white/20" : "bg-white/10 hover:bg-white/20 ring-1 ring-white/10"} ${onRefresh ? 'flex' : 'hidden'}`}
+                  className="w-11 h-11 rounded-2xl flex items-center justify-center active:scale-95 backdrop-blur-md transition-all shadow-md bg-black/40 hover:bg-black/55 ring-1 ring-white/20"
                 >
                   <RefreshCw size={20} className="text-white" />
                 </button>
@@ -298,10 +297,9 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  console.log("Refresh clicked subpage");
                   onRefresh?.();
                 }}
-                className={`h-10 w-10 rounded-2xl flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all ${onRefresh ? 'flex' : 'hidden'}`}
+                className="h-10 w-10 rounded-2xl flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all"
               >
                 <RefreshCw size={18} className="text-white" />
               </button>
