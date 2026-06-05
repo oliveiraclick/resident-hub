@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trophy, CheckCircle2, Clock, Users, Plus, Trash2, Search, RefreshCw, HandThumbUp } from "lucide-react";
+import { Trophy, CheckCircle2, Clock, Users, Plus, Trash2, Search, RefreshCw, ThumbsUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { toast as sonnerToast } from "sonner";
 
