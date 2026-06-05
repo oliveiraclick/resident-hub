@@ -132,7 +132,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
 
       if (error) throw error;
 
-      toast.success("Aposta paga com saldo e validada com sucesso!");
+      toast.success(betType === 'bolao' ? "Palpite do bolão atualizado com sucesso!" : "Aposta paga com saldo e validada com sucesso!");
       onSuccess();
       handleClose();
     } catch (error: any) {
@@ -189,7 +189,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
         .maybeSingle();
 
       if (alreadyPaid) {
-        // User already paid for the bolao pool, proceed directly
+        // Se já pagou o bolão, usamos o fluxo de saldo mas a função SQL já não descontará nada
         handlePayWithBalance();
         return;
       }
