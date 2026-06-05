@@ -78,6 +78,7 @@ const MoradorLayout = ({ children, showSearch = false, title, showBack = false, 
       aprovado={aprovado}
       title={title}
       showBack={showBack}
+      onRefresh={onRefresh}
     >
       {children}
     </AppShell>
