@@ -61,6 +61,16 @@ const CopaMorador = () => {
         .maybeSingle();
       if (profile) setSaldo(Number(profile.saldo) || 0);
 
+      const { data: pendencias } = await supabase
+        .from("copa_palpites")
+        .select("valor_pago")
+        .eq("user_id", user.id)
+        .eq("tipo", "recharge")
+        .eq("status_pagamento", "pendente");
+      
+      const totalPendente = (pendencias || []).reduce((acc, curr) => acc + Number(curr.valor_pago), 0);
+      setSaldoPendente(totalPendente);
+
       const { data: userBets } = await supabase
         .from("copa_palpites")
         .select("*")
