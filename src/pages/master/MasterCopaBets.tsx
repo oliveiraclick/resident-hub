@@ -277,8 +277,8 @@ const MasterCopaBets = () => {
               {palpites.filter(p => p.status_pagamento === "pago").length === 0 && (
                 <p className="text-center text-xs text-muted-foreground py-4">Nenhum pagamento confirmado ainda.</p>
               )}
-            </CardContent>
-          </Card>
+          </div>
+        </TabsContent>
         </TabsContent>
 
         <TabsContent value="jogos" className="space-y-4">
