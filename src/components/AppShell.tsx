@@ -305,19 +305,24 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
                 <QrCode size={18} className="text-white" />
               </button>
               <button
-                onClick={(e) => {
+                onClick={async (e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  console.log("Executando onRefresh subpage");
-                  if (onRefresh) {
-                    onRefresh();
-                  } else {
-                    window.location.reload();
+                  if (isRefreshing) return;
+                  setIsRefreshing(true);
+                  try {
+                    if (onRefresh) {
+                      await onRefresh();
+                    } else {
+                      window.location.reload();
+                    }
+                  } finally {
+                    setTimeout(() => setIsRefreshing(false), 1000);
                   }
                 }}
                 className="h-10 w-10 rounded-2xl flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all"
               >
-                <RefreshCw size={18} className="text-white" />
+                <RefreshCw size={18} className={`text-white transition-all duration-700 ${isRefreshing ? 'animate-spin' : ''}`} />
               </button>
               <button
                 className="h-10 w-10 rounded-2xl flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all"
