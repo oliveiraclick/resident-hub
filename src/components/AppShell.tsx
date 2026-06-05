@@ -227,7 +227,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
                 </button>
                 <button
                   onClick={onRefresh}
-                  className={`w-11 h-11 rounded-2xl flex items-center justify-center active:scale-95 backdrop-blur-md transition-all shadow-md ${isMoradorModule ? "bg-black/40 hover:bg-black/55 ring-1 ring-white/20" : "bg-white/10 hover:bg-white/20 ring-1 ring-white/10"} ${!onRefresh && 'hidden'}`}
+                  className={`w-11 h-11 rounded-2xl flex items-center justify-center active:scale-95 backdrop-blur-md transition-all shadow-md ${isMoradorModule ? "bg-black/40 hover:bg-black/55 ring-1 ring-white/20" : "bg-white/10 hover:bg-white/20 ring-1 ring-white/10"} ${onRefresh ? 'flex' : 'hidden'}`}
                 >
                   <RefreshCw size={20} className="text-white" />
                 </button>
