@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-const CHECK_INTERVAL = 6 * 60 * 60 * 1000; // 6 hours
+const CHECK_INTERVAL = 1 * 60 * 1000; // Check every 1 minute instead of 6 hours
 const BUILD_ID_KEY = "app_build_id";
 
 /**
