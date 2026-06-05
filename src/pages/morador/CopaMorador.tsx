@@ -29,6 +29,7 @@ const CopaMorador = () => {
   const [forceShowMultiplas, setForceShowMultiplas] = useState(false);
   const [visibleCount, setVisibleCount] = useState(6);
   const [saldo, setSaldo] = useState(0);
+  const [saldoPendente, setSaldoPendente] = useState(0);
   const [ranking, setRanking] = useState([]);
   const [selecoesCopa, setSelecoesCopa] = useState<SelecaoCopa[]>([]);
   const [isLoadingSelecoes, setIsLoadingSelecoes] = useState(false);
