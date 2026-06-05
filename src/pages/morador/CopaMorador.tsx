@@ -29,6 +29,7 @@ const CopaMorador = () => {
   const [forceShowMultiplas, setForceShowMultiplas] = useState(false);
   const [visibleCount, setVisibleCount] = useState(6);
   const [saldo, setSaldo] = useState(0);
+  const [saldoPendente, setSaldoPendente] = useState(0);
   const [ranking, setRanking] = useState([]);
   const [selecoesCopa, setSelecoesCopa] = useState<SelecaoCopa[]>([]);
   const [isLoadingSelecoes, setIsLoadingSelecoes] = useState(false);
@@ -59,6 +60,16 @@ const CopaMorador = () => {
         .eq("user_id", user.id)
         .maybeSingle();
       if (profile) setSaldo(Number(profile.saldo) || 0);
+
+      const { data: pendencias } = await supabase
+        .from("copa_palpites")
+        .select("valor_pago")
+        .eq("user_id", user.id)
+        .eq("tipo", "recharge")
+        .eq("status_pagamento", "pendente");
+      
+      const totalPendente = (pendencias || []).reduce((acc, curr) => acc + Number(curr.valor_pago), 0);
+      setSaldoPendente(totalPendente);
 
       const { data: userBets } = await supabase
         .from("copa_palpites")
@@ -341,8 +352,13 @@ const CopaMorador = () => {
             </div>
             <div className="flex items-center justify-between mt-4">
               <div className="flex flex-col">
-                <p className="text-[10px] font-black uppercase tracking-widest text-primary/80">Meu Saldo</p>
-                <p className="text-xl font-black text-white">R$ {saldo.toFixed(2)}</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-primary/80">Saldo Disponível</p>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-xl font-black text-white">R$ {saldo.toFixed(2)}</p>
+                  {saldoPendente > 0 && (
+                    <p className="text-[10px] font-bold text-yellow-500 italic">+ R$ {saldoPendente.toFixed(2)} pendente</p>
+                  )}
+                </div>
               </div>
               <button 
                 onClick={handleRecarregar}
