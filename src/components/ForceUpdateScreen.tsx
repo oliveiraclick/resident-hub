@@ -6,7 +6,7 @@ import { isNativeApp } from "@/lib/nativeDetect";
  * Versão mínima exigida para o app nativo.
  * Quando você publicar uma nova versão obrigatória, atualize aqui.
  */
-const MIN_NATIVE_VERSION = "3.2.0";
+const MIN_NATIVE_VERSION = "3.5.0";
 
 function isVersionOutdated(current: string, minimum: string): boolean {
   const cur = current.split(".").map(Number);
