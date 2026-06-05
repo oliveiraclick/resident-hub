@@ -142,11 +142,19 @@ const MasterCopaBets = () => {
   return (
     <MasterLayout title="Gestão Copa O Morador">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-6">
-          <TabsTrigger value="pagamentos">Pagamentos Pendentes</TabsTrigger>
-          <TabsTrigger value="confirmados">Pagamentos Confirmados</TabsTrigger>
-          <TabsTrigger value="jogos">Resultados Jogos</TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto no-scrollbar -mx-4 px-4 mb-6">
+          <TabsList className="flex w-max min-w-full rounded-[20px] bg-muted/50 p-1">
+            <TabsTrigger value="pagamentos" className="rounded-[16px] px-6 py-2 text-[10px] uppercase font-black whitespace-nowrap data-[state=active]:bg-background data-[state=active]:shadow-sm">
+              Pendentes
+            </TabsTrigger>
+            <TabsTrigger value="confirmados" className="rounded-[16px] px-6 py-2 text-[10px] uppercase font-black whitespace-nowrap data-[state=active]:bg-background data-[state=active]:shadow-sm">
+              Confirmados
+            </TabsTrigger>
+            <TabsTrigger value="jogos" className="rounded-[16px] px-6 py-2 text-[10px] uppercase font-black whitespace-nowrap data-[state=active]:bg-background data-[state=active]:shadow-sm">
+              Resultados
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="pagamentos" className="space-y-6">
           {["placar", "campeao", "bolao", "recharge"].map((tipo) => {
