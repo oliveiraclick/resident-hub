@@ -141,7 +141,31 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
       return;
     }
 
-    setShowOptions(true);
+    // Check balance (real + pending recharge)
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("saldo")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    const { data: pendencias } = await supabase
+      .from("copa_palpites")
+      .select("valor_pago")
+      .eq("user_id", user.id)
+      .eq("tipo", "recharge")
+      .eq("status_pagamento", "pendente");
+    
+    const saldoReal = Number(profile?.saldo || 0);
+    const saldoPendente = (pendencias || []).reduce((acc, curr) => acc + Number(curr.valor_pago), 0);
+    const saldoTotal = saldoReal + saldoPendente;
+
+    if (saldoTotal >= 20) {
+      // If user has enough total balance, they can use 'carteira'
+      processAposta(20, 'carteira');
+    } else {
+      // Otherwise, they must choose how to pay/recharge
+      setShowOptions(true);
+    }
   };
 
   const handleClose = () => {
