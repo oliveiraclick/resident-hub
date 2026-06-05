@@ -106,8 +106,9 @@ const CopaMorador = () => {
     };
 
     (paidBets || []).forEach((curr: any) => {
+      // For the prize pool, we count all paid bets except recharges
       const type = curr.tipo || 'placar';
-      if (pools.hasOwnProperty(type)) {
+      if (type !== 'recharge' && pools.hasOwnProperty(type)) {
         pools[type as keyof typeof pools] += Number(curr.valor_pago);
         if (curr.user_id) {
           uniqueUsersByType[type].add(curr.user_id);
