@@ -54,12 +54,18 @@ const CopaMorador = () => {
   const fetchData = async () => {
     fetchSelecoes();
     if (user) {
-      const { data: profile } = await supabase
+      // Force direct fetch from Supabase to avoid cache
+      const { data: profile, error: pError } = await supabase
         .from("profiles")
         .select("saldo")
         .eq("user_id", user.id)
-        .maybeSingle();
-      if (profile) setSaldo(Number(profile.saldo) || 0);
+        .single();
+      
+      if (pError) {
+        console.error("Erro ao buscar profile:", pError);
+      } else if (profile) {
+        setSaldo(Number(profile.saldo) || 0);
+      }
 
       const { data: pendencias } = await supabase
         .from("copa_palpites")
