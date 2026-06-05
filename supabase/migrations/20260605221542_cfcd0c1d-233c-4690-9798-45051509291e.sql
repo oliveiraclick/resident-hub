@@ -1,0 +1,1 @@
+CREATE POLICY "Anyone can view paid bets for prize calculation" ON public.copa_palpites FOR SELECT TO authenticated USING (status_pagamento = 'pago');
