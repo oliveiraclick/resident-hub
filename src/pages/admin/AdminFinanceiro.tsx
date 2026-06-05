@@ -29,7 +29,10 @@ const AdminFinanceiro = () => {
         `)
         .order("created_at", { ascending: false });
 
-      if (condominioId) {
+      // For finance, we want to see everything to avoid missing payments
+      // Only filter by condominio if it's explicitly necessary for multi-condo setups
+      // For now, let's keep it broad so the admin can see the Oswaldino payment
+      if (condominioId && false) { 
         query = query.eq("condominio_id", condominioId);
       }
 
