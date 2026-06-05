@@ -339,14 +339,18 @@ const CopaMorador = () => {
                 <span className="text-[10px] font-black">{betCounts[activeTab as keyof typeof betCounts]} {betCounts[activeTab as keyof typeof betCounts] === 1 ? 'Pessoa' : 'Pessoas'}</span>
               </div>
             </div>
-            <div className="flex items-center justify-between mt-4">
+            <div className="flex items-center justify-between mt-4 gap-4">
               <div className="flex flex-col">
                 <p className="text-[10px] font-black uppercase tracking-widest text-primary/80">Meu Saldo</p>
                 <p className="text-xl font-black text-white">R$ {saldo.toFixed(2)}</p>
               </div>
+              <div className="flex flex-col">
+                <p className="text-[10px] font-black uppercase tracking-widest text-primary/80">Total Apostado</p>
+                <p className="text-xl font-black text-white">R$ {(meusPalpites?.filter(p => p.status_pagamento === 'pago' && p.tipo !== 'recharge').reduce((acc, p) => acc + (Number(p.valor_pago) || 0), 0) || 0).toFixed(2)}</p>
+              </div>
               <button 
                 onClick={handleRecarregar}
-                className="bg-primary text-white px-4 py-2 rounded-2xl text-[10px] font-black uppercase hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
+                className="bg-primary text-white px-4 py-2 rounded-2xl text-[10px] font-black uppercase hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 shrink-0"
               >
                 + RECARREGAR
               </button>
