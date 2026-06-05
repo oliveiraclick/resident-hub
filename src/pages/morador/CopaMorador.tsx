@@ -169,9 +169,11 @@ const CopaMorador = () => {
 
   useEffect(() => {
     fetchData();
+    console.log("CopaMorador mounted, fetching data...");
     
-    // Auto-refresh every 30 seconds to keep sync
-    const interval = setInterval(fetchData, 30000);
+    const interval = setInterval(() => {
+      fetchData();
+    }, 15000); // 15 seconds
     return () => clearInterval(interval);
   }, [user]);
 
