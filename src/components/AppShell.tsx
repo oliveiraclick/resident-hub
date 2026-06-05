@@ -290,6 +290,12 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
                 <QrCode size={18} className="text-white" />
               </button>
               <button
+                onClick={onRefresh}
+                className={`h-10 w-10 rounded-2xl flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all ${!onRefresh && 'hidden'}`}
+              >
+                <RefreshCw size={18} className="text-white" />
+              </button>
+              <button
                 className="h-10 w-10 rounded-2xl flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all"
               >
                 <Bell size={18} className="text-white" />
