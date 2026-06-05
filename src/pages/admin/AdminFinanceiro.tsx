@@ -165,12 +165,15 @@ const AdminFinanceiro = () => {
         </div>
 
         <Tabs defaultValue="pendentes" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 rounded-[20px] bg-muted/50 p-1">
-            <TabsTrigger value="pendentes" className="rounded-[16px] data-[state=active]:bg-background data-[state=active]:shadow-sm">
+          <TabsList className="grid w-full grid-cols-3 rounded-[20px] bg-muted/50 p-1">
+            <TabsTrigger value="pendentes" className="rounded-[16px] data-[state=active]:bg-background data-[state=active]:shadow-sm text-[10px] uppercase font-black">
               Pendentes ({pendentes.length})
             </TabsTrigger>
-            <TabsTrigger value="confirmados" className="rounded-[16px] data-[state=active]:bg-background data-[state=active]:shadow-sm">
-              Pagos ({confirmados.length})
+            <TabsTrigger value="confirmados" className="rounded-[16px] data-[state=active]:bg-background data-[state=active]:shadow-sm text-[10px] uppercase font-black">
+              Confirmados ({confirmados.length})
+            </TabsTrigger>
+            <TabsTrigger value="resultados" className="rounded-[16px] data-[state=active]:bg-background data-[state=active]:shadow-sm text-[10px] uppercase font-black">
+              Resultados
             </TabsTrigger>
           </TabsList>
 
