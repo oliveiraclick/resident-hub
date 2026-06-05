@@ -114,11 +114,13 @@ const CopaMorador = () => {
     };
 
     (paidBets || []).forEach((curr: any) => {
-      // For the prize pool, we count all paid bets except recharges
       const type = curr.tipo || 'placar';
       if (type !== 'recharge') {
-        const poolType = (type === 'placar' || type === 'campeao' || type === 'bolao') ? type : 'placar';
-        pools[poolType] += Number(curr.valor_pago);
+        // Find pool type: 'placar', 'campeao', or 'bolao'
+        const poolType = (['placar', 'campeao', 'bolao'].includes(type)) ? type : 'placar';
+        
+        pools[poolType as keyof typeof pools] += Number(curr.valor_pago || 0);
+        
         if (curr.user_id) {
           uniqueUsersByType[poolType].add(curr.user_id);
         }
@@ -167,9 +169,11 @@ const CopaMorador = () => {
 
   useEffect(() => {
     fetchData();
+    console.log("CopaMorador mounted, fetching data...");
     
-    // Auto-refresh every 30 seconds to keep sync
-    const interval = setInterval(fetchData, 30000);
+    const interval = setInterval(() => {
+      fetchData();
+    }, 15000); // 15 seconds
     return () => clearInterval(interval);
   }, [user]);
 
@@ -356,7 +360,7 @@ const CopaMorador = () => {
               <div>
                 <p className="text-[10px] font-black uppercase tracking-widest text-primary/80">Prêmio Acumulado</p>
                 <h2 className="text-3xl font-black text-white mt-1.5 leading-none">
-                  R$ {prizes[activeTab as keyof typeof prizes].toFixed(2)}
+                  R$ {(prizes[activeTab as keyof typeof prizes] || 0).toFixed(2)}
                 </h2>
               </div>
               <div className="bg-primary/10 px-3 py-1 rounded-xl flex items-center gap-1.5 text-primary">
@@ -368,8 +372,8 @@ const CopaMorador = () => {
               <div className="flex flex-col">
                 <p className="text-[10px] font-black uppercase tracking-widest text-primary/80">Saldo Disponível</p>
                 <div className="flex items-baseline gap-2">
-                  <p className="text-xl font-black text-white">R$ {saldo.toFixed(2)}</p>
-                  {saldoPendente > 0 && (
+                  <p className="text-xl font-black text-white">R$ {(saldo || 0).toFixed(2)}</p>
+                  {(saldoPendente || 0) > 0 && (
                     <p className="text-[10px] font-bold text-yellow-500 italic">+ R$ {saldoPendente.toFixed(2)} pendente</p>
                   )}
                 </div>
