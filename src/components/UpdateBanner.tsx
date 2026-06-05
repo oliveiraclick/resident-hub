@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { RefreshCw, X } from "lucide-react";
 import { useUpdateChecker } from "@/hooks/useUpdateChecker";
 
