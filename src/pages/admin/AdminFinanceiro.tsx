@@ -29,6 +29,7 @@ const AdminFinanceiro = () => {
         `)
         .order("created_at", { ascending: false });
 
+      // Filter only if condominioId is provided
       if (condominioId) {
         query = query.eq("condominio_id", condominioId);
       }
@@ -192,7 +193,7 @@ const AdminFinanceiro = () => {
                           {p.tipo === 'placar' ? 'Placar Exato' : p.tipo === 'campeao' ? 'Campeão' : p.tipo === 'bolao' ? 'Bolão Geral' : p.tipo === 'recharge' ? 'Recarga de Saldo' : p.tipo}
                         </p>
                         <p className="text-[10px] font-bold text-muted-foreground truncate mt-0.5">
-                          {p.tipo === 'recharge' ? 'Créditos para conta' : `Jogo: ${p.copa_jogos?.time_home || 'Indefinido'} x ${p.copa_jogos?.time_away || 'Indefinido'}`}
+                          {p.tipo === 'recharge' ? 'Créditos para conta' : `Jogo: ${p.copa_jogos?.time_home || 'Jogo'} x ${p.copa_jogos?.time_away || 'Removido'}`}
                         </p>
                         {p.palpite_valor && (
                           <p className="text-[10px] font-black text-foreground/70 mt-0.5">
