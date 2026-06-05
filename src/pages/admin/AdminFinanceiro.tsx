@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, CheckCircle2, DollarSign, Wallet, Trash2 } from "lucide-react";
+import { Users, CheckCircle2, DollarSign, Wallet, Trash2, Trophy } from "lucide-react";
 import { toast } from "sonner";
 
 const AdminFinanceiro = () => {
@@ -165,12 +165,15 @@ const AdminFinanceiro = () => {
         </div>
 
         <Tabs defaultValue="pendentes" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 rounded-[20px] bg-muted/50 p-1">
-            <TabsTrigger value="pendentes" className="rounded-[16px] data-[state=active]:bg-background data-[state=active]:shadow-sm">
+          <TabsList className="grid w-full grid-cols-3 rounded-[20px] bg-muted/50 p-1">
+            <TabsTrigger value="pendentes" className="rounded-[16px] data-[state=active]:bg-background data-[state=active]:shadow-sm text-[10px] uppercase font-black">
               Pendentes ({pendentes.length})
             </TabsTrigger>
-            <TabsTrigger value="confirmados" className="rounded-[16px] data-[state=active]:bg-background data-[state=active]:shadow-sm">
-              Pagos ({confirmados.length})
+            <TabsTrigger value="confirmados" className="rounded-[16px] data-[state=active]:bg-background data-[state=active]:shadow-sm text-[10px] uppercase font-black">
+              Confirmados ({confirmados.length})
+            </TabsTrigger>
+            <TabsTrigger value="resultados" className="rounded-[16px] data-[state=active]:bg-background data-[state=active]:shadow-sm text-[10px] uppercase font-black">
+              Resultados
             </TabsTrigger>
           </TabsList>
 
@@ -254,6 +257,13 @@ const AdminFinanceiro = () => {
             ) : (
               <p className="text-center text-xs text-muted-foreground py-10 italic">Nenhum pagamento confirmado ainda.</p>
             )}
+          </TabsContent>
+
+          <TabsContent value="resultados" className="mt-6 space-y-4">
+            <div className="flex flex-col items-center justify-center py-20 bg-muted/20 rounded-[32px] border-2 border-dashed border-muted/50 text-center px-6">
+              <Trophy size={40} className="text-primary mb-3 opacity-20" />
+              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Os resultados dos jogos são atualizados automaticamente após o fim de cada partida.</p>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
