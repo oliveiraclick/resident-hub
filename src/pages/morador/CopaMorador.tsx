@@ -83,7 +83,7 @@ const CopaMorador = () => {
       .from("copa_jogos")
       .select("*, copa_palpites(count)")
       .eq('status', 'agendado')
-      .eq('copa_palpites.status_pagamento', 'pago')
+      // Removed the filter that required a paid bet to show the game
       .order('data_jogo', { ascending: true });
     
     const processedJogos = (jogosData || []).map((j: any) => ({
