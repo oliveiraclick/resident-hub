@@ -258,6 +258,13 @@ const AdminFinanceiro = () => {
               <p className="text-center text-xs text-muted-foreground py-10 italic">Nenhum pagamento confirmado ainda.</p>
             )}
           </TabsContent>
+
+          <TabsContent value="resultados" className="mt-6 space-y-4">
+            <div className="flex flex-col items-center justify-center py-20 bg-muted/20 rounded-[32px] border-2 border-dashed border-muted/50 text-center px-6">
+              <Trophy size={40} className="text-primary mb-3 opacity-20" />
+              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Os resultados dos jogos são atualizados automaticamente após o fim de cada partida.</p>
+            </div>
+          </TabsContent>
         </Tabs>
       </div>
     </AdminLayout>
