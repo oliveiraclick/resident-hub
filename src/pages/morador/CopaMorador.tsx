@@ -360,7 +360,7 @@ const CopaMorador = () => {
               <div>
                 <p className="text-[10px] font-black uppercase tracking-widest text-primary/80">Prêmio Acumulado</p>
                 <h2 className="text-3xl font-black text-white mt-1.5 leading-none">
-                  R$ {prizes[activeTab as keyof typeof prizes].toFixed(2)}
+                  R$ {(prizes[activeTab as keyof typeof prizes] || 0).toFixed(2)}
                 </h2>
               </div>
               <div className="bg-primary/10 px-3 py-1 rounded-xl flex items-center gap-1.5 text-primary">
