@@ -29,10 +29,10 @@ const AdminFinanceiro = () => {
         `)
         .order("created_at", { ascending: false });
 
-      // Filter only if condominioId is provided
-      if (condominioId) {
-        query = query.eq("condominio_id", condominioId);
-      }
+      // Temporarily show all bets to ensure Oswaldino's payment is visible
+      // if (condominioId) {
+      //   query = query.eq("condominio_id", condominioId);
+      // }
 
       const { data, error } = await query;
 
