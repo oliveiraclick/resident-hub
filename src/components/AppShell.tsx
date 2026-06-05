@@ -1,6 +1,6 @@
 import { ReactNode, useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, Bell, QrCode, Search, Wrench, X, Sparkles, Menu, Trophy } from "lucide-react";
+import { ArrowLeft, Bell, QrCode, Search, Wrench, X, Sparkles, Menu, Trophy, RefreshCw } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
