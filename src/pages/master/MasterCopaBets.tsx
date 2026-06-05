@@ -191,7 +191,7 @@ const MasterCopaBets = () => {
                           </div>
                           <div className="flex flex-col gap-1">
                             <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest truncate">
-                              {p.copa_jogos?.time_home} vs {p.copa_jogos?.time_away}
+                              {tipo === 'recharge' ? 'Créditos para conta' : `${p.copa_jogos?.time_home} vs ${p.copa_jogos?.time_away}`}
                             </p>
                             {p.palpite_valor && (
                               <div className="flex items-center gap-2 mt-1">
