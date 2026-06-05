@@ -92,10 +92,12 @@ const CopaMorador = () => {
     }));
     setJogos(processedJogos);
     
-    const { data: paidBets } = await supabase
+    const { data: paidBets, error: paidError } = await supabase
       .from("copa_palpites")
-      .select("valor_pago, tipo, user_id")
+      .select("valor_pago, tipo, user_id, status_pagamento")
       .eq("status_pagamento", "pago");
+    
+    if (paidError) console.error("Erro ao buscar prêmios:", paidError);
     
     const pools = { placar: 0, campeao: 0, bolao: 0 };
     const counts = { placar: 0, campeao: 0, bolao: 0 };
