@@ -352,8 +352,13 @@ const CopaMorador = () => {
             </div>
             <div className="flex items-center justify-between mt-4">
               <div className="flex flex-col">
-                <p className="text-[10px] font-black uppercase tracking-widest text-primary/80">Meu Saldo</p>
-                <p className="text-xl font-black text-white">R$ {saldo.toFixed(2)}</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-primary/80">Saldo Disponível</p>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-xl font-black text-white">R$ {saldo.toFixed(2)}</p>
+                  {saldoPendente > 0 && (
+                    <p className="text-[10px] font-bold text-yellow-500 italic">+ R$ {saldoPendente.toFixed(2)} pendente</p>
+                  )}
+                </div>
               </div>
               <button 
                 onClick={handleRecarregar}
