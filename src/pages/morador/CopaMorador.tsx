@@ -100,13 +100,19 @@ const CopaMorador = () => {
     
     const { data: paidBets, error: paidError } = await supabase
       .from("copa_palpites")
-      .select("valor_pago, tipo, user_id, status_pagamento")
+      .select("valor_pago, tipo, user_id, status_pagamento, jogo_id")
       .eq("status_pagamento", "pago");
     
     if (paidError) console.error("Erro ao buscar prêmios:", paidError);
     
     const pools = { placar: 0, campeao: 0, bolao: 0 };
     const counts = { placar: 0, campeao: 0, bolao: 0 };
+    
+    // For 'placar' (Jogos do Brasil), we want to show the pool of the "next/focused" game
+    // Let's calculate pools per game_id for placar
+    const placarPoolsByGame: Record<string, number> = {};
+    const placarCountsByGame: Record<string, Set<string>> = {};
+
     const uniqueUsersByType: Record<string, Set<string>> = {
       placar: new Set(),
       campeao: new Set(),
@@ -116,19 +122,36 @@ const CopaMorador = () => {
     (paidBets || []).forEach((curr: any) => {
       const type = curr.tipo || 'placar';
       if (type !== 'recharge') {
-        // Find pool type: 'placar', 'campeao', or 'bolao'
         const poolType = (['placar', 'campeao', 'bolao'].includes(type)) ? type : 'placar';
         
-        pools[poolType as keyof typeof pools] += Number(curr.valor_pago || 0);
-        
-        if (curr.user_id) {
-          uniqueUsersByType[poolType].add(curr.user_id);
+        if (poolType === 'placar' && curr.jogo_id) {
+          placarPoolsByGame[curr.jogo_id] = (placarPoolsByGame[curr.jogo_id] || 0) + Number(curr.valor_pago || 0);
+          if (!placarCountsByGame[curr.jogo_id]) placarCountsByGame[curr.jogo_id] = new Set();
+          if (curr.user_id) placarCountsByGame[curr.jogo_id].add(curr.user_id);
+        } else {
+          pools[poolType as keyof typeof pools] += Number(curr.valor_pago || 0);
+          if (curr.user_id) {
+            uniqueUsersByType[poolType].add(curr.user_id);
+          }
         }
       }
     });
 
+    // If activeTab is placar, we find the first available Brazil game to show its specific prize
+    if (activeTab === 'placar') {
+      const firstBrazilGame = processedJogos.find((j: any) => 
+        j.time_home.toLowerCase().trim() === "brasil" || j.time_away.toLowerCase().trim() === "brasil"
+      );
+      if (firstBrazilGame) {
+        pools.placar = placarPoolsByGame[firstBrazilGame.id] || 0;
+        counts.placar = placarCountsByGame[firstBrazilGame.id]?.size || 0;
+      }
+    }
+
     Object.keys(uniqueUsersByType).forEach(type => {
-      counts[type as keyof typeof counts] = uniqueUsersByType[type].size;
+      if (type !== 'placar') {
+        counts[type as keyof typeof counts] = uniqueUsersByType[type].size;
+      }
     });
 
     setPrizes(pools);
