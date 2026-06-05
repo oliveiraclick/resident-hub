@@ -162,7 +162,7 @@ const MasterCopaBets = () => {
         </TabsList>
 
         <TabsContent value="pagamentos" className="space-y-6">
-          {["placar", "campeao", "bolao"].map((tipo) => {
+          {["placar", "campeao", "bolao", "recharge"].map((tipo) => {
             const palpitesDoTipo = palpites.filter(p => p.status_pagamento === "pendente" && p.tipo === tipo);
             if (palpitesDoTipo.length === 0) return null;
 
