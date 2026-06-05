@@ -83,7 +83,7 @@ const MasterCopaBets = () => {
 
       if (walletError) throw walletError;
       
-      toast({ title: "Pagamento aprovado!", description: `R$ ${valorAprovado.toFixed(2)} adicionado ao saldo do morador.` });
+      sonnerToast.success(`Pagamento aprovado! R$ ${valorAprovado.toFixed(2)} liberado.`);
       fetchData();
     } catch (error: any) {
       toast({ title: "Erro ao aprovar", description: error.message, variant: "destructive" });
