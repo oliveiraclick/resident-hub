@@ -114,11 +114,13 @@ const CopaMorador = () => {
     };
 
     (paidBets || []).forEach((curr: any) => {
-      // For the prize pool, we count all paid bets except recharges
       const type = curr.tipo || 'placar';
       if (type !== 'recharge') {
-        const poolType = (type === 'placar' || type === 'campeao' || type === 'bolao') ? type : 'placar';
-        pools[poolType] += Number(curr.valor_pago);
+        // Find pool type: 'placar', 'campeao', or 'bolao'
+        const poolType = (['placar', 'campeao', 'bolao'].includes(type)) ? type : 'placar';
+        
+        pools[poolType as keyof typeof pools] += Number(curr.valor_pago || 0);
+        
         if (curr.user_id) {
           uniqueUsersByType[poolType].add(curr.user_id);
         }
