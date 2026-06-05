@@ -24,6 +24,7 @@ const CopaMorador = () => {
   const [prizes, setPrizes] = useState({ placar: 0, campeao: 0, bolao: 0 });
   const [betCounts, setBetCounts] = useState({ placar: 0, campeao: 0, bolao: 0 });
   const [activeTab, setActiveTab] = useState("placar");
+  const [focusedJogoId, setFocusedJogoId] = useState<string | null>(null);
   const [selectedJogo, setSelectedJogo] = useState<any>(null);
   const [isBetModalOpen, setIsBetModalOpen] = useState(false);
   const [forceShowMultiplas, setForceShowMultiplas] = useState(false);
@@ -137,14 +138,20 @@ const CopaMorador = () => {
       }
     });
 
-    // If activeTab is placar, we find the first available Brazil game to show its specific prize
+    // Handle Placar Pool display based on focused game or first available
     if (activeTab === 'placar') {
-      const firstBrazilGame = processedJogos.find((j: any) => 
-        j.time_home.toLowerCase().trim() === "brasil" || j.time_away.toLowerCase().trim() === "brasil"
-      );
-      if (firstBrazilGame) {
-        pools.placar = placarPoolsByGame[firstBrazilGame.id] || 0;
-        counts.placar = placarCountsByGame[firstBrazilGame.id]?.size || 0;
+      let targetId = focusedJogoId;
+      
+      if (!targetId) {
+        const firstBrazilGame = processedJogos.find((j: any) => 
+          j.time_home.toLowerCase().trim() === "brasil" || j.time_away.toLowerCase().trim() === "brasil"
+        );
+        targetId = firstBrazilGame?.id;
+      }
+
+      if (targetId) {
+        pools.placar = placarPoolsByGame[targetId] || 0;
+        counts.placar = placarCountsByGame[targetId]?.size || 0;
       }
     }
 
@@ -249,7 +256,21 @@ const CopaMorador = () => {
         const hasBet = userBetsForGame.length > 0;
 
         return (
-          <div key={jogo.id} className="bg-[#1a2e25] rounded-[32px] border border-white/5 overflow-hidden shadow-xl transition-all hover:border-primary/20">
+          <div 
+            key={jogo.id} 
+            onClick={() => {
+              if (activeTab === 'placar') {
+                setFocusedJogoId(jogo.id);
+                // Trigger a re-calculation of the prizes state immediately if needed, 
+                // but since it's in the next render cycle of fetchData, we can just wait or manually trigger.
+                // For better UX, we'll let the fetchData interval or a manual call handle it.
+                fetchData();
+              }
+            }}
+            className={`bg-[#1a2e25] rounded-[32px] border overflow-hidden shadow-xl transition-all cursor-pointer ${
+              focusedJogoId === jogo.id && activeTab === 'placar' ? 'border-primary ring-1 ring-primary/50 scale-[1.02]' : 'border-white/5 hover:border-primary/20'
+            }`}
+          >
             <div className="p-6 space-y-5">
               <div className="flex justify-between items-center text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest">
                 <span className="flex items-center gap-2 italic">
