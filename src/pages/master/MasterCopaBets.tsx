@@ -243,14 +243,9 @@ const MasterCopaBets = () => {
             </div>
           )}
 
-          <Card className="mt-8">
-            <CardHeader>
-              <CardTitle className="text-sm font-bold flex items-center gap-2">
-                <CheckCircle2 size={18} className="text-success" /> Pagamentos Confirmados
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 p-4">
-              {palpites.filter(p => p.status_pagamento === "pago").map((p: any) => (
+        <TabsContent value="confirmados" className="space-y-4">
+          <div className="space-y-3 p-0">
+            {palpites.filter(p => p.status_pagamento === "pago").map((p: any) => (
                 <div key={p.id} className="flex flex-col p-4 bg-[#1a2e25] rounded-[24px] border border-white/5 opacity-80 gap-2">
                   <div className="flex justify-between items-start">
                     <div className="min-w-0 flex-1">
