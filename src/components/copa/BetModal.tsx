@@ -177,19 +177,30 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
       return;
     }
 
+    // Rule: Bolao is a one-time 20 BRL fee for all games
+    if (betType === 'bolao') {
+      const { data: alreadyPaid } = await supabase
+        .from("copa_palpites")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("tipo", "bolao")
+        .eq("status_pagamento", "pago")
+        .limit(1)
+        .maybeSingle();
+
+      if (alreadyPaid) {
+        // User already paid for the bolao pool, proceed directly
+        handlePayWithBalance();
+        return;
+      }
+    }
+
     // Check balance (real + pending recharge)
     const { data: profile } = await supabase
       .from("profiles")
       .select("saldo")
       .eq("user_id", user.id)
       .maybeSingle();
-
-    const { data: pendencias } = await supabase
-      .from("copa_palpites")
-      .select("valor_pago")
-      .eq("user_id", user.id)
-      .eq("tipo", "recharge")
-      .eq("status_pagamento", "pendente");
     
     const saldoReal = Number(profile?.saldo || 0);
     
@@ -417,7 +428,9 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
                 </div>
                 <div className="flex-1">
                   <p className="text-[14px] font-black uppercase tracking-tight text-primary">Saldo em Conta</p>
-                  <p className="text-[10px] text-primary/60 font-bold uppercase tracking-widest">Descontar R$ 20,00 e validar agora</p>
+                  <p className="text-[10px] text-primary/60 font-bold uppercase tracking-widest">
+                    {betType === 'bolao' ? 'Pagar taxa única de R$ 20,00' : 'Descontar R$ 20,00 e validar agora'}
+                  </p>
                 </div>
               </button>
 
