@@ -97,7 +97,7 @@ export const BetModal = ({ isOpen, onClose, jogo, betType, onSuccess, forceShowM
 
       if (error) throw error;
 
-      toast.success(method === 'carteira' ? "Pré-aposta registrada! O saldo será liberado após o OK do ADM." : "Palpite registrado! Realize o pagamento para validar.");
+      toast.success(method === 'carteira' ? "Palpite registrado! O saldo será liberado em instantes." : "Palpite registrado! Realize o pagamento para validar.");
       onSuccess();
       setShowOptions(false);
       setShowPix(true);
