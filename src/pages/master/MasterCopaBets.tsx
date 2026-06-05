@@ -7,8 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trophy, CheckCircle2, Clock, Users, Plus, Trash2, Search, RefreshCw } from "lucide-react";
+import { Trophy, CheckCircle2, Clock, Users, Plus, Trash2, Search, RefreshCw, ThumbsUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { toast as sonnerToast } from "sonner";
 
 const MasterCopaBets = () => {
   const [activeTab, setActiveTab] = useState("pagamentos");
@@ -82,7 +83,7 @@ const MasterCopaBets = () => {
 
       if (walletError) throw walletError;
       
-      toast({ title: "Pagamento aprovado!", description: `R$ ${valorAprovado.toFixed(2)} adicionado ao saldo do morador.` });
+      sonnerToast.success(`Pagamento aprovado! R$ ${valorAprovado.toFixed(2)} liberado.`);
       fetchData();
     } catch (error: any) {
       toast({ title: "Erro ao aprovar", description: error.message, variant: "destructive" });

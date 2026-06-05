@@ -58,6 +58,7 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searchIndex, setSearchIndex] = useState<PrestadorSearchItem[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
@@ -226,19 +227,24 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
                   <QrCode size={20} className="text-white" />
                 </button>
                 <button
-                  onClick={(e) => {
+                  onClick={async (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log("Executando onRefresh");
-                    if (onRefresh) {
-                      onRefresh();
-                    } else {
-                      window.location.reload();
+                    if (isRefreshing) return;
+                    setIsRefreshing(true);
+                    try {
+                      if (onRefresh) {
+                        await onRefresh();
+                      } else {
+                        window.location.reload();
+                      }
+                    } finally {
+                      setTimeout(() => setIsRefreshing(false), 1000);
                     }
                   }}
                   className="w-11 h-11 rounded-2xl flex items-center justify-center active:scale-95 backdrop-blur-md transition-all shadow-md bg-black/40 hover:bg-black/55 ring-1 ring-white/20"
                 >
-                  <RefreshCw size={20} className="text-white" />
+                  <RefreshCw size={20} className={`text-white transition-all duration-700 ${isRefreshing ? 'animate-spin' : ''}`} />
                 </button>
                 <button
                   className={`w-11 h-11 rounded-2xl flex items-center justify-center active:scale-95 backdrop-blur-md transition-all shadow-md ${isMoradorModule ? "bg-black/40 hover:bg-black/55 ring-1 ring-white/20" : "bg-white/10 hover:bg-white/20 ring-1 ring-white/10"}`}
@@ -299,19 +305,24 @@ const AppShell = ({ children, moduleName, navItems, menuItems, userName, showSea
                 <QrCode size={18} className="text-white" />
               </button>
               <button
-                onClick={(e) => {
+                onClick={async (e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  console.log("Executando onRefresh subpage");
-                  if (onRefresh) {
-                    onRefresh();
-                  } else {
-                    window.location.reload();
+                  if (isRefreshing) return;
+                  setIsRefreshing(true);
+                  try {
+                    if (onRefresh) {
+                      await onRefresh();
+                    } else {
+                      window.location.reload();
+                    }
+                  } finally {
+                    setTimeout(() => setIsRefreshing(false), 1000);
                   }
                 }}
                 className="h-10 w-10 rounded-2xl flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all"
               >
-                <RefreshCw size={18} className="text-white" />
+                <RefreshCw size={18} className={`text-white transition-all duration-700 ${isRefreshing ? 'animate-spin' : ''}`} />
               </button>
               <button
                 className="h-10 w-10 rounded-2xl flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all"
