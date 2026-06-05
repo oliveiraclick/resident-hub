@@ -157,7 +157,11 @@ const CopaMorador = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+    
+    // Auto-refresh every 30 seconds to keep sync
+    const interval = setInterval(fetchData, 30000);
+    return () => clearInterval(interval);
+  }, [user]);
 
   const handleBet = (jogo: any, type?: string) => {
     setSelectedJogo(jogo);
