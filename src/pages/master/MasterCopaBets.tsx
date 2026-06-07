@@ -94,17 +94,17 @@ const MasterCopaBets = () => {
   };
 
   const handleDeleteBet = async (betId: string) => {
-    if (!confirm("Tem certeza que deseja excluir este palpite permanentemente?")) return;
+    if (!confirm("Tem certeza que deseja cancelar este palpite?")) return;
 
     const { error } = await supabase
       .from("copa_palpites")
-      .delete()
+      .update({ status_pagamento: "cancelado" })
       .eq("id", betId);
 
     if (error) {
       toast({ title: "Erro ao excluir", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "Palpite excluído com sucesso!" });
+      sonnerToast.success("Palpite excluído com sucesso!");
       fetchData();
     }
   };
