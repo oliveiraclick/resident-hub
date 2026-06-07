@@ -29,7 +29,9 @@ const MasterCopaBets = () => {
     const { data: palpitesData } = await supabase
       .from("copa_palpites")
       .select("*, profiles(nome), copa_jogos(time_home, time_away)")
+      .neq("status_pagamento", "cancelado")
       .order("created_at", { ascending: false });
+
     
     setJogos(jogosData || []);
     setPalpites(palpitesData || []);
