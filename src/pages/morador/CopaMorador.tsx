@@ -81,7 +81,8 @@ const CopaMorador = () => {
       const { data: userBets } = await supabase
         .from("copa_palpites")
         .select("*")
-        .eq("user_id", user.id);
+        .eq("user_id", user.id)
+        .neq("status_pagamento", "cancelado");
       
       if (userBets) setMeusPalpites(userBets);
     }
@@ -102,7 +103,8 @@ const CopaMorador = () => {
     const { data: paidBets, error: paidError } = await supabase
       .from("copa_palpites")
       .select("valor_pago, tipo, user_id, status_pagamento, jogo_id")
-      .eq("status_pagamento", "pago");
+      .eq("status_pagamento", "pago")
+      .neq("status_pagamento", "cancelado");
     
     if (paidError) console.error("Erro ao buscar prêmios:", paidError);
     
