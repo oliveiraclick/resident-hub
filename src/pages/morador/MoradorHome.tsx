@@ -383,54 +383,6 @@ const MoradorHome = () => {
           </DialogContent>
         </Dialog>
 
-        {/* ═══ COPA DO MUNDO - BOLÃO ═══ */}
-        {document.body.classList.contains("theme-brasil") && (
-          <section className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <Link
-              to="/morador/copa"
-              className="block w-full relative overflow-hidden rounded-[32px] group transition-all hover:shadow-2xl hover:shadow-yellow-500/30 active:scale-[0.98] no-underline border border-white/10"
-              style={{
-                background:
-                  "radial-gradient(120% 120% at 0% 0%, #FEDF00 0%, #009739 45%, #002776 100%)",
-              }}
-            >
-              {/* Glow + textura */}
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_20%,rgba(255,255,255,0.25),transparent_55%)]" />
-              <div className="absolute -right-6 -bottom-6 opacity-[0.08] transition-transform group-hover:scale-110 group-hover:rotate-6 duration-500">
-                <Trophy size={180} className="text-white" strokeWidth={1.5} />
-              </div>
-
-              <div className="relative z-10 p-6 pt-5 flex items-center justify-between gap-4">
-                <div className="text-left space-y-2 flex-1 min-w-0">
-                  {/* Selos empilhados */}
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="inline-flex items-center gap-1.5 bg-black/35 backdrop-blur-md px-2 py-0.5 rounded-full border border-white/20">
-                      <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
-                      <span className="text-[9px] font-black text-white uppercase tracking-[0.15em]">
-                        Oficial Morador.app
-                      </span>
-                    </span>
-                    <span className="inline-block bg-white text-[#002776] px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-[0.18em] shadow-md">
-                      Bolão Copa 2026
-                    </span>
-                  </div>
-                  <h3 className="text-[28px] leading-none font-black text-white italic tracking-tighter drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
-                    COPA O MORADOR
-                  </h3>
-                  <p className="text-white/95 text-[13px] font-semibold leading-snug max-w-[260px]">
-                    Dê seu palpite e dispute o prêmio acumulado com todos os moradores
-                    {condoNome ? <> aqui do <span className="font-black">{condoNome}</span>.</> : " do seu condomínio."}
-                  </p>
-                </div>
-
-
-                <div className="h-14 w-14 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-xl shadow-black/30 group-hover:scale-105 transition-transform">
-                  <ArrowRight size={26} className="text-[#002776]" strokeWidth={3} />
-                </div>
-              </div>
-            </Link>
-          </section>
-        )}
 
 
         {/* ═══ ATALHOS RÁPIDOS ═══ */}
